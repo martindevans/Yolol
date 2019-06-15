@@ -1,24 +1,25 @@
-﻿using YololEmulator.Execution;
+﻿using System;
+using YololEmulator.Execution;
 using YololEmulator.Execution.Extensions;
 
 namespace YololEmulator.Grammar.AST.Expressions.Binary
 {
-    public class AddExpression
+    public class NotEqualToExpression
         : BaseBinaryExpression
     {
-        public AddExpression(BaseExpression left, BaseExpression right)
-            : base(left, right)
+        public NotEqualToExpression(BaseExpression lhs, BaseExpression rhs)
+            : base(lhs, rhs)
         {
         }
 
         protected override Value Evaluate(string l, string r)
         {
-            return new Value(l + r);
+            return new Value(l.Equals(r, StringComparison.OrdinalIgnoreCase) ? 0 : 1);
         }
 
         protected override Value Evaluate(decimal l, decimal r)
         {
-            return new Value(l + r);
+            return new Value(l == r ? 0 : 1);
         }
 
         protected override Value Evaluate(string l, decimal r)

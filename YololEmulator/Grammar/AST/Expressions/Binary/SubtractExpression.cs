@@ -1,5 +1,6 @@
 ﻿using System;
 using YololEmulator.Execution;
+using YololEmulator.Execution.Extensions;
 
 namespace YololEmulator.Grammar.AST.Expressions.Binary
 {
@@ -28,12 +29,12 @@ namespace YololEmulator.Grammar.AST.Expressions.Binary
 
         protected override Value Evaluate(string l, decimal r)
         {
-            return Evaluate(l, r.ToString("#.####"));
+            return Evaluate(l, r.Coerce());
         }
 
         protected override Value Evaluate(decimal l, string r)
         {
-            return Evaluate(l.ToString("#.####"), r);
+            return Evaluate(l.Coerce(), r);
         }
     }
 }

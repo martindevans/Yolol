@@ -1,24 +1,27 @@
-﻿using YololEmulator.Execution;
+﻿using System;
+using YololEmulator.Execution;
 using YololEmulator.Execution.Extensions;
 
 namespace YololEmulator.Grammar.AST.Expressions.Binary
 {
-    public class AddExpression
+    public class GreaterThanExpression
         : BaseBinaryExpression
     {
-        public AddExpression(BaseExpression left, BaseExpression right)
-            : base(left, right)
+        public GreaterThanExpression(BaseExpression lhs, BaseExpression rhs)
+            : base(lhs, rhs)
         {
         }
 
         protected override Value Evaluate(string l, string r)
         {
-            return new Value(l + r);
+            var comparison = StringComparer.OrdinalIgnoreCase.Compare(l, r);
+
+            return new Value(comparison > 0 ? 1 : 0);
         }
 
         protected override Value Evaluate(decimal l, decimal r)
         {
-            return new Value(l + r);
+            return new Value(l > r ? 1 : 0);
         }
 
         protected override Value Evaluate(string l, decimal r)

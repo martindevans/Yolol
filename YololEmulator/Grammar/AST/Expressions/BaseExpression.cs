@@ -20,6 +20,18 @@ namespace YololEmulator.Grammar.AST.Expressions
                     return new MultiplyExpression(lhs, rhs);
                 case YololBinaryOp.Divide:
                     return new DivideExpression(lhs, rhs);
+                case YololBinaryOp.LessThan:
+                    return new LessThanExpression(lhs, rhs);
+                case YololBinaryOp.GreaterThan:
+                    return new GreaterThanExpression(lhs, rhs);
+                case YololBinaryOp.LessThanEqualTo:
+                    return new LessThanEqualToExpression(lhs, rhs);
+                case YololBinaryOp.GreaterThanEqualTo:
+                    return new GreaterThanEqualToExpression(lhs, rhs);
+                case YololBinaryOp.NotEqualTo:
+                    return new NotEqualToExpression(lhs, rhs);
+                case YololBinaryOp.EqualTo:
+                    return new EqualToExpression(lhs, rhs);
                 default:
                     throw new ArgumentOutOfRangeException(nameof(operand), operand, null);
             }

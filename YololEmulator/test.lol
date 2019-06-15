@@ -1,7 +1,6 @@
-﻿a = -3 b = 10
-:c = 20
-a = b + 1
-a = a * 1
-if a < 10 then goto 1 else goto 4 end
-:b = a * 10
-:b = a / 10
+﻿s=:INPUT if s=="" then goto 1 end m=1 n=0 h=s
+if h=="" then goto 6 else s=h-- t=s-h d=-1 end
+d=(t=="0")+(t=="1")*2+(t=="2")*3+(t=="3")*4+(t=="4")*5+(t=="5")*6
+d+=(t=="6")*7+(t=="7")*8+(t=="8")*9+(t=="9")*10-1
+if d==-1 then goto 6 end n+=d*m m*=10 goto 2
+:OUTPUT=n :INPUT="" goto 1

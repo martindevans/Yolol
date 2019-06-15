@@ -47,12 +47,13 @@ namespace YololEmulator
                     pc = EvaluateLine(line, pc, st);
 
                     // Print machine state
-                    Console.WriteLine();
                     Console.WriteLine("State:");
                     st.Print("| ");
                     Console.WriteLine();
 
-
+                    // Pause until made to continue
+                    while (Console.ReadKey(true).Key != ConsoleKey.F5)
+                        continue;
                 }
             }
             catch (Exception e)
