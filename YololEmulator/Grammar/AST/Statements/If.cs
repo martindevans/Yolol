@@ -21,7 +21,7 @@ namespace YololEmulator.Grammar.AST.Statements
         {
             var condition = _condition.Evaluate(state);
 
-            var todo = condition.ValueNumber != 0 ? _trueBranch : _falseBranch;
+            var todo = condition.Number != 0 ? _trueBranch : _falseBranch;
 
             if (todo != null)
             {

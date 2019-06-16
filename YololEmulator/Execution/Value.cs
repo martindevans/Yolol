@@ -7,49 +7,49 @@ namespace YololEmulator.Execution
     {
         public Type Type { get; private set; }
 
-        private decimal _valueNumber;
-        public decimal ValueNumber
+        private decimal _number;
+        public decimal Number
         {
             get
             {
                 if (Type != Type.Number)
                     throw new InvalidCastException($"Attempted to access value of type {Type} as a Number");
-                return _valueNumber;
+                return _number;
             }
             set
             {
                 Type = Type.Number;
-                _valueNumber = value;
+                _number = value;
             }
         }
 
-        private string _valueString;
-        public string ValueString
+        private string _string;
+        public string String
         {
             get
             {
                 if (Type != Type.String)
                     throw new InvalidCastException($"Attempted to access value of type {Type} as a String");
-                return _valueString;
+                return _string;
             }
             set
             {
                 Type = Type.String;
-                _valueString = value;
+                _string = value;
             }
         }
 
         public Value(string str)
         {
-            _valueString = str;
-            _valueNumber = 0;
+            _string = str;
+            _number = 0;
             Type = Type.String;
         }
 
         public Value(decimal dec)
         {
-            _valueString = "";
-            _valueNumber = dec;
+            _string = "";
+            _number = dec;
             Type = Type.Number;
         }
 
@@ -59,9 +59,9 @@ namespace YololEmulator.Execution
                 return "<unassigned>";
 
             if (Type == Type.Number)
-                return ValueNumber.ToString(CultureInfo.InvariantCulture);
+                return Number.ToString(CultureInfo.InvariantCulture);
 
-            return $"\"{ValueString}\"";
+            return $"\"{String}\"";
         }
     }
 }

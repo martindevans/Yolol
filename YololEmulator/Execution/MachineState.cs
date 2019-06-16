@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using YololEmulator.Grammar.AST.Statements;
 
 namespace YololEmulator.Execution
 {
@@ -15,6 +16,8 @@ namespace YololEmulator.Execution
                 _variables.Add(name, v = new Variable(name, name.StartsWith(':')));
             return v;
         }
+
+        internal Variable Get(VariableName name) => Get(name.Name);
 
         public void Print(string prefix)
         {

@@ -31,15 +31,15 @@ namespace YololEmulator.Grammar.AST.Expressions.Binary
                 throw new ExecutionError("Attempted to operate on an unassigned value");
 
             if (l.Type == Type.Number && r.Type == Type.Number)
-                return Evaluate(l.ValueNumber, r.ValueNumber);
+                return Evaluate(l.Number, r.Number);
 
             if (l.Type == Type.String && r.Type == Type.String)
-                return Evaluate(l.ValueString, r.ValueString);
+                return Evaluate(l.String, r.String);
 
             if (l.Type == Type.Number)
-                return Evaluate(l.ValueNumber, r.ValueString);
+                return Evaluate(l.Number, r.String);
 
-            return Evaluate(l.ValueString, r.ValueNumber);
+            return Evaluate(l.String, r.Number);
         }
     }
 }

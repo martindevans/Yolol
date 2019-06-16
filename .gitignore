@@ -1,7 +1,10 @@
 *.lock
 *.user
+*.cache
+*.ncrunchsolution
 
 .vs
 obj
 bin
 _ReSharper.Caches
+/_NCrunch_YololEmulator/

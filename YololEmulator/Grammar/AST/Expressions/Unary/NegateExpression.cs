@@ -22,7 +22,7 @@ namespace YololEmulator.Grammar.AST.Expressions.Unary
             if (v.Type == Type.String)
                 throw new ExecutionError("Attempted to negate a String value");
 
-            return new Value(-v.ValueNumber);
+            return new Value(-v.Number);
         }
     }
 }

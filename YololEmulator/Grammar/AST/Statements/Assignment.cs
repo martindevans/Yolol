@@ -3,13 +3,13 @@ using YololEmulator.Grammar.AST.Expressions;
 
 namespace YololEmulator.Grammar.AST.Statements
 {
-    public class AssignmentStatement
+    public class Assignment
         : BaseStatement
     {
         public VariableName Left { get; }
         public BaseExpression Right { get; }
 
-        public AssignmentStatement(VariableName left, BaseExpression right)
+        public Assignment(VariableName left, BaseExpression right)
         {
             Left = left;
             Right = right;

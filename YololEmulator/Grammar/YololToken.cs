@@ -16,6 +16,9 @@
         Multiply,
         Divide,
 
+        Increment,
+        Decrement,
+
         LParen,
         RParen,
 
@@ -31,5 +34,6 @@
 
         Number,
         String,
+        
     }
 }
