@@ -19,7 +19,7 @@ namespace YololEmulator.Grammar.AST.Expressions.Unary
             if (value.Type == Type.String)
                 return new Value(value.String + " ");
 
-            throw new ExecutionError($"Attempted to increment a variable of type `{value.Type}`");
+            throw new ExecutionException($"Attempted to increment a variable of type `{value.Type}`");
         }
     }
 }

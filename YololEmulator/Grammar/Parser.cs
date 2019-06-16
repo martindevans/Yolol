@@ -127,7 +127,6 @@ namespace YololEmulator.Grammar
                 .Match(Span.EqualTo(':').IgnoreThen(Identifier.CStyle), YololToken.ExternalIdentifier)
                 .Match(Identifier.CStyle, YololToken.Identifier)
                 .Match(QuotedString.CStyle, YololToken.String)
-                .Match(Numerics.Decimal, YololToken.Number)
 
                 .Match(Character.EqualTo('='), YololToken.Assignment)
 
@@ -141,6 +140,8 @@ namespace YololEmulator.Grammar
                 .Match(Character.EqualTo('-'), YololToken.Subtract)
                 .Match(Character.EqualTo('*'), YololToken.Multiply)
                 .Match(Character.EqualTo('/'), YololToken.Divide)
+
+                .Match(Numerics.Decimal, YololToken.Number)
 
                 .Build();
 

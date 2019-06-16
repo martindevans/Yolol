@@ -5,7 +5,6 @@ namespace YololEmulator.Tests.Scripts.Basic.Str
     [TestClass]
     public class Addition
     {
-        #region add
         [TestMethod]
         public void ConstantConstant()
         {
@@ -39,6 +38,5 @@ namespace YololEmulator.Tests.Scripts.Basic.Str
             Assert.AreEqual("a", a.Value.String);
             Assert.AreEqual("ba", b.Value.String);
         }
-        #endregion
     }
 }

@@ -19,10 +19,9 @@ namespace YololEmulator.Grammar.AST.Statements
             var dest = _destination.Evaluate(state);
 
             if (dest.Type != Execution.Type.Number)
-                throw new ExecutionError($"Attempted to goto to a value of type `{dest.Type}`");
+                throw new ExecutionException($"Attempted to goto to a value of type `{dest.Type}`");
 
-            var num = Math.Truncate(dest.Number);
-            return new ExecutionResult((int)Math.Truncate(dest.Number));
+            return new ExecutionResult((int)dest.Number.Value);
         }
     }
 }

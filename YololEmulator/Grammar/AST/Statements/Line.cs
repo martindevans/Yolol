@@ -20,16 +20,16 @@ namespace YololEmulator.Grammar.AST.Statements
                 switch (r.Type)
                 {
                     case ExecutionResultType.Error:
-                        throw new ExecutionError(r.ErrorMessage);
+                        throw new ExecutionException(r.ErrorMessage);
 
                     case ExecutionResultType.Goto:
-                        return r.GotoLine;
+                        return r.GotoLine - 1;
 
                     case ExecutionResultType.None:
                         continue;
 
                     default:
-                        throw new ExecutionError($"Unknown ExecutionResult `{r.Type}`");
+                        throw new ExecutionException($"Unknown ExecutionResult `{r.Type}`");
 
                 }
             }

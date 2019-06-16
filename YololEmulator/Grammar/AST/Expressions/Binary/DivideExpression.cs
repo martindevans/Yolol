@@ -12,22 +12,22 @@ namespace YololEmulator.Grammar.AST.Expressions.Binary
 
         protected override Value Evaluate(string l, string r)
         {
-            throw new ExecutionError("Attempted to divide strings");
+            throw new ExecutionException("Attempted to divide strings");
         }
 
-        protected override Value Evaluate(decimal l, decimal r)
+        protected override Value Evaluate(Number l, Number r)
         {
             return new Value(l / r);
         }
 
-        protected override Value Evaluate(string l, decimal r)
+        protected override Value Evaluate(string l, Number r)
         {
-            throw new ExecutionError("Attempted to divide mixed types");
+            throw new ExecutionException("Attempted to divide mixed types");
         }
 
-        protected override Value Evaluate(decimal l, string r)
+        protected override Value Evaluate(Number l, string r)
         {
-            throw new ExecutionError("Attempted to divide mixed types");
+            throw new ExecutionException("Attempted to divide mixed types");
         }
     }
 }

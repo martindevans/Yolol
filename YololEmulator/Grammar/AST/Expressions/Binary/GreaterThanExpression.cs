@@ -1,6 +1,6 @@
 ﻿using System;
 using YololEmulator.Execution;
-using YololEmulator.Execution.Extensions;
+
 
 namespace YololEmulator.Grammar.AST.Expressions.Binary
 {
@@ -19,19 +19,19 @@ namespace YololEmulator.Grammar.AST.Expressions.Binary
             return new Value(comparison > 0 ? 1 : 0);
         }
 
-        protected override Value Evaluate(decimal l, decimal r)
+        protected override Value Evaluate(Number l, Number r)
         {
             return new Value(l > r ? 1 : 0);
         }
 
-        protected override Value Evaluate(string l, decimal r)
+        protected override Value Evaluate(string l, Number r)
         {
-            return Evaluate(l, r.Coerce());
+            return Evaluate(l, r.ToString());
         }
 
-        protected override Value Evaluate(decimal l, string r)
+        protected override Value Evaluate(Number l, string r)
         {
-            return Evaluate(l.Coerce(), r);
+            return Evaluate(l.ToString(), r);
         }
     }
 }

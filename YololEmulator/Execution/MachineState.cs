@@ -13,7 +13,7 @@ namespace YololEmulator.Execution
             name = name.ToLowerInvariant();
 
             if (!_variables.TryGetValue(name, out var v))
-                _variables.Add(name, v = new Variable(name, name.StartsWith(':')));
+                _variables.Add(name, v = new Variable(name, name.StartsWith(':')) { Value = new Value(0) });
             return v;
         }
 

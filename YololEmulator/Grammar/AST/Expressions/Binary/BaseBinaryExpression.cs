@@ -16,11 +16,11 @@ namespace YololEmulator.Grammar.AST.Expressions.Binary
 
         protected abstract Value Evaluate(string l, string r);
 
-        protected abstract Value Evaluate(decimal l, decimal r);
+        protected abstract Value Evaluate(Number l, Number r);
 
-        protected abstract Value Evaluate(string l, decimal r);
+        protected abstract Value Evaluate(string l, Number r);
 
-        protected abstract Value Evaluate(decimal l, string r);
+        protected abstract Value Evaluate(Number l, string r);
 
         public override Value Evaluate(MachineState state)
         {
@@ -28,7 +28,7 @@ namespace YololEmulator.Grammar.AST.Expressions.Binary
             var r = Right.Evaluate(state);
 
             if (l.Type == Type.None || r.Type == Type.None)
-                throw new ExecutionError("Attempted to operate on an unassigned value");
+                throw new ExecutionException("Attempted to operate on an unassigned value");
 
             if (l.Type == Type.Number && r.Type == Type.Number)
                 return Evaluate(l.Number, r.Number);

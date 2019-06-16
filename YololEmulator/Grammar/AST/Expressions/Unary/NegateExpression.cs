@@ -17,10 +17,10 @@ namespace YololEmulator.Grammar.AST.Expressions.Unary
             var v = _expr.Evaluate(state);
 
             if (v.Type == Type.None)
-                throw new ExecutionError("Attempted to negate an unassigned value");
+                throw new ExecutionException("Attempted to negate an unassigned value");
 
             if (v.Type == Type.String)
-                throw new ExecutionError("Attempted to negate a String value");
+                throw new ExecutionException("Attempted to negate a String value");
 
             return new Value(-v.Number);
         }

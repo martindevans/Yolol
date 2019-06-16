@@ -7,8 +7,8 @@ namespace YololEmulator.Execution
     {
         public Type Type { get; private set; }
 
-        private decimal _number;
-        public decimal Number
+        private Number _number;
+        public Number Number
         {
             get
             {
@@ -42,14 +42,14 @@ namespace YololEmulator.Execution
         public Value(string str)
         {
             _string = str;
-            _number = 0;
+            _number = new Number(0);
             Type = Type.String;
         }
 
-        public Value(decimal dec)
+        public Value(Number num)
         {
             _string = "";
-            _number = dec;
+            _number = num;
             Type = Type.Number;
         }
 

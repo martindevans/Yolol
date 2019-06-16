@@ -2,10 +2,10 @@
 
 namespace YololEmulator.Execution
 {
-    public class ExecutionError
+    public class ExecutionException
         : Exception
     {
-        public ExecutionError(string message)
+        public ExecutionException(string message)
             : base(message)
         {
             

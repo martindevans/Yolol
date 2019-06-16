@@ -19,11 +19,11 @@ namespace YololEmulator.Grammar.AST.Expressions.Unary
             if (value.Type == Type.String)
             {
                 if (value.String == "")
-                    throw new ExecutionError("Attempted to decrement empty string");
+                    throw new ExecutionException("Attempted to decrement empty string");
                 return new Value(value.String.Substring(0, value.String.Length - 1));
             }
 
-            throw new ExecutionError($"Attempted to increment a variable of type `{value.Type}`");
+            throw new ExecutionException($"Attempted to increment a variable of type `{value.Type}`");
         }
     }
 }
