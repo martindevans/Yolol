@@ -16,9 +16,6 @@ namespace YololEmulator.Grammar.AST.Expressions.Unary
         {
             var v = _expr.Evaluate(state);
 
-            if (v.Type == Type.None)
-                throw new ExecutionException("Attempted to negate an unassigned value");
-
             if (v.Type == Type.String)
                 throw new ExecutionException("Attempted to negate a String value");
 

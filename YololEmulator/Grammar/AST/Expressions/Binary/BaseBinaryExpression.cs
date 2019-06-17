@@ -27,9 +27,6 @@ namespace YololEmulator.Grammar.AST.Expressions.Binary
             var l = Left.Evaluate(state);
             var r = Right.Evaluate(state);
 
-            if (l.Type == Type.None || r.Type == Type.None)
-                throw new ExecutionException("Attempted to operate on an unassigned value");
-
             if (l.Type == Type.Number && r.Type == Type.Number)
                 return Evaluate(l.Number, r.Number);
 

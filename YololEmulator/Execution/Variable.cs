@@ -3,34 +3,18 @@
 namespace YololEmulator.Execution
 {
     public class Variable
+        : IVariable
     {
+        public Value Value { get; set; }
 
-        public bool IsExternal { get; }
-
-        public string Name { get; }
-
-        private Value _value;
-        public Value Value
+        public Variable()
         {
-            get
-            {
-                if (IsExternal)
-                    throw new NotImplementedException("get external var");
-                return _value;
-            }
-            set => _value = value;
-        }
-
-        public Variable(string name, bool external)
-        {
-            Name = name;
-            IsExternal = external;
             Value = new Value();
         }
 
         public override string ToString()
         {
-            return _value.ToString();
+            return Value.ToString();
         }
     }
 }

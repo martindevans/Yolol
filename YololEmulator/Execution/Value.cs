@@ -5,9 +5,9 @@ namespace YololEmulator.Execution
 {
     public struct Value
     {
-        public Type Type { get; private set; }
+        public Type Type { get; }
 
-        private Number _number;
+        private readonly Number _number;
         public Number Number
         {
             get
@@ -16,14 +16,9 @@ namespace YololEmulator.Execution
                     throw new InvalidCastException($"Attempted to access value of type {Type} as a Number");
                 return _number;
             }
-            set
-            {
-                Type = Type.Number;
-                _number = value;
-            }
         }
 
-        private string _string;
+        private readonly string _string;
         public string String
         {
             get
@@ -31,11 +26,6 @@ namespace YololEmulator.Execution
                 if (Type != Type.String)
                     throw new InvalidCastException($"Attempted to access value of type {Type} as a String");
                 return _string;
-            }
-            set
-            {
-                Type = Type.String;
-                _string = value;
             }
         }
 
@@ -55,9 +45,6 @@ namespace YololEmulator.Execution
 
         public override string ToString()
         {
-            if (Type == Type.None)
-                return "<unassigned>";
-
             if (Type == Type.Number)
                 return Number.ToString(CultureInfo.InvariantCulture);
 

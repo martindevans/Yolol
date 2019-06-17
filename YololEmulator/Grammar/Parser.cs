@@ -111,10 +111,11 @@ namespace YololEmulator.Grammar
                 .Ignore(Span.WhiteSpace)
                 .Ignore(Comment.CPlusPlusStyle)
 
-                .Match(Character.EqualTo('<'), YololToken.LessThan)
-                .Match(Character.EqualTo('>'), YololToken.GreaterThan)
                 .Match(Span.EqualTo("<="), YololToken.LessThanEqualTo)
                 .Match(Span.EqualTo(">="), YololToken.GreaterThanEqualTo)
+                .Match(Character.EqualTo('<'), YololToken.LessThan)
+                .Match(Character.EqualTo('>'), YololToken.GreaterThan)
+
                 .Match(Span.EqualTo("~="), YololToken.NotEqualTo)
                 .Match(Span.EqualTo("=="), YololToken.EqualTo)
 

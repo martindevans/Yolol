@@ -4,7 +4,7 @@ using YololEmulator.Grammar.AST.Statements;
 namespace YololEmulator.Grammar.AST.Expressions.Unary
 {
     public abstract class BaseIncrement
-        : BasePrePostModify
+        : BaseModify
     {
         protected BaseIncrement(VariableName name)
             : base(name)
@@ -19,7 +19,9 @@ namespace YololEmulator.Grammar.AST.Expressions.Unary
             if (value.Type == Type.String)
                 return new Value(value.String + " ");
 
+            //ncrunch: no coverage start
             throw new ExecutionException($"Attempted to increment a variable of type `{value.Type}`");
+            //ncrunch: no coverage end
         }
     }
 }

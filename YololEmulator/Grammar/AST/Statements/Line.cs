@@ -19,17 +19,16 @@ namespace YololEmulator.Grammar.AST.Statements
                 var r = statement.Evaluate(state);
                 switch (r.Type)
                 {
-                    case ExecutionResultType.Error:
-                        throw new ExecutionException(r.ErrorMessage);
-
                     case ExecutionResultType.Goto:
                         return r.GotoLine - 1;
 
                     case ExecutionResultType.None:
                         continue;
 
+                    //ncrunch: no coverage start
                     default:
                         throw new ExecutionException($"Unknown ExecutionResult `{r.Type}`");
+                    //ncrunch: no coverage end
 
                 }
             }

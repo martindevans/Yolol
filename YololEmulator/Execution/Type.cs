@@ -2,8 +2,7 @@
 {
     public enum Type
     {
-        None,
+        Number,
         String,
-        Number
     }
 }

@@ -32,8 +32,11 @@ namespace YololEmulator.Grammar.AST.Expressions
                     return new NotEqualToExpression(lhs, rhs);
                 case YololBinaryOp.EqualTo:
                     return new EqualToExpression(lhs, rhs);
+
+                //ncrunch: no coverage start
                 default:
                     throw new ArgumentOutOfRangeException(nameof(operand), operand, null);
+                //ncrunch: no coverage end
             }
         }
     }

@@ -1,5 +1,4 @@
-﻿using System;
-using YololEmulator.Execution;
+﻿using YololEmulator.Execution;
 using YololEmulator.Grammar.AST.Expressions;
 
 namespace YololEmulator.Grammar.AST.Statements

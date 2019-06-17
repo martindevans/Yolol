@@ -35,7 +35,7 @@ namespace YololEmulator
                     return;
                 }
 
-                var st = new MachineState();
+                var st = new MachineState(null);
                 var pc = 0;
                 while (pc <= 20)
                 {
@@ -48,7 +48,8 @@ namespace YololEmulator
 
                     // Print machine state
                     Console.WriteLine("State:");
-                    st.Print("| ");
+                    foreach (var (key, value) in st)
+                        Console.WriteLine($" | {key} = {value}");
                     Console.WriteLine();
 
                     // Pause until made to continue
