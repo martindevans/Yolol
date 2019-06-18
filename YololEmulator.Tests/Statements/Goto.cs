@@ -1,5 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using YololEmulator.Execution;
+using Yolol.Execution;
 
 namespace YololEmulator.Tests.Statements
 {

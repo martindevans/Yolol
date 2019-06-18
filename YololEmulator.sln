@@ -5,7 +5,9 @@ VisualStudioVersion = 16.0.29009.5
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YololEmulator", "YololEmulator\YololEmulator.csproj", "{B6D47544-30A0-4606-A590-6FB8F51A620A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YololEmulator.Tests", "YololEmulator.Tests\YololEmulator.Tests.csproj", "{719293ED-EBF2-4B5D-BB11-21F120F0F71F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YololEmulator.Tests", "YololEmulator.Tests\YololEmulator.Tests.csproj", "{719293ED-EBF2-4B5D-BB11-21F120F0F71F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yolol", "Yolol\Yolol.csproj", "{EB2F61FF-5525-4AA2-BA43-D9BD0027EE56}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{719293ED-EBF2-4B5D-BB11-21F120F0F71F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{719293ED-EBF2-4B5D-BB11-21F120F0F71F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{719293ED-EBF2-4B5D-BB11-21F120F0F71F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB2F61FF-5525-4AA2-BA43-D9BD0027EE56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB2F61FF-5525-4AA2-BA43-D9BD0027EE56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB2F61FF-5525-4AA2-BA43-D9BD0027EE56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB2F61FF-5525-4AA2-BA43-D9BD0027EE56}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

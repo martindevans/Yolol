@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using YololEmulator.Execution;
+using Yolol.Execution;
+using Type = Yolol.Execution.Type;
 
 namespace YololEmulator.Tests
 {
@@ -9,7 +10,7 @@ namespace YololEmulator.Tests
     {
         private static void AssertNumber(Value v, decimal d)
         {
-            Assert.AreEqual(Execution.Type.Number, v.Type);
+            Assert.AreEqual(Type.Number, v.Type);
             Assert.AreEqual(d, v.Number);
             Assert.AreEqual(d.ToString(), v.ToString());
 
@@ -20,7 +21,7 @@ namespace YololEmulator.Tests
 
         private static void AssertString(Value v, string s)
         {
-            Assert.AreEqual(Execution.Type.String, v.Type);
+            Assert.AreEqual(Type.String, v.Type);
             Assert.AreEqual(s, v.String);
             Assert.AreEqual($"\"{s}\"", v.ToString());
 

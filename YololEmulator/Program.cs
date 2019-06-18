@@ -3,8 +3,9 @@ using System.IO;
 using System.Linq;
 using CommandLine;
 using Superpower.Model;
-using YololEmulator.Execution;
-using Parser = YololEmulator.Grammar.Parser;
+using Yolol.Execution;
+using Yolol.Grammar;
+using Parser = Yolol.Grammar.Parser;
 
 namespace YololEmulator
 {
@@ -35,13 +36,13 @@ namespace YololEmulator
                     return;
                 }
 
-                var st = new MachineState(null);
+                var st = new MachineState(new ConsoleInputDeviceNetwork());
                 var pc = 0;
                 while (pc <= 20)
                 {
                     // Read the next line to execute from the file
                     var line = ReadLine(options.InputFile, pc);
-                    Console.WriteLine($"[{pc:00}] {line}");
+                    Console.WriteLine($"[{pc + 1:00}] {line}");
 
                     // Evaluate this line
                     pc = EvaluateLine(line, pc, st);
@@ -53,8 +54,10 @@ namespace YololEmulator
                     Console.WriteLine();
 
                     // Pause until made to continue
+                    Console.WriteLine("Press F5 to continue");
                     while (Console.ReadKey(true).Key != ConsoleKey.F5)
                         continue;
+                    Console.WriteLine(string.Join("", Enumerable.Repeat('=', Console.WindowWidth)));
                 }
             }
             catch (Exception e)
@@ -77,7 +80,7 @@ namespace YololEmulator
 
         private static int EvaluateLine(string line, int pc, MachineState state)
         {
-            var tokens = Parser.TryTokenize(line);
+            var tokens = Tokenizer.TryTokenize(line);
             if (!tokens.HasValue)
             {
                 Error(() => {

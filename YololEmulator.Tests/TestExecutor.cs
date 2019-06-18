@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using YololEmulator.Execution;
-using YololEmulator.Grammar;
+using Yolol.Execution;
+using Yolol.Grammar;
 
 namespace YololEmulator.Tests
 {
@@ -17,7 +17,7 @@ namespace YololEmulator.Tests
                     break;
 
                 var line = lines[pc];
-                var tokens = Parser.TryTokenize(line);
+                var tokens = Tokenizer.TryTokenize(line);
                 Assert.IsTrue(tokens.HasValue, tokens.FormatErrorMessageFragment());
 
                 var parsed = Parser.TryParse(tokens.Value);

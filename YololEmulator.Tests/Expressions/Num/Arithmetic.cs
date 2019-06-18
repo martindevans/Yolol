@@ -38,5 +38,22 @@ namespace YololEmulator.Tests.Expressions.Num
 
             Assert.AreEqual(expected, a.Value.Number);
         }
+
+        [TestMethod]
+        public void Compound()
+        {
+            var result = TestExecutor.Execute(
+                "a = 2",
+                "a *= 3 + 4",
+                "b = 2",
+                "b = b * 3 + 4"
+            );
+
+            var a = result.Get("a");
+            var b = result.Get("b");
+
+            Assert.AreEqual(14, a.Value.Number);
+            Assert.AreEqual(10, b.Value.Number);
+        }
     }
 }
