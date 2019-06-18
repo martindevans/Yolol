@@ -22,6 +22,8 @@ namespace Yolol.Grammar.AST.Expressions
                     return new DivideExpression(lhs, rhs);
                 case YololBinaryOp.Modulo:
                     return new ModuloExpression(lhs, rhs);
+                case YololBinaryOp.Exponent:
+                    return new Exponent(lhs, rhs);
 
                 case YololBinaryOp.LessThan:
                     return new LessThanExpression(lhs, rhs);
@@ -34,7 +36,7 @@ namespace Yolol.Grammar.AST.Expressions
                 case YololBinaryOp.NotEqualTo:
                     return new NotEqualToExpression(lhs, rhs);
                 case YololBinaryOp.EqualTo:
-                    return new EqualToExpression(lhs, rhs);
+                    return new EqualTo(lhs, rhs);
 
                 //ncrunch: no coverage start
                 default:

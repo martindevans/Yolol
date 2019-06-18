@@ -15,6 +15,7 @@ namespace Yolol.Grammar
         private static readonly TokenListParser<YololToken, YololBinaryOp> Multiply = Token.EqualTo(YololToken.Multiply).Value(YololBinaryOp.Multiply);
         private static readonly TokenListParser<YololToken, YololBinaryOp> Divide = Token.EqualTo(YololToken.Divide).Value(YololBinaryOp.Divide);
         private static readonly TokenListParser<YololToken, YololBinaryOp> Modulo = Token.EqualTo(YololToken.Modulo).Value(YololBinaryOp.Modulo);
+        private static readonly TokenListParser<YololToken, YololBinaryOp> Exponent = Token.EqualTo(YololToken.Exponent).Value(YololBinaryOp.Exponent);
 
         private static readonly TokenListParser<YololToken, YololBinaryOp> CompoundAdd = Token.EqualTo(YololToken.CompoundPlus).Value(YololBinaryOp.Add);
         private static readonly TokenListParser<YololToken, YololBinaryOp> CompoundSubtract = Token.EqualTo(YololToken.CompoundSubtract).Value(YololBinaryOp.Subtract);
@@ -83,7 +84,7 @@ namespace Yolol.Grammar
             .Or(Factor).Named("expression");
 
         private static readonly TokenListParser<YololToken, BaseExpression> Term =
-            Parse.Chain(Multiply.Or(Divide).Or(Modulo), Operand, BaseExpression.MakeBinary);
+            Parse.Chain(Multiply.Or(Divide).Or(Modulo).Or(Exponent), Operand, BaseExpression.MakeBinary);
 
         private static readonly TokenListParser<YololToken, BaseExpression> Expression =
             Parse.Chain(Add.Or(Subtract).Or(LessThan).Or(GreaterThan).Or(LessThanEqualTo).Or(GreaterThanEqualTo).Or(NotEqualTo).Or(EqualTo), Term, BaseExpression.MakeBinary);
@@ -96,7 +97,7 @@ namespace Yolol.Grammar
 
         private static readonly TokenListParser<YololToken, BaseStatement> CompoundAssignment =
             from lhs in VariableName.Or(ExternalVariableName)
-            from op in CompoundAdd.Or(CompoundSubtract).Or(CompoundMultiply).Or(CompoundDivide)
+            from op in CompoundAdd.Or(CompoundSubtract).Or(CompoundMultiply).Or(CompoundDivide).Or(CompoundModulo)
             from rhs in Expression
             select (BaseStatement)new Assignment(lhs, BaseExpression.MakeBinary(op, new VariableExpression(lhs.Name), rhs));
 

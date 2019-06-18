@@ -6,7 +6,7 @@ namespace YololEmulator.Tests.AST
     [TestClass]
     public class ToString
     {
-        private void Roundtrip(string line)
+        private static void Roundtrip(string line)
         {
             var tok = Tokenizer.TryTokenize(line);
             Assert.IsTrue(tok.HasValue);
@@ -92,6 +92,72 @@ namespace YololEmulator.Tests.AST
         public void PreInc()
         {
             Roundtrip("++a");
+        }
+
+        [TestMethod]
+        public void Exponent()
+        {
+            Roundtrip("a=2^3");
+        }
+
+        [TestMethod]
+        public void Modulo()
+        {
+            Roundtrip("a=2%3");
+        }
+
+        [TestMethod]
+        public void Add()
+        {
+            Roundtrip("a=1+a");
+        }
+
+        [TestMethod]
+        public void Subtract()
+        {
+            Roundtrip("a=1-a");
+        }
+
+        [TestMethod]
+        public void Multiply()
+        {
+            Roundtrip("a=1*a");
+        }
+
+        [TestMethod]
+        public void Divide()
+        {
+            Roundtrip("a=1/a");
+        }
+
+        [TestMethod]
+        public void NotEqual()
+        {
+            Roundtrip("a=1~=a");
+        }
+
+        [TestMethod]
+        public void GreaterThan()
+        {
+            Roundtrip("a=1>a");
+        }
+
+        [TestMethod]
+        public void GreaterThanEqualTo()
+        {
+            Roundtrip("a=1>=a");
+        }
+
+        [TestMethod]
+        public void LessThan()
+        {
+            Roundtrip("a=1<a");
+        }
+
+        [TestMethod]
+        public void LessThanEqualTo()
+        {
+            Roundtrip("a=1<=a");
         }
     }
 }

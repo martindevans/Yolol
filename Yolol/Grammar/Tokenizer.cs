@@ -49,6 +49,7 @@ namespace Yolol.Grammar
                 .Match(Character.EqualTo('*'), YololToken.Multiply)
                 .Match(Character.EqualTo('/'), YololToken.Divide)
                 .Match(Character.EqualTo('%'), YololToken.Modulo)
+                .Match(Character.EqualTo('^'), YololToken.Exponent)
 
                 .Match(Numerics.Decimal, YololToken.Number)
 

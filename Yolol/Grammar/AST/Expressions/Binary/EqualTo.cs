@@ -3,10 +3,10 @@ using Yolol.Execution;
 
 namespace Yolol.Grammar.AST.Expressions.Binary
 {
-    public class EqualToExpression
+    public class EqualTo
         : BaseBinaryExpression
     {
-        public EqualToExpression(BaseExpression lhs, BaseExpression rhs)
+        public EqualTo(BaseExpression lhs, BaseExpression rhs)
             : base(lhs, rhs)
         {
         }

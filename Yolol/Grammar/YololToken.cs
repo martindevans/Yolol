@@ -22,6 +22,7 @@
         Multiply,
         Divide,
         Modulo,
+        Exponent,
 
         Increment,
         Decrement,

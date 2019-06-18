@@ -3,37 +3,37 @@ using Yolol.Execution;
 
 namespace Yolol.Grammar.AST.Expressions.Binary
 {
-    public class NotEqualToExpression
+    public class Exponent
         : BaseBinaryExpression
     {
-        public NotEqualToExpression(BaseExpression lhs, BaseExpression rhs)
-            : base(lhs, rhs)
+        public Exponent(BaseExpression left, BaseExpression right)
+            : base(left, right)
         {
         }
 
         protected override Value Evaluate(string l, string r)
         {
-            return new Value(l.Equals(r, StringComparison.OrdinalIgnoreCase) ? 0 : 1);
+            throw new ExecutionException("Attempted to exponent strings");
         }
 
         protected override Value Evaluate(Number l, Number r)
         {
-            return new Value(l == r ? 0 : 1);
+            return new Value((decimal)Math.Pow((double)l.Value, (double)r.Value));
         }
 
         protected override Value Evaluate(string l, Number r)
         {
-            return Evaluate(l, r.ToString());
+            throw new ExecutionException("Attempted to exponent mixed types");
         }
 
         protected override Value Evaluate(Number l, string r)
         {
-            return Evaluate(l.ToString(), r);
+            throw new ExecutionException("Attempted to exponent mixed types");
         }
 
         public override string ToString()
         {
-            return $"{Left}~={Right}";
+            return $"{Left}^{Right}";
         }
     }
 }
