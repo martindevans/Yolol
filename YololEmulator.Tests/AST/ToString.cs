@@ -131,6 +131,36 @@ namespace YololEmulator.Tests.AST
         }
 
         [TestMethod]
+        public void CompoundAdd()
+        {
+            Roundtrip("a+=1");
+        }
+
+        [TestMethod]
+        public void CompoundSubtract()
+        {
+            Roundtrip("a-=1");
+        }
+
+        [TestMethod]
+        public void CompoundMultiply()
+        {
+            Roundtrip("a*=a");
+        }
+
+        [TestMethod]
+        public void CompoundDivide()
+        {
+            Roundtrip("a/=a");
+        }
+
+        [TestMethod]
+        public void CompoundModulo()
+        {
+            Roundtrip("a%=3");
+        }
+
+        [TestMethod]
         public void NotEqual()
         {
             Roundtrip("a=1~=a");

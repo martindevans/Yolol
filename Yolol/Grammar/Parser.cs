@@ -67,7 +67,7 @@ namespace Yolol.Grammar
             (from lparen in Token.EqualTo(YololToken.LParen)
              from expr in Parse.Ref(() => Expression)
              from rparen in Token.EqualTo(YololToken.RParen)
-             select expr)
+             select (BaseExpression)new BracketedExpression(expr))
             .Or(PostDecrementExpr.Try())
             .Or(PreIncrementExpr.Try())
             .Or(PostIncrementExpr.Try())
@@ -81,13 +81,14 @@ namespace Yolol.Grammar
             (from sign in Token.EqualTo(YololToken.Subtract)
              from factor in Factor
              select (BaseExpression)new NegateExpression(factor))
-            .Or(Factor).Named("expression");
+            .Or(Factor.Try())
+            .Named("expression");
 
         private static readonly TokenListParser<YololToken, BaseExpression> Term =
             Parse.Chain(Multiply.Or(Divide).Or(Modulo).Or(Exponent), Operand, BaseExpression.MakeBinary);
 
         private static readonly TokenListParser<YololToken, BaseExpression> Expression =
-            Parse.Chain(Add.Or(Subtract).Or(LessThan).Or(GreaterThan).Or(LessThanEqualTo).Or(GreaterThanEqualTo).Or(NotEqualTo).Or(EqualTo), Term, BaseExpression.MakeBinary);
+            Parse.Chain(Add.Or(Subtract).Or(LessThan).Or(GreaterThan).Or(LessThanEqualTo).Or(GreaterThanEqualTo).Or(NotEqualTo).Or(EqualTo), Term, BaseExpression.MakeBinary).Try();
 
         private static readonly TokenListParser<YololToken, BaseStatement> Assignment =
             from lhs in VariableName.Or(ExternalVariableName)
@@ -97,9 +98,9 @@ namespace Yolol.Grammar
 
         private static readonly TokenListParser<YololToken, BaseStatement> CompoundAssignment =
             from lhs in VariableName.Or(ExternalVariableName)
-            from op in CompoundAdd.Or(CompoundSubtract).Or(CompoundMultiply).Or(CompoundDivide).Or(CompoundModulo)
+            from op in CompoundAdd.Or(CompoundSubtract.Try()).Or(CompoundMultiply.Try()).Or(CompoundDivide.Try()).Or(CompoundModulo.Try())
             from rhs in Expression
-            select (BaseStatement)new Assignment(lhs, BaseExpression.MakeBinary(op, new VariableExpression(lhs.Name), rhs));
+            select (BaseStatement)new CompoundAssignment(lhs, op, rhs);
 
         private static readonly TokenListParser<YololToken, BaseStatement> Goto =
             from @goto in Token.EqualTo(YololToken.Goto)
@@ -123,7 +124,7 @@ namespace Yolol.Grammar
               .Or(PreIncrementStat.Try())
               .Or(PreDecrementStat.Try())
               .Or(PostIncrementStat.Try())
-              .Or(PostDecrementStat);
+              .Or(PostDecrementStat.Try());
 
         private static readonly TokenListParser<YololToken, BaseStatement[]> Statements = 
             from statement in Statement.Many()

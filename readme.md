@@ -24,11 +24,8 @@ If an external variable is read execution will pause and ask you to enter the va
 ## Missing Language Features
 
 These language features are currently not implemented:
- - `A %= B`
- - `A ^ B`
- - `A % B`
- - `ABS A`
  - `A!`
+ - `ABS A`
  - `SQRT A`
  - `SIN A`
  - `COS A`
