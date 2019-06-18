@@ -14,11 +14,13 @@ namespace Yolol.Grammar
         private static readonly TokenListParser<YololToken, YololBinaryOp> Subtract = Token.EqualTo(YololToken.Subtract).Value(YololBinaryOp.Subtract);
         private static readonly TokenListParser<YololToken, YololBinaryOp> Multiply = Token.EqualTo(YololToken.Multiply).Value(YololBinaryOp.Multiply);
         private static readonly TokenListParser<YololToken, YololBinaryOp> Divide = Token.EqualTo(YololToken.Divide).Value(YololBinaryOp.Divide);
+        private static readonly TokenListParser<YololToken, YololBinaryOp> Modulo = Token.EqualTo(YololToken.Modulo).Value(YololBinaryOp.Modulo);
 
         private static readonly TokenListParser<YololToken, YololBinaryOp> CompoundAdd = Token.EqualTo(YololToken.CompoundPlus).Value(YololBinaryOp.Add);
         private static readonly TokenListParser<YololToken, YololBinaryOp> CompoundSubtract = Token.EqualTo(YololToken.CompoundSubtract).Value(YololBinaryOp.Subtract);
         private static readonly TokenListParser<YololToken, YololBinaryOp> CompoundMultiply = Token.EqualTo(YololToken.CompoundMultiply).Value(YololBinaryOp.Multiply);
         private static readonly TokenListParser<YololToken, YololBinaryOp> CompoundDivide = Token.EqualTo(YololToken.CompoundDivide).Value(YololBinaryOp.Divide);
+        private static readonly TokenListParser<YololToken, YololBinaryOp> CompoundModulo = Token.EqualTo(YololToken.CompoundModulo).Value(YololBinaryOp.Modulo);
 
         private static readonly TokenListParser<YololToken, YololBinaryOp> LessThan = Token.EqualTo(YololToken.LessThan).Value(YololBinaryOp.LessThan);
         private static readonly TokenListParser<YololToken, YololBinaryOp> GreaterThan = Token.EqualTo(YololToken.GreaterThan).Value(YololBinaryOp.GreaterThan);
@@ -40,36 +42,25 @@ namespace Yolol.Grammar
             from var in VariableName
             select (BaseExpression)new PreIncrement(var);
 
-        private static readonly TokenListParser<YololToken, BaseStatement> PreIncrementStat =
-            from inc in PreIncrementExpr
-            select (BaseStatement)new ExpressionWrapper(inc);
-
         private static readonly TokenListParser<YololToken, BaseExpression> PostIncrementExpr =
             from var in VariableName
             from inc in Token.EqualTo(YololToken.Increment)
             select (BaseExpression)new PostIncrement(var);
-
-        private static readonly TokenListParser<YololToken, BaseStatement> PostIncrementStat =
-            from inc in PostIncrementExpr
-            select (BaseStatement)new ExpressionWrapper(inc);
 
         private static readonly TokenListParser<YololToken, BaseExpression> PreDecrementExpr =
             from dec in Token.EqualTo(YololToken.Decrement)
             from var in VariableName
             select (BaseExpression)new PreDecrement(var);
 
-        private static readonly TokenListParser<YololToken, BaseStatement> PreDecrementStat =
-            from dec in PreDecrementExpr
-            select (BaseStatement)new ExpressionWrapper(dec);
-
         private static readonly TokenListParser<YololToken, BaseExpression> PostDecrementExpr =
             from var in VariableName
             from dec in Token.EqualTo(YololToken.Decrement)
             select (BaseExpression)new PostDecrement(var);
 
-        private static readonly TokenListParser<YololToken, BaseStatement> PostDecrementStat =
-            from dec in PostDecrementExpr
-            select (BaseStatement)new ExpressionWrapper(dec);
+        private static readonly TokenListParser<YololToken, BaseStatement> PreIncrementStat = PreIncrementExpr.Select(a => (BaseStatement)new ExpressionWrapper(a));
+        private static readonly TokenListParser<YololToken, BaseStatement> PostIncrementStat = PostIncrementExpr.Select(a => (BaseStatement)new ExpressionWrapper(a));
+        private static readonly TokenListParser<YololToken, BaseStatement> PreDecrementStat = PreDecrementExpr.Select(a => (BaseStatement)new ExpressionWrapper(a));
+        private static readonly TokenListParser<YololToken, BaseStatement> PostDecrementStat = PostDecrementExpr.Select(a => (BaseStatement)new ExpressionWrapper(a));
 
         private static readonly TokenListParser<YololToken, BaseExpression> Factor =
             (from lparen in Token.EqualTo(YololToken.LParen)
@@ -92,7 +83,7 @@ namespace Yolol.Grammar
             .Or(Factor).Named("expression");
 
         private static readonly TokenListParser<YololToken, BaseExpression> Term =
-            Parse.Chain(Multiply.Or(Divide), Operand, BaseExpression.MakeBinary);
+            Parse.Chain(Multiply.Or(Divide).Or(Modulo), Operand, BaseExpression.MakeBinary);
 
         private static readonly TokenListParser<YololToken, BaseExpression> Expression =
             Parse.Chain(Add.Or(Subtract).Or(LessThan).Or(GreaterThan).Or(LessThanEqualTo).Or(GreaterThanEqualTo).Or(NotEqualTo).Or(EqualTo), Term, BaseExpression.MakeBinary);

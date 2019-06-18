@@ -15,11 +15,13 @@
         CompoundSubtract,
         CompoundMultiply,
         CompoundDivide,
+        CompoundModulo,
 
         Plus,
         Subtract,
         Multiply,
         Divide,
+        Modulo,
 
         Increment,
         Decrement,
@@ -39,6 +41,5 @@
 
         Number,
         String,
-        
     }
 }

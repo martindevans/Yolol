@@ -42,11 +42,13 @@ namespace Yolol.Grammar
                 .Match(Span.EqualTo("-="), YololToken.CompoundSubtract)
                 .Match(Span.EqualTo("*="), YololToken.CompoundMultiply)
                 .Match(Span.EqualTo("/="), YololToken.CompoundDivide)
+                .Match(Span.EqualTo("%="), YololToken.Modulo)
 
                 .Match(Character.EqualTo('+'), YololToken.Plus)
                 .Match(Character.EqualTo('-'), YololToken.Subtract)
                 .Match(Character.EqualTo('*'), YololToken.Multiply)
                 .Match(Character.EqualTo('/'), YololToken.Divide)
+                .Match(Character.EqualTo('%'), YololToken.Modulo)
 
                 .Match(Numerics.Decimal, YololToken.Number)
 

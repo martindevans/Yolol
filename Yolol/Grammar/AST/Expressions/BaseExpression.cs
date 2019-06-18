@@ -20,6 +20,9 @@ namespace Yolol.Grammar.AST.Expressions
                     return new MultiplyExpression(lhs, rhs);
                 case YololBinaryOp.Divide:
                     return new DivideExpression(lhs, rhs);
+                case YololBinaryOp.Modulo:
+                    return new ModuloExpression(lhs, rhs);
+
                 case YololBinaryOp.LessThan:
                     return new LessThanExpression(lhs, rhs);
                 case YololBinaryOp.GreaterThan:
