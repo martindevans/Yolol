@@ -25,14 +25,8 @@ If an external variable is read execution will pause and ask you to enter the va
 
 These language features are currently not implemented:
  - `A!`
- - `ABS A`
- - `SQRT A`
- - `SIN A`
- - `COS A`
- - `TAN A`
- - `ARCSIN A`
- - `ARCCOS A`
- - `ARCTAN A`
+ 
+ Additionally while function calls (e.g. `ABS A`) do exist, they require brackets around the argument (i.e. `ABS(A)`)
 
 ## Help, Something Broke!
 
