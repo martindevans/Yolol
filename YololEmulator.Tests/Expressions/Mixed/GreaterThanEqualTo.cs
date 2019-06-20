@@ -10,7 +10,7 @@ namespace YololEmulator.Tests.Expressions.Mixed
         {
             var result = TestExecutor.Execute("a = 1 >= \"2\"");
 
-            var a = result.Get("a");
+            var a = result.GetVariable("a");
 
             Assert.AreEqual(0, a.Value.Number);
         }
@@ -20,7 +20,7 @@ namespace YololEmulator.Tests.Expressions.Mixed
         {
             var result = TestExecutor.Execute("a = \"1\" >= 2");
 
-            var a = result.Get("a");
+            var a = result.GetVariable("a");
 
             Assert.AreEqual(0, a.Value.Number);
         }
@@ -30,7 +30,7 @@ namespace YololEmulator.Tests.Expressions.Mixed
         {
             var result = TestExecutor.Execute("a = 1 >= \"1\"");
 
-            var a = result.Get("a");
+            var a = result.GetVariable("a");
 
             Assert.AreEqual(1, a.Value.Number);
         }
@@ -40,7 +40,7 @@ namespace YololEmulator.Tests.Expressions.Mixed
         {
             var result = TestExecutor.Execute("a = \"2\" >= 2");
 
-            var a = result.Get("a");
+            var a = result.GetVariable("a");
 
             Assert.AreEqual(1, a.Value.Number);
         }

@@ -10,7 +10,7 @@ namespace YololEmulator.Tests.Expressions.Str
         {
             var result = TestExecutor.Execute("a = \"zzz\" <= \"aaa\"");
 
-            var a = result.Get("a");
+            var a = result.GetVariable("a");
 
             Assert.AreEqual(0, a.Value.Number);
         }
@@ -20,7 +20,7 @@ namespace YololEmulator.Tests.Expressions.Str
         {
             var result = TestExecutor.Execute("a = \"aaa\" <= \"aaa\"");
 
-            var a = result.Get("a");
+            var a = result.GetVariable("a");
 
             Assert.AreEqual(1, a.Value.Number);
         }

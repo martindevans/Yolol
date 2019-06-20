@@ -10,7 +10,7 @@ namespace YololEmulator.Tests.Expressions.Str
         {
             var result = TestExecutor.Execute("a = \"abc\" - \"b\"");
 
-            var a = result.Get("a");
+            var a = result.GetVariable("a");
 
             Assert.AreEqual("ac", a.Value.String);
         }
@@ -20,7 +20,7 @@ namespace YololEmulator.Tests.Expressions.Str
         {
             var result = TestExecutor.Execute("a = \"abc\" - \"d\"");
 
-            var a = result.Get("a");
+            var a = result.GetVariable("a");
 
             Assert.AreEqual("abc", a.Value.String);
         }
@@ -30,8 +30,8 @@ namespace YololEmulator.Tests.Expressions.Str
         {
             var result = TestExecutor.Execute("a = \"abc\"", "b = a - \"b\"");
 
-            var a = result.Get("a");
-            var b = result.Get("b");
+            var a = result.GetVariable("a");
+            var b = result.GetVariable("b");
 
             Assert.AreEqual("abc", a.Value.String);
             Assert.AreEqual("ac", b.Value.String);
@@ -42,8 +42,8 @@ namespace YololEmulator.Tests.Expressions.Str
         {
             var result = TestExecutor.Execute("a = \"b\"", "b = \"abc\" - a");
 
-            var a = result.Get("a");
-            var b = result.Get("b");
+            var a = result.GetVariable("a");
+            var b = result.GetVariable("b");
 
             Assert.AreEqual("b", a.Value.String);
             Assert.AreEqual("ac", b.Value.String);

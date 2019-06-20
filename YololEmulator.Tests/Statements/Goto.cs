@@ -11,9 +11,9 @@ namespace YololEmulator.Tests.Statements
         {
             var result = TestExecutor.Execute("a = 1", "goto 4", "a = 2", "b = 1 c = 1");
 
-            var a = result.Get("a");
-            var b = result.Get("b");
-            var c = result.Get("c");
+            var a = result.GetVariable("a");
+            var b = result.GetVariable("b");
+            var c = result.GetVariable("c");
 
             Assert.AreEqual(1, a.Value.Number);
             Assert.AreEqual(1, b.Value.Number);
@@ -25,9 +25,9 @@ namespace YololEmulator.Tests.Statements
         {
             var result = TestExecutor.Execute("a = 4", "goto a", "a = 2", "b = 1 c = 1");
 
-            var a = result.Get("a");
-            var b = result.Get("b");
-            var c = result.Get("c");
+            var a = result.GetVariable("a");
+            var b = result.GetVariable("b");
+            var c = result.GetVariable("c");
 
             Assert.AreEqual(4, a.Value.Number);
             Assert.AreEqual(1, b.Value.Number);

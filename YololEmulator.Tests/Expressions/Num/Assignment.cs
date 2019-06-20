@@ -10,7 +10,7 @@ namespace YololEmulator.Tests.Expressions.Num
         {
             var result = TestExecutor.Execute("a=1");
 
-            var a = result.Get("a");
+            var a = result.GetVariable("a");
 
             Assert.AreEqual(1, a.Value.Number);
         }
@@ -20,7 +20,7 @@ namespace YololEmulator.Tests.Expressions.Num
         {
             var result = TestExecutor.Execute("a=-1");
 
-            var a = result.Get("a");
+            var a = result.GetVariable("a");
 
             Assert.AreEqual(-1, a.Value.Number);
         }
@@ -30,7 +30,7 @@ namespace YololEmulator.Tests.Expressions.Num
         {
             var result = TestExecutor.Execute("a=1.11111");
 
-            var a = result.Get("a");
+            var a = result.GetVariable("a");
 
             Assert.AreEqual(1.1111m, a.Value.Number);
         }
@@ -40,7 +40,7 @@ namespace YololEmulator.Tests.Expressions.Num
         {
             var result = TestExecutor.Execute("a=1.11111 b=1.1111 c=a==b");
 
-            var c = result.Get("c");
+            var c = result.GetVariable("c");
 
             Assert.AreEqual(1, c.Value.Number);
         }
@@ -50,7 +50,7 @@ namespace YololEmulator.Tests.Expressions.Num
         {
             var result = TestExecutor.Execute("a=1.11117 b=1.1111 c=a==b");
 
-            var c = result.Get("c");
+            var c = result.GetVariable("c");
 
             Assert.AreEqual(1, c.Value.Number);
         }

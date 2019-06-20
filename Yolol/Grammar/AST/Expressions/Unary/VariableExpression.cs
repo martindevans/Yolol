@@ -14,7 +14,7 @@ namespace Yolol.Grammar.AST.Expressions.Unary
 
         public override Value Evaluate(MachineState state)
         {
-            return state.Get(_name).Value;
+            return state.GetVariable(_name).Value;
         }
 
         public override string ToString()

@@ -1,5 +1,4 @@
-﻿a = 5^2
-s = :BITSET
+﻿s = :BITSET
 i = :SET_THIS_BIT
 s = s-("B"+i)+("B"+i)
 i = :SET_THIS_BIT

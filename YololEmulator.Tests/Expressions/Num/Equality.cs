@@ -10,7 +10,7 @@ namespace YololEmulator.Tests.Expressions.Num
         {
             var result = TestExecutor.Execute("a = 2 == 2");
 
-            var a = result.Get("a");
+            var a = result.GetVariable("a");
 
             Assert.AreEqual(1, a.Value.Number);
         }
@@ -20,8 +20,8 @@ namespace YololEmulator.Tests.Expressions.Num
         {
             var result = TestExecutor.Execute("a = 2 b = a == 2");
 
-            var a = result.Get("a");
-            var b = result.Get("b");
+            var a = result.GetVariable("a");
+            var b = result.GetVariable("b");
 
             Assert.AreEqual(2, a.Value.Number);
             Assert.AreEqual(1, b.Value.Number);
@@ -32,9 +32,9 @@ namespace YololEmulator.Tests.Expressions.Num
         {
             var result = TestExecutor.Execute("a = 2 b = 2 c = b == a");
 
-            var a = result.Get("a");
-            var b = result.Get("b");
-            var c = result.Get("c");
+            var a = result.GetVariable("a");
+            var b = result.GetVariable("b");
+            var c = result.GetVariable("c");
 
             Assert.AreEqual(2, a.Value.Number);
             Assert.AreEqual(2, b.Value.Number);

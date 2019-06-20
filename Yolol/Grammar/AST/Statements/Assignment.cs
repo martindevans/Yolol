@@ -17,7 +17,7 @@ namespace Yolol.Grammar.AST.Statements
 
         public override ExecutionResult Evaluate(MachineState state)
         {
-            var var = state.Get(Left.Name);
+            var var = state.GetVariable(Left.Name);
             var.Value = Right.Evaluate(state);
 
             return new ExecutionResult();

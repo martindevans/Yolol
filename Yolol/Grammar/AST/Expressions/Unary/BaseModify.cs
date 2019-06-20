@@ -19,7 +19,7 @@ namespace Yolol.Grammar.AST.Expressions.Unary
 
         public override Value Evaluate(MachineState state)
         {
-            var variable = state.Get(Name);
+            var variable = state.GetVariable(Name);
 
             var original = variable.Value;
             var modified = Modify(original);

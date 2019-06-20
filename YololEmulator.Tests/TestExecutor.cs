@@ -8,7 +8,7 @@ namespace YololEmulator.Tests
     {
         public static MachineState Execute(params string[] lines)
         {
-            var state = new MachineState(new ConstantNetwork());
+            var state = new MachineState(new ConstantNetwork(), new DefaultIntrinsics());
 
             var pc = 0;
             while (pc < 20)

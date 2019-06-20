@@ -36,7 +36,7 @@ namespace YololEmulator
                     return;
                 }
 
-                var st = new MachineState(new ConsoleInputDeviceNetwork());
+                var st = new MachineState(new ConsoleInputDeviceNetwork(), new DefaultIntrinsics());
                 var pc = 0;
                 while (pc <= 20)
                 {

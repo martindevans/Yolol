@@ -43,6 +43,16 @@ namespace Yolol.Execution
             Type = Type.Number;
         }
 
+        public static implicit operator Value(decimal d)
+        {
+            return new Value(new Number(d));
+        }
+
+        public static implicit operator Value(string s)
+        {
+            return new Value(s);
+        }
+
         public override string ToString()
         {
             if (Type == Type.Number)

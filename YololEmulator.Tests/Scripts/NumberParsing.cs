@@ -19,7 +19,7 @@ namespace YololEmulator.Tests.Scripts
 
             var result = TestExecutor.Execute(lines);
 
-            var output = result.Get("output");
+            var output = result.GetVariable("output");
 
             Assert.AreEqual(84726, output.Value.Number);
         }
@@ -38,7 +38,7 @@ namespace YololEmulator.Tests.Scripts
 
             var result = TestExecutor.Execute(lines);
 
-            var output = result.Get("output");
+            var output = result.GetVariable("output");
 
             Assert.AreEqual(8473426, output.Value.Number);
         }

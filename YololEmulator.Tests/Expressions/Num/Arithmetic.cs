@@ -14,9 +14,9 @@ namespace YololEmulator.Tests.Expressions.Num
                 "c = 4 / 8 * 2 + 1"
             );
 
-            var a = result.Get("a");
-            var b = result.Get("b");
-            var c = result.Get("c");
+            var a = result.GetVariable("a");
+            var b = result.GetVariable("b");
+            var c = result.GetVariable("c");
 
             const decimal expected = 1 + 2 * 4 / 8m;
 
@@ -32,7 +32,7 @@ namespace YololEmulator.Tests.Expressions.Num
                 "a = (2 + 2) * 4 / 8"
             );
 
-            var a = result.Get("a");
+            var a = result.GetVariable("a");
 
             const decimal expected = (2 + 2) * 4 / 8m;
 
@@ -49,8 +49,8 @@ namespace YololEmulator.Tests.Expressions.Num
                 "b = b * 3 + 4"
             );
 
-            var a = result.Get("a");
-            var b = result.Get("b");
+            var a = result.GetVariable("a");
+            var b = result.GetVariable("b");
 
             Assert.AreEqual(14, a.Value.Number);
             Assert.AreEqual(10, b.Value.Number);

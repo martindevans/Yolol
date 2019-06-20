@@ -9,15 +9,22 @@ namespace Yolol.Execution
         : IEnumerable<KeyValuePair<string, IVariable>>
     {
         private readonly IDeviceNetwork _network;
+        private readonly IReadOnlyDictionary<string, Func<Value, Value>> _intrinsics;
 
         private readonly Dictionary<string, IVariable> _variables = new Dictionary<string, IVariable>();
 
-        public MachineState(IDeviceNetwork network)
+        public MachineState(IDeviceNetwork network, IReadOnlyDictionary<string, Func<Value, Value>> intrinsics)
         {
             _network = network ?? throw new ArgumentNullException(nameof(network));
+            _intrinsics = intrinsics;
         }
 
-        public IVariable Get(string name)
+        public Func<Value, Value> GetIntrinsic(string name)
+        {
+            return _intrinsics.GetValueOrDefault(name.ToLowerInvariant(), null);
+        }
+
+        public IVariable GetVariable(string name)
         {
             name = name.ToLowerInvariant();
 
@@ -33,7 +40,7 @@ namespace Yolol.Execution
             }
         }
 
-        internal IVariable Get(VariableName name) => Get(name.Name);
+        internal IVariable GetVariable(VariableName name) => GetVariable(name.Name);
 
         public IEnumerator<KeyValuePair<string, IVariable>> GetEnumerator()
         {

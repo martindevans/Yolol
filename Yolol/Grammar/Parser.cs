@@ -31,6 +31,7 @@ namespace Yolol.Grammar
         private static readonly TokenListParser<YololToken, YololBinaryOp> EqualTo = Token.EqualTo(YololToken.EqualTo).Value(YololBinaryOp.EqualTo);
 
         private static readonly TokenListParser<YololToken, VariableName> VariableName = Token.EqualTo(YololToken.Identifier).Select(n => new VariableName(n.ToStringValue()));
+        private static readonly TokenListParser<YololToken, string> FunctionName = Token.EqualTo(YololToken.Identifier).Select(n => n.ToStringValue());
         private static readonly TokenListParser<YololToken, VariableName> ExternalVariableName = Token.EqualTo(YololToken.ExternalIdentifier).Select(n => new VariableName(n.ToStringValue()));
 
         private static readonly TokenListParser<YololToken, BaseExpression> ConstantNumExpression = Token.EqualTo(YololToken.Number).Select(n => (BaseExpression)new ConstantNumber(decimal.Parse(n.ToStringValue())));
@@ -85,10 +86,17 @@ namespace Yolol.Grammar
             .Named("expression");
 
         private static readonly TokenListParser<YololToken, BaseExpression> Term =
-            Parse.Chain(Multiply.Or(Divide).Or(Modulo).Or(Exponent), Operand, BaseExpression.MakeBinary);
+            Parse.Chain(Multiply.Or(Divide).Or(Modulo).Or(Exponent), Operand, BaseExpression.MakeBinary).Try();
 
         private static readonly TokenListParser<YololToken, BaseExpression> Expression =
-            Parse.Chain(Add.Or(Subtract).Or(LessThan).Or(GreaterThan).Or(LessThanEqualTo).Or(GreaterThanEqualTo).Or(NotEqualTo).Or(EqualTo), Term, BaseExpression.MakeBinary).Try();
+            (from name in FunctionName
+             from _ in Token.EqualTo(YololToken.LParen)
+             from expr in Parse.Ref(() => Expression)
+             from __ in Token.EqualTo(YololToken.RParen)
+             select (BaseExpression)new Application(name, expr)).Try()
+            .Or(
+                Parse.Chain(Add.Or(Subtract).Or(LessThan).Or(GreaterThan).Or(LessThanEqualTo).Or(GreaterThanEqualTo).Or(NotEqualTo).Or(EqualTo), Term, BaseExpression.MakeBinary)
+            );
 
         private static readonly TokenListParser<YololToken, BaseStatement> Assignment =
             from lhs in VariableName.Or(ExternalVariableName)

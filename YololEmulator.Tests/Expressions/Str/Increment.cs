@@ -10,8 +10,8 @@ namespace YololEmulator.Tests.Expressions.Str
         {
             var result = TestExecutor.Execute("a = \"a\"", "b = a++");
 
-            var a = result.Get("a");
-            var b = result.Get("b");
+            var a = result.GetVariable("a");
+            var b = result.GetVariable("b");
 
             Assert.AreEqual("a ", a.Value.String);
             Assert.AreEqual("a", b.Value.String);
@@ -22,8 +22,8 @@ namespace YololEmulator.Tests.Expressions.Str
         {
             var result = TestExecutor.Execute("a = \"a\"", "b = ++a");
 
-            var a = result.Get("a");
-            var b = result.Get("b");
+            var a = result.GetVariable("a");
+            var b = result.GetVariable("b");
 
             Assert.AreEqual("a ", a.Value.String);
             Assert.AreEqual("a ", b.Value.String);

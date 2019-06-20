@@ -10,7 +10,7 @@ namespace YololEmulator.Tests.Statements
         {
             var result = TestExecutor.Execute("a = 1", "if a == 1 then a = 2 end");
 
-            var a = result.Get("a");
+            var a = result.GetVariable("a");
 
             Assert.AreEqual(2, a.Value.Number);
         }
@@ -20,7 +20,7 @@ namespace YololEmulator.Tests.Statements
         {
             var result = TestExecutor.Execute("a = 1", "if a == 2 then a = 2 end");
 
-            var a = result.Get("a");
+            var a = result.GetVariable("a");
 
             Assert.AreEqual(1, a.Value.Number);
         }
@@ -30,7 +30,7 @@ namespace YololEmulator.Tests.Statements
         {
             var result = TestExecutor.Execute("a = 1", "if a == 1 then a = 2 else a = 3 end");
 
-            var a = result.Get("a");
+            var a = result.GetVariable("a");
 
             Assert.AreEqual(2, a.Value.Number);
         }
@@ -40,7 +40,7 @@ namespace YololEmulator.Tests.Statements
         {
             var result = TestExecutor.Execute("a = 1", "if a == 2 then a = 2 else a = 3 end");
 
-            var a = result.Get("a");
+            var a = result.GetVariable("a");
 
             Assert.AreEqual(3, a.Value.Number);
         }
@@ -54,7 +54,7 @@ namespace YololEmulator.Tests.Statements
                 "a = 2"
             );
 
-            var a = result.Get("a");
+            var a = result.GetVariable("a");
             Assert.AreEqual(1, a.Value.Number);
         }
     }
