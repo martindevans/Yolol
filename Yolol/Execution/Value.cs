@@ -60,5 +60,13 @@ namespace Yolol.Execution
 
             return $"\"{String}\"";
         }
+
+        public object ToObject()
+        {
+            if (Type == Type.Number)
+                return Number.Value;
+            else
+                return String;
+        }
     }
 }

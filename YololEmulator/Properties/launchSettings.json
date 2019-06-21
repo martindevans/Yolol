@@ -2,7 +2,7 @@
   "profiles": {
     "YololEmulator": {
       "commandName": "Project",
-      "commandLineArgs": "-c test.lol"
+      "commandLineArgs": "-i test.lol -h 7896"
     }
   }
 }

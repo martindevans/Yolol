@@ -11,8 +11,10 @@
 
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.5.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     <PackageReference Include="NLog" Version="4.6.5" />
     <PackageReference Include="Superpower" Version="2.3.0" />
+    <PackageReference Include="uHttpSharp" Version="0.1.6.22" />
   </ItemGroup>
 
   <ItemGroup>

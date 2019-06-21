@@ -5,6 +5,8 @@ using CommandLine;
 using Superpower.Model;
 using Yolol.Execution;
 using Yolol.Grammar;
+using YololEmulator.Network;
+using YololEmulator.Network.Http;
 using Parser = Yolol.Grammar.Parser;
 
 namespace YololEmulator
@@ -15,9 +17,14 @@ namespace YololEmulator
         // ReSharper disable UnusedAutoPropertyAccessor.Local
         private class Options
         {
-            [Option('c', "code", HelpText = "File to read YOLOL code from", Required = true)]
-            
+            [Option('i', "input", HelpText = "File to read YOLOL code from", Required = true)]
             public string InputFile { get; set; }
+
+            [Option('h', "host", HelpText = "Port to host a network on", Required = false)]
+            public ushort? HostPort { get; set; }
+
+            [Option('c', "client", HelpText = "IP/Port to connect on", Required = false)]
+            public string Client { get; set; }
         }
         // ReSharper restore UnusedAutoPropertyAccessor.Local
 
@@ -36,7 +43,13 @@ namespace YololEmulator
                     return;
                 }
 
-                var st = new MachineState(new ConsoleInputDeviceNetwork(), new DefaultIntrinsics());
+                IDeviceNetwork network = new ConsoleInputDeviceNetwork();
+                if (options.Client != null)
+                    network = new HttpClientDeviceNetwork(options.Client);
+                if (options.HostPort != null)
+                    network = new HttpHostDeviceNetwork(options.HostPort.Value);
+
+                var st = new MachineState(network, new DefaultIntrinsics());
                 var pc = 0;
                 while (pc <= 20)
                 {

@@ -1,7 +1,7 @@
 ﻿using System;
 using Yolol.Execution;
 
-namespace YololEmulator
+namespace YololEmulator.Network
 {
     public class ConsoleInputDeviceNetwork
         : IDeviceNetwork
