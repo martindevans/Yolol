@@ -67,9 +67,10 @@ namespace YololEmulator
                     Console.WriteLine();
 
                     // Pause until made to continue
-                    Console.WriteLine("Press F5 to continue");
+                    Console.Write("Press F5 to continue");
                     while (Console.ReadKey(true).Key != ConsoleKey.F5)
                         continue;
+                    Console.CursorLeft = 0;
                     Console.WriteLine(string.Join("", Enumerable.Repeat('=', Console.WindowWidth)));
                 }
             }

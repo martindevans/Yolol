@@ -1,4 +1,4 @@
-﻿namespace Yolol.Grammar.AST.Statements
+﻿namespace Yolol.Execution
 {
     public class VariableName
     {

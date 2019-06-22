@@ -8,7 +8,7 @@ namespace YololEmulator.Tests.Expressions.Num
         [TestMethod]
         public void ConstantConstant()
         {
-            var result = TestExecutor.Execute("a = 2 ~= 3");
+            var result = TestExecutor.Execute("a = 2 != 3");
 
             var a = result.GetVariable("a");
 
@@ -18,7 +18,7 @@ namespace YololEmulator.Tests.Expressions.Num
         [TestMethod]
         public void VariableConstant()
         {
-            var result = TestExecutor.Execute("a = 2 b = a ~= 3");
+            var result = TestExecutor.Execute("a = 2 b = a != 3");
 
             var a = result.GetVariable("a");
             var b = result.GetVariable("b");
@@ -30,7 +30,7 @@ namespace YololEmulator.Tests.Expressions.Num
         [TestMethod]
         public void VariableVariable()
         {
-            var result = TestExecutor.Execute("a = 2 b = 3 c = b ~= a");
+            var result = TestExecutor.Execute("a = 2 b = 3 c = b != a");
 
             var a = result.GetVariable("a");
             var b = result.GetVariable("b");

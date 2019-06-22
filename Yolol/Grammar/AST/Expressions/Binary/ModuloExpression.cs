@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Yolol.Execution;
+﻿using Yolol.Execution;
 
 namespace Yolol.Grammar.AST.Expressions.Binary
 {

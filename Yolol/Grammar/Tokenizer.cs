@@ -17,7 +17,7 @@ namespace Yolol.Grammar
                 .Match(Character.EqualTo('<'), YololToken.LessThan)
                 .Match(Character.EqualTo('>'), YololToken.GreaterThan)
 
-                .Match(Span.EqualTo("~="), YololToken.NotEqualTo)
+                .Match(Span.EqualTo("!="), YololToken.NotEqualTo)
                 .Match(Span.EqualTo("=="), YololToken.EqualTo)
 
                 .Match(Span.EqualToIgnoreCase("if"), YololToken.If)

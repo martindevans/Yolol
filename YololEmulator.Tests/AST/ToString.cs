@@ -163,7 +163,7 @@ namespace YololEmulator.Tests.AST
         [TestMethod]
         public void NotEqual()
         {
-            Roundtrip("a=1~=a");
+            Roundtrip("a=1!=a");
         }
 
         [TestMethod]
@@ -188,6 +188,18 @@ namespace YololEmulator.Tests.AST
         public void LessThanEqualTo()
         {
             Roundtrip("a=1<=a");
+        }
+
+        [TestMethod]
+        public void Brackets()
+        {
+            Roundtrip("a=(1<=a)");
+        }
+
+        [TestMethod]
+        public void Function()
+        {
+            Roundtrip("a=sin(1<=a)");
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Yolol.Execution;
 
 namespace Yolol.Grammar.AST.Statements

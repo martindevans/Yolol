@@ -35,7 +35,7 @@ namespace Yolol.Grammar
                 case YololBinaryOp.GreaterThan: return ">";
                 case YololBinaryOp.LessThanEqualTo: return "<=";
                 case YololBinaryOp.GreaterThanEqualTo: return ">=";
-                case YololBinaryOp.NotEqualTo: return "~=";
+                case YololBinaryOp.NotEqualTo: return "!=";
                 case YololBinaryOp.EqualTo: return "==";
                 default:
                     throw new ArgumentOutOfRangeException(nameof(op), op, null);

@@ -1,4 +1,5 @@
-﻿using Yolol.Grammar.AST.Expressions;
+﻿using Yolol.Execution;
+using Yolol.Grammar.AST.Expressions;
 using Yolol.Grammar.AST.Expressions.Unary;
 
 namespace Yolol.Grammar.AST.Statements
@@ -11,7 +12,7 @@ namespace Yolol.Grammar.AST.Statements
         private readonly BaseExpression _rhs;
 
         public CompoundAssignment(VariableName var, YololBinaryOp op, BaseExpression rhs)
-            : base(var, BaseExpression.MakeBinary(op, new VariableExpression(var.Name), rhs))
+            : base(var, BaseExpression.MakeBinary(op, new VariableExpression(var), rhs))
         {
             _var = var;
             _op = op;

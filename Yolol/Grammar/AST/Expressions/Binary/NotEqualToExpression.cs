@@ -33,7 +33,7 @@ namespace Yolol.Grammar.AST.Expressions.Binary
 
         public override string ToString()
         {
-            return $"{Left}~={Right}";
+            return $"{Left}!={Right}";
         }
     }
 }

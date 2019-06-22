@@ -2,6 +2,7 @@
 using Superpower;
 using Superpower.Model;
 using Superpower.Parsers;
+using Yolol.Execution;
 using Yolol.Grammar.AST.Expressions;
 using Yolol.Grammar.AST.Expressions.Unary;
 using Yolol.Grammar.AST.Statements;
@@ -31,13 +32,13 @@ namespace Yolol.Grammar
         private static readonly TokenListParser<YololToken, YololBinaryOp> EqualTo = Token.EqualTo(YololToken.EqualTo).Value(YololBinaryOp.EqualTo);
 
         private static readonly TokenListParser<YololToken, VariableName> VariableName = Token.EqualTo(YololToken.Identifier).Select(n => new VariableName(n.ToStringValue()));
-        private static readonly TokenListParser<YololToken, string> FunctionName = Token.EqualTo(YololToken.Identifier).Select(n => n.ToStringValue());
+        private static readonly TokenListParser<YololToken, FunctionName> FunctionName = Token.EqualTo(YololToken.Identifier).Select(n => new FunctionName(n.ToStringValue()));
         private static readonly TokenListParser<YololToken, VariableName> ExternalVariableName = Token.EqualTo(YololToken.ExternalIdentifier).Select(n => new VariableName(n.ToStringValue()));
 
         private static readonly TokenListParser<YololToken, BaseExpression> ConstantNumExpression = Token.EqualTo(YololToken.Number).Select(n => (BaseExpression)new ConstantNumber(decimal.Parse(n.ToStringValue())));
         private static readonly TokenListParser<YololToken, BaseExpression> ConstantStrExpression = Token.EqualTo(YololToken.String).Select(n => (BaseExpression)new ConstantString(n.ToStringValue().Trim('"')));
-        private static readonly TokenListParser<YololToken, BaseExpression> VariableExpression = from name in VariableName select (BaseExpression)new VariableExpression(name.Name);
-        private static readonly TokenListParser<YololToken, BaseExpression> ExternalVariableExpression = from name in ExternalVariableName select (BaseExpression)new VariableExpression(name.Name);
+        private static readonly TokenListParser<YololToken, BaseExpression> VariableExpression = from name in VariableName select (BaseExpression)new VariableExpression(name);
+        private static readonly TokenListParser<YololToken, BaseExpression> ExternalVariableExpression = from name in ExternalVariableName select (BaseExpression)new VariableExpression(name);
 
         private static readonly TokenListParser<YololToken, BaseExpression> PreIncrementExpr =
             from inc in Token.EqualTo(YololToken.Increment)
@@ -89,11 +90,11 @@ namespace Yolol.Grammar
             Parse.Chain(Multiply.Or(Divide).Or(Modulo).Or(Exponent), Operand, BaseExpression.MakeBinary).Try();
 
         private static readonly TokenListParser<YololToken, BaseExpression> Expression =
-            (from name in FunctionName
+            (from func in FunctionName
              from _ in Token.EqualTo(YololToken.LParen)
              from expr in Parse.Ref(() => Expression)
              from __ in Token.EqualTo(YololToken.RParen)
-             select (BaseExpression)new Application(name, expr)).Try()
+             select (BaseExpression)new Application(func, expr)).Try()
             .Or(
                 Parse.Chain(Add.Or(Subtract).Or(LessThan).Or(GreaterThan).Or(LessThanEqualTo).Or(GreaterThanEqualTo).Or(NotEqualTo).Or(EqualTo), Term, BaseExpression.MakeBinary)
             );
