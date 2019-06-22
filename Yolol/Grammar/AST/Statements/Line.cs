@@ -6,12 +6,12 @@ namespace Yolol.Grammar.AST.Statements
 {
     public class Line
     {
+        public IReadOnlyList<BaseStatement> Statements { get; }
+
         public Line(IReadOnlyList<BaseStatement> statements)
         {
             Statements = statements;
         }
-
-        public IReadOnlyList<BaseStatement> Statements { get; }
 
         public int Evaluate(int pc, MachineState state)
         {

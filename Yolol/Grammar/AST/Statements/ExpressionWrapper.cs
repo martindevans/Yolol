@@ -7,23 +7,23 @@ namespace Yolol.Grammar.AST.Statements
     public class ExpressionWrapper
         : BaseStatement
     {
-        private readonly BaseExpression _expr;
+        public BaseExpression Expression { get; }
 
         public ExpressionWrapper(BaseExpression expression)
         {
-            _expr = expression ?? throw new ArgumentNullException(nameof(expression));
+            Expression = expression ?? throw new ArgumentNullException(nameof(expression));
         }
 
         public override ExecutionResult Evaluate(MachineState state)
         {
-            _expr.Evaluate(state);
+            Expression.Evaluate(state);
 
             return new ExecutionResult();
         }
 
         public override string ToString()
         {
-            return _expr.ToString();
+            return Expression.ToString();
         }
     }
 }

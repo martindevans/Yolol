@@ -5,21 +5,21 @@ namespace Yolol.Grammar.AST.Expressions.Unary
     public class BracketedExpression
         : BaseExpression
     {
-        private readonly BaseExpression _expr;
+        public BaseExpression Expression { get; }
 
-        public BracketedExpression(BaseExpression expr)
+        public BracketedExpression(BaseExpression expression)
         {
-            _expr = expr;
+            Expression = expression;
         }
 
         public override Value Evaluate(MachineState state)
         {
-            return _expr.Evaluate(state);
+            return Expression.Evaluate(state);
         }
 
         public override string ToString()
         {
-            return $"({_expr})";
+            return $"({Expression})";
         }
     }
 }

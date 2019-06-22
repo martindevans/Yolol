@@ -5,27 +5,27 @@ namespace Yolol.Grammar.AST.Expressions.Unary
     public class Application
         : BaseExpression
     {
-        private readonly FunctionName _name;
-        private readonly BaseExpression _rhs;
+        public FunctionName Name { get; }
+        public BaseExpression Parameter { get; }
 
-        public Application(FunctionName name, BaseExpression rhs)
+        public Application(FunctionName name, BaseExpression parameter)
         {
-            _name = name;
-            _rhs = rhs;
+            Name = name;
+            Parameter = parameter;
         }
 
         public override Value Evaluate(MachineState state)
         {
-            var intrinsic = state.GetIntrinsic(_name.Name);
+            var intrinsic = state.GetIntrinsic(Name.Name);
             if (intrinsic == null)
                 throw new ExecutionException("Attempted to call unknown function `{_name}`");
 
-            return intrinsic(_rhs.Evaluate(state));
+            return intrinsic(Parameter.Evaluate(state));
         }
 
         public override string ToString()
         {
-            return $"{_name}({_rhs})";
+            return $"{Name}({Parameter})";
         }
     }
 }

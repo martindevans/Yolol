@@ -1,10 +1,10 @@
-﻿namespace Yolol.Execution
+﻿namespace Yolol.Grammar
 {
-    public class VariableName
+    public class FunctionName
     {
         public string Name { get; }
 
-        public VariableName(string name)
+        public FunctionName(string name)
         {
             Name = name;
         }

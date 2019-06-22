@@ -5,16 +5,16 @@ namespace Yolol.Grammar.AST.Expressions.Unary
     public class NegateExpression
         : BaseExpression
     {
-        private readonly BaseExpression _expr;
+        public BaseExpression Expression { get; }
 
-        public NegateExpression(BaseExpression expr)
+        public NegateExpression(BaseExpression expression)
         {
-            _expr = expr;
+            Expression = expression;
         }
 
         public override Value Evaluate(MachineState state)
         {
-            var v = _expr.Evaluate(state);
+            var v = Expression.Evaluate(state);
 
             if (v.Type == Type.String)
                 throw new ExecutionException("Attempted to negate a String value");
@@ -24,7 +24,7 @@ namespace Yolol.Grammar.AST.Expressions.Unary
 
         public override string ToString()
         {
-            return $"-{_expr}";
+            return $"-{Expression}";
         }
     }
 }

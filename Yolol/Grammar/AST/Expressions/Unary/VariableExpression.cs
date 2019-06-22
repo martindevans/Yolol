@@ -5,21 +5,21 @@ namespace Yolol.Grammar.AST.Expressions.Unary
     public class VariableExpression
         : BaseExpression
     {
-        private readonly VariableName _var;
+        public VariableName Variable { get; }
 
-        public VariableExpression(VariableName var)
+        public VariableExpression(VariableName variable)
         {
-            _var = var;
+            Variable = variable;
         }
 
         public override Value Evaluate(MachineState state)
         {
-            return state.GetVariable(_var.Name).Value;
+            return state.GetVariable(Variable.Name).Value;
         }
 
         public override string ToString()
         {
-            return _var.Name;
+            return Variable.Name;
         }
     }
 }

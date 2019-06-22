@@ -9,16 +9,16 @@ namespace Yolol.Grammar.AST.Statements
     public class Goto
         : BaseStatement
     {
-        private readonly BaseExpression _destination;
+        public BaseExpression Destination { get; }
 
         public Goto(BaseExpression destination)
         {
-            _destination = destination;
+            Destination = destination;
         }
 
         public override ExecutionResult Evaluate(MachineState state)
         {
-            var dest = _destination.Evaluate(state);
+            var dest = Destination.Evaluate(state);
 
             if (dest.Type != Type.Number)
                 throw new ExecutionException($"Attempted to goto to a value of type `{dest.Type}`");
@@ -29,7 +29,7 @@ namespace Yolol.Grammar.AST.Statements
 
         public override string ToString()
         {
-            return $"goto {_destination}";
+            return $"goto {Destination}";
         }
     }
 }

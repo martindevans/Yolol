@@ -6,17 +6,11 @@ namespace Yolol.Execution
     public struct Number
         : IEquatable<Number>
     {
-        private decimal _value;
-        public decimal Value
-        {
-            get => Math.Round(_value, 4, MidpointRounding.AwayFromZero);
-            set => _value = Math.Truncate(value * 10000) / 10000;
-        }
+        public decimal Value { get; }
 
         public Number(decimal num)
         {
-            _value = 0;
-            Value = num;
+            Value = Math.Truncate(num * 10000) / 10000;
         }
 
         public string ToString(CultureInfo culture)

@@ -7,21 +7,19 @@ namespace Yolol.Grammar.AST.Statements
     public class CompoundAssignment
         : Assignment
     {
-        private readonly VariableName _var;
-        private readonly YololBinaryOp _op;
-        private readonly BaseExpression _rhs;
+        public YololBinaryOp Op { get; }
+        public BaseExpression Expression { get; }
 
-        public CompoundAssignment(VariableName var, YololBinaryOp op, BaseExpression rhs)
-            : base(var, BaseExpression.MakeBinary(op, new VariableExpression(var), rhs))
+        public CompoundAssignment(VariableName variable, YololBinaryOp op, BaseExpression expression)
+            : base(variable, BaseExpression.MakeBinary(op, new VariableExpression(variable), expression))
         {
-            _var = var;
-            _op = op;
-            _rhs = rhs;
+            Op = op;
+            Expression = expression;
         }
 
         public override string ToString()
         {
-            return $"{_var.Name}{_op.String()}={_rhs}";
+            return $"{Left.Name}{Op.String()}={Expression}";
         }
     }
 }
