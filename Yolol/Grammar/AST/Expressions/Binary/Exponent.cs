@@ -1,4 +1,5 @@
 ﻿using System;
+using JetBrains.Annotations;
 using Yolol.Execution;
 
 namespace Yolol.Grammar.AST.Expressions.Binary
@@ -6,7 +7,7 @@ namespace Yolol.Grammar.AST.Expressions.Binary
     public class Exponent
         : BaseBinaryExpression
     {
-        public Exponent(BaseExpression left, BaseExpression right)
+        public Exponent([NotNull] BaseExpression left, [NotNull] BaseExpression right)
             : base(left, right)
         {
         }

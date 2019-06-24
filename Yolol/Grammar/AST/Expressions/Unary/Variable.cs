@@ -2,24 +2,26 @@
 
 namespace Yolol.Grammar.AST.Expressions.Unary
 {
-    public class VariableExpression
+    public class Variable
         : BaseExpression
     {
-        public VariableName Variable { get; }
+        public VariableName Name { get; }
 
-        public VariableExpression(VariableName variable)
+        public override bool IsConstant => false;
+
+        public Variable(VariableName name)
         {
-            Variable = variable;
+            Name = name;
         }
 
         public override Value Evaluate(MachineState state)
         {
-            return state.GetVariable(Variable.Name).Value;
+            return state.GetVariable(Name.Name).Value;
         }
 
         public override string ToString()
         {
-            return Variable.Name;
+            return Name.Name;
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using CommandLine;
+using JetBrains.Annotations;
 using Superpower.Model;
 using Yolol.Execution;
 using Yolol.Grammar;
@@ -68,8 +69,7 @@ namespace YololEmulator
 
                     // Pause until made to continue
                     Console.Write("Press F5 to continue");
-                    while (Console.ReadKey(true).Key != ConsoleKey.F5)
-                        continue;
+                    while (Console.ReadKey(true).Key != ConsoleKey.F5) { }
                     Console.CursorLeft = 0;
                     Console.WriteLine(string.Join("", Enumerable.Repeat('=', Console.WindowWidth)));
                 }
@@ -84,7 +84,7 @@ namespace YololEmulator
             }
         }
 
-        private static string ReadLine(string filepath, int lineNumber)
+        [NotNull] private static string ReadLine([NotNull] string filepath, int lineNumber)
         {
             if (lineNumber < 0)
                 throw new ArgumentOutOfRangeException(nameof(lineNumber), "Line number is negative");
@@ -148,7 +148,7 @@ namespace YololEmulator
                 Console.Error.Write('^');
         }
 
-        private static void Error(Action act)
+        private static void Error([NotNull] Action act)
         {
             var fg = Console.ForegroundColor;
             Console.ForegroundColor = ConsoleColor.Red;

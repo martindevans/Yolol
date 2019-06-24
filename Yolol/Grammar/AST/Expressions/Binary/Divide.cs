@@ -1,44 +1,39 @@
-﻿using System;
+﻿using JetBrains.Annotations;
 using Yolol.Execution;
 
 namespace Yolol.Grammar.AST.Expressions.Binary
 {
-    internal class SubtractExpression
+    public class Divide
         : BaseBinaryExpression
     {
-        public SubtractExpression(BaseExpression left, BaseExpression right)
+        public Divide([NotNull] BaseExpression left, [NotNull] BaseExpression right)
             : base(left, right)
         {
         }
 
         protected override Value Evaluate(string l, string r)
         {
-            var index = l.LastIndexOf(r, StringComparison.Ordinal);
-
-            if (index == -1)
-                return new Value(l);
-            else
-                return new Value(l.Remove(index, r.Length));
+            throw new ExecutionException("Attempted to divide strings");
         }
 
         protected override Value Evaluate(Number l, Number r)
         {
-            return new Value(l - r);
+            return new Value(l / r);
         }
 
         protected override Value Evaluate(string l, Number r)
         {
-            return Evaluate(l, r.ToString());
+            throw new ExecutionException("Attempted to divide mixed types");
         }
 
         protected override Value Evaluate(Number l, string r)
         {
-            return Evaluate(l.ToString(), r);
+            throw new ExecutionException("Attempted to divide mixed types");
         }
 
         public override string ToString()
         {
-            return $"{Left}-{Right}";
+            return $"{Left}/{Right}";
         }
     }
 }

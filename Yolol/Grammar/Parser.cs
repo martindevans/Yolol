@@ -2,8 +2,8 @@
 using Superpower;
 using Superpower.Model;
 using Superpower.Parsers;
-using Yolol.Execution;
 using Yolol.Grammar.AST.Expressions;
+using Yolol.Grammar.AST.Expressions.Binary;
 using Yolol.Grammar.AST.Expressions.Unary;
 using Yolol.Grammar.AST.Statements;
 
@@ -37,8 +37,8 @@ namespace Yolol.Grammar
 
         private static readonly TokenListParser<YololToken, BaseExpression> ConstantNumExpression = Token.EqualTo(YololToken.Number).Select(n => (BaseExpression)new ConstantNumber(decimal.Parse(n.ToStringValue())));
         private static readonly TokenListParser<YololToken, BaseExpression> ConstantStrExpression = Token.EqualTo(YololToken.String).Select(n => (BaseExpression)new ConstantString(n.ToStringValue().Trim('"')));
-        private static readonly TokenListParser<YololToken, BaseExpression> VariableExpression = from name in VariableName select (BaseExpression)new VariableExpression(name);
-        private static readonly TokenListParser<YololToken, BaseExpression> ExternalVariableExpression = from name in ExternalVariableName select (BaseExpression)new VariableExpression(name);
+        private static readonly TokenListParser<YololToken, BaseExpression> VariableExpression = from name in VariableName select (BaseExpression)new Variable(name);
+        private static readonly TokenListParser<YololToken, BaseExpression> ExternalVariableExpression = from name in ExternalVariableName select (BaseExpression)new Variable(name);
 
         private static readonly TokenListParser<YololToken, BaseExpression> PreIncrementExpr =
             from inc in Token.EqualTo(YololToken.Increment)
@@ -69,7 +69,7 @@ namespace Yolol.Grammar
             (from lparen in Token.EqualTo(YololToken.LParen)
              from expr in Parse.Ref(() => Expression)
              from rparen in Token.EqualTo(YololToken.RParen)
-             select (BaseExpression)new BracketedExpression(expr))
+             select (BaseExpression)new Bracketed(expr))
             .Or(PostDecrementExpr.Try())
             .Or(PreIncrementExpr.Try())
             .Or(PostIncrementExpr.Try())
@@ -82,22 +82,22 @@ namespace Yolol.Grammar
         private static readonly TokenListParser<YololToken, BaseExpression> Operand =
             (from sign in Token.EqualTo(YololToken.Subtract)
              from factor in Factor
-             select (BaseExpression)new NegateExpression(factor))
+             select (BaseExpression)new Negate(factor))
             .Or(Factor.Try())
             .Named("expression");
 
         private static readonly TokenListParser<YololToken, BaseExpression> Term =
-            Parse.Chain(Multiply.Or(Divide).Or(Modulo).Or(Exponent), Operand, BaseExpression.MakeBinary).Try();
-
-        private static readonly TokenListParser<YololToken, BaseExpression> Expression =
             (from func in FunctionName
              from _ in Token.EqualTo(YololToken.LParen)
              from expr in Parse.Ref(() => Expression)
              from __ in Token.EqualTo(YololToken.RParen)
              select (BaseExpression)new Application(func, expr)).Try()
             .Or(
-                Parse.Chain(Add.Or(Subtract).Or(LessThan).Or(GreaterThan).Or(LessThanEqualTo).Or(GreaterThanEqualTo).Or(NotEqualTo).Or(EqualTo), Term, BaseExpression.MakeBinary)
+                Parse.Chain(Multiply.Or(Divide).Or(Modulo).Or(Exponent), Operand, BaseBinaryExpression.Create).Try()
             );
+
+        private static readonly TokenListParser<YololToken, BaseExpression> Expression =
+            Parse.Chain(Add.Or(Subtract).Or(LessThan).Or(GreaterThan).Or(LessThanEqualTo).Or(GreaterThanEqualTo).Or(NotEqualTo).Or(EqualTo), Term, BaseBinaryExpression.Create);
 
         private static readonly TokenListParser<YololToken, BaseStatement> Assignment =
             from lhs in VariableName.Or(ExternalVariableName)
@@ -123,7 +123,7 @@ namespace Yolol.Grammar
             from trueBranch in Parse.Ref(() => Statements)
             from falseBranch in (Token.EqualTo(YololToken.Else).IgnoreThen(Parse.Ref(() => Statements)).OptionalOrDefault(Array.Empty<BaseStatement>()))
             from end in Token.EqualTo(YololToken.End)
-            select (BaseStatement)new If(cond, trueBranch, falseBranch);
+            select (BaseStatement)new If(cond, new StatementList(trueBranch), new StatementList(falseBranch));
 
         private static readonly TokenListParser<YololToken, BaseStatement> Statement = 
             Assignment.Try()
@@ -141,7 +141,7 @@ namespace Yolol.Grammar
 
         private static readonly TokenListParser<YololToken, Line> Line =
             from statement in Statements.AtEnd()
-            select new Line(statement);
+            select new Line(new StatementList(statement));
 
         public static TokenListParserResult<YololToken, Line> TryParse(TokenList<YololToken> tokens)
         {

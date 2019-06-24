@@ -1,13 +1,16 @@
-﻿using Yolol.Execution;
+﻿using JetBrains.Annotations;
+using Yolol.Execution;
 
 namespace Yolol.Grammar.AST.Expressions.Unary
 {
-    public class NegateExpression
+    public class Negate
         : BaseExpression
     {
-        public BaseExpression Expression { get; }
+        [NotNull] public BaseExpression Expression { get; }
 
-        public NegateExpression(BaseExpression expression)
+        public override bool IsConstant => Expression.IsConstant;
+
+        public Negate([NotNull] BaseExpression expression)
         {
             Expression = expression;
         }

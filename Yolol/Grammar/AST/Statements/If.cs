@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
+using JetBrains.Annotations;
 using Yolol.Execution;
 using Yolol.Grammar.AST.Expressions;
 
@@ -9,11 +8,11 @@ namespace Yolol.Grammar.AST.Statements
     public class If
         : BaseStatement
     {
-        public BaseExpression Condition { get; }
-        public IReadOnlyList<BaseStatement> TrueBranch { get; }
-        public IReadOnlyList<BaseStatement> FalseBranch { get; }
+        [NotNull] public BaseExpression Condition { get; }
+        [NotNull] public BaseStatement TrueBranch { get; }
+        [NotNull] public BaseStatement FalseBranch { get; }
 
-        public If(BaseExpression condition, BaseStatement[] trueBranch, BaseStatement[] falseBranch)
+        public If([NotNull] BaseExpression condition, [NotNull] BaseStatement trueBranch, [NotNull] BaseStatement falseBranch)
         {
             Condition = condition;
             TrueBranch = trueBranch;
@@ -23,20 +22,8 @@ namespace Yolol.Grammar.AST.Statements
         public override ExecutionResult Evaluate(MachineState state)
         {
             var condition = Condition.Evaluate(state);
-
             var todo = condition.Number != 0 ? TrueBranch : FalseBranch;
-
-            if (todo != null)
-            {
-                foreach (var item in todo)
-                {
-                    var r = item.Evaluate(state);
-                    if (r.Type != ExecutionResultType.None)
-                        return r;
-                }
-            }
-
-            return new ExecutionResult();
+            return todo.Evaluate(state);
         }
 
         public override string ToString()
@@ -46,16 +33,18 @@ namespace Yolol.Grammar.AST.Statements
             builder.Append(Condition);
             builder.Append(" then");
 
-            if (TrueBranch.Count > 0)
+            var ts = TrueBranch.ToString();
+            if (!string.IsNullOrWhiteSpace(ts))
             {
                 builder.Append(" ");
-                builder.AppendJoin(" ", TrueBranch.Select(a => a.ToString()));
+                builder.Append(ts);
             }
 
-            if (FalseBranch.Count > 0)
+            var fs = FalseBranch.ToString();
+            if (!string.IsNullOrWhiteSpace(fs))
             {
                 builder.Append(" else ");
-                builder.AppendJoin(" ", FalseBranch.Select(a => a.ToString()));
+                builder.Append(fs);
             }
 
             builder.Append(" end");

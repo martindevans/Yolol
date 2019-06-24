@@ -1,26 +1,29 @@
-﻿using Yolol.Execution;
+﻿using JetBrains.Annotations;
+using Yolol.Execution;
 
 namespace Yolol.Grammar.AST.Expressions.Binary
 {
     public abstract class BaseBinaryExpression
         : BaseExpression
     {
-        public BaseExpression Left { get; }
-        public BaseExpression Right { get; }
+        [NotNull] public BaseExpression Left { get; }
+        [NotNull] public BaseExpression Right { get; }
 
-        protected BaseBinaryExpression(BaseExpression left, BaseExpression right)
+        public override bool IsConstant => Left.IsConstant && Right.IsConstant;
+
+        protected BaseBinaryExpression([NotNull] BaseExpression left, [NotNull] BaseExpression right)
         {
             Left = left;
             Right = right;
         }
 
-        protected abstract Value Evaluate(string l, string r);
+        protected abstract Value Evaluate([NotNull] string l, [NotNull] string r);
 
         protected abstract Value Evaluate(Number l, Number r);
 
-        protected abstract Value Evaluate(string l, Number r);
+        protected abstract Value Evaluate([NotNull] string l, Number r);
 
-        protected abstract Value Evaluate(Number l, string r);
+        protected abstract Value Evaluate(Number l, [NotNull] string r);
 
         public override Value Evaluate(MachineState state)
         {
@@ -37,6 +40,11 @@ namespace Yolol.Grammar.AST.Expressions.Binary
                 return Evaluate(l.Number, r.String);
 
             return Evaluate(l.String, r.Number);
+        }
+
+        [NotNull] public static BaseExpression Create(YololBinaryOp op, [NotNull] BaseExpression lhs, [NotNull] BaseExpression rhs)
+        {
+            return op.ToExpression(lhs, rhs);
         }
     }
 }

@@ -1,12 +1,13 @@
 ﻿using System;
+using JetBrains.Annotations;
 using Yolol.Execution;
 
 namespace Yolol.Grammar.AST.Expressions.Binary
 {
-    public class GreaterThanEqualToExpression
+    public class GreaterThanEqualTo
         : BaseBinaryExpression
     {
-        public GreaterThanEqualToExpression(BaseExpression lhs, BaseExpression rhs)
+        public GreaterThanEqualTo([NotNull] BaseExpression lhs, [NotNull] BaseExpression rhs)
             : base(lhs, rhs)
         {
         }

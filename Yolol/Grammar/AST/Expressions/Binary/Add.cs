@@ -1,38 +1,39 @@
-﻿using Yolol.Execution;
+﻿using JetBrains.Annotations;
+using Yolol.Execution;
 
 namespace Yolol.Grammar.AST.Expressions.Binary
 {
-    public class MultiplyExpression
+    public class Add
         : BaseBinaryExpression
     {
-        public MultiplyExpression(BaseExpression left, BaseExpression right)
+        public Add([NotNull] BaseExpression left, [NotNull] BaseExpression right)
             : base(left, right)
         {
         }
 
         protected override Value Evaluate(string l, string r)
         {
-            throw new ExecutionException("Attempted to multiply strings");
+            return new Value(l + r);
         }
 
         protected override Value Evaluate(Number l, Number r)
         {
-            return new Value(l * r);
+            return new Value(l + r);
         }
 
         protected override Value Evaluate(string l, Number r)
         {
-            throw new ExecutionException("Attempted to multiply mixed types");
+            return Evaluate(l, r.ToString());
         }
 
         protected override Value Evaluate(Number l, string r)
         {
-            throw new ExecutionException("Attempted to multiply mixed types");
+            return Evaluate(l.ToString(), r);
         }
 
         public override string ToString()
         {
-            return $"{Left}*{Right}";
+            return $"{Left}+{Right}";
         }
     }
 }

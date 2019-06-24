@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using Yolol.Grammar;
 
 namespace Yolol.Execution
@@ -13,13 +14,13 @@ namespace Yolol.Execution
 
         private readonly Dictionary<string, IVariable> _variables = new Dictionary<string, IVariable>();
 
-        public MachineState(IDeviceNetwork network, IReadOnlyDictionary<string, Func<Value, Value>> intrinsics)
+        public MachineState([NotNull] IDeviceNetwork network, [NotNull] IReadOnlyDictionary<string, Func<Value, Value>> intrinsics)
         {
             _network = network ?? throw new ArgumentNullException(nameof(network));
             _intrinsics = intrinsics;
         }
 
-        public Func<Value, Value> GetIntrinsic(string name)
+        public Func<Value, Value> GetIntrinsic([NotNull] string name)
         {
             return _intrinsics.GetValueOrDefault(name.ToLowerInvariant(), null);
         }
@@ -40,9 +41,9 @@ namespace Yolol.Execution
             }
         }
 
-        internal IVariable GetVariable(VariableName name) => GetVariable(name.Name);
+        [NotNull] internal IVariable GetVariable([NotNull] VariableName name) => GetVariable(name.Name);
 
-        public IEnumerator<KeyValuePair<string, IVariable>> GetEnumerator()
+        [NotNull] public IEnumerator<KeyValuePair<string, IVariable>> GetEnumerator()
         {
             return _variables.GetEnumerator();
         }

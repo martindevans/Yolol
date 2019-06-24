@@ -1,11 +1,12 @@
-﻿using Yolol.Execution;
+﻿using JetBrains.Annotations;
+using Yolol.Execution;
 
 namespace Yolol.Grammar.AST.Expressions.Unary
 {
     public abstract class BaseDecrement
         : BaseModify
     {
-        protected BaseDecrement(VariableName name)
+        protected BaseDecrement([NotNull] VariableName name)
             : base(name)
         {
         }

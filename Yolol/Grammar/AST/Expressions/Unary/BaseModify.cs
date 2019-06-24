@@ -1,13 +1,16 @@
-﻿using Yolol.Execution;
+﻿using JetBrains.Annotations;
+using Yolol.Execution;
 
 namespace Yolol.Grammar.AST.Expressions.Unary
 {
     public abstract class BaseModify
         : BaseExpression
     {
-        public VariableName Name { get; }
+        [NotNull] public VariableName Name { get; }
 
-        protected BaseModify(VariableName name)
+        public override bool IsConstant => false;
+
+        protected BaseModify([NotNull] VariableName name)
         {
             Name = name;
         }

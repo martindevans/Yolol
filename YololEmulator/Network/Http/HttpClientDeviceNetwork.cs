@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Http;
+using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
 using Yolol.Execution;
 
@@ -50,7 +51,7 @@ namespace YololEmulator.Network.Http
                 }
             }
 
-            public HttpVariable(string name, Uri baseUrl)
+            public HttpVariable([NotNull] string name, [NotNull] Uri baseUrl)
             {
                 _name = name.ToLowerInvariant();
                 _baseUrl = baseUrl;

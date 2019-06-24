@@ -1,11 +1,12 @@
-﻿using Yolol.Execution;
+﻿using JetBrains.Annotations;
+using Yolol.Execution;
 
 namespace Yolol.Grammar.AST.Expressions.Unary
 {
     public class PreDecrement
         : BaseDecrement
     {
-        public PreDecrement(VariableName name)
+        public PreDecrement([NotNull] VariableName name)
             : base(name)
         {
         }

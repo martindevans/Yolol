@@ -1,12 +1,13 @@
 ﻿using System;
+using JetBrains.Annotations;
 using Yolol.Execution;
 
 namespace Yolol.Grammar.AST.Expressions.Binary
 {
-    public class LessThanExpression
+    public class LessThanEqualTo
         : BaseBinaryExpression
     {
-        public LessThanExpression(BaseExpression lhs, BaseExpression rhs)
+        public LessThanEqualTo([NotNull] BaseExpression lhs, [NotNull] BaseExpression rhs)
             : base(lhs, rhs)
         {
         }
@@ -15,12 +16,12 @@ namespace Yolol.Grammar.AST.Expressions.Binary
         {
             var comparison = StringComparer.OrdinalIgnoreCase.Compare(l, r);
 
-            return new Value(comparison < 0 ? 1 : 0);
+            return new Value(comparison <= 0 ? 1 : 0);
         }
 
         protected override Value Evaluate(Number l, Number r)
         {
-            return new Value(l < r ? 1 : 0);
+            return new Value(l <= r ? 1 : 0);
         }
 
         protected override Value Evaluate(string l, Number r)
@@ -35,7 +36,7 @@ namespace Yolol.Grammar.AST.Expressions.Binary
 
         public override string ToString()
         {
-            return $"{Left}<{Right}";
+            return $"{Left}<={Right}";
         }
     }
 }

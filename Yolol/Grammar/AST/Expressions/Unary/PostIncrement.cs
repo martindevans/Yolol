@@ -1,11 +1,12 @@
-﻿using Yolol.Execution;
+﻿using JetBrains.Annotations;
+using Yolol.Execution;
 
 namespace Yolol.Grammar.AST.Expressions.Unary
 {
     public class PostIncrement
         : BaseIncrement
     {
-        public PostIncrement(VariableName name)
+        public PostIncrement([NotNull] VariableName name)
             : base(name)
         {
         }

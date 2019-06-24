@@ -1,13 +1,16 @@
-﻿using Yolol.Execution;
+﻿using JetBrains.Annotations;
+using Yolol.Execution;
 
 namespace Yolol.Grammar.AST.Expressions.Unary
 {
     public class ConstantString
         : BaseExpression
     {
-        public string Value { get; }
+        [NotNull] public string Value { get; }
 
-        public ConstantString(string value)
+        public override bool IsConstant => true;
+
+        public ConstantString([NotNull] string value)
         {
             Value = value;
         }

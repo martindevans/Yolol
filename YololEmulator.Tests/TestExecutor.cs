@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using JetBrains.Annotations;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Yolol.Execution;
 using Yolol.Grammar;
 
@@ -6,7 +7,7 @@ namespace YololEmulator.Tests
 {
     public static class TestExecutor
     {
-        public static MachineState Execute(params string[] lines)
+        [NotNull] public static MachineState Execute([NotNull] params string[] lines)
         {
             var state = new MachineState(new ConstantNetwork(), new DefaultIntrinsics());
 

@@ -1,14 +1,17 @@
-﻿using Yolol.Execution;
+﻿using JetBrains.Annotations;
+using Yolol.Execution;
 
 namespace Yolol.Grammar.AST.Expressions.Unary
 {
     public class Application
         : BaseExpression
     {
-        public FunctionName Name { get; }
-        public BaseExpression Parameter { get; }
+        [NotNull] public FunctionName Name { get; }
+        [NotNull] public BaseExpression Parameter { get; }
 
-        public Application(FunctionName name, BaseExpression parameter)
+        public override bool IsConstant => Parameter.IsConstant;
+
+        public Application([NotNull] FunctionName name, [NotNull] BaseExpression parameter)
         {
             Name = name;
             Parameter = parameter;

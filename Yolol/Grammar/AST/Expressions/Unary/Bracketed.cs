@@ -1,13 +1,16 @@
-﻿using Yolol.Execution;
+﻿using JetBrains.Annotations;
+using Yolol.Execution;
 
 namespace Yolol.Grammar.AST.Expressions.Unary
 {
-    public class BracketedExpression
+    public class Bracketed
         : BaseExpression
     {
-        public BaseExpression Expression { get; }
+        [NotNull] public BaseExpression Expression { get; }
 
-        public BracketedExpression(BaseExpression expression)
+        public override bool IsConstant => Expression.IsConstant;
+
+        public Bracketed([NotNull] BaseExpression expression)
         {
             Expression = expression;
         }

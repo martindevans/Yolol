@@ -1,7 +1,9 @@
-﻿namespace Yolol.Execution
+﻿using JetBrains.Annotations;
+
+namespace Yolol.Execution
 {
     public interface IDeviceNetwork
     {
-        IVariable Get(string name);
+        [NotNull] IVariable Get([NotNull] string name);
     }
 }

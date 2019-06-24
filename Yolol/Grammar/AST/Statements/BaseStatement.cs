@@ -1,9 +1,12 @@
-﻿using Yolol.Execution;
+﻿using JetBrains.Annotations;
+using Yolol.Execution;
 
 namespace Yolol.Grammar.AST.Statements
 {
     public abstract class BaseStatement
     {
-        public abstract ExecutionResult Evaluate(MachineState state);
+        [NotNull] public abstract ExecutionResult Evaluate([NotNull] MachineState state);
+
+        [NotNull] public abstract override string ToString();
     }
 }

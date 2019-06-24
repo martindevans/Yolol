@@ -4,22 +4,27 @@ using Yolol.Execution;
 
 namespace Yolol.Grammar.AST.Expressions.Binary
 {
-    public class EqualTo
+    public class Subtract
         : BaseBinaryExpression
     {
-        public EqualTo([NotNull] BaseExpression lhs, [NotNull] BaseExpression rhs)
-            : base(lhs, rhs)
+        public Subtract([NotNull] BaseExpression left, [NotNull] BaseExpression right)
+            : base(left, right)
         {
         }
 
         protected override Value Evaluate(string l, string r)
         {
-            return new Value(l.Equals(r, StringComparison.OrdinalIgnoreCase) ? 1 : 0);
+            var index = l.LastIndexOf(r, StringComparison.Ordinal);
+
+            if (index == -1)
+                return new Value(l);
+            else
+                return new Value(l.Remove(index, r.Length));
         }
 
         protected override Value Evaluate(Number l, Number r)
         {
-            return new Value(l == r ? 1 : 0);
+            return new Value(l - r);
         }
 
         protected override Value Evaluate(string l, Number r)
@@ -34,7 +39,7 @@ namespace Yolol.Grammar.AST.Expressions.Binary
 
         public override string ToString()
         {
-            return $"{Left}=={Right}";
+            return $"{Left}-{Right}";
         }
     }
 }

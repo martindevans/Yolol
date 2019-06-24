@@ -6,6 +6,16 @@ namespace YololEmulator.Tests.Statements
     public class If
     {
         [TestMethod]
+        public void IfNone()
+        {
+            var result = TestExecutor.Execute("a = 1", "if a == 1 then else end");
+
+            var a = result.GetVariable("a");
+
+            Assert.AreEqual(1, a.Value.Number);
+        }
+
+        [TestMethod]
         public void IfTrue()
         {
             var result = TestExecutor.Execute("a = 1", "if a == 1 then a = 2 end");

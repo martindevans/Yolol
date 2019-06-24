@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Yolol.Execution;
 using Type = Yolol.Execution.Type;
@@ -12,10 +13,10 @@ namespace YololEmulator.Tests
         {
             Assert.AreEqual(Type.Number, v.Type);
             Assert.AreEqual(d, v.Number);
-            Assert.AreEqual(d.ToString(), v.ToString());
+            Assert.AreEqual(d.ToString(CultureInfo.InvariantCulture), v.ToString());
 
             Assert.ThrowsException<InvalidCastException>(() => {
-                var s = v.String;
+                var _ = v.String;
             });
         }
 
@@ -26,7 +27,7 @@ namespace YololEmulator.Tests
             Assert.AreEqual($"\"{s}\"", v.ToString());
 
             Assert.ThrowsException<InvalidCastException>(() => {
-                var n = v.Number;
+                var _ = v.Number;
             });
         }
 

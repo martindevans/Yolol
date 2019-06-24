@@ -1,4 +1,5 @@
 ﻿using System;
+using JetBrains.Annotations;
 using Yolol.Execution;
 using Yolol.Grammar.AST.Expressions;
 
@@ -7,9 +8,9 @@ namespace Yolol.Grammar.AST.Statements
     public class ExpressionWrapper
         : BaseStatement
     {
-        public BaseExpression Expression { get; }
+        [NotNull] public BaseExpression Expression { get; }
 
-        public ExpressionWrapper(BaseExpression expression)
+        public ExpressionWrapper([NotNull] BaseExpression expression)
         {
             Expression = expression ?? throw new ArgumentNullException(nameof(expression));
         }
