@@ -21,7 +21,7 @@ namespace YololEmulator.Tests
                 var tokens = Tokenizer.TryTokenize(line);
                 Assert.IsTrue(tokens.HasValue, tokens.FormatErrorMessageFragment());
 
-                var parsed = Parser.TryParse(tokens.Value);
+                var parsed = Parser.TryParseLine(tokens.Value);
                 Assert.IsTrue(parsed.HasValue, parsed.FormatErrorMessageFragment());
 
                 pc = parsed.Value.Evaluate(pc, state);

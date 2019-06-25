@@ -2,6 +2,8 @@
 {
     public enum YololToken
     {
+        NewLine,
+
         LessThan,
         GreaterThan,
         LessThanEqualTo,
@@ -41,6 +43,6 @@
         ExternalIdentifier,
 
         Number,
-        String,
+        String
     }
 }

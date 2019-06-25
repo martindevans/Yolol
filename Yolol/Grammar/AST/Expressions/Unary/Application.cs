@@ -7,6 +7,7 @@ namespace Yolol.Grammar.AST.Expressions.Unary
         : BaseExpression
     {
         [NotNull] public FunctionName Name { get; }
+
         [NotNull] public BaseExpression Parameter { get; }
 
         public override bool IsConstant => Parameter.IsConstant;

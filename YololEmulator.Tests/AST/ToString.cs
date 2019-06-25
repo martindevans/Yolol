@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Yolol.Grammar;
 
 namespace YololEmulator.Tests.AST
@@ -10,8 +11,8 @@ namespace YololEmulator.Tests.AST
         {
             var tok = Tokenizer.TryTokenize(line);
             Assert.IsTrue(tok.HasValue);
-            var par = Parser.TryParse(tok.Value);
-            Assert.IsTrue(par.HasValue);
+            var par = Parser.TryParseLine(tok.Value);
+            Assert.IsTrue(par.HasValue, par.FormatErrorMessageFragment());
 
             Assert.AreEqual(line, par.Value.ToString());
         }

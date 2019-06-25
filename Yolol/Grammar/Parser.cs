@@ -140,12 +140,22 @@ namespace Yolol.Grammar
             select statement;
 
         private static readonly TokenListParser<YololToken, Line> Line =
-            from statement in Statements.AtEnd()
+            from statement in Statements
+            from nl in Token.EqualTo(YololToken.NewLine)
             select new Line(new StatementList(statement));
 
-        public static TokenListParserResult<YololToken, Line> TryParse(TokenList<YololToken> tokens)
+        private static readonly TokenListParser<YololToken, Program> Program =
+            from lines in Line.Many()
+            select new Program(lines);
+
+        public static TokenListParserResult<YololToken, Line> TryParseLine(TokenList<YololToken> tokens)
         {
             return Line.TryParse(tokens);
+        }
+
+        public static TokenListParserResult<YololToken, Program> TryParseProgram(TokenList<YololToken> tokens)
+        {
+            return Program.TryParse(tokens);
         }
     }
 }

@@ -5,7 +5,7 @@ namespace Yolol.Analysis
 {
     public interface ITreeVisitor
     {
-        Line Visit(Line line);
+        Program Visit(Program program);
 
         BaseExpression Visit(BaseExpression expression);
 

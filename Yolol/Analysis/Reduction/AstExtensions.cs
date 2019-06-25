@@ -5,14 +5,19 @@ namespace Yolol.Analysis.Reduction
 {
     public static class AstExtensions
     {
-        [NotNull] public static Line FoldConstants([NotNull] this Line line)
+        [NotNull] public static Program FoldConstants([NotNull] this Program prog)
         {
-            return new ConstantFoldingVisitor().Visit(line);
+            return new ConstantFoldingVisitor().Visit(prog);
         }
 
-        [NotNull] public static Line SimplifyVariableNames([NotNull] this Line line)
+        [NotNull] public static Program SimplifyVariableNames([NotNull] this Program prog)
         {
-            return new VariableSimplificationVisitor().Visit(line);
+            return new VariableSimplificationVisitor().Visit(prog);
         }
+
+        //[NotNull] public static Program HoistConstants([NotNull] this Program prog)
+        //{
+        //    return new ConstantHoisting().Visit(prog);
+        //}
     }
 }

@@ -1,7 +1,9 @@
 ﻿using System.Collections.Concurrent;
-using System.Text;
+using System.Collections.Generic;
+using System.Linq;
 using JetBrains.Annotations;
 using Yolol.Grammar;
+using Yolol.Grammar.AST.Statements;
 
 namespace Yolol.Analysis.Reduction
 {
@@ -9,11 +11,28 @@ namespace Yolol.Analysis.Reduction
         : BaseTreeVisitor
     {
         private readonly INameGenerator _names;
-        private readonly ConcurrentDictionary<string, string> _remap = new ConcurrentDictionary<string, string>();
+        private readonly Dictionary<string, string> _remap = new Dictionary<string, string>();
         
         public VariableSimplificationVisitor([CanBeNull] INameGenerator names = null)
         {
             _names = names ?? new SequentialNameGenerator();
+        }
+
+        public override Program Visit(Program program)
+        {
+            // Find all variables with a count of how frequent they are
+            var p = new FirstPass();
+            p.Visit(program);
+
+            // Generate some unique names, order by size
+            var names = Enumerable.Range(0, p.Names.Count()).Select(a => _names.Name()).OrderBy(a => a.Length).ToArray();
+            var vars = p.Names.OrderByDescending(a => a.Value).Select(a => a.Key).ToArray();
+
+            // Assign most common variables to shortest names
+            foreach (var (n1, n2) in vars.Zip(names, (a, b) => (a, b)))
+                _remap.Add(n1.Name, n2);
+
+            return base.Visit(program);
         }
 
         protected override VariableName Visit(VariableName var)
@@ -21,43 +40,23 @@ namespace Yolol.Analysis.Reduction
             if (var.IsExternal)
                 return var;
             else
-                return new VariableName(_remap.GetOrAdd(var.Name, _names.Name(var.Name)));
-        }
-    }
-
-    public class SequentialNameGenerator
-        : INameGenerator
-    {
-        private const string FirstChars = "abcdefghijklmnopqrstuvwxyz";
-        private const string RemainingChars = FirstChars + "1234567890_";
-        private int _nextId;
-
-        public string Name(string name)
-        {
-            return GetVar(_nextId++);
+                return new VariableName(_remap[var.Name]);
         }
 
-        private static string GetVar(int id)
+        private class FirstPass
+            : BaseTreeVisitor
         {
-            var first = FirstChars[id % FirstChars.Length];
-            id /= FirstChars.Length;
+            private readonly ConcurrentDictionary<VariableName, uint> _nameCount = new ConcurrentDictionary<VariableName, uint>();
 
-            if (id <= 0)
-                return first.ToString();
+            public IEnumerable<KeyValuePair<VariableName, uint>> Names => _nameCount;
 
-            var result = new StringBuilder(10);
-            while (id > 0)
+            protected override VariableName Visit(VariableName var)
             {
-                result.Append(RemainingChars[id % RemainingChars.Length]);
-                id /= RemainingChars.Length;
+                if (!var.IsExternal)
+                    _nameCount.AddOrUpdate(var, 1, (_, a) => a + 1);
+
+                return base.Visit(var);
             }
-
-            return first + result.ToString();
         }
-    }
-
-    public interface INameGenerator
-    {
-        string Name(string name);
     }
 }

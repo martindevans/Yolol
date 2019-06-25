@@ -109,7 +109,7 @@ namespace YololEmulator
                 return pc;
             }
 
-            var parsed = Parser.TryParse(tokens.Value);
+            var parsed = Parser.TryParseLine(tokens.Value);
             if (!parsed.HasValue)
             {
                 Error(() => {

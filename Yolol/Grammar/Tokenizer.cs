@@ -9,8 +9,16 @@ namespace Yolol.Grammar
     {
         private static Tokenizer<YololToken> Instance { get; } = 
             new TokenizerBuilder<YololToken>()
+
+                .Match(Span.Regex("\n"), YololToken.NewLine)
                 .Ignore(Span.WhiteSpace)
                 .Ignore(Comment.CPlusPlusStyle)
+
+                .Match(Span.EqualToIgnoreCase("if "), YololToken.If)
+                .Match(Span.EqualToIgnoreCase("then "), YololToken.Then)
+                .Match(Span.EqualToIgnoreCase("else "), YololToken.Else)
+                .Match(Span.Regex("end($| )"), YololToken.End)
+                .Match(Span.EqualToIgnoreCase("goto "), YololToken.Goto)
 
                 .Match(Span.EqualTo("<="), YololToken.LessThanEqualTo)
                 .Match(Span.EqualTo(">="), YololToken.GreaterThanEqualTo)
@@ -19,12 +27,6 @@ namespace Yolol.Grammar
 
                 .Match(Span.EqualTo("!="), YololToken.NotEqualTo)
                 .Match(Span.EqualTo("=="), YololToken.EqualTo)
-
-                .Match(Span.EqualToIgnoreCase("if"), YololToken.If)
-                .Match(Span.EqualToIgnoreCase("then"), YololToken.Then)
-                .Match(Span.EqualToIgnoreCase("else"), YololToken.Else)
-                .Match(Span.EqualToIgnoreCase("end"), YololToken.End)
-                .Match(Span.EqualToIgnoreCase("goto"), YololToken.Goto)
 
                 .Match(Span.EqualTo(':').IgnoreThen(Identifier.CStyle), YololToken.ExternalIdentifier)
                 .Match(Identifier.CStyle, YololToken.Identifier)
@@ -57,6 +59,9 @@ namespace Yolol.Grammar
 
         public static Result<TokenList<YololToken>> TryTokenize(string str)
         {
+            // Ensure the last line ends with a newline
+            str += "\n";
+
             return Instance.TryTokenize(str);
         }
     }

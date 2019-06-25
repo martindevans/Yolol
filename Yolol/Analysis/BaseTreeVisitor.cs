@@ -12,7 +12,12 @@ namespace Yolol.Analysis
     public abstract class BaseTreeVisitor
         : ITreeVisitor
     {
-        [NotNull] public virtual Line Visit([NotNull] Line line)
+        [NotNull] public virtual Program Visit([NotNull] Program program)
+        {
+            return new Program(program.Lines.Select(Visit));
+        }
+
+        [NotNull] protected virtual Line Visit([NotNull] Line line)
         {
             var r = Visit(line.Statements);
             if (r is StatementList sl)

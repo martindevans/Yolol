@@ -43,5 +43,11 @@ namespace YololEmulator.Tests.AST
 
             Assert.AreNotEqual(a.GetHashCode(), b.GetHashCode());
         }
+
+        [TestMethod]
+        public void NamesWithKeywords()
+        {
+            Assert.IsTrue(Parser.TryParseLine(Tokenizer.TryTokenize("iff=1 thenn=2 elsee=3 endd=4 gotoo=5").Value).HasValue);
+        }
     }
 }
