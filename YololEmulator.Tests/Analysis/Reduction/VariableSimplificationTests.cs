@@ -12,13 +12,13 @@ namespace YololEmulator.Tests.Analysis.Reduction
         public void SimplifyVarNames()
         {
             // Parse the initial (complex) code
-            var ast = Parser.TryParseProgram(Tokenizer.TryTokenize("ship=7\niff=0 ship=6\n").Value).Value;
+            var ast = TestExecutor.Parse("ship=7", "ixf=0 ship=6");
 
             // Reduce AST to a simpler program
             var reduced = ast.SimplifyVariableNames().ToString();
 
             // Check we got the simpler program we expected
-            Assert.AreEqual("a=7\nb=0 a=6\n", reduced);
+            Assert.AreEqual("a=7\nb=0 a=6", reduced);
         }
 
         [TestMethod]

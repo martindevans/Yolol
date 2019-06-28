@@ -9,10 +9,10 @@ namespace Yolol.Grammar.AST.Statements
         : BaseStatement
     {
         [NotNull] public BaseExpression Condition { get; }
-        [NotNull] public BaseStatement TrueBranch { get; }
-        [NotNull] public BaseStatement FalseBranch { get; }
+        [NotNull] public StatementList TrueBranch { get; }
+        [NotNull] public StatementList FalseBranch { get; }
 
-        public If([NotNull] BaseExpression condition, [NotNull] BaseStatement trueBranch, [NotNull] BaseStatement falseBranch)
+        public If([NotNull] BaseExpression condition, [NotNull] StatementList trueBranch, [NotNull] StatementList falseBranch)
         {
             Condition = condition;
             TrueBranch = trueBranch;

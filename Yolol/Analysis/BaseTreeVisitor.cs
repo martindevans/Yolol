@@ -1,18 +1,28 @@
 ﻿using System;
 using System.Linq;
 using JetBrains.Annotations;
+using Yolol.Execution;
 using Yolol.Grammar;
 using Yolol.Grammar.AST.Expressions;
 using Yolol.Grammar.AST.Expressions.Binary;
 using Yolol.Grammar.AST.Expressions.Unary;
 using Yolol.Grammar.AST.Statements;
+using Variable = Yolol.Grammar.AST.Expressions.Unary.Variable;
 
 namespace Yolol.Analysis
 {
     public abstract class BaseTreeVisitor
         : ITreeVisitor
     {
-        [NotNull] public virtual Program Visit([NotNull] Program program)
+        protected static Value StaticEvaluate([NotNull] BaseExpression expression)
+        {
+            if (!expression.IsConstant)
+                throw new ArgumentException("Cannot statically evaluate a non-constant expression");
+
+            return expression.Evaluate(new MachineState(new NullDeviceNetwork(), new DefaultIntrinsics()));
+        }
+
+        public virtual Program Visit(Program program)
         {
             return new Program(program.Lines.Select(Visit));
         }
@@ -31,7 +41,8 @@ namespace Yolol.Analysis
         }
 
         #region expression visiting
-        [NotNull] public virtual BaseExpression Visit([NotNull] BaseExpression expression)
+        [NotNull]
+        protected virtual BaseExpression Visit([NotNull] BaseExpression expression)
         {
             switch (expression)
             {
@@ -49,6 +60,7 @@ namespace Yolol.Analysis
                 case Divide a:   return Visit(a);
                 case Modulo a:   return Visit(a);
                 case Negate a:   return Visit(a);
+                case Exponent a: return Visit(a);
 
                 case Variable a:       return Visit(a);
                 case ConstantNumber a: return Visit(a);
@@ -105,24 +117,24 @@ namespace Yolol.Analysis
             return new Modulo(Visit(mod.Left), Visit(mod.Right));
         }
 
-        [NotNull] protected virtual BaseExpression Visit([NotNull] PreDecrement inc)
+        [NotNull] protected virtual BaseExpression Visit([NotNull] PreDecrement dec)
         {
-            return inc;
+            return new PreDecrement(Visit(dec.Name));
         }
 
-        [NotNull] protected virtual BaseExpression Visit([NotNull] PostDecrement inc)
+        [NotNull] protected virtual BaseExpression Visit([NotNull] PostDecrement dec)
         {
-            return inc;
+            return new PostDecrement(Visit(dec.Name));
         }
 
         [NotNull] protected virtual BaseExpression Visit([NotNull] PreIncrement inc)
         {
-            return inc;
+            return new PreIncrement(Visit(inc.Name));
         }
 
         [NotNull] protected virtual BaseExpression Visit([NotNull] PostIncrement inc)
         {
-            return inc;
+            return new PostIncrement(Visit(inc.Name));
         }
 
         [NotNull] protected virtual BaseExpression Visit([NotNull] Application app)
@@ -155,6 +167,11 @@ namespace Yolol.Analysis
             return new Divide(Visit(div.Left), Visit(div.Right));
         }
 
+        [NotNull] protected virtual BaseExpression Visit([NotNull] Exponent exp)
+        {
+            return new Exponent(Visit(exp.Left), Visit(exp.Right));
+        }
+
         [NotNull] protected virtual BaseExpression Visit([NotNull] Negate neg)
         {
             return new Negate(Visit(neg.Expression));
@@ -182,19 +199,20 @@ namespace Yolol.Analysis
                 case Goto a: return Visit(a);
                 case If a: return Visit(a);
                 case StatementList a: return Visit(a);
+                case EmptyStatement a: return a;
             }
 
             throw new InvalidOperationException($"`Visit` invalid for statement type `{statement.GetType().FullName}`");
         }
 
-        [NotNull] protected virtual BaseStatement Visit([NotNull] StatementList list)
+        [NotNull] protected virtual StatementList Visit([NotNull] StatementList list)
         {
             return new StatementList(list.Statements.Select(Visit));
         }
 
         [NotNull] protected virtual BaseStatement Visit([NotNull] CompoundAssignment compAss)
         {
-            return new CompoundAssignment(Visit(compAss.Left), compAss.Op, Visit(compAss.Right));
+            return new CompoundAssignment(Visit(compAss.Left), compAss.Op, Visit(compAss.Expression));
         }
 
         [NotNull] protected virtual BaseStatement Visit([NotNull] Assignment ass)

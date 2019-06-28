@@ -11,6 +11,8 @@ namespace Yolol.Grammar.AST.Expressions.Binary
 
         public override bool IsConstant => Left.IsConstant && Right.IsConstant;
 
+        public override bool IsBoolean => false;
+
         protected BaseBinaryExpression([NotNull] BaseExpression left, [NotNull] BaseExpression right)
         {
             Left = left;

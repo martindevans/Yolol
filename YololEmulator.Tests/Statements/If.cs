@@ -8,7 +8,7 @@ namespace YololEmulator.Tests.Statements
         [TestMethod]
         public void IfNone()
         {
-            var result = TestExecutor.Execute("a = 1", "if a == 1 then else end");
+            var result = TestExecutor.Execute("a = 1", "b = 2 if a == 1 then else end");
 
             var a = result.GetVariable("a");
 

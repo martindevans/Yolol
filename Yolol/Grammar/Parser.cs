@@ -120,32 +120,28 @@ namespace Yolol.Grammar
             from @if in Token.EqualTo(YololToken.If)
             from cond in Expression
             from then in Token.EqualTo(YololToken.Then)
-            from trueBranch in Parse.Ref(() => Statements)
-            from falseBranch in (Token.EqualTo(YololToken.Else).IgnoreThen(Parse.Ref(() => Statements)).OptionalOrDefault(Array.Empty<BaseStatement>()))
+            from trueBranch in Parse.Ref(() => Statement.Many())
+            from falseBranch in (Token.EqualTo(YololToken.Else).IgnoreThen(Parse.Ref(() => Statement.Many())).OptionalOrDefault(Array.Empty<BaseStatement>()))
             from end in Token.EqualTo(YololToken.End)
             select (BaseStatement)new If(cond, new StatementList(trueBranch), new StatementList(falseBranch));
 
         private static readonly TokenListParser<YololToken, BaseStatement> Statement = 
             Assignment.Try()
-              .Or(CompoundAssignment.Try())
-              .Or(If.Try())
-              .Or(Goto.Try())
-              .Or(PreIncrementStat.Try())
-              .Or(PreDecrementStat.Try())
-              .Or(PostIncrementStat.Try())
-              .Or(PostDecrementStat.Try());
-
-        private static readonly TokenListParser<YololToken, BaseStatement[]> Statements = 
-            from statement in Statement.Many()
-            select statement;
+                      .Or(If.Try())
+                      .Or(CompoundAssignment.Try())
+                      .Or(Goto.Try())
+                      .Or(PreIncrementStat.Try())
+                      .Or(PreDecrementStat.Try())
+                      .Or(PostIncrementStat.Try())
+                      .Or(PostDecrementStat);
 
         private static readonly TokenListParser<YololToken, Line> Line =
-            from statement in Statements
+            from statements in Statement.Many()
             from nl in Token.EqualTo(YololToken.NewLine)
-            select new Line(new StatementList(statement));
+            select new Line(new StatementList(statements));
 
         private static readonly TokenListParser<YololToken, Program> Program =
-            from lines in Line.Many()
+            from lines in Line.Many().AtEnd()
             select new Program(lines);
 
         public static TokenListParserResult<YololToken, Line> TryParseLine(TokenList<YololToken> tokens)

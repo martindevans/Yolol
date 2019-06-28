@@ -7,6 +7,8 @@ namespace Yolol.Grammar.AST.Expressions.Binary
     public class LessThanEqualTo
         : BaseBinaryExpression
     {
+        public override bool IsBoolean => true;
+
         public LessThanEqualTo([NotNull] BaseExpression lhs, [NotNull] BaseExpression rhs)
             : base(lhs, rhs)
         {

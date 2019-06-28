@@ -26,7 +26,7 @@ namespace Yolol.Analysis.Reduction
 
             // Generate some unique names, order by size
             var names = Enumerable.Range(0, p.Names.Count()).Select(a => _names.Name()).OrderBy(a => a.Length).ToArray();
-            var vars = p.Names.OrderByDescending(a => a.Value).Select(a => a.Key).ToArray();
+            var vars = p.Names.OrderByDescending(a => a.Value).ThenBy(a => a.Key.Name).Select(a => a.Key).ToArray();
 
             // Assign most common variables to shortest names
             foreach (var (n1, n2) in vars.Zip(names, (a, b) => (a, b)))
@@ -38,9 +38,9 @@ namespace Yolol.Analysis.Reduction
         protected override VariableName Visit(VariableName var)
         {
             if (var.IsExternal)
-                return var;
+                return base.Visit(var);
             else
-                return new VariableName(_remap[var.Name]);
+                return base.Visit(new VariableName(_remap[var.Name]));
         }
 
         private class FirstPass

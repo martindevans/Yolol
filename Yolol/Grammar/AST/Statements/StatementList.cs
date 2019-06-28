@@ -12,7 +12,7 @@ namespace Yolol.Grammar.AST.Statements
 
         public StatementList([NotNull] IEnumerable<BaseStatement> statements)
         {
-            Statements = statements.ToArray();
+            Statements = statements.Where(a => !(a is EmptyStatement)).ToArray();
         }
 
         public override ExecutionResult Evaluate(MachineState state)

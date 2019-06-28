@@ -1,14 +1,10 @@
-﻿using Yolol.Grammar.AST.Expressions;
+﻿using JetBrains.Annotations;
 using Yolol.Grammar.AST.Statements;
 
 namespace Yolol.Analysis
 {
     public interface ITreeVisitor
     {
-        Program Visit(Program program);
-
-        BaseExpression Visit(BaseExpression expression);
-
-        BaseStatement Visit(BaseStatement statement);
+        [NotNull] Program Visit([NotNull] Program program);
     }
 }

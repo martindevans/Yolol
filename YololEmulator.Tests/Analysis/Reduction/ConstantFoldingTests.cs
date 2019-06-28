@@ -10,7 +10,7 @@ namespace YololEmulator.Tests.Analysis.Reduction
         [TestMethod]
         public void FoldNumber()
         {
-            var ast = Parser.TryParseProgram(Tokenizer.TryTokenize("a=-2+(2*3)/2").Value).Value;
+            var ast = TestExecutor.Parse("a=-2+(2*3)/2");
             var reduced = ast.FoldConstants().ToString();
             Assert.AreEqual("a=1", reduced);
         }
@@ -42,7 +42,7 @@ namespace YololEmulator.Tests.Analysis.Reduction
         [TestMethod]
         public void FoldIfFalse()
         {
-            var ast = Parser.TryParseProgram(Tokenizer.TryTokenize("if 0 then a = 1 else a = 2 end").Value).Value;
+            var ast = TestExecutor.Parse("if 0 then a = 1 else a = 2 end");
             var reduced = ast.FoldConstants().ToString();
             Assert.AreEqual("a=2", reduced);
         }
@@ -50,7 +50,7 @@ namespace YololEmulator.Tests.Analysis.Reduction
         [TestMethod]
         public void DoNotFoldIf()
         {
-            var ast = Parser.TryParseProgram(Tokenizer.TryTokenize("if :extern then a = 1 else a = 2 end").Value).Value;
+            var ast = TestExecutor.Parse("if :extern then a = 1 else a = 2 end");
             var reduced = ast.FoldConstants().ToString();
             Assert.AreEqual("if :extern then a=1 else a=2 end", reduced);
         }
@@ -58,7 +58,7 @@ namespace YololEmulator.Tests.Analysis.Reduction
         [TestMethod]
         public void DoNotFoldIfError()
         {
-            var ast = Parser.TryParseProgram(Tokenizer.TryTokenize("if \"err\" then a = 1 else a = 2 end").Value).Value;
+            var ast = TestExecutor.Parse("if \"err\" then a = 1 else a = 2 end");
             var reduced = ast.FoldConstants().ToString();
             Assert.AreEqual("if \"err\" then a=1 else a=2 end", reduced);
         }

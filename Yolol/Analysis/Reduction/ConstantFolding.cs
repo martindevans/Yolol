@@ -1,5 +1,4 @@
-﻿using JetBrains.Annotations;
-using Yolol.Execution;
+﻿using Yolol.Execution;
 using Yolol.Grammar.AST.Expressions;
 using Yolol.Grammar.AST.Expressions.Unary;
 using Yolol.Grammar.AST.Statements;
@@ -9,40 +8,40 @@ namespace Yolol.Analysis.Reduction
     public class ConstantFoldingVisitor
         : BaseTreeVisitor
     {
-        public override BaseExpression Visit(BaseExpression expression)
+        protected override BaseExpression Visit(BaseExpression expression)
         {
             if (expression.IsConstant)
             {
                 var v = expression.Evaluate(new MachineState(new NullDeviceNetwork(), new DefaultIntrinsics()));
+
+                //// Do not substitute the constant value if it is a longer string than the expression
+                //if (v.ToString().Length > expression.ToString().Length)
+                //    return base.Visit(expression);
+
                 if (v.Type == Type.Number)
-                    return new ConstantNumber(v.Number);
+                    return base.Visit(new ConstantNumber(v.Number));
                 else
-                    return new ConstantString(v.String);
+                    return base.Visit(new ConstantString(v.String));
             }
 
-            return expression;
+            return base.Visit(expression);
         }
 
         protected override BaseStatement Visit(If @if)
         {
             if (!@if.Condition.IsConstant)
-                return @if;
+                return base.Visit(@if);
 
-            var cond = Evaluate(@if.Condition);
+            var cond = StaticEvaluate(@if.Condition);
 
             // Condition must be a number, if we've constant folded to a string emit the original if statement unchanged
             if (cond.Type != Type.Number)
-                return @if;
+                return base.Visit(@if);
 
             if (cond.Number != 0)
-                return @if.TrueBranch;
+                return Visit(@if.TrueBranch);
             else
-                return @if.FalseBranch;
-        }
-
-        private static Value Evaluate([NotNull] BaseExpression expression)
-        {
-            return expression.Evaluate(new MachineState(new NullDeviceNetwork(), new DefaultIntrinsics()));
+                return Visit(@if.FalseBranch);
         }
     }
 }

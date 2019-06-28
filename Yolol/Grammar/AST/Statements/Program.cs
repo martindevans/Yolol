@@ -15,7 +15,7 @@ namespace Yolol.Grammar.AST.Statements
 
         public override string ToString()
         {
-            return string.Join("\n", Lines.Select(l => l.ToString()));
+            return string.Join("\n", Lines.Select(l => l.ToString())).TrimEnd('\n');
         }
     }
 }

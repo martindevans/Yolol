@@ -8,6 +8,8 @@ namespace Yolol.Grammar.AST.Expressions.Unary
     {
         [NotNull] public BaseExpression Expression { get; }
 
+        public override bool IsBoolean => Expression.IsBoolean;
+
         public override bool IsConstant => Expression.IsConstant;
 
         public Bracketed([NotNull] BaseExpression expression)

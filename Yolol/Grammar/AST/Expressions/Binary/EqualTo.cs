@@ -7,6 +7,8 @@ namespace Yolol.Grammar.AST.Expressions.Binary
     public class EqualTo
         : BaseBinaryExpression
     {
+        public override bool IsBoolean => true;
+
         public EqualTo([NotNull] BaseExpression lhs, [NotNull] BaseExpression rhs)
             : base(lhs, rhs)
         {

@@ -8,6 +8,8 @@ namespace Yolol.Grammar.AST.Expressions.Unary
     {
         [NotNull] public BaseExpression Expression { get; }
 
+        public override bool IsBoolean => false;
+
         public override bool IsConstant => Expression.IsConstant;
 
         public Negate([NotNull] BaseExpression expression)

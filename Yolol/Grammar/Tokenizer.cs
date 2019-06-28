@@ -1,4 +1,5 @@
-﻿using Superpower;
+﻿using System.Text.RegularExpressions;
+using Superpower;
 using Superpower.Model;
 using Superpower.Parsers;
 using Superpower.Tokenizers;
@@ -10,15 +11,16 @@ namespace Yolol.Grammar
         private static Tokenizer<YololToken> Instance { get; } = 
             new TokenizerBuilder<YololToken>()
 
-                .Match(Span.Regex("\n"), YololToken.NewLine)
+                .Match(Span.Regex("\\r?\\n"), YololToken.NewLine)
+
                 .Ignore(Span.WhiteSpace)
                 .Ignore(Comment.CPlusPlusStyle)
 
-                .Match(Span.EqualToIgnoreCase("if "), YololToken.If)
-                .Match(Span.EqualToIgnoreCase("then "), YololToken.Then)
-                .Match(Span.EqualToIgnoreCase("else "), YololToken.Else)
-                .Match(Span.Regex("end($| )"), YololToken.End)
-                .Match(Span.EqualToIgnoreCase("goto "), YololToken.Goto)
+                .Match(Span.EqualTo("if"), YololToken.If)
+                .Match(Span.EqualTo("then"), YololToken.Then)
+                .Match(Span.EqualTo("else"), YololToken.Else)
+                .Match(Span.EqualTo("end"), YololToken.End)
+                .Match(Span.EqualTo("goto"), YololToken.Goto)
 
                 .Match(Span.EqualTo("<="), YololToken.LessThanEqualTo)
                 .Match(Span.EqualTo(">="), YololToken.GreaterThanEqualTo)
@@ -60,7 +62,8 @@ namespace Yolol.Grammar
         public static Result<TokenList<YololToken>> TryTokenize(string str)
         {
             // Ensure the last line ends with a newline
-            str += "\n";
+            if (!str.EndsWith('\n'))
+                str += "\n";
 
             return Instance.TryTokenize(str);
         }

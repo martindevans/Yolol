@@ -7,6 +7,8 @@ namespace Yolol.Grammar.AST.Expressions.Binary
     public class GreaterThan
         : BaseBinaryExpression
     {
+        public override bool IsBoolean => true;
+
         public GreaterThan([NotNull] BaseExpression lhs, [NotNull] BaseExpression rhs)
             : base(lhs, rhs)
         {
