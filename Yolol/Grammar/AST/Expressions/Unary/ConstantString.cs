@@ -8,6 +8,8 @@ namespace Yolol.Grammar.AST.Expressions.Unary
     {
         [NotNull] public string Value { get; }
 
+        public override bool CanRuntimeError => false;
+
         public override bool IsBoolean => false;
 
         public override bool IsConstant => true;

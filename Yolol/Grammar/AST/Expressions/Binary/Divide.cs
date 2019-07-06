@@ -6,6 +6,8 @@ namespace Yolol.Grammar.AST.Expressions.Binary
     public class Divide
         : BaseBinaryExpression
     {
+        public override bool CanRuntimeError => true;
+
         public Divide([NotNull] BaseExpression left, [NotNull] BaseExpression right)
             : base(left, right)
         {

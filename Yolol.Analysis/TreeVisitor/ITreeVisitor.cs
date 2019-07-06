@@ -1,7 +1,7 @@
 ﻿using JetBrains.Annotations;
 using Yolol.Grammar.AST.Statements;
 
-namespace Yolol.Analysis
+namespace Yolol.Analysis.TreeVisitor
 {
     public interface ITreeVisitor
     {

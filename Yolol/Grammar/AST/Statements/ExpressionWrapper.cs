@@ -10,6 +10,8 @@ namespace Yolol.Grammar.AST.Statements
     {
         [NotNull] public BaseExpression Expression { get; }
 
+        public override bool CanRuntimeError => Expression.CanRuntimeError;
+
         public ExpressionWrapper([NotNull] BaseExpression expression)
         {
             Expression = expression ?? throw new ArgumentNullException(nameof(expression));

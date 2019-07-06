@@ -6,6 +6,8 @@ namespace Yolol.Grammar.AST.Statements
     public class Assignment
         : BaseStatement
     {
+        public override bool CanRuntimeError => Right.CanRuntimeError;
+
         public VariableName Left { get; }
         public BaseExpression Right { get; }
 

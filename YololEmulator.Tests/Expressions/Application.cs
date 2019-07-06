@@ -9,6 +9,14 @@ namespace YololEmulator.Tests.Expressions
     public class Application
     {
         [TestMethod]
+        public void CallInSequence()
+        {
+            var result = TestExecutor.Execute("a = 7*cos(0)");
+            var a = result.GetVariable("a");
+            Assert.AreEqual(7, a.Value.Number);
+        }
+
+        [TestMethod]
         public void CallUnknown()
         {
             Assert.ThrowsException<ExecutionException>(() =>

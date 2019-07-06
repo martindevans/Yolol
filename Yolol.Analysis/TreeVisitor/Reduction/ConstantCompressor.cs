@@ -1,11 +1,12 @@
 ﻿using System;
 using JetBrains.Annotations;
 using Yolol.Execution;
+using Yolol.Execution.Extensions;
 using Yolol.Grammar.AST.Expressions;
 using Yolol.Grammar.AST.Expressions.Binary;
 using Yolol.Grammar.AST.Expressions.Unary;
 
-namespace Yolol.Analysis.Reduction
+namespace Yolol.Analysis.TreeVisitor.Reduction
 {
     public class ConstantCompressor
         : BaseTreeVisitor
@@ -48,7 +49,7 @@ namespace Yolol.Analysis.Reduction
 
             void Submit(BaseExpression exp)
             {
-                if (StaticEvaluate(exp).Number != value)
+                if (exp.StaticEvaluate().Number != value)
                     return;
 
                 var length = exp.ToString().Length;
@@ -59,17 +60,24 @@ namespace Yolol.Analysis.Reduction
                 }
             }
 
-            for (var b = 2; b < 32; b++)
+            for (var idx = 1; idx < 320; idx++)
             {
-                var log = Math.Log((double)value.Value, b);
+                var b = idx / 10m;
+                try
+                {
+                    var log = Math.Log((double)value.Value, (double)b);
 
-                var exp = new Exponent(new ConstantNumber(b), new ConstantNumber((decimal)log));
-                Submit(exp);
+                    var exp = new Exponent(new ConstantNumber(b), new ConstantNumber((decimal)log));
+                    Submit(exp);
 
-                var integral = new Exponent(new ConstantNumber(b), new ConstantNumber((int)Math.Round(log)));
-                var integralV = StaticEvaluate(integral).Number;
-                var integralE = value - integralV;
-                Submit(new Add(integral, new ConstantNumber(integralE)));
+                    var integral = new Exponent(new ConstantNumber(b), new ConstantNumber((int)Math.Round(log)));
+                    var integralV = integral.StaticEvaluate().Number;
+                    var integralE = value - integralV;
+                    Submit(new Add(integral, new ConstantNumber(integralE)));
+                }
+                catch (OverflowException)
+                {
+                }
             }
 
             return best;
@@ -142,7 +150,7 @@ namespace Yolol.Analysis.Reduction
 
             var replacement = new Divide(new ConstantNumber(new Number((decimal)fn)), new ConstantNumber(new Number((decimal)fd)));
 
-            if (StaticEvaluate(replacement).Number == number)
+            if (replacement.StaticEvaluate().Number == number)
                 return replacement;
             else
                 return new ConstantNumber(number);

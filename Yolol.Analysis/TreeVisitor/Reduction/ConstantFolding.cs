@@ -1,9 +1,10 @@
 ﻿using Yolol.Execution;
+using Yolol.Execution.Extensions;
 using Yolol.Grammar.AST.Expressions;
 using Yolol.Grammar.AST.Expressions.Unary;
 using Yolol.Grammar.AST.Statements;
 
-namespace Yolol.Analysis.Reduction
+namespace Yolol.Analysis.TreeVisitor.Reduction
 {
     public class ConstantFoldingVisitor
         : BaseTreeVisitor
@@ -32,7 +33,7 @@ namespace Yolol.Analysis.Reduction
             if (!@if.Condition.IsConstant)
                 return base.Visit(@if);
 
-            var cond = StaticEvaluate(@if.Condition);
+            var cond = @if.Condition.StaticEvaluate();
 
             // Condition must be a number, if we've constant folded to a string emit the original if statement unchanged
             if (cond.Type != Type.Number)

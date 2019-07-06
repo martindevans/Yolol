@@ -2,8 +2,8 @@
 using System.IO;
 using CommandLine;
 using JetBrains.Annotations;
+using Yolol.Analysis.TreeVisitor.Reduction;
 using Yolol.Grammar;
-using Yolol.Analysis.Reduction;
 
 namespace Yololc
 {
@@ -61,11 +61,13 @@ namespace Yololc
             }
 
             var input = File.ReadAllText(options.InputFile);
+            var startLength = input.Length;
 
             var tokens = Tokenizer.TryTokenize(input);
             if (!tokens.HasValue)
             {
                 Console.Error.WriteLine($"{tokens.FormatErrorMessageFragment()}");
+                Console.Error.WriteLine(tokens.ErrorPosition);
                 return;
             }
 
@@ -73,6 +75,7 @@ namespace Yololc
             if (!astResult.HasValue)
             {
                 Console.Error.WriteLine($"{astResult.FormatErrorMessageFragment()}");
+                Console.Error.WriteLine(astResult.ErrorPosition);
                 return;
             }
 
@@ -82,7 +85,7 @@ namespace Yololc
                 ast = ast.FoldConstants();
             if (!options.DisableConstantHoisting)
                 ast = ast.HoistConstants();
-            if (options.DisableCompoundIncrementSubstitution)
+            if (!options.DisableCompoundIncrementSubstitution)
                 ast = ast.CompressCompoundIncrement();
             if (!options.DisableVariableNameSimplification)
                 ast = ast.SimplifyVariableNames();
@@ -98,7 +101,7 @@ namespace Yololc
                 ast = ast.CompressConstants();
 
             var output = ast.ToString();
-            Console.Write(output);
+            Console.Write(output + $"\n//reduced from {startLength} characters to {output.Length} characters");
         }
     }
 }

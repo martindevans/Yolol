@@ -1,7 +1,8 @@
 ﻿using System.Linq;
+using Yolol.Execution.Extensions;
 using Yolol.Grammar.AST.Statements;
 
-namespace Yolol.Analysis.Reduction
+namespace Yolol.Analysis.TreeVisitor.Reduction
 {
     public class EndOfLineGotoElimination
         : BaseTreeVisitor
@@ -22,7 +23,7 @@ namespace Yolol.Analysis.Reduction
             if (!@goto.Destination.IsConstant)
                 return base.Visit(line);
 
-            var destination = StaticEvaluate(@goto.Destination);
+            var destination = @goto.Destination.StaticEvaluate();
             if (destination.Type != Execution.Type.Number)
                 return base.Visit(line);
 

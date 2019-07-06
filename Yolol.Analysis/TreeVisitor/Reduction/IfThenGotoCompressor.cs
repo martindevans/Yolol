@@ -1,11 +1,12 @@
 ﻿using System.Linq;
 using JetBrains.Annotations;
+using Yolol.Execution.Extensions;
 using Yolol.Grammar.AST.Expressions;
 using Yolol.Grammar.AST.Expressions.Binary;
 using Yolol.Grammar.AST.Expressions.Unary;
 using Yolol.Grammar.AST.Statements;
 
-namespace Yolol.Analysis.Reduction
+namespace Yolol.Analysis.TreeVisitor.Reduction
 {
     public class IfThenGotoCompressor
         : BaseTreeVisitor
@@ -15,6 +16,9 @@ namespace Yolol.Analysis.Reduction
         protected override Line Visit(Line line)
         {
             _lineNumber++;
+
+            if (line.Statements.Statements.Count == 0)
+                return base.Visit(line);
 
             var last = line.Statements.Statements.Last();
             if (!(last is If @if))
@@ -45,7 +49,7 @@ namespace Yolol.Analysis.Reduction
 
             BaseExpression diff = new Bracketed(new Subtract(new ConstantNumber(_lineNumber + 1), @goto.Destination));
             if (diff.IsConstant)
-                diff = new ConstantNumber(StaticEvaluate(diff).Number);
+                diff = new ConstantNumber(diff.StaticEvaluate().Number);
 
             var dest2 = new Add(@goto.Destination, new Multiply(diff, new Bracketed(condition)));
 

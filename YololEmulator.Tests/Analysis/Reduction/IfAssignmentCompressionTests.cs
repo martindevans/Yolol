@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Yolol.Analysis.Reduction;
+using Yolol.Analysis.TreeVisitor.Reduction;
 using Yolol.Execution;
-using Yolol.Grammar.AST.Statements;
 
 namespace YololEmulator.Tests.Analysis.Reduction
 {

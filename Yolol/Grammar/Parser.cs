@@ -65,11 +65,19 @@ namespace Yolol.Grammar
         private static readonly TokenListParser<YololToken, BaseStatement> PreDecrementStat = PreDecrementExpr.Select(a => (BaseStatement)new ExpressionWrapper(a));
         private static readonly TokenListParser<YololToken, BaseStatement> PostDecrementStat = PostDecrementExpr.Select(a => (BaseStatement)new ExpressionWrapper(a));
 
+        private static readonly TokenListParser<YololToken, BaseExpression> FunctionCall =
+            from func in FunctionName
+            from _ in Token.EqualTo(YololToken.LParen)
+            from expr in Parse.Ref(() => Expression)
+            from __ in Token.EqualTo(YololToken.RParen)
+            select (BaseExpression)new Application(func, expr);
+
         private static readonly TokenListParser<YololToken, BaseExpression> Factor =
             (from lparen in Token.EqualTo(YololToken.LParen)
              from expr in Parse.Ref(() => Expression)
              from rparen in Token.EqualTo(YololToken.RParen)
              select (BaseExpression)new Bracketed(expr))
+            .Or(FunctionCall.Try())
             .Or(PostDecrementExpr.Try())
             .Or(PreIncrementExpr.Try())
             .Or(PostIncrementExpr.Try())
@@ -87,14 +95,7 @@ namespace Yolol.Grammar
             .Named("expression");
 
         private static readonly TokenListParser<YololToken, BaseExpression> Term =
-            (from func in FunctionName
-             from _ in Token.EqualTo(YololToken.LParen)
-             from expr in Parse.Ref(() => Expression)
-             from __ in Token.EqualTo(YololToken.RParen)
-             select (BaseExpression)new Application(func, expr)).Try()
-            .Or(
-                Parse.Chain(Multiply.Or(Divide).Or(Modulo).Or(Exponent), Operand, BaseBinaryExpression.Create).Try()
-            );
+            Parse.Chain(Multiply.Or(Divide).Or(Modulo).Or(Exponent), Operand, BaseBinaryExpression.Create).Try();
 
         private static readonly TokenListParser<YololToken, BaseExpression> Expression =
             Parse.Chain(Add.Or(Subtract).Or(LessThan).Or(GreaterThan).Or(LessThanEqualTo).Or(GreaterThanEqualTo).Or(NotEqualTo).Or(EqualTo), Term, BaseBinaryExpression.Create);

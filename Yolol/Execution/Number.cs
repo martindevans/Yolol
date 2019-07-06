@@ -6,11 +6,19 @@ namespace Yolol.Execution
     public struct Number
         : IEquatable<Number>
     {
+        public static readonly decimal MaxValue = 9223372036854775.807m;
+        public static readonly decimal MinValue = -9223372036854775.808m;
+
         public decimal Value { get; }
 
         public Number(decimal num)
         {
             Value = Math.Truncate(num * 10000) / 10000;
+
+            if (Value > MaxValue)
+                Value = MaxValue;
+            if (Value < MinValue)
+                Value = MinValue;
         }
 
         public string ToString(CultureInfo culture)

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 using Yolol.Execution;
@@ -8,7 +9,21 @@ namespace Yolol.Grammar.AST.Statements
     public class StatementList
         : BaseStatement
     {
+        public override bool CanRuntimeError => Statements.All(s => s.CanRuntimeError);
+
         [NotNull] public IReadOnlyList<BaseStatement> Statements { get; }
+
+        public StatementList()
+            : this(Array.Empty<BaseStatement>())
+        {
+            
+        }
+
+        public StatementList([NotNull] params BaseStatement[] stmts)
+            : this((IEnumerable<BaseStatement>)stmts)
+        {
+            
+        }
 
         public StatementList([NotNull] IEnumerable<BaseStatement> statements)
         {

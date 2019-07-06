@@ -8,6 +8,8 @@ namespace Yolol.Grammar.AST.Statements
     public class If
         : BaseStatement
     {
+        public override bool CanRuntimeError => Condition.CanRuntimeError || TrueBranch.CanRuntimeError || FalseBranch.CanRuntimeError;
+
         [NotNull] public BaseExpression Condition { get; }
         [NotNull] public StatementList TrueBranch { get; }
         [NotNull] public StatementList FalseBranch { get; }

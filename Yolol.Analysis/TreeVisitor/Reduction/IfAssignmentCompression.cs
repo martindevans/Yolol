@@ -1,11 +1,11 @@
 ﻿using System.Linq;
-using JetBrains.Annotations;
+using Yolol.Execution.Extensions;
 using Yolol.Grammar.AST.Expressions;
 using Yolol.Grammar.AST.Expressions.Binary;
 using Yolol.Grammar.AST.Expressions.Unary;
 using Yolol.Grammar.AST.Statements;
 
-namespace Yolol.Analysis.Reduction
+namespace Yolol.Analysis.TreeVisitor.Reduction
 {
     public class IfAssignmentCompression
         : BaseTreeVisitor
@@ -25,7 +25,7 @@ namespace Yolol.Analysis.Reduction
             if (!trueAss.Right.IsConstant)
                 return base.Visit(@if);
 
-            var trueRight = StaticEvaluate(trueAss.Right);
+            var trueRight = trueAss.Right.StaticEvaluate();
             if (trueRight.Type != Execution.Type.Number)
                 return base.Visit(@if);
 
@@ -48,7 +48,7 @@ namespace Yolol.Analysis.Reduction
                 if (trueAss.Left.Name != falseAss.Left.Name)
                     return base.Visit(@if);
 
-                var falseRight = StaticEvaluate(falseAss.Right);
+                var falseRight = falseAss.Right.StaticEvaluate();
                 if (falseRight.Type != Execution.Type.Number)
                     return base.Visit(@if);
 
@@ -60,7 +60,7 @@ namespace Yolol.Analysis.Reduction
                 //b = 3 if a == 0 then b = 5 else b = 10 end
 
                 var diff = new Subtract(new ConstantNumber(trueRight.Number), new ConstantNumber(falseRight.Number));
-                var diffEval = StaticEvaluate(diff);
+                var diffEval = diff.StaticEvaluate();
                 var finalRight = diffEval.Number == 1 ? (BaseExpression)condition : new Bracketed(new Multiply(new ConstantNumber(diffEval.Number), condition));
 
                 return new Assignment(trueAss.Left, new Add(new ConstantNumber(falseRight.Number), finalRight));

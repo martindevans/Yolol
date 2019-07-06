@@ -6,6 +6,8 @@ namespace Yolol.Grammar.AST.Expressions.Binary
     public class Modulo
         : BaseBinaryExpression
     {
+        public override bool CanRuntimeError => true;
+
         public Modulo([NotNull] BaseExpression left, [NotNull] BaseExpression right)
             : base(left, right)
         {

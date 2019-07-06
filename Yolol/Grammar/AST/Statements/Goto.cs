@@ -9,6 +9,8 @@ namespace Yolol.Grammar.AST.Statements
     public class Goto
         : BaseStatement
     {
+        public override bool CanRuntimeError => true;
+
         public BaseExpression Destination { get; }
 
         public Goto(BaseExpression destination)

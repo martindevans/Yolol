@@ -1,10 +1,17 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Yolol.Grammar.AST.Expressions.Unary;
 
 namespace YololEmulator.Tests.Expressions.Num
 {
     [TestClass]
     public class Application
     {
+        [TestMethod]
+        public void IsNotBoolean()
+        {
+            Assert.IsFalse(new Yolol.Grammar.AST.Expressions.Unary.Application(new Yolol.Grammar.FunctionName("hello"), new ConstantNumber(3)).IsBoolean);
+        }
+
         [TestMethod]
         public void Constant()
         {

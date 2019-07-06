@@ -1,6 +1,13 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Yolol.Analysis.Reduction;
+using Yolol.Analysis;
+using Yolol.Analysis.ControlFlowGraph;
+using Yolol.Analysis.ControlFlowGraph.Extensions;
+using Yolol.Analysis.TreeVisitor;
+using Yolol.Analysis.TreeVisitor.Reduction;
+using Yolol.Analysis.Types;
+using Yolol.Grammar.AST.Statements;
 
 namespace YololEmulator.Tests
 {
@@ -35,32 +42,69 @@ namespace YololEmulator.Tests
         //}
 
         [TestMethod]
-        public void MethodName()
+        public void CFG()
         {
-            var ast = TestExecutor.Parse("a=111111 b=111111 c=111111 d=222222 e=222222 f=3333 g=333 h=3333 i=\"hello\" j=\"hello\"");
+            var ast = TestExecutor.Parse(
+                "a = :a b = :b",
+                "c = a + b",
+                "if a/2 > 10 then b = 1 else b = \"str\" end",
+                "goto 2"
+            );
 
-            var reduced = ast.HoistConstants().SimplifyVariableNames();
+            //var ast = TestExecutor.Parse(
+            //    "z = 2 a = :a * z a /= z",
+            //    "flag=a==:a if flag then goto 5 else goto 6 end",
+            //    "x = \"hello\" * 4 goto \"world\" x = 2",
+            //    "b*=2 flag=b>30 if flag then :b=a end",
+            //    "b=b-1 goto 4",
+            //    "b=b+1 goto 4"
+            //);
+            Console.WriteLine(ast);
+            Console.WriteLine();
 
-            Console.WriteLine(reduced);
-            //a=111111 b=222222 c="hello" d=a j=a m=a l=b e=b h=3333 g=333 k=3333 i=c f=c
+            var cfg = new Builder(ast).Build();
+
+            // Minify the graph
+            for (var i = 0; i < 10; i++)
+                cfg = cfg.RemoveEmptyNodes();
+            cfg = cfg.RemoveUnreachableBlocks();
+
+            // Modify the graph
+            cfg = cfg.StaticSingleAssignment(out var ssa);
+            cfg = cfg.FlowTypingAssignment(ssa, out var types);
+
+            var s = cfg.ToDot();
+            Console.WriteLine(s);
         }
 
         [TestMethod]
-        public void FinalGoto()
+        public void ExprDecomposition()
         {
             var ast = TestExecutor.Parse(
-                "a=111111 b=111111 c=111111 goto 2",
-                "d=222222 e=222222 f=3333 goto 4",
-                "g=333 h=3333 i=\"hello\" j=\"hello\"");
+                "a = b+c*-(d+z)%14+sin(3*2)+(y++)"
+            );
+            var ass = ast.Lines.Single().Statements.Statements.Single() as Assignment;
 
-            Console.WriteLine(ast);
-            Console.WriteLine($"Score: {ast.ToString().Length}");
-            Console.WriteLine();
+            var stmts = new ExpressionDecomposition(new SequentialNameGenerator("__tmp")).Visit(ass.Right);
+            foreach (var stmt in stmts)
+                Console.WriteLine(stmt);
 
-            var reduced = ast.TrailingGotoNextLineElimination();
+            Console.WriteLine("a = " + ((Assignment)stmts.Last()).Left.Name);
+        }
 
-            Console.WriteLine(reduced);
-            Console.WriteLine($"Score: {reduced.ToString().Length}");
+        [TestMethod]
+        public void EStmtDecomposition()
+        {
+            var ast = TestExecutor.Parse(
+                "if a-- then b *= 3 else c-- end",
+                "c++ d-- goto 3",
+                "q=q/z"
+            );
+
+            var prog = new ProgramDecomposition(new SequentialNameGenerator("__tmp")).Visit(ast);
+            foreach (var line in prog.Lines)
+                Console.WriteLine(line);
+            
         }
 
         [TestMethod]
@@ -84,37 +128,6 @@ namespace YololEmulator.Tests
             ast = ast.SimplifyVariableNames();
             ast = ast.DeadPostGotoElimination();
             ast = ast.CompressCompoundIncrement();
-
-            Console.WriteLine(ast);
-            Console.WriteLine($"Score: {ast.ToString().Length}");
-        }
-
-        [TestMethod]
-        public void StringIndexing()
-        {
-            var ast = TestExecutor.Parse(
-                "s = \"ABCDEFGHIJKLMNOPQRSTUVWXYZ\"",
-                "idx = 4",
-                "s2 = s slen = 0",
-                "s2-- slen++ if s2 != \"\" then goto 3 end",
-                "s2 = s nback = slen - idx - 1",
-                "if nback < 1 then goto 6 end s2-- nback-- goto 5",
-                "char = (s2--) - s2",
-                "goto 7"
-            );
-
-            Console.WriteLine(ast);
-            Console.WriteLine($"Score: {ast.ToString().Length}");
-            Console.WriteLine();
-            
-            ast = ast.FoldConstants();
-            ast = ast.HoistConstants();
-            ast = ast.SimplifyVariableNames();
-            ast = ast.DeadPostGotoElimination();
-            ast = ast.CompressCompoundIncrement();
-            ast = ast.TrailingGotoNextLineElimination();
-            ast = ast.TrailingConditionalGotoAnyLineCompression();
-            ast = ast.CompressConditionalAssignment();
 
             Console.WriteLine(ast);
             Console.WriteLine($"Score: {ast.ToString().Length}");

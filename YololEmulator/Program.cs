@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using CommandLine;
 using JetBrains.Annotations;
+using Newtonsoft.Json;
 using Superpower.Model;
 using Yolol.Execution;
 using Yolol.Grammar;
@@ -110,6 +111,7 @@ namespace YololEmulator
             }
 
             var parsed = Parser.TryParseLine(tokens.Value);
+            Console.WriteLine(JsonConvert.SerializeObject(parsed));
             if (!parsed.HasValue)
             {
                 Error(() => {

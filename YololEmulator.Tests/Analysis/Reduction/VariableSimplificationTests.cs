@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Yolol.Analysis.Reduction;
+using Yolol.Analysis;
+using Yolol.Analysis.TreeVisitor.Reduction;
 using Yolol.Grammar;
 
 namespace YololEmulator.Tests.Analysis.Reduction
@@ -37,7 +38,7 @@ namespace YololEmulator.Tests.Analysis.Reduction
         [TestMethod]
         public void LotsOfUniqueNames()
         {
-            var n = new SequentialNameGenerator();
+            var n = new SequentialNameGenerator("");
             var h = new HashSet<string>();
             for (var i = 0; i < 1000; i++)
                 Assert.IsTrue(h.Add(n.Name()));

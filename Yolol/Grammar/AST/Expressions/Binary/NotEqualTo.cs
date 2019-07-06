@@ -7,6 +7,8 @@ namespace Yolol.Grammar.AST.Expressions.Binary
     public class NotEqualTo
         : BaseBinaryExpression
     {
+        public override bool CanRuntimeError => Left.CanRuntimeError || Right.CanRuntimeError;
+
         public override bool IsBoolean => true;
 
         public NotEqualTo([NotNull] BaseExpression lhs, [NotNull] BaseExpression rhs)

@@ -1,7 +1,8 @@
 {
   "profiles": {
     "Yololc": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "-i test.lol"
     }
   }
 }

@@ -7,6 +7,8 @@ namespace Yolol.Grammar.AST.Expressions.Unary
     {
         public VariableName Name { get; }
 
+        public override bool CanRuntimeError => false;
+
         public override bool IsBoolean => false;
 
         public override bool IsConstant => false;

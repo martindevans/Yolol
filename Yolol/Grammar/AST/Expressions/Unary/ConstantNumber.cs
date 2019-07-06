@@ -7,6 +7,8 @@ namespace Yolol.Grammar.AST.Expressions.Unary
     {
         public Number Value { get; }
 
+        public override bool CanRuntimeError => false;
+
         public override bool IsBoolean => Value == 0 || Value == 1;
 
         public override bool IsConstant => true;

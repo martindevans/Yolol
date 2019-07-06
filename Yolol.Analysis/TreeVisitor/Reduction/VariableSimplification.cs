@@ -5,7 +5,7 @@ using JetBrains.Annotations;
 using Yolol.Grammar;
 using Yolol.Grammar.AST.Statements;
 
-namespace Yolol.Analysis.Reduction
+namespace Yolol.Analysis.TreeVisitor.Reduction
 {
     public class VariableSimplificationVisitor
         : BaseTreeVisitor
@@ -15,7 +15,7 @@ namespace Yolol.Analysis.Reduction
         
         public VariableSimplificationVisitor([CanBeNull] INameGenerator names = null)
         {
-            _names = names ?? new SequentialNameGenerator();
+            _names = names ?? new SequentialNameGenerator("");
         }
 
         public override Program Visit(Program program)

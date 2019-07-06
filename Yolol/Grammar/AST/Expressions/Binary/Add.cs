@@ -6,6 +6,8 @@ namespace Yolol.Grammar.AST.Expressions.Binary
     public class Add
         : BaseBinaryExpression
     {
+        public override bool CanRuntimeError => Left.CanRuntimeError || Right.CanRuntimeError;
+
         public Add([NotNull] BaseExpression left, [NotNull] BaseExpression right)
             : base(left, right)
         {

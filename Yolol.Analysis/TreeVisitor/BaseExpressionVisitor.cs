@@ -1,0 +1,97 @@
+﻿using System;
+using JetBrains.Annotations;
+using Yolol.Grammar.AST.Expressions;
+using Yolol.Grammar.AST.Expressions.Binary;
+using Yolol.Grammar.AST.Expressions.Unary;
+
+namespace Yolol.Analysis.TreeVisitor
+{
+    public abstract class BaseExpressionVisitor<TResult>
+    {
+        #region expression visiting
+        [NotNull] public virtual TResult Visit([NotNull] BaseExpression expression)
+        {
+            switch (expression)
+            {
+                case Bracketed a:   return Visit(a);
+                case Application a: return Visit(a);
+
+                case PostIncrement a: return Visit(a);
+                case PreIncrement a:  return Visit(a);
+                case PostDecrement a: return Visit(a);
+                case PreDecrement a:  return Visit(a);
+
+                case Add a:      return Visit(a);
+                case Subtract a: return Visit(a);
+                case Multiply a: return Visit(a);
+                case Divide a:   return Visit(a);
+                case Modulo a:   return Visit(a);
+                case Negate a:   return Visit(a);
+                case Exponent a: return Visit(a);
+
+                case Variable a:       return Visit(a);
+                case ConstantNumber a: return Visit(a);
+                case ConstantString a: return Visit(a);
+
+                case EqualTo a:            return Visit(a);
+                case NotEqualTo a:         return Visit(a);
+                case GreaterThan a:        return Visit(a);
+                case GreaterThanEqualTo a: return Visit(a);
+                case LessThan a:           return Visit(a);
+                case LessThanEqualTo a:    return Visit(a);
+            }
+
+            return VisitUnknown(expression);
+        }
+
+        [NotNull] protected virtual TResult VisitUnknown(BaseExpression expression)
+        {
+            throw new InvalidOperationException($"`Visit` not invalid for expression type `{expression.GetType().FullName}`");
+        }
+
+        [NotNull] protected abstract TResult Visit([NotNull] LessThanEqualTo eq);
+
+        [NotNull] protected abstract TResult Visit([NotNull] LessThan eq);
+
+        [NotNull] protected abstract TResult Visit([NotNull] GreaterThanEqualTo eq);
+
+        [NotNull] protected abstract TResult Visit([NotNull] GreaterThan eq);
+
+        [NotNull] protected abstract TResult Visit([NotNull] NotEqualTo eq);
+
+        [NotNull] protected abstract TResult Visit([NotNull] EqualTo eq);
+
+        [NotNull] protected abstract TResult Visit([NotNull] Variable var);
+
+        [NotNull] protected abstract TResult Visit([NotNull] Modulo mod);
+
+        [NotNull] protected abstract TResult Visit([NotNull] PreDecrement dec);
+
+        [NotNull] protected abstract TResult Visit([NotNull] PostDecrement dec);
+
+        [NotNull] protected abstract TResult Visit([NotNull] PreIncrement inc);
+
+        [NotNull] protected abstract TResult Visit([NotNull] PostIncrement inc);
+
+        [NotNull] protected abstract TResult Visit([NotNull] Application app);
+
+        [NotNull] protected abstract TResult Visit([NotNull] Bracketed brk);
+
+        [NotNull] protected abstract TResult Visit([NotNull] Add add);
+
+        [NotNull] protected abstract TResult Visit([NotNull] Subtract sub);
+
+        [NotNull] protected abstract TResult Visit([NotNull] Multiply mul);
+
+        [NotNull] protected abstract TResult Visit([NotNull] Divide div);
+
+        [NotNull] protected abstract TResult Visit([NotNull] Exponent exp);
+
+        [NotNull] protected abstract TResult Visit([NotNull] Negate neg);
+
+        [NotNull] protected abstract TResult Visit([NotNull] ConstantNumber con);
+
+        [NotNull] protected abstract TResult Visit([NotNull] ConstantString con);
+        #endregion
+    }
+}

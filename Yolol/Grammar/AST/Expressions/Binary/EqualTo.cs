@@ -7,6 +7,8 @@ namespace Yolol.Grammar.AST.Expressions.Binary
     public class EqualTo
         : BaseBinaryExpression
     {
+        public override bool CanRuntimeError => Left.CanRuntimeError || Right.CanRuntimeError;
+
         public override bool IsBoolean => true;
 
         public EqualTo([NotNull] BaseExpression lhs, [NotNull] BaseExpression rhs)
@@ -26,12 +28,12 @@ namespace Yolol.Grammar.AST.Expressions.Binary
 
         protected override Value Evaluate(string l, Number r)
         {
-            return Evaluate(l, r.ToString());
+            return 0;
         }
 
         protected override Value Evaluate(Number l, string r)
         {
-            return Evaluate(l.ToString(), r);
+            return 0;
         }
 
         public override string ToString()

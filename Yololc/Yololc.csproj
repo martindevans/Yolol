@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Yolol.Analysis\Yolol.Analysis.csproj" />
     <ProjectReference Include="..\Yolol\Yolol.csproj" />
   </ItemGroup>
 

@@ -1,8 +1,8 @@
-﻿using JetBrains.Annotations;
+﻿using Yolol.Execution.Extensions;
 using Yolol.Grammar.AST.Expressions.Unary;
 using Yolol.Grammar.AST.Statements;
 
-namespace Yolol.Analysis.Reduction
+namespace Yolol.Analysis.TreeVisitor.Reduction
 {
     public class CompoundCompressor
         : BaseTreeVisitor
@@ -15,7 +15,7 @@ namespace Yolol.Analysis.Reduction
             if (!compAss.Expression.IsConstant)
                 return base.Visit(compAss);
 
-            var value = StaticEvaluate(compAss.Expression);
+            var value = compAss.Expression.StaticEvaluate();
             if (value.Type != Execution.Type.Number || value.Number != 1)
                 return base.Visit(compAss);
 

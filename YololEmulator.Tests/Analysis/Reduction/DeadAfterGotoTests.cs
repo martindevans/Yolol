@@ -1,5 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Yolol.Analysis.Reduction;
+using Yolol.Analysis.TreeVisitor.Reduction;
 
 namespace YololEmulator.Tests.Analysis.Reduction
 {

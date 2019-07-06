@@ -7,6 +7,8 @@ namespace Yolol.Grammar.AST.Expressions.Binary
     public class Exponent
         : BaseBinaryExpression
     {
+        public override bool CanRuntimeError => true;
+
         public Exponent([NotNull] BaseExpression left, [NotNull] BaseExpression right)
             : base(left, right)
         {
