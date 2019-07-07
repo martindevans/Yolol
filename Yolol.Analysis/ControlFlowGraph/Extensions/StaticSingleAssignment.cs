@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 using Yolol.Analysis.ControlFlowGraph.AST;
 using Yolol.Analysis.TreeVisitor;
+using Yolol.Grammar;
 using Yolol.Grammar.AST.Expressions;
 using Yolol.Grammar.AST.Expressions.Unary;
 using Yolol.Grammar.AST.Statements;
@@ -64,14 +66,6 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
                 _block = block;
                 _ssa = ssa;
                 _finalNamesByBlock = finalNamesByBlock;
-            }
-
-            protected override BaseStatement VisitUnknown(BaseStatement statement)
-            {
-                if (statement is Conditional con)
-                    return new Conditional(base.Visit(con.Condition));
-                
-                return base.VisitUnknown(statement);
             }
 
             protected override BaseStatement Visit(Assignment ass)

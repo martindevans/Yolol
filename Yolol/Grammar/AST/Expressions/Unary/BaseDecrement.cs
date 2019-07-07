@@ -4,10 +4,10 @@ using Yolol.Execution;
 namespace Yolol.Grammar.AST.Expressions.Unary
 {
     public abstract class BaseDecrement
-        : BaseModify
+        : BaseModifyInPlace
     {
-        protected BaseDecrement([NotNull] VariableName name)
-            : base(name)
+        protected BaseDecrement([NotNull] VariableName name, bool pre)
+            : base(name, YololModifyOp.Decrement, pre)
         {
         }
 

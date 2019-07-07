@@ -73,12 +73,9 @@ namespace Yolol.Analysis.Types
                 _types = types;
             }
 
-            protected override BaseStatement VisitUnknown(BaseStatement statement)
+            protected override BaseStatement Visit(Conditional con)
             {
-                if (statement is Conditional)
-                    return statement;
-
-                return base.VisitUnknown(statement);
+                return con;
             }
 
             protected override BaseStatement Visit(EmptyStatement empty)
@@ -117,7 +114,7 @@ namespace Yolol.Analysis.Types
 
             protected override BaseStatement Visit(ExpressionWrapper expr)
             {
-                throw new NotImplementedException();
+                return expr;
             }
 
             protected override BaseStatement Visit(Goto @goto)

@@ -124,21 +124,26 @@ namespace Yolol.Analysis.Types
                 return _types.TypeOf(name.Name) ?? Type.Unassigned;
         }
 
-        protected override Type VisitUnknown(BaseExpression expression)
+        protected override Type Visit(Increment inc)
         {
-            if (expression is Phi phi)
-            {
-                var result = Type.Unassigned;
-                foreach (var type in phi.AssignedNames.Select(_types.TypeOf))
-                {
-                    if (type.HasValue)
-                        result |= type.Value;
-                }
+            return _types.TypeOf(inc.Name.Name) ?? Type.Unassigned;
+        }
 
-                return result;
+        protected override Type Visit(Decrement dec)
+        {
+            return _types.TypeOf(dec.Name.Name) ?? Type.Unassigned;
+        }
+
+        protected override Type Visit(Phi phi)
+        {
+            var result = Type.Unassigned;
+            foreach (var type in phi.AssignedNames.Select(_types.TypeOf))
+            {
+                if (type.HasValue)
+                    result |= type.Value;
             }
 
-            return base.VisitUnknown(expression);
+            return result;
         }
 
         protected override Type Visit(LessThanEqualTo eq) => BinaryLogical(eq);

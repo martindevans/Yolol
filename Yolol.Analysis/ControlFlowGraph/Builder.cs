@@ -43,7 +43,7 @@ namespace Yolol.Analysis.ControlFlowGraph
             var ast = new ProgramDecomposition(names).Visit(_program);
             ast = new FlattenStatementLists().Visit(ast);
 
-            for (var lineNumber = 1; lineNumber < 20; lineNumber++)
+            for (var lineNumber = 1; lineNumber <= 20; lineNumber++)
             {
                 var line = lineNumber > ast.Lines.Count ? new Line(new StatementList(Array.Empty<BaseStatement>())) : ast.Lines[lineNumber - 1];
                 var block = GetLineEntryBlock(cfg, lineNumber);

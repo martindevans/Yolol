@@ -1,5 +1,6 @@
 ﻿using System;
 using JetBrains.Annotations;
+using Yolol.Analysis.ControlFlowGraph.AST;
 using Yolol.Grammar.AST.Statements;
 
 namespace Yolol.Analysis.TreeVisitor
@@ -10,6 +11,8 @@ namespace Yolol.Analysis.TreeVisitor
         {
             switch (statement)
             {
+                case Conditional a: return Visit(a);
+
                 case CompoundAssignment a: return Visit(a);
                 case Assignment a:   return Visit(a);
                 case ExpressionWrapper a: return Visit(a);
@@ -26,6 +29,8 @@ namespace Yolol.Analysis.TreeVisitor
         {
             throw new InvalidOperationException($"`Visit` invalid for statement type `{statement.GetType().FullName}`");
         }
+
+        [NotNull] protected abstract TResult Visit([NotNull] Conditional con);
 
         [NotNull] protected abstract TResult Visit([NotNull] EmptyStatement empty);
 

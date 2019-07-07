@@ -1,6 +1,7 @@
 ﻿using JetBrains.Annotations;
 using Yolol.Grammar.AST.Statements;
 using System.Linq;
+using Yolol.Grammar.AST.Expressions;
 
 namespace Yolol.Analysis.TreeVisitor.Reduction
 {
@@ -13,6 +14,16 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
         protected override StatementList Visit(StatementList list)
         {
             return base.Visit(new StatementList(list.Statements.SelectMany(item => item is StatementList sl ? sl.Statements : new[] {item})));
+        }
+
+        protected override BaseStatement VisitUnknown(BaseStatement statement)
+        {
+            return statement;
+        }
+
+        protected override BaseExpression VisitUnknown(BaseExpression expression)
+        {
+            return expression;
         }
     }
 }

@@ -13,25 +13,6 @@ namespace Yolol.Analysis.TreeVisitor.Inspection
         private readonly HashSet<VariableName> _names = new HashSet<VariableName>();
         public IReadOnlyCollection<VariableName> Names => _names;
 
-        protected override BaseExpression VisitUnknown(BaseExpression expression)
-        {
-            if (expression is Phi phi)
-                return phi;
-
-            return base.VisitUnknown(expression);
-        }
-
-        protected override BaseStatement VisitUnknown(BaseStatement statement)
-        {
-            if (statement is Conditional con)
-            {
-                Visit(con.Condition);
-                return con;
-            }
-
-            return base.VisitUnknown(statement);
-        }
-
         protected override BaseStatement Visit(Assignment ass)
         {
             _names.Add(ass.Left);

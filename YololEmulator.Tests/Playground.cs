@@ -44,12 +44,12 @@ namespace YololEmulator.Tests
         [TestMethod]
         public void CFG()
         {
-            var ast = TestExecutor.Parse(
-                "a = :a b = :b",
-                "c = a + b",
-                "if a/2 > 10 then b = 1 else b = \"str\" end",
-                "goto 2"
-            );
+            //var ast = TestExecutor.Parse(
+            //    "a = :a b = :b",
+            //    "c = a + b",
+            //    "if a/2 > 10 then b = 1 else b = \"str\" end",
+            //    "goto 2"
+            //);
 
             //var ast = TestExecutor.Parse(
             //    "z = 2 a = :a * z a /= z",
@@ -59,19 +59,28 @@ namespace YololEmulator.Tests
             //    "b=b-1 goto 4",
             //    "b=b+1 goto 4"
             //);
+
+            var ast = TestExecutor.Parse(
+                "a = :a a *= 1 goto 3",
+                "a++ goto 1",
+                "b = a * 2 goto 1"
+            );
             Console.WriteLine(ast);
             Console.WriteLine();
 
             var cfg = new Builder(ast).Build();
 
+            // Find types
+            cfg = cfg.StaticSingleAssignment(out var ssa);
+            cfg = cfg.FlowTypingAssignment(ssa, out var types);
+
+            // Trim graph based on types
+            cfg = cfg.TypeDrivenEdgeTrimming(types);
+
             // Minify the graph
             for (var i = 0; i < 10; i++)
                 cfg = cfg.RemoveEmptyNodes();
             cfg = cfg.RemoveUnreachableBlocks();
-
-            // Modify the graph
-            cfg = cfg.StaticSingleAssignment(out var ssa);
-            cfg = cfg.FlowTypingAssignment(ssa, out var types);
 
             var s = cfg.ToDot();
             Console.WriteLine(s);
@@ -83,7 +92,7 @@ namespace YololEmulator.Tests
             var ast = TestExecutor.Parse(
                 "a = b+c*-(d+z)%14+sin(3*2)+(y++)"
             );
-            var ass = ast.Lines.Single().Statements.Statements.Single() as Assignment;
+            var ass = (Assignment)ast.Lines.Single().Statements.Statements.Single();
 
             var stmts = new ExpressionDecomposition(new SequentialNameGenerator("__tmp")).Visit(ass.Right);
             foreach (var stmt in stmts)

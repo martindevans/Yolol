@@ -17,7 +17,7 @@ namespace Yolol.Analysis.ControlFlowGraph.AST
         public string BaseVariable { get; }
         public IReadOnlyList<string> AssignedNames { get; }
 
-        private readonly ISingleStaticAssignmentTable _ssa;
+        public ISingleStaticAssignmentTable SSA { get; }
 
         public Phi([NotNull] ISingleStaticAssignmentTable ssa, [NotNull] params string[] assignedNames)
         {
@@ -29,7 +29,7 @@ namespace Yolol.Analysis.ControlFlowGraph.AST
             BaseVariable = ssa.BaseName(assignedNames[0]);
             AssignedNames = assignedNames.Distinct().ToArray();
 
-            _ssa = ssa;
+            SSA = ssa;
         }
 
         public override bool IsConstant => false;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using JetBrains.Annotations;
+using Yolol.Analysis.ControlFlowGraph.AST;
 using Yolol.Grammar;
 using Yolol.Grammar.AST.Expressions;
 using Yolol.Grammar.AST.Expressions.Binary;
@@ -37,6 +38,10 @@ namespace Yolol.Analysis.TreeVisitor
         {
             switch (expression)
             {
+                case Phi a:         return Visit(a);
+                case Increment a:   return Visit(a);
+                case Decrement a:   return Visit(a);
+
                 case Bracketed a:   return Visit(a);
                 case Application a: return Visit(a);
 
@@ -71,6 +76,21 @@ namespace Yolol.Analysis.TreeVisitor
         [NotNull] protected virtual BaseExpression VisitUnknown(BaseExpression expression)
         {
             throw new InvalidOperationException($"`Visit` not invalid for expression type `{expression.GetType().FullName}`");
+        }
+
+        [NotNull] protected virtual BaseExpression Visit([NotNull] Increment inc)
+        {
+            return new Increment(Visit(inc.Name));
+        }
+
+        [NotNull] protected virtual BaseExpression Visit([NotNull] Decrement dec)
+        {
+            return new Decrement(Visit(dec.Name));
+        }
+
+        [NotNull] protected virtual BaseExpression Visit([NotNull] Phi phi)
+        {
+            return new Phi(phi.SSA, phi.AssignedNames.Select(n => Visit(new VariableName(n))).Select(n => n.Name).ToArray());
         }
 
         [NotNull] protected virtual BaseExpression Visit([NotNull] LessThanEqualTo eq)
@@ -189,8 +209,10 @@ namespace Yolol.Analysis.TreeVisitor
         {
             switch (statement)
             {
+                case Conditional a: return Visit(a);
+
                 case CompoundAssignment a: return Visit(a);
-                case Assignment a:   return Visit(a);
+                case Assignment a: return Visit(a);
                 case ExpressionWrapper a: return Visit(a);
                 case Goto a: return Visit(a);
                 case If a: return Visit(a);
@@ -201,9 +223,14 @@ namespace Yolol.Analysis.TreeVisitor
             return VisitUnknown(statement);
         }
 
-        [NotNull] protected virtual BaseStatement VisitUnknown(BaseStatement statement)
+        [NotNull] protected virtual BaseStatement VisitUnknown([NotNull] BaseStatement statement)
         {
             throw new InvalidOperationException($"`Visit` invalid for statement type `{statement.GetType().FullName}`");
+        }
+
+        [NotNull] protected virtual BaseStatement Visit([NotNull] Conditional con)
+        {
+            return new Conditional(Visit(con.Condition));
         }
 
         [NotNull] protected virtual StatementList Visit([NotNull] StatementList list)

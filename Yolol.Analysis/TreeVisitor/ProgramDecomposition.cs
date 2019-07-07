@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
+using Yolol.Analysis.ControlFlowGraph.AST;
 using Yolol.Execution.Extensions;
 using Yolol.Grammar;
 using Yolol.Grammar.AST.Expressions;
@@ -43,6 +44,11 @@ namespace Yolol.Analysis.TreeVisitor
         public StatementDecomposition(INameGenerator names)
         {
             _names = names;
+        }
+
+        protected override IEnumerable<BaseStatement> Visit(Conditional con)
+        {
+            throw new NotSupportedException();
         }
 
         protected override IEnumerable<BaseStatement> Visit(EmptyStatement empty)
@@ -141,6 +147,21 @@ namespace Yolol.Analysis.TreeVisitor
             return p.Append(a);
         }
 
+        protected override IEnumerable<BaseStatement> Visit(Increment inc)
+        {
+            throw new NotSupportedException();
+        }
+
+        protected override IEnumerable<BaseStatement> Visit(Decrement dec)
+        {
+            throw new NotSupportedException();
+        }
+
+        protected override IEnumerable<BaseStatement> Visit(Phi phi)
+        {
+            throw new NotSupportedException();
+        }
+
         protected override IEnumerable<BaseStatement> Visit(LessThanEqualTo eq) => Binary(eq, (a, b) => new LessThanEqualTo(a, b));
 
         protected override IEnumerable<BaseStatement> Visit(LessThan eq) => Binary(eq, (a, b) => new LessThan(a, b));
@@ -163,36 +184,56 @@ namespace Yolol.Analysis.TreeVisitor
         protected override IEnumerable<BaseStatement> Visit(PreDecrement dec)
         {
             return new BaseStatement[] {
-                new ExpressionWrapper(dec),
+
+                // Increment in place
+                new Assignment(dec.Name, new Decrement(dec.Name)),
+
+                // Return modified value
                 new Assignment(MkTmp(), new Variable(dec.Name))
             };
         }
 
         protected override IEnumerable<BaseStatement> Visit(PostDecrement dec)
         {
-            var storedVal = MkTmp();
+            var tmp = MkTmp();
             return new BaseStatement[] {
-                new Assignment(storedVal, new Variable(dec.Name)),
-                new ExpressionWrapper(dec),
-                new Assignment(MkTmp(), new Variable(storedVal))
+
+                // Save original value
+                new Assignment(tmp, new Variable(dec.Name)),
+
+                // Increment it in place
+                new Assignment(dec.Name, new Decrement(dec.Name)),
+
+                // Return original value
+                new Assignment(MkTmp(), new Variable(tmp))
             };
         }
 
         protected override IEnumerable<BaseStatement> Visit(PreIncrement inc)
         {
             return new BaseStatement[] {
-                new ExpressionWrapper(inc),
+
+                // Increment in place
+                new Assignment(inc.Name, new Increment(inc.Name)),
+
+                // Return modified value
                 new Assignment(MkTmp(), new Variable(inc.Name))
             };
         }
 
         protected override IEnumerable<BaseStatement> Visit(PostIncrement inc)
         {
-            var storedVal = MkTmp();
+            var tmp = MkTmp();
             return new BaseStatement[] {
-                new Assignment(storedVal, new Variable(inc.Name)),
-                new ExpressionWrapper(inc),
-                new Assignment(MkTmp(), new Variable(storedVal))
+
+                // Save original value
+                new Assignment(tmp, new Variable(inc.Name)),
+
+                // Increment it in place
+                new Assignment(inc.Name, new Increment(inc.Name)),
+
+                // Return original value
+                new Assignment(MkTmp(), new Variable(tmp))
             };
         }
 

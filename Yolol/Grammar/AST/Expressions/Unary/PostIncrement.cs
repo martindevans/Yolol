@@ -1,5 +1,4 @@
 ﻿using JetBrains.Annotations;
-using Yolol.Execution;
 
 namespace Yolol.Grammar.AST.Expressions.Unary
 {
@@ -7,13 +6,8 @@ namespace Yolol.Grammar.AST.Expressions.Unary
         : BaseIncrement
     {
         public PostIncrement([NotNull] VariableName name)
-            : base(name)
+            : base(name, false)
         {
-        }
-
-        protected override Value Return(Value original, Value modified)
-        {
-            return original;
         }
 
         public override string ToString()

@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Linq;
 using JetBrains.Annotations;
+using Yolol.Analysis.ControlFlowGraph.AST;
+using Yolol.Grammar;
 using Yolol.Grammar.AST.Expressions;
 using Yolol.Grammar.AST.Expressions.Binary;
 using Yolol.Grammar.AST.Expressions.Unary;
@@ -13,6 +16,10 @@ namespace Yolol.Analysis.TreeVisitor
         {
             switch (expression)
             {
+                case Phi a:       return Visit(a);
+                case Increment a: return Visit(a);
+                case Decrement a: return Visit(a);
+
                 case Bracketed a:   return Visit(a);
                 case Application a: return Visit(a);
 
@@ -48,6 +55,12 @@ namespace Yolol.Analysis.TreeVisitor
         {
             throw new InvalidOperationException($"`Visit` not invalid for expression type `{expression.GetType().FullName}`");
         }
+
+        [NotNull] protected abstract TResult Visit([NotNull] Increment inc);
+
+        [NotNull] protected abstract TResult Visit([NotNull] Decrement dec);
+
+        [NotNull] protected abstract TResult Visit([NotNull] Phi phi);
 
         [NotNull] protected abstract TResult Visit([NotNull] LessThanEqualTo eq);
 

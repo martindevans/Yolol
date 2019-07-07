@@ -14,29 +14,12 @@ namespace Yolol.Analysis.TreeVisitor.Inspection
         private readonly HashSet<VariableName> _names = new HashSet<VariableName>();
         public IEnumerable<VariableName> Names => _names;
 
-        protected override BaseExpression VisitUnknown(BaseExpression expression)
+        protected override BaseExpression Visit(Phi phi)
         {
-            if (expression is Phi phi)
-            {
-                foreach (var name in phi.AssignedNames)
-                {
-                    _names.Add(new VariableName(name));
-                    return phi;
-                }
-            }
+            foreach (var name in phi.AssignedNames)
+                _names.Add(new VariableName(name));
 
-            return base.VisitUnknown(expression);
-        }
-
-        protected override BaseStatement VisitUnknown(BaseStatement statement)
-        {
-            if (statement is Conditional con)
-            {
-                Visit(con.Condition);
-                return con;
-            }
-
-            return base.VisitUnknown(statement);
+            return phi;
         }
 
         protected override BaseStatement Visit(CompoundAssignment compAss)

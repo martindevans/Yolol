@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
+using Yolol.Analysis.ControlFlowGraph.AST;
+using Yolol.Analysis.Types;
+using Yolol.Grammar.AST.Statements;
 
 namespace Yolol.Analysis.ControlFlowGraph.Extensions
 {
@@ -67,6 +70,38 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
             g = g.Trim(e => !edgesDelete.Contains(e));
             g = g.Add(edgesCreate);
             return g;
+        }
+
+        [NotNull] public static IControlFlowGraph TypeDrivenEdgeTrimming([NotNull] this IControlFlowGraph graph, ITypeAssignments types)
+        {
+            return graph.Trim(edge => {
+
+                // Find last statement in previous block
+                var stmt = edge.Start.Statements.LastOrDefault();
+                var tass = stmt as TypedAssignment;
+
+                // If type is unassigned we can't make a judgement
+                if (tass?.Type == Execution.Type.Unassigned)
+                    return true;
+
+                if (edge.Type == EdgeType.RuntimeError)
+                {
+                    // If there is no statement at all then it can't be an error
+                    if (tass == null)
+                        return false;
+
+                    // Only keep edge if type has an error
+                    return tass.Type.HasFlag(Execution.Type.Error);
+                }
+                else
+                {
+                    // If there is no typed assignment we can't judge
+                    if (tass == null)
+                        return true;
+
+                    return tass.Type != Execution.Type.Error;
+                }
+            });
         }
     }
 }
