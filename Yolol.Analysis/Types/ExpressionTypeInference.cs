@@ -2,12 +2,14 @@
 using JetBrains.Annotations;
 using Yolol.Analysis.ControlFlowGraph.AST;
 using Yolol.Analysis.TreeVisitor;
+using Yolol.Execution.Extensions;
 using Yolol.Grammar;
 using Yolol.Grammar.AST.Expressions;
 using Yolol.Grammar.AST.Expressions.Binary;
 using Yolol.Grammar.AST.Expressions.Unary;
 
 using Type = Yolol.Execution.Type;
+using Variable = Yolol.Grammar.AST.Expressions.Unary.Variable;
 
 namespace Yolol.Analysis.Types
 {
@@ -54,7 +56,7 @@ namespace Yolol.Analysis.Types
             if (l == Type.Error || r == Type.Error)
                 return Type.Error;
 
-            // If either side is guaranteed not to be a number/logical this is a guaranteed error
+            // If either side is guaranteed not to be a number this is a guaranteed error
             if (!l.HasFlag(Type.Number) || !r.HasFlag(Type.Number))
                 return Type.Error;
 
@@ -114,24 +116,29 @@ namespace Yolol.Analysis.Types
 
         private Type VariableRead([NotNull] VariableName name)
         {
-            var t = _types.TypeOf(name.Name);
+            var t = _types.TypeOf(name);
             if (t.HasValue)
                 return t.Value;
 
             if (name.IsExternal)
                 return Type.String | Type.Number;
             else
-                return _types.TypeOf(name.Name) ?? Type.Unassigned;
+                return _types.TypeOf(name) ?? Type.Unassigned;
         }
 
         protected override Type Visit(Increment inc)
         {
-            return _types.TypeOf(inc.Name.Name) ?? Type.Unassigned;
+            return _types.TypeOf(inc.Name) ?? Type.Unassigned;
         }
 
         protected override Type Visit(Decrement dec)
         {
-            return _types.TypeOf(dec.Name.Name) ?? Type.Unassigned;
+            return _types.TypeOf(dec.Name) ?? Type.Unassigned;
+        }
+
+        protected override Type Visit(ErrorExpression err)
+        {
+            return Type.Error;
         }
 
         protected override Type Visit(Phi phi)
@@ -180,7 +187,19 @@ namespace Yolol.Analysis.Types
 
         protected override Type Visit(Multiply mul) => BinaryNumeric(mul, false);
 
-        protected override Type Visit(Divide div) => BinaryNumeric(div, true);
+        protected override Type Visit(Divide div)
+        {
+            // If we statically know the right side is a non-zero number don't force an error
+            var forceError = true;
+            if (div.Right.IsConstant)
+            {
+                var r = div.Right.StaticEvaluate();
+                if (r.Type == Type.Number && r.Number != 0)
+                    forceError = false;
+            }
+
+            return BinaryNumeric(div, forceError);
+        }
 
         protected override Type Visit(Exponent exp) => BinaryNumeric(exp, true);
 

@@ -7,7 +7,7 @@ namespace YololEmulator.Tests.AST
     public class YololBinaryOpTests
     {
         [TestMethod]
-        public void MethodName()
+        public void String()
         {
             Assert.AreEqual("+", YololBinaryOp.Add.String());
             Assert.AreEqual("/", YololBinaryOp.Divide.String());
@@ -21,6 +21,8 @@ namespace YololEmulator.Tests.AST
             Assert.AreEqual("*", YololBinaryOp.Multiply.String());
             Assert.AreEqual("!=", YololBinaryOp.NotEqualTo.String());
             Assert.AreEqual("-", YololBinaryOp.Subtract.String());
+            Assert.AreEqual("or", YololBinaryOp.Or.String());
+            Assert.AreEqual("and", YololBinaryOp.And.String());
         }
     }
 }

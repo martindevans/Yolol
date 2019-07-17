@@ -14,14 +14,30 @@ namespace Yolol.Analysis.Types
 {
     public static class FlowTypingExtensions
     {
+        [NotNull] private static IControlFlowGraph RemoveTypeAssignments([NotNull] this IControlFlowGraph graph)
+        {
+            return graph.Modify((a, b) => {
+                foreach (var stmt in a.Statements)
+                {
+                    if (stmt is TypedAssignment tass)
+                        b.Add(new Assignment(tass.Left, tass.Right));
+                    else
+                        b.Add(stmt);
+                }
+            });
+        }
+
         [NotNull] public static IControlFlowGraph FlowTypingAssignment(
             [NotNull] this IControlFlowGraph graph,
-            [NotNull] ISingleStaticAssignmentTable ssa,
+            [NotNull] ISingleStaticAssignmentTable ssa, // We require the SSA object because SSA must be done before flow typing
             [NotNull] out ITypeAssignments types,
-            [NotNull] params (string, Execution.Type)[] hints)
+            [NotNull] params (VariableName, Execution.Type)[] hints)
         {
             var typesMut = new TypeAssignmentTable();
             types = typesMut;
+
+            // Remove any existing types
+            graph = graph.RemoveTypeAssignments();
 
             // Unconditionally assign hints
             foreach (var (name, type) in hints)
@@ -29,7 +45,7 @@ namespace Yolol.Analysis.Types
 
             // Assign all variables which are never assigned the default type (number)
             foreach (var unassReads in UnassignedReadNames(graph))
-                typesMut.Assign(unassReads.Name, Execution.Type.Number);
+                typesMut.Assign(unassReads, Execution.Type.Number);
 
             // Keep assigning types until we no longer find any additional types
             var output = graph;
@@ -73,6 +89,11 @@ namespace Yolol.Analysis.Types
                 _types = types;
             }
 
+            protected override BaseStatement Visit(ErrorStatement err)
+            {
+                return err;
+            }
+
             protected override BaseStatement Visit(Conditional con)
             {
                 return con;
@@ -93,6 +114,11 @@ namespace Yolol.Analysis.Types
                 throw new NotSupportedException("Cannot flow type CFG with compound expression (decompose to simpler form first)");
             }
 
+            protected override BaseStatement Visit(TypedAssignment ass)
+            {
+                return ass;
+            }
+
             protected override BaseStatement Visit(Assignment ass)
             {
                 // Check type of the right hand side
@@ -108,7 +134,7 @@ namespace Yolol.Analysis.Types
 
                 // We found some new type information
                 Modified++;
-                _types.Assign(ass.Left.Name, type);
+                _types.Assign(ass.Left, type);
                 return new TypedAssignment(type, ass.Left, ass.Right);
             }
 
@@ -133,17 +159,18 @@ namespace Yolol.Analysis.Types
         private class TypeAssignmentTable
             : ITypeAssignments
         {
-            private readonly Dictionary<string, Execution.Type> _types = new Dictionary<string, Execution.Type>();
+            private readonly Dictionary<VariableName, Execution.Type> _types = new Dictionary<VariableName, Execution.Type>();
 
-            public void Assign(string varName, Execution.Type type)
+            public void Assign([NotNull] VariableName name, Execution.Type type)
             {
-                if (_types.ContainsKey(varName))
-                    throw new ArgumentException("type already assigned to {varName}", nameof(varName));
-                _types[varName] = type & ~Execution.Type.Error;
+                if (_types.TryGetValue(name, out var t))
+                    _types[name] = t | type;
+                else
+                    _types[name] = type;
             }
 
             
-            public Execution.Type? TypeOf(string varName)
+            public Execution.Type? TypeOf(VariableName varName)
             {
                 if (_types.TryGetValue(varName, out var type))
                     return type;

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
+using Yolol.Analysis.TreeVisitor;
+using Yolol.Grammar.AST.Statements;
 
 namespace Yolol.Analysis.ControlFlowGraph.Extensions
 {
@@ -11,7 +13,7 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
             [NotNull] this IControlFlowGraph input,
             ControlFlowGraph output,
             [NotNull] Func<IBasicBlock, bool> keep,
-            [NotNull] Action<IBasicBlock, IMutableBasicBlock> copy = null
+            [CanBeNull] Action<IBasicBlock, IMutableBasicBlock> copy = null
             )
         {
             // Clone vertices (without edges)
@@ -111,6 +113,25 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
             return cfg;
         }
 
+        [NotNull] public static IControlFlowGraph Modify([NotNull] this IControlFlowGraph input, [NotNull] Action<IEdge, Action<IBasicBlock, IBasicBlock, EdgeType>> copy)
+        {
+            var cfg = new ControlFlowGraph();
+
+            // Copy vertices
+            var replacementVertices = input.CloneVertices(cfg, __ => true);
+
+            // Copy edges
+            foreach (var edge in input.Edges)
+            {
+                copy(edge, (s, e, t) => {
+                    var ss = replacementVertices[s];
+                    var ee = replacementVertices[e];
+                    cfg.CreateEdge(ss, ee, t);
+                });
+            }
+
+            return cfg;
+        }
 
         /// <summary>
         /// Add edges to the graph
@@ -135,6 +156,43 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
             }
 
             return cfg;
+        }
+
+        /// <summary>
+        /// Apply an AST visitor to each control flow graph vertex
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="input"></param>
+        /// <param name="factory"></param>
+        /// <returns></returns>
+        [NotNull] public static IControlFlowGraph VisitBlocks<T>([NotNull] this IControlFlowGraph input, Func<T> factory)
+            where T : BaseTreeVisitor
+        {
+            return input.Modify((a, b) => {
+
+                // Create a program from the statements in this block, visit it
+                var visited = factory().Visit(new Program(new[] { new Line(new StatementList(a.Statements)) }));
+
+                // Extract statements from single line of result programand copy into result block
+                foreach (var stmt in  visited.Lines.Single().Statements.Statements)
+                    b.Add(stmt);
+            });
+        }
+
+        /// <summary>
+        /// Apply an AST visitor to each control flow graph vertex
+        /// </summary>
+        /// <typeparam name="TVisitor"></typeparam>
+        /// <typeparam name="TPrep"></typeparam>
+        /// <param name="input"></param>
+        /// <param name="factory"></param>
+        /// <param name="prepare"></param>
+        /// <returns></returns>
+        [NotNull] public static IControlFlowGraph VisitBlocks<TVisitor, TPrep>([NotNull] this IControlFlowGraph input, [NotNull] Func<TPrep, TVisitor> factory, [NotNull] Func<IControlFlowGraph, TPrep> prepare)
+            where TVisitor : BaseTreeVisitor
+        {
+            var prep = prepare(input);
+            return VisitBlocks(input, () => factory(prep));
         }
     }
 }

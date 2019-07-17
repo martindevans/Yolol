@@ -4,6 +4,7 @@ using System.Linq;
 using JetBrains.Annotations;
 using Yolol.Analysis.ControlFlowGraph.Extensions;
 using Yolol.Execution;
+using Yolol.Grammar;
 using Yolol.Grammar.AST.Expressions;
 
 namespace Yolol.Analysis.ControlFlowGraph.AST
@@ -14,12 +15,12 @@ namespace Yolol.Analysis.ControlFlowGraph.AST
     public class Phi
         : BaseExpression
     {
-        public string BaseVariable { get; }
-        public IReadOnlyList<string> AssignedNames { get; }
+        public VariableName BaseVariable { get; }
+        public IReadOnlyList<VariableName> AssignedNames { get; }
 
         public ISingleStaticAssignmentTable SSA { get; }
 
-        public Phi([NotNull] ISingleStaticAssignmentTable ssa, [NotNull] params string[] assignedNames)
+        public Phi([NotNull] ISingleStaticAssignmentTable ssa, [NotNull] params VariableName[] assignedNames)
         {
             if (assignedNames.Length == 0)
                 throw new ArgumentException("Must specify one or more assigned names");

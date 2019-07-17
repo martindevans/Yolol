@@ -7,6 +7,7 @@ using Yolol.Analysis.ControlFlowGraph.Extensions;
 using Yolol.Analysis.TreeVisitor;
 using Yolol.Analysis.TreeVisitor.Reduction;
 using Yolol.Analysis.Types;
+using Yolol.Grammar;
 using Yolol.Grammar.AST.Statements;
 
 namespace YololEmulator.Tests
@@ -14,42 +15,15 @@ namespace YololEmulator.Tests
     [TestClass]
     public class Playground
     {
-        //[TestMethod]
-        //public void MethodName()
-        //{
-        //    var l1 = "ship=:radio check=11111 if check != 0 then check = 22222 else check = 11111 end";
-        //    var l2 = "gunnery_state = 33333 ciws_readyness_state = 0 general_alarm_state = 0";
-
-        //    var l1p = Parser.TryParseLine(Tokenizer.TryTokenize(l1).Value).Value;
-        //    Console.WriteLine(l1p);
-
-        //    var l2p = Parser.TryParseLine(Tokenizer.TryTokenize(l2).Value).Value;
-        //    Console.WriteLine(l2p);
-
-        //    var prog = l1 + "\n" + l2;
-
-        //    var tokens = Tokenizer.TryTokenize(prog);
-        //    if (!tokens.HasValue)
-        //        Console.WriteLine(tokens.FormatErrorMessageFragment());
-
-        //    // Why does this not parse in multi line, but it does as two separate lines!?
-        //    var astResult = Parser.TryParseProgram(tokens.Value);
-        //    if (!astResult.HasValue)
-        //        Console.WriteLine(astResult.FormatErrorMessageFragment());
-
-        //    var ast = astResult.Value;
-        //    Console.WriteLine(ast.ToString());
-        //}
-
         [TestMethod]
         public void CFG()
         {
-            //var ast = TestExecutor.Parse(
-            //    "a = :a b = :b",
-            //    "c = a + b",
-            //    "if a/2 > 10 then b = 1 else b = \"str\" end",
-            //    "goto 2"
-            //);
+            var ast = TestExecutor.Parse(
+                "a = :a b = :b",
+                "c = a + b",
+                "if a/2 > 10 then :c = 1/:a else :c = \"str\" end d = c",
+                "goto 2"
+            );
 
             //var ast = TestExecutor.Parse(
             //    "z = 2 a = :a * z a /= z",
@@ -60,30 +34,58 @@ namespace YololEmulator.Tests
             //    "b=b+1 goto 4"
             //);
 
-            var ast = TestExecutor.Parse(
-                "a = :a a *= 1 goto 3",
-                "a++ goto 1",
-                "b = a * 2 goto 1"
-            );
+            //var ast = TestExecutor.Parse(
+            //    ":o1=0+(:a*1)+(:a/1)+:a^1+(:a-0)",
+            //    ":o2=\"hello\"*1",
+            //    ":o3=a/0",
+            //    ":o4=a^\"world\"",
+            //    "goto 1"
+            //);
+
+            //var ast = TestExecutor.Parse(
+            //    "a = :a a *= 1 goto 3",
+            //    "a++ goto 1",
+            //    "b = a * 2 goto 1"
+            //);
             Console.WriteLine(ast);
             Console.WriteLine();
 
             var cfg = new Builder(ast).Build();
 
+            var hints = new[] {
+                (new VariableName(":a"), Yolol.Execution.Type.Number)
+            };
+
             // Find types
             cfg = cfg.StaticSingleAssignment(out var ssa);
-            cfg = cfg.FlowTypingAssignment(ssa, out var types);
+            cfg = cfg.FlowTypingAssignment(ssa, out var types, hints);
 
-            // Trim graph based on types
+            // Optimise graph based on types
+            // ReSharper disable once AccessToModifiedClosure
+            cfg = cfg.VisitBlocks(() => new OpNumByConstNumCompressor(types));
+            cfg = cfg.VisitBlocks(() => new ErrorCompressor());
+            cfg = cfg.VisitBlocks(u => new RemoveUnreadAssignments(u, ssa), c => c.FindUnreadAssignments());
+            cfg = cfg.FlowTypingAssignment(ssa, out types, hints);
             cfg = cfg.TypeDrivenEdgeTrimming(types);
+            cfg = cfg.NormalizeErrors();
 
             // Minify the graph
             for (var i = 0; i < 10; i++)
                 cfg = cfg.RemoveEmptyNodes();
             cfg = cfg.RemoveUnreachableBlocks();
 
-            var s = cfg.ToDot();
-            Console.WriteLine(s);
+            // Convert optimised graph to dot
+            var dot = cfg.ToDot();
+
+            // Apply some simplifications before conversion into yolol
+            cfg = cfg.RemoveStaticSingleAssignment(ssa);
+
+            // Convert back into Yolol
+            var yolol = cfg.ToYolol();
+            Console.WriteLine(yolol);
+            Console.WriteLine();
+
+            Console.WriteLine(dot);
         }
 
         [TestMethod]

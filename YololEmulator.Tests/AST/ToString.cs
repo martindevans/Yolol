@@ -18,6 +18,24 @@ namespace YololEmulator.Tests.AST
         }
 
         [TestMethod]
+        public void Not()
+        {
+            Roundtrip("b=not a");
+        }
+
+        [TestMethod]
+        public void And()
+        {
+            Roundtrip("b=a and b");
+        }
+
+        [TestMethod]
+        public void Or()
+        {
+            Roundtrip("b=a or b");
+        }
+
+        [TestMethod]
         public void If()
         {
             Roundtrip("if a==1 then end");

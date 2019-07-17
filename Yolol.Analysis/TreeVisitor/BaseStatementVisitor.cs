@@ -12,6 +12,8 @@ namespace Yolol.Analysis.TreeVisitor
             switch (statement)
             {
                 case Conditional a: return Visit(a);
+                case TypedAssignment a: return Visit(a);
+                case ErrorStatement a: return Visit(a);
 
                 case CompoundAssignment a: return Visit(a);
                 case Assignment a:   return Visit(a);
@@ -30,7 +32,11 @@ namespace Yolol.Analysis.TreeVisitor
             throw new InvalidOperationException($"`Visit` invalid for statement type `{statement.GetType().FullName}`");
         }
 
+        [NotNull] protected abstract TResult Visit([NotNull] ErrorStatement err);
+
         [NotNull] protected abstract TResult Visit([NotNull] Conditional con);
+
+        [NotNull] protected abstract TResult Visit([NotNull] TypedAssignment ass);
 
         [NotNull] protected abstract TResult Visit([NotNull] EmptyStatement empty);
 

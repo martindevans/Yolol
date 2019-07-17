@@ -111,7 +111,6 @@ namespace YololEmulator
             }
 
             var parsed = Parser.TryParseLine(tokens.Value);
-            Console.WriteLine(JsonConvert.SerializeObject(parsed));
             if (!parsed.HasValue)
             {
                 Error(() => {

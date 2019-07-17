@@ -20,6 +20,9 @@ namespace Yolol.Grammar
         GreaterThanEqualTo,
         NotEqualTo,
         EqualTo,
+
+        And,
+        Or
     }
 
     public static class YololBinaryOpExtensions
@@ -40,6 +43,8 @@ namespace Yolol.Grammar
                 case YololBinaryOp.GreaterThanEqualTo: return new GreaterThanEqualTo(left, right);
                 case YololBinaryOp.NotEqualTo: return new NotEqualTo(left, right);
                 case YololBinaryOp.EqualTo: return new EqualTo(left, right);
+                case YololBinaryOp.And: return new And(left, right);
+                case YololBinaryOp.Or: return new Or(left, right);
 
                 //ncrunch: no coverage start
                 default:
@@ -64,6 +69,8 @@ namespace Yolol.Grammar
                 case YololBinaryOp.GreaterThanEqualTo: return ">=";
                 case YololBinaryOp.NotEqualTo: return "!=";
                 case YololBinaryOp.EqualTo: return "==";
+                case YololBinaryOp.And: return "and";
+                case YololBinaryOp.Or: return "or";
 
                 //ncrunch: no coverage start
                 default:

@@ -10,9 +10,9 @@ namespace Yolol.Grammar
 
         public bool IsExternal => Name.StartsWith(':');
 
-        public VariableName(string name)
+        public VariableName([NotNull] string name)
         {
-            Name = name;
+            Name = name.ToLowerInvariant();
         }
 
         public override string ToString()

@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Globalization;
+using JetBrains.Annotations;
+using Yolol.Grammar.AST.Expressions;
+using Yolol.Grammar.AST.Expressions.Unary;
 
 namespace Yolol.Execution
 {
@@ -44,6 +47,11 @@ namespace Yolol.Execution
             Type = Type.Number;
         }
 
+        public Value(bool @bool)
+            : this(@bool ? 1 : 0)
+        {
+        }
+
         public static implicit operator Value(decimal d)
         {
             return new Value(new Number(d));
@@ -60,6 +68,14 @@ namespace Yolol.Execution
                 return Number.ToString(CultureInfo.InvariantCulture);
 
             return $"\"{String}\"";
+        }
+
+        public bool ToBool()
+        {
+            if (Type == Type.String)
+                return true;
+            else
+                return Number != 0;
         }
 
         public object ToObject()
@@ -112,6 +128,14 @@ namespace Yolol.Execution
         public static bool operator !=(Value left, Value right)
         {
             return !left.Equals(right);
+        }
+
+        [NotNull] public BaseExpression ToConstant()
+        {
+            if (Type == Type.Number)
+                return new ConstantNumber(Number);
+            else
+                return new ConstantString(String);
         }
     }
 }

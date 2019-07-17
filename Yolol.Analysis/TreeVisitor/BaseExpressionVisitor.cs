@@ -19,6 +19,7 @@ namespace Yolol.Analysis.TreeVisitor
                 case Phi a:       return Visit(a);
                 case Increment a: return Visit(a);
                 case Decrement a: return Visit(a);
+                case ErrorExpression a: return Visit(a);
 
                 case Bracketed a:   return Visit(a);
                 case Application a: return Visit(a);
@@ -35,6 +36,9 @@ namespace Yolol.Analysis.TreeVisitor
                 case Modulo a:   return Visit(a);
                 case Negate a:   return Visit(a);
                 case Exponent a: return Visit(a);
+
+                case Or a:  return Visit(a);
+                case And a: return Visit(a);
 
                 case Variable a:       return Visit(a);
                 case ConstantNumber a: return Visit(a);
@@ -55,6 +59,12 @@ namespace Yolol.Analysis.TreeVisitor
         {
             throw new InvalidOperationException($"`Visit` not invalid for expression type `{expression.GetType().FullName}`");
         }
+
+        [NotNull] protected abstract TResult Visit([NotNull] Or or);
+
+        [NotNull] protected abstract TResult Visit([NotNull] And and);
+
+        [NotNull] protected abstract TResult Visit([NotNull] ErrorExpression err);
 
         [NotNull] protected abstract TResult Visit([NotNull] Increment inc);
 

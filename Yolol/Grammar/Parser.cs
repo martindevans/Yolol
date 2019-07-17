@@ -18,6 +18,9 @@ namespace Yolol.Grammar
         private static readonly TokenListParser<YololToken, YololBinaryOp> Modulo = Token.EqualTo(YololToken.Modulo).Value(YololBinaryOp.Modulo);
         private static readonly TokenListParser<YololToken, YololBinaryOp> Exponent = Token.EqualTo(YololToken.Exponent).Value(YololBinaryOp.Exponent);
 
+        private static readonly TokenListParser<YololToken, YololBinaryOp> And = Token.EqualTo(YololToken.And).Value(YololBinaryOp.And);
+        private static readonly TokenListParser<YololToken, YololBinaryOp> Or = Token.EqualTo(YololToken.Or).Value(YololBinaryOp.Or);
+
         private static readonly TokenListParser<YololToken, YololBinaryOp> CompoundAdd = Token.EqualTo(YololToken.CompoundPlus).Value(YololBinaryOp.Add);
         private static readonly TokenListParser<YololToken, YololBinaryOp> CompoundSubtract = Token.EqualTo(YololToken.CompoundSubtract).Value(YololBinaryOp.Subtract);
         private static readonly TokenListParser<YololToken, YololBinaryOp> CompoundMultiply = Token.EqualTo(YololToken.CompoundMultiply).Value(YololBinaryOp.Multiply);
@@ -30,6 +33,11 @@ namespace Yolol.Grammar
         private static readonly TokenListParser<YololToken, YololBinaryOp> GreaterThanEqualTo = Token.EqualTo(YololToken.GreaterThanEqualTo).Value(YololBinaryOp.GreaterThanEqualTo);
         private static readonly TokenListParser<YololToken, YololBinaryOp> NotEqualTo = Token.EqualTo(YololToken.NotEqualTo).Value(YololBinaryOp.NotEqualTo);
         private static readonly TokenListParser<YololToken, YololBinaryOp> EqualTo = Token.EqualTo(YololToken.EqualTo).Value(YololBinaryOp.EqualTo);
+
+        private static readonly TokenListParser<YololToken, BaseExpression> Not =
+            from not in Token.EqualTo(YololToken.Not)
+            from exp in Parse.Ref(() => Expression)
+            select (BaseExpression)new Not(exp);
 
         private static readonly TokenListParser<YololToken, VariableName> VariableName = Token.EqualTo(YololToken.Identifier).Select(n => new VariableName(n.ToStringValue()));
         private static readonly TokenListParser<YololToken, FunctionName> FunctionName = Token.EqualTo(YololToken.Identifier).Select(n => new FunctionName(n.ToStringValue()));
@@ -91,6 +99,7 @@ namespace Yolol.Grammar
             (from sign in Token.EqualTo(YololToken.Subtract)
              from factor in Factor
              select (BaseExpression)new Negate(factor))
+            .Or(Not.Try())
             .Or(Factor.Try())
             .Named("expression");
 
@@ -98,7 +107,7 @@ namespace Yolol.Grammar
             Parse.Chain(Multiply.Or(Divide).Or(Modulo).Or(Exponent), Operand, BaseBinaryExpression.Create).Try();
 
         private static readonly TokenListParser<YololToken, BaseExpression> Expression =
-            Parse.Chain(Add.Or(Subtract).Or(LessThan).Or(GreaterThan).Or(LessThanEqualTo).Or(GreaterThanEqualTo).Or(NotEqualTo).Or(EqualTo), Term, BaseBinaryExpression.Create);
+            Parse.Chain(Add.Or(Subtract).Or(LessThan).Or(GreaterThan).Or(LessThanEqualTo).Or(GreaterThanEqualTo).Or(NotEqualTo).Or(EqualTo).Or(And).Or(Or), Term, BaseBinaryExpression.Create);
 
         private static readonly TokenListParser<YololToken, BaseStatement> Assignment =
             from lhs in VariableName.Or(ExternalVariableName)

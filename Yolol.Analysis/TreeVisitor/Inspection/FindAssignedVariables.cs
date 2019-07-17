@@ -20,6 +20,13 @@ namespace Yolol.Analysis.TreeVisitor.Inspection
             return base.Visit(ass);
         }
 
+        protected override BaseStatement Visit(TypedAssignment ass)
+        {
+            _names.Add(ass.Left);
+
+            return base.Visit(ass);
+        }
+
         protected override BaseStatement Visit(CompoundAssignment compAss)
         {
             _names.Add(compAss.Left);

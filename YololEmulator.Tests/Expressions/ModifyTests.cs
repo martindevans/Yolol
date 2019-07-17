@@ -13,5 +13,19 @@ namespace YololEmulator.Tests.Expressions
             var app = new PreIncrement(new VariableName("abc"));
             Assert.IsFalse(app.IsConstant);
         }
+
+        [TestMethod]
+        public void IsNotBoolean()
+        {
+            var app = new PreIncrement(new VariableName("abc"));
+            Assert.IsFalse(app.IsBoolean);
+        }
+
+        [TestMethod]
+        public void CanNotRuntimeError()
+        {
+            var app = new PreIncrement(new VariableName("abc"));
+            Assert.IsFalse(app.CanRuntimeError);
+        }
     }
 }

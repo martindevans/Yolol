@@ -9,6 +9,13 @@ namespace YololEmulator.Tests.Expressions
     public class Application
     {
         [TestMethod]
+        public void CanNotRuntimeError()
+        {
+            var app = new Yolol.Grammar.AST.Expressions.Unary.Application(new FunctionName("func"), new ConstantNumber(1));
+            Assert.IsFalse(app.CanRuntimeError);
+        }
+
+        [TestMethod]
         public void CallInSequence()
         {
             var result = TestExecutor.Execute("a = 7*cos(0)");

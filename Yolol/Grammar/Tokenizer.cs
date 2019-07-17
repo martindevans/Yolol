@@ -22,6 +22,10 @@ namespace Yolol.Grammar
                 .Match(Span.EqualTo("end"), YololToken.End)
                 .Match(Span.EqualTo("goto"), YololToken.Goto)
 
+                .Match(Span.EqualTo("and"), YololToken.And)
+                .Match(Span.EqualTo("or"), YololToken.Or)
+                .Match(Span.EqualTo("not"), YololToken.Not)
+
                 .Match(Span.EqualTo("<="), YololToken.LessThanEqualTo)
                 .Match(Span.EqualTo(">="), YololToken.GreaterThanEqualTo)
                 .Match(Character.EqualTo('<'), YololToken.LessThan)

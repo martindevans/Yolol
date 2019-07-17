@@ -156,12 +156,3 @@ namespace Yolol.Analysis.ControlFlowGraph
         }
     }
 }
-
-/* a = b++ * c * d++
- * 
- w = b++
- x = w * c -->
- y = d++
- z = x * y
- a = z
- */

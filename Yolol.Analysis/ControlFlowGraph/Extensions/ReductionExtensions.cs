@@ -4,7 +4,6 @@ using System.Linq;
 using JetBrains.Annotations;
 using Yolol.Analysis.ControlFlowGraph.AST;
 using Yolol.Analysis.Types;
-using Yolol.Grammar.AST.Statements;
 
 namespace Yolol.Analysis.ControlFlowGraph.Extensions
 {
@@ -72,6 +71,12 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
             return g;
         }
 
+        /// <summary>
+        /// Removed error/continue edges which we know cannot happen due to type info
+        /// </summary>
+        /// <param name="graph"></param>
+        /// <param name="types"></param>
+        /// <returns></returns>
         [NotNull] public static IControlFlowGraph TypeDrivenEdgeTrimming([NotNull] this IControlFlowGraph graph, ITypeAssignments types)
         {
             return graph.Trim(edge => {
@@ -79,6 +84,7 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
                 // Find last statement in previous block
                 var stmt = edge.Start.Statements.LastOrDefault();
                 var tass = stmt as TypedAssignment;
+                var err = stmt as ErrorStatement;
 
                 // If type is unassigned we can't make a judgement
                 if (tass?.Type == Execution.Type.Unassigned)
@@ -86,6 +92,10 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
 
                 if (edge.Type == EdgeType.RuntimeError)
                 {
+                    // If it's an error statement keep it
+                    if (err != null)
+                        return true;
+
                     // If there is no statement at all then it can't be an error
                     if (tass == null)
                         return false;
@@ -95,12 +105,48 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
                 }
                 else
                 {
+                    // If it's an error statement remove it
+                    if (err != null)
+                        return false;
+
                     // If there is no typed assignment we can't judge
                     if (tass == null)
                         return true;
 
                     return tass.Type != Execution.Type.Error;
                 }
+            });
+        }
+
+        /// <summary>
+        /// Replaces nodes with an error statement and an error edge with an empty node and a continue edge
+        /// </summary>
+        /// <param name="cfg"></param>
+        /// <returns></returns>
+        [NotNull] public static IControlFlowGraph NormalizeErrors([NotNull] this IControlFlowGraph cfg)
+        {
+            var todo = new HashSet<IBasicBlock>();
+
+            // Remove the error statements and save blocks to remove edges from
+            cfg = cfg.Modify((a, b) => {
+
+                if (!a.Statements.Any())
+                    return;
+
+                var toCopy = a.Statements;
+                if ((a.Statements.Last() is ErrorStatement) && a.Outgoing.Count() == 1 && a.Outgoing.Single().Type == EdgeType.RuntimeError)
+                {
+                    toCopy = a.Statements.Take(a.Statements.Count() - 1);
+                    todo.Add(b);
+                }
+
+                foreach (var stmt in toCopy)
+                    b.Add(stmt);
+            });
+
+            // Copy graph, replacing edges as necessary
+            return cfg.Modify((e, c) => {
+                c(e.Start, e.End, todo.Contains(e.Start) ? EdgeType.Continue : e.Type);
             });
         }
     }

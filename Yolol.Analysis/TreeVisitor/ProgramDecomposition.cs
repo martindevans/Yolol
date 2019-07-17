@@ -9,6 +9,7 @@ using Yolol.Grammar.AST.Expressions;
 using Yolol.Grammar.AST.Expressions.Binary;
 using Yolol.Grammar.AST.Expressions.Unary;
 using Yolol.Grammar.AST.Statements;
+using Variable = Yolol.Grammar.AST.Expressions.Unary.Variable;
 
 namespace Yolol.Analysis.TreeVisitor
 {
@@ -46,6 +47,11 @@ namespace Yolol.Analysis.TreeVisitor
             _names = names;
         }
 
+        protected override IEnumerable<BaseStatement> Visit(ErrorStatement err)
+        {
+            yield return err;
+        }
+
         protected override IEnumerable<BaseStatement> Visit(Conditional con)
         {
             throw new NotSupportedException();
@@ -70,6 +76,11 @@ namespace Yolol.Analysis.TreeVisitor
             var c = new Assignment(new VariableName(compAss.Left.Name), new Variable(tmp));
 
             return a.Append(b).Append(c);
+        }
+
+        protected override IEnumerable<BaseStatement> Visit(TypedAssignment ass)
+        {
+            throw new NotSupportedException();
         }
 
         protected override IEnumerable<BaseStatement> Visit(Assignment ass)
@@ -123,28 +134,50 @@ namespace Yolol.Analysis.TreeVisitor
 
         [NotNull] private VariableName MkTmp() => new VariableName(_names.Name());
 
-        [NotNull] private static Variable GetResultName([NotNull] IEnumerable<BaseStatement> stmts) => new Variable(((Assignment)stmts.Last()).Left);
+        [NotNull] private static Variable GetResultName([NotNull] IEnumerable<BaseStatement> stmts, BaseExpression original)
+        {
+            if (stmts.Any())
+                return new Variable(((Assignment)stmts.Last()).Left);
 
-        [NotNull] private IEnumerable<BaseStatement> Binary<T>([NotNull] T expr, [NotNull] Func<Variable, Variable, T> factory)
+            if (original is Variable var)
+                return var;
+
+            throw new InvalidOperationException("Failed to get result from previous decomposed expression");
+        }
+
+        [NotNull] private IEnumerable<BaseStatement> Binary<T>([NotNull] T expr, [NotNull] Func<BaseExpression, BaseExpression, T> factory)
             where T : BaseBinaryExpression
         {
-            var l = Visit(expr.Left);
-            var r = Visit(expr.Right);
+            (BaseExpression, IEnumerable<BaseStatement>) EvalSide(BaseExpression ex)
+            {
+                if (ex.IsConstant)
+                    return (ex.StaticEvaluate().ToConstant(), Array.Empty<BaseStatement>());
+
+                var s = Visit(ex);
+                return (GetResultName(s, ex), s);
+            }
+
+            var (le, ls) = EvalSide(expr.Left);
+            var (re, rs) = EvalSide(expr.Right);
 
             var t = MkTmp();
-            var a = new Assignment(t, factory(GetResultName(l), GetResultName(r)));
+            var a = new Assignment(t, factory(le, re));
 
-            return l.Concat(r).Append(a);
+            return ls.Concat(rs).Append(a);
         }
 
         [NotNull] private IEnumerable<BaseStatement> Unary<T>([NotNull] T _, [NotNull] BaseExpression param, [NotNull] Func<Variable, T> factory)
             where T : BaseExpression
         {
             var p = Visit(param);
-            factory(GetResultName(p));
-            var a = new Assignment(MkTmp(), factory(GetResultName(p)));
+            var a = new Assignment(MkTmp(), factory(GetResultName(p, param)));
 
             return p.Append(a);
+        }
+
+        protected override IEnumerable<BaseStatement> Visit(ErrorExpression err)
+        {
+            yield return new ErrorStatement();
         }
 
         protected override IEnumerable<BaseStatement> Visit(Increment inc)

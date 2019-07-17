@@ -9,7 +9,7 @@ namespace Yolol.Grammar.AST.Statements
     public class StatementList
         : BaseStatement
     {
-        public override bool CanRuntimeError => Statements.All(s => s.CanRuntimeError);
+        public override bool CanRuntimeError => Statements.Any(s => s.CanRuntimeError);
 
         [NotNull] public IReadOnlyList<BaseStatement> Statements { get; }
 

@@ -24,7 +24,7 @@ namespace Yolol.Analysis.TreeVisitor
             var r = Visit(line.Statements);
             if (r is StatementList sl)
                 return new Line(sl);
-            return new Line(new StatementList(new[] { r }));
+            return new Line(new StatementList(r));
         }
 
         [NotNull] protected virtual VariableName Visit([NotNull] VariableName var)
@@ -41,6 +41,7 @@ namespace Yolol.Analysis.TreeVisitor
                 case Phi a:         return Visit(a);
                 case Increment a:   return Visit(a);
                 case Decrement a:   return Visit(a);
+                case ErrorExpression a: return Visit(a);
 
                 case Bracketed a:   return Visit(a);
                 case Application a: return Visit(a);
@@ -57,6 +58,9 @@ namespace Yolol.Analysis.TreeVisitor
                 case Modulo a:   return Visit(a);
                 case Negate a:   return Visit(a);
                 case Exponent a: return Visit(a);
+
+                case Or a:  return Visit(a);
+                case And a: return Visit(a);
 
                 case Variable a:       return Visit(a);
                 case ConstantNumber a: return Visit(a);
@@ -78,6 +82,21 @@ namespace Yolol.Analysis.TreeVisitor
             throw new InvalidOperationException($"`Visit` not invalid for expression type `{expression.GetType().FullName}`");
         }
 
+        [NotNull] protected virtual BaseExpression Visit([NotNull] Or or)
+        {
+            return new Or(Visit(or.Left), Visit(or.Right));
+        }
+
+        [NotNull] protected virtual BaseExpression Visit([NotNull] And and)
+        {
+            return new And(Visit(and.Left), Visit(and.Right));
+        }
+
+        [NotNull] protected virtual BaseExpression Visit([NotNull] ErrorExpression err)
+        {
+            return err;
+        }
+
         [NotNull] protected virtual BaseExpression Visit([NotNull] Increment inc)
         {
             return new Increment(Visit(inc.Name));
@@ -90,7 +109,7 @@ namespace Yolol.Analysis.TreeVisitor
 
         [NotNull] protected virtual BaseExpression Visit([NotNull] Phi phi)
         {
-            return new Phi(phi.SSA, phi.AssignedNames.Select(n => Visit(new VariableName(n))).Select(n => n.Name).ToArray());
+            return new Phi(phi.SSA, phi.AssignedNames.Select(Visit).ToArray());
         }
 
         [NotNull] protected virtual BaseExpression Visit([NotNull] LessThanEqualTo eq)
@@ -210,6 +229,8 @@ namespace Yolol.Analysis.TreeVisitor
             switch (statement)
             {
                 case Conditional a: return Visit(a);
+                case TypedAssignment a: return Visit(a);
+                case ErrorStatement a: return Visit(a);
 
                 case CompoundAssignment a: return Visit(a);
                 case Assignment a: return Visit(a);
@@ -228,9 +249,20 @@ namespace Yolol.Analysis.TreeVisitor
             throw new InvalidOperationException($"`Visit` invalid for statement type `{statement.GetType().FullName}`");
         }
 
+        [NotNull] protected virtual BaseStatement Visit([NotNull] ErrorStatement err)
+        {
+            return err;
+        }
+
         [NotNull] protected virtual BaseStatement Visit([NotNull] Conditional con)
         {
             return new Conditional(Visit(con.Condition));
+        }
+
+        [NotNull] protected virtual BaseStatement Visit([NotNull] TypedAssignment ass)
+        {
+            var expr = Visit(ass.Right);
+            return new TypedAssignment(ass.Type, Visit(ass.Left), expr);
         }
 
         [NotNull] protected virtual StatementList Visit([NotNull] StatementList list)

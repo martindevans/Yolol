@@ -30,26 +30,38 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
             var root = graph.Vertices.Single(a => a.Type == BasicBlockType.Entry);
             sb.AppendLine($"  {ID(root.ID)} [label=\"entry\" shape=note rank=min];");
 
-            foreach (var edge in graph.Edges)
+            string EdgeAsString(IEdge edge)
             {
                 // 35 -> 36 [label="eol_fallthrough" color="r g b"];
                 var a = ID(edge.Start.ID);
                 var b = ID(edge.End.ID);
 
-                string col;
-                switch (edge.Type)
-                {
-                    case EdgeType.GotoConstStr:
-                    case EdgeType.RuntimeError:
-                        col = "#ff0000";
-                        break;
-                    default:
-                        col = "#000000";
-                        break;
-                }
+                var col = "#000000";
+                if (edge.Type == EdgeType.GotoConstStr || edge.Type == EdgeType.RuntimeError)
+                    col = "#ff0000";
 
-                sb.AppendLine($"  {a} -> {b} [label=\"{edge.Type}\" color=\"{col}\"];");
+                return $"  {a} -> {b} [label=\"{edge.Type}\" color=\"{col}\"];";
             }
+
+            // Group edges into clusters (transfers within one line)
+            var clusters = from edge in graph.Edges
+                           where edge.Start.LineNumber == edge.End.LineNumber
+                           group edge by edge.Start.LineNumber into grps
+                           select grps;
+            var others = from edge in graph.Edges
+                         where edge.Start.LineNumber != edge.End.LineNumber
+                         select edge;
+
+            foreach (var cluster in clusters)
+            {
+                sb.AppendLine($"  subgraph cluster_L{cluster.Key} {{");
+                foreach (var edge in cluster)
+                    sb.AppendLine($"    {EdgeAsString(edge)}");
+                sb.AppendLine("  }");
+            }
+
+            foreach (var edge in others)
+                sb.AppendLine($"{EdgeAsString(edge)}");
 
             var vs = graph.Vertices.Where(a => a.Type != BasicBlockType.Entry).Select(vertex => {
                 var style = vertex.Type == BasicBlockType.LineStart ? "style=none" : "style=rounded";

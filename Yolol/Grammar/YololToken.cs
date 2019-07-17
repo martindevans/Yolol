@@ -37,6 +37,10 @@
         Else,
         End,
 
+        And,
+        Or,
+        Not,
+
         Goto,
 
         Identifier,
