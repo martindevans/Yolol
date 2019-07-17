@@ -153,6 +153,10 @@ namespace Yolol.Analysis.Types
             return result;
         }
 
+        protected override Type Visit(And and) => BinaryLogical(and);
+
+        protected override Type Visit(Or or) => BinaryLogical(or);
+
         protected override Type Visit(LessThanEqualTo eq) => BinaryLogical(eq);
 
         protected override Type Visit(LessThan eq) => BinaryLogical(eq);

@@ -274,6 +274,10 @@ namespace Yolol.Analysis.TreeVisitor
 
         protected override IEnumerable<BaseStatement> Visit(Bracketed brk) => Visit(brk.Expression);
 
+        protected override IEnumerable<BaseStatement> Visit(And and) => Binary(and, (a, b) => new And(a, b));
+
+        protected override IEnumerable<BaseStatement> Visit(Or or) => Binary(or, (a, b) => new Or(a, b));
+
         protected override IEnumerable<BaseStatement> Visit(Add add) => Binary(add, (a, b) => new Add(a, b));
 
         protected override IEnumerable<BaseStatement> Visit(Subtract sub) => Binary(sub, (a, b) => new Subtract(a, b));
