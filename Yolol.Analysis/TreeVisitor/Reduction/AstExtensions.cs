@@ -52,5 +52,13 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
         {
             return new ConstantCompressor().Visit(prog);
         }
+
+
+
+
+        [NotNull] public static Program StripTypes([NotNull] this Program prog)
+        {
+            return new StripTypes().Visit(prog);
+        }
     }
 }

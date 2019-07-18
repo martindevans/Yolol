@@ -28,7 +28,7 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
 
             // Add root node
             var root = graph.Vertices.Single(a => a.Type == BasicBlockType.Entry);
-            sb.AppendLine($"  {ID(root.ID)} [label=\"entry\" shape=note rank=min];");
+            sb.AppendLine($"  {ID(root.ID)} [label=\"entry\" shape=circle rank=min];");
 
             string EdgeAsString(IEdge edge)
             {

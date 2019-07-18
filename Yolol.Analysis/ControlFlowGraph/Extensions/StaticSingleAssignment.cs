@@ -67,6 +67,11 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
                 _ssa = ssa;
             }
 
+            protected override BaseExpression Visit(Phi phi)
+            {
+                return new Variable(phi.BaseVariable);
+            }
+
             protected override VariableName Visit(VariableName var)
             {
                 if (var.IsExternal)

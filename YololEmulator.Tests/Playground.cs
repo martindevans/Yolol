@@ -18,21 +18,21 @@ namespace YololEmulator.Tests
         [TestMethod]
         public void CFG()
         {
-            var ast = TestExecutor.Parse(
-                "a = :a b = :b",
-                "c = a + b",
-                "if a/2 > 10 then :c = 1/:a else :c = \"str\" end d = c",
-                "goto 2"
-            );
-
             //var ast = TestExecutor.Parse(
-            //    "z = 2 a = :a * z a /= z",
-            //    "flag=a==:a if flag then goto 5 else goto 6 end",
-            //    "x = \"hello\" * 4 goto \"world\" x = 2",
-            //    "b*=2 flag=b>30 if flag then :b=a end",
-            //    "b=b-1 goto 4",
-            //    "b=b+1 goto 4"
+            //    "a = :a b = :b",
+            //    "c = a + b",
+            //    "if a/2 > 10 then :c = 1/:a else :c = \"str\" end d = c",
+            //    "goto 2"
             //);
+
+            var ast = TestExecutor.Parse(
+                "z = 2 a = :a * z a /= z",
+                "flag=a==:a if flag then goto 5 else goto 6 end",
+                "x = \"hello\" * 4 goto \"world\" x = 2",
+                "b*=2 flag=b>30 if flag then :b=a end",
+                "b=b-1 goto 4",
+                "b=b+1 goto 4"
+            );
 
             //var ast = TestExecutor.Parse(
             //    ":o1=0+(:a*1)+(:a/1)+:a^1+(:a-0)",
@@ -81,7 +81,7 @@ namespace YololEmulator.Tests
             cfg = cfg.RemoveStaticSingleAssignment(ssa);
 
             // Convert back into Yolol
-            var yolol = cfg.ToYolol();
+            var yolol = cfg.ToYolol().StripTypes();
             Console.WriteLine(yolol);
             Console.WriteLine();
 
