@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using JetBrains.Annotations;
 using Yolol.Analysis.ControlFlowGraph.AST;
 using Yolol.Grammar;
 using Yolol.Grammar.AST.Expressions;
@@ -12,12 +14,9 @@ namespace Yolol.Analysis.TreeVisitor.Inspection
     {
         private readonly Dictionary<VariableName, uint> _counts = new Dictionary<VariableName, uint>();
 
-        public IEnumerable<VariableName> Names => _counts.Keys;
+        [NotNull] public IEnumerable<VariableName> Names => _counts.Keys;
 
-        private void Add(string name)
-        {
-            Add(new VariableName(name));
-        }
+        [NotNull] public IEnumerable<(VariableName, uint)> Counts => _counts.Select(a => (a.Key, a.Value));
 
         private void Add(VariableName name)
         {

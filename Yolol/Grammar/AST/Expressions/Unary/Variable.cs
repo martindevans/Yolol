@@ -1,9 +1,12 @@
-﻿using Yolol.Execution;
+﻿using System;
+using JetBrains.Annotations;
+using Yolol.Execution;
+using Yolol.Grammar.AST.Statements;
 
 namespace Yolol.Grammar.AST.Expressions.Unary
 {
     public class Variable
-        : BaseExpression
+        : BaseExpression, IEquatable<Variable>
     {
         public VariableName Name { get; }
 
@@ -21,6 +24,18 @@ namespace Yolol.Grammar.AST.Expressions.Unary
         public override Value Evaluate(MachineState state)
         {
             return state.GetVariable(Name.Name).Value;
+        }
+
+        public bool Equals([CanBeNull] Variable other)
+        {
+            return other != null
+                && other.Name.Equals(Name);
+        }
+
+        public override bool Equals(BaseExpression other)
+        {
+            return other is Variable var
+                && var.Equals(this);
         }
 
         public override string ToString()

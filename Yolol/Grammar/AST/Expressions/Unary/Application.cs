@@ -1,10 +1,11 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+using JetBrains.Annotations;
 using Yolol.Execution;
 
 namespace Yolol.Grammar.AST.Expressions.Unary
 {
     public class Application
-        : BaseExpression
+        : BaseExpression, IEquatable<Application>
     {
         [NotNull] public FunctionName Name { get; }
 
@@ -29,6 +30,19 @@ namespace Yolol.Grammar.AST.Expressions.Unary
                 throw new ExecutionException("Attempted to call unknown function `{_name}`");
 
             return intrinsic(Parameter.Evaluate(state));
+        }
+
+        public bool Equals([CanBeNull] Application other)
+        {
+            return other != null
+                && other.Name.Equals(Name)
+                && other.Parameter.Equals(Parameter);
+        }
+
+        public override bool Equals(BaseExpression other)
+        {
+            return other is Application app
+                && app.Equals(this);
         }
 
         public override string ToString()

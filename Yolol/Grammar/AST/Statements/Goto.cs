@@ -1,4 +1,5 @@
 ﻿using System;
+using JetBrains.Annotations;
 using Yolol.Execution;
 using Yolol.Grammar.AST.Expressions;
 
@@ -7,7 +8,7 @@ using Type = Yolol.Execution.Type;
 namespace Yolol.Grammar.AST.Statements
 {
     public class Goto
-        : BaseStatement
+        : BaseStatement, IEquatable<Goto>
     {
         public override bool CanRuntimeError => true;
 
@@ -27,6 +28,18 @@ namespace Yolol.Grammar.AST.Statements
 
             var line = Math.Clamp((int)dest.Number.Value, 1, 20);
             return new ExecutionResult(line);
+        }
+
+        public bool Equals([CanBeNull] Goto other)
+        {
+            return other != null
+                && other.Destination.Equals(Destination);
+        }
+
+        public override bool Equals(BaseStatement other)
+        {
+            return other is Goto @goto
+                   && @goto.Equals(this);
         }
 
         public override string ToString()

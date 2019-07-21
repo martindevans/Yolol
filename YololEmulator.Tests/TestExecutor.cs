@@ -4,6 +4,7 @@ using JetBrains.Annotations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Yolol.Execution;
 using Yolol.Grammar;
+using Yolol.Grammar.AST;
 using Yolol.Grammar.AST.Statements;
 
 namespace YololEmulator.Tests

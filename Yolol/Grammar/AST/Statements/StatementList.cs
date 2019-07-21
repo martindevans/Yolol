@@ -7,7 +7,7 @@ using Yolol.Execution;
 namespace Yolol.Grammar.AST.Statements
 {
     public class StatementList
-        : BaseStatement
+        : BaseStatement, IEquatable<StatementList>
     {
         public override bool CanRuntimeError => Statements.Any(s => s.CanRuntimeError);
 
@@ -52,6 +52,19 @@ namespace Yolol.Grammar.AST.Statements
             }
 
             return new ExecutionResult();
+        }
+
+        public bool Equals([CanBeNull] StatementList other)
+        {
+            return other != null
+                && other.Statements.Count == Statements.Count
+                && other.Statements.Zip(Statements, (a, b) => a.Equals(b)).All(a => a);
+        }
+
+        public override bool Equals(BaseStatement other)
+        {
+            return other is StatementList sl
+                && sl.Equals(this);
         }
 
         public override string ToString()

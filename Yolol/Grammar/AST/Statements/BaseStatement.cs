@@ -1,9 +1,11 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+using JetBrains.Annotations;
 using Yolol.Execution;
 
 namespace Yolol.Grammar.AST.Statements
 {
     public abstract class BaseStatement
+        : IEquatable<BaseStatement>
     {
         /// <summary>
         /// Check if this statement can cause a runtime error
@@ -11,6 +13,8 @@ namespace Yolol.Grammar.AST.Statements
         public abstract bool CanRuntimeError { get; }
 
         [NotNull] public abstract ExecutionResult Evaluate([NotNull] MachineState state);
+
+        public abstract bool Equals([CanBeNull] BaseStatement other);
 
         [NotNull] public abstract override string ToString();
     }

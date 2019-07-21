@@ -5,6 +5,7 @@ using Yolol.Analysis.ControlFlowGraph.AST;
 using Yolol.Analysis.TreeVisitor;
 using Yolol.Analysis.TreeVisitor.Reduction;
 using Yolol.Execution.Extensions;
+using Yolol.Grammar.AST;
 using Yolol.Grammar.AST.Statements;
 
 namespace Yolol.Analysis.ControlFlowGraph

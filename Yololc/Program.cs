@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using CommandLine;
 using JetBrains.Annotations;
@@ -11,6 +12,23 @@ namespace Yololc
     {
         [Option('i', "input", HelpText = "File to read YOLOL code from", Required = true)]
         public string InputFile { get; set; }
+
+        [Option('v', "verbose", HelpText = "Control if output of non-code messages are displayed", Required = false, Default = true)]
+        public bool Verbose { get; set; }
+
+        [Option("iterations", HelpText = "Maximum number of times to apply the optimisation passes", Required = false, Default = 10)]
+        public int MaxIterations { get; set; }
+
+
+        [Option("disable_astpasses", HelpText = "Disable all passes based on AST transforms", Required = false, Default = false)]
+        public bool DisableAstTransformPasses { get; set; }
+
+        [Option("disable_cfgpasses", HelpText = "Disable all passes based on CFG analysis", Required = false, Default = false)]
+        public bool DisableSimpleAstPasses { get; set; }
+
+
+
+
 
 
         [Option("disable_constantfolding", HelpText = "Do not replace constant expressions/statements with their result", Required = false)]
@@ -81,27 +99,69 @@ namespace Yololc
 
             var ast = astResult.Value;
 
-            if (!options.DisableConstantFolding)
-                ast = ast.FoldConstants();
-            if (!options.DisableConstantHoisting)
-                ast = ast.HoistConstants();
-            if (!options.DisableCompoundIncrementSubstitution)
-                ast = ast.CompressCompoundIncrement();
-            if (!options.DisableVariableNameSimplification)
-                ast = ast.SimplifyVariableNames();
-            if (!options.DisableDeadPostGotoElimination)
-                ast = ast.DeadPostGotoElimination();
-            if (!options.DisableEolGotoElimination)
-                ast = ast.TrailingGotoNextLineElimination();
-            if (!options.DisableTrailingConditionalGotoAnyLineCompression)
-                ast = ast.TrailingConditionalGotoAnyLineCompression();
-            if (!options.DisableCompressConditionalAssignment)
-                ast = ast.CompressConditionalAssignment();
-            if (!options.DisableConstantCompression)
-                ast = ast.CompressConstants();
+            var i = 0;
+            ast = Fixpoint(options.MaxIterations, ast, a => {
+
+                i++;
+                if (options.Verbose)
+                    Console.WriteLine($"Starting Iteration: {i}");
+
+                var timer = new Stopwatch();
+                timer.Start();
+
+                // Apply AST transform passes
+                if (!options.DisableConstantFolding && !options.DisableAstTransformPasses)
+                    a = a.FoldConstants();
+                if (!options.DisableConstantHoisting && !options.DisableAstTransformPasses)
+                    a = a.HoistConstants();
+                if (!options.DisableCompoundIncrementSubstitution && !options.DisableAstTransformPasses)
+                    a = a.CompressCompoundIncrement();
+                if (!options.DisableVariableNameSimplification && !options.DisableAstTransformPasses)
+                    a = a.SimplifyVariableNames();
+                if (!options.DisableDeadPostGotoElimination && !options.DisableAstTransformPasses)
+                    a = a.DeadPostGotoElimination();
+                if (!options.DisableEolGotoElimination && !options.DisableAstTransformPasses)
+                    a = a.TrailingGotoNextLineElimination();
+                if (!options.DisableTrailingConditionalGotoAnyLineCompression && !options.DisableAstTransformPasses)
+                    a = a.TrailingConditionalGotoAnyLineCompression();
+                if (!options.DisableCompressConditionalAssignment && !options.DisableAstTransformPasses)
+                    a = a.CompressConditionalAssignment();
+                if (!options.DisableConstantCompression && !options.DisableAstTransformPasses)
+                    a = a.CompressConstants();
+
+                if (options.Verbose)
+                Console.WriteLine($"{timer.ElapsedMilliseconds}ms");
+
+                return a;
+            });
 
             var output = ast.ToString();
-            Console.Write(output + $"\n//reduced from {startLength} characters to {output.Length} characters");
+
+            if (options.Verbose)
+            {
+                Console.WriteLine("Done");
+                Console.Write($"reduced from {startLength} characters to {output.Length} characters");
+                Console.WriteLine();
+                Console.WriteLine();
+                Console.WriteLine();
+            }
+
+            Console.WriteLine(output);
+        }
+
+        private static T Fixpoint<T>(int iters, T item, Func<T, T> transform)
+            where T : IEquatable<T>
+        {
+            for (var i = 0; i < iters; i++)
+            {
+                var prev = item;
+                item = transform(prev);
+
+                if (prev.Equals(item))
+                    break;
+            }
+
+            return item;
         }
     }
 }

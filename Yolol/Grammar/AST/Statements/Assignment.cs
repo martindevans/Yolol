@@ -1,10 +1,12 @@
-﻿using Yolol.Execution;
+﻿using System;
+using JetBrains.Annotations;
+using Yolol.Execution;
 using Yolol.Grammar.AST.Expressions;
 
 namespace Yolol.Grammar.AST.Statements
 {
     public class Assignment
-        : BaseStatement
+        : BaseStatement, IEquatable<Assignment>
     {
         public override bool CanRuntimeError => Right.CanRuntimeError;
 
@@ -23,6 +25,19 @@ namespace Yolol.Grammar.AST.Statements
             var.Value = Right.Evaluate(state);
 
             return new ExecutionResult();
+        }
+
+        public bool Equals([CanBeNull] Assignment other)
+        {
+            return other != null
+                && other.Left.Equals(Left)
+                && other.Right.Equals(Right);
+        }
+
+        public override bool Equals(BaseStatement other)
+        {
+            return other is Assignment ass
+                   && ass.Equals(this);
         }
 
         public override string ToString()

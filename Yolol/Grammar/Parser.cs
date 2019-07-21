@@ -2,6 +2,7 @@
 using Superpower;
 using Superpower.Model;
 using Superpower.Parsers;
+using Yolol.Grammar.AST;
 using Yolol.Grammar.AST.Expressions;
 using Yolol.Grammar.AST.Expressions.Binary;
 using Yolol.Grammar.AST.Expressions.Unary;

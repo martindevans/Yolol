@@ -1,10 +1,13 @@
-﻿using Yolol.Execution;
+﻿using System;
+using JetBrains.Annotations;
+using Yolol.Execution;
 using Yolol.Grammar.AST.Expressions;
+using Yolol.Grammar.AST.Expressions.Binary;
 
 namespace Yolol.Analysis.ControlFlowGraph.AST
 {
     public class ErrorExpression
-        : BaseExpression
+        : BaseExpression, IEquatable<ErrorExpression>
     {
         public override bool IsConstant => true;
         public override bool IsBoolean => false;
@@ -12,6 +15,17 @@ namespace Yolol.Analysis.ControlFlowGraph.AST
         public override Value Evaluate(MachineState state)
         {
             throw new ExecutionException("Static error");
+        }
+
+        public bool Equals([CanBeNull] ErrorExpression other)
+        {
+            return other != null;
+        }
+
+        public override bool Equals(BaseExpression other)
+        {
+            return other is ErrorExpression a
+                && a.Equals(this);
         }
 
         public override string ToString()

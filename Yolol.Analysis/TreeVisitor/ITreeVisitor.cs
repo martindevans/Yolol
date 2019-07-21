@@ -1,4 +1,5 @@
 ﻿using JetBrains.Annotations;
+using Yolol.Grammar.AST;
 using Yolol.Grammar.AST.Statements;
 
 namespace Yolol.Analysis.TreeVisitor

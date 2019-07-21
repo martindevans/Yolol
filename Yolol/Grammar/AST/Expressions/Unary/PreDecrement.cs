@@ -1,13 +1,26 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+using JetBrains.Annotations;
 
 namespace Yolol.Grammar.AST.Expressions.Unary
 {
     public class PreDecrement
-        : BaseDecrement
+        : BaseDecrement, IEquatable<PreDecrement>
     {
         public PreDecrement([NotNull] VariableName name)
             : base(name, true)
         {
+        }
+
+        public bool Equals([CanBeNull] PreDecrement other)
+        {
+            return other != null
+                && other.Name.Equals(Name);
+        }
+
+        public override bool Equals(BaseExpression other)
+        {
+            return other is PreDecrement pre
+                && pre.Equals(this);
         }
 
         public override string ToString()

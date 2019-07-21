@@ -1,9 +1,11 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+using JetBrains.Annotations;
 using Yolol.Execution;
 
 namespace Yolol.Grammar.AST.Expressions
 {
     public abstract class BaseExpression
+        : IEquatable<BaseExpression>
     {
         /// <summary>
         /// Check if this expression evaluates to a constant value
@@ -21,6 +23,8 @@ namespace Yolol.Grammar.AST.Expressions
         public abstract bool CanRuntimeError { get; }
 
         public abstract Value Evaluate([NotNull] MachineState state);
+
+        public abstract bool Equals(BaseExpression other);
 
         [NotNull] public abstract override string ToString();
     }

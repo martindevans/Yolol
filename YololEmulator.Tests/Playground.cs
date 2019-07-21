@@ -85,6 +85,9 @@ namespace YololEmulator.Tests
             Console.WriteLine(yolol);
             Console.WriteLine();
 
+            Console.WriteLine($"{ast.ToString().Length} => {yolol.ToString().Length}");
+            Console.WriteLine();
+
             Console.WriteLine(dot);
         }
 

@@ -1,9 +1,11 @@
-﻿using Yolol.Execution;
+﻿using System;
+using JetBrains.Annotations;
+using Yolol.Execution;
 
 namespace Yolol.Grammar.AST.Expressions.Unary
 {
     public class ConstantNumber
-        : BaseExpression
+        : BaseExpression, IEquatable<ConstantNumber>
     {
         public Number Value { get; }
 
@@ -21,6 +23,18 @@ namespace Yolol.Grammar.AST.Expressions.Unary
         public override Value Evaluate(MachineState _)
         {
             return new Value(Value);
+        }
+
+        public bool Equals([CanBeNull] ConstantNumber other)
+        {
+            return other != null
+                && other.Value.Equals(Value);
+        }
+
+        public override bool Equals(BaseExpression other)
+        {
+            return other is ConstantNumber num
+                && num.Equals(this);
         }
 
         public override string ToString()

@@ -1,10 +1,12 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+using JetBrains.Annotations;
 using Yolol.Execution;
+using Type = Yolol.Execution.Type;
 
 namespace Yolol.Grammar.AST.Expressions.Unary
 {
     public class Not
-        : BaseExpression
+        : BaseExpression, IEquatable<Not>
     {
         [NotNull] public BaseExpression Expression { get; }
 
@@ -27,6 +29,18 @@ namespace Yolol.Grammar.AST.Expressions.Unary
                 return new Value(false);
 
             return new Value(v.Number == 0);
+        }
+
+        public bool Equals([CanBeNull] Not other)
+        {
+            return other != null
+                && other.Expression.Equals(Expression);
+        }
+
+        public override bool Equals(BaseExpression other)
+        {
+            return other is Not not
+                && not.Equals(this);
         }
 
         public override string ToString()

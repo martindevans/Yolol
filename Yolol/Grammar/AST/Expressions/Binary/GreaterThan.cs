@@ -5,7 +5,7 @@ using Yolol.Execution;
 namespace Yolol.Grammar.AST.Expressions.Binary
 {
     public class GreaterThan
-        : BaseBinaryExpression
+        : BaseBinaryExpression, IEquatable<GreaterThan>
     {
         public override bool CanRuntimeError => Left.CanRuntimeError || Right.CanRuntimeError;
 
@@ -36,6 +36,19 @@ namespace Yolol.Grammar.AST.Expressions.Binary
         protected override Value Evaluate(Number l, string r)
         {
             return Evaluate(l.ToString(), r);
+        }
+
+        public bool Equals([CanBeNull] GreaterThan other)
+        {
+            return other != null
+                   && other.Left.Equals(Left)
+                   && other.Right.Equals(Right);
+        }
+
+        public override bool Equals(BaseExpression other)
+        {
+            return other is GreaterThan a
+                   && a.Equals(this);
         }
 
         public override string ToString()

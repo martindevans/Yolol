@@ -5,7 +5,7 @@ using Yolol.Execution;
 namespace Yolol.Grammar.AST.Expressions.Binary
 {
     public class EqualTo
-        : BaseBinaryExpression
+        : BaseBinaryExpression, IEquatable<EqualTo>
     {
         public override bool CanRuntimeError => Left.CanRuntimeError || Right.CanRuntimeError;
 
@@ -34,6 +34,19 @@ namespace Yolol.Grammar.AST.Expressions.Binary
         protected override Value Evaluate(Number l, string r)
         {
             return 0;
+        }
+
+        public bool Equals([CanBeNull] EqualTo other)
+        {
+            return other != null
+                   && other.Left.Equals(Left)
+                   && other.Right.Equals(Right);
+        }
+
+        public override bool Equals(BaseExpression other)
+        {
+            return other is EqualTo a
+                   && a.Equals(this);
         }
 
         public override string ToString()

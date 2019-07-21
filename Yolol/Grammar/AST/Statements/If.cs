@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using JetBrains.Annotations;
 using Yolol.Execution;
 using Yolol.Grammar.AST.Expressions;
@@ -6,7 +7,7 @@ using Yolol.Grammar.AST.Expressions;
 namespace Yolol.Grammar.AST.Statements
 {
     public class If
-        : BaseStatement
+        : BaseStatement, IEquatable<If>
     {
         public override bool CanRuntimeError => Condition.CanRuntimeError || TrueBranch.CanRuntimeError || FalseBranch.CanRuntimeError;
 
@@ -26,6 +27,20 @@ namespace Yolol.Grammar.AST.Statements
             var condition = Condition.Evaluate(state);
             var todo = condition.Number != 0 ? TrueBranch : FalseBranch;
             return todo.Evaluate(state);
+        }
+
+        public bool Equals([CanBeNull] If other)
+        {
+            return other != null
+                && other.Condition.Equals(Condition)
+                && other.TrueBranch.Equals(TrueBranch)
+                && other.FalseBranch.Equals(FalseBranch);
+        }
+
+        public override bool Equals(BaseStatement other)
+        {
+            return other is If @if
+                && @if.Equals(this);
         }
 
         public override string ToString()

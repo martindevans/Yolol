@@ -1,9 +1,12 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+using JetBrains.Annotations;
 using Yolol.Execution;
+using Yolol.Grammar.AST.Statements;
 
-namespace Yolol.Grammar.AST.Statements
+namespace Yolol.Grammar.AST
 {
     public class Line
+        : IEquatable<Line>
     {
         [NotNull] public StatementList Statements { get; }
 
@@ -19,6 +22,11 @@ namespace Yolol.Grammar.AST.Statements
                 return result.GotoLine - 1;
             else
                 return pc + 1;
+        }
+
+        public bool Equals([CanBeNull] Line other)
+        {
+            return other != null && other.Statements.Equals(Statements);
         }
 
         [NotNull] public override string ToString()

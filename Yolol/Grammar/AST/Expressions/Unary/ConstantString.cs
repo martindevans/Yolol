@@ -1,10 +1,12 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+using System.Reflection.Metadata;
+using JetBrains.Annotations;
 using Yolol.Execution;
 
 namespace Yolol.Grammar.AST.Expressions.Unary
 {
     public class ConstantString
-        : BaseExpression
+        : BaseExpression, IEquatable<ConstantString>
     {
         [NotNull] public string Value { get; }
 
@@ -22,6 +24,18 @@ namespace Yolol.Grammar.AST.Expressions.Unary
         public override Value Evaluate(MachineState _)
         {
             return new Value(Value);
+        }
+
+        public bool Equals([CanBeNull] ConstantString other)
+        {
+            return other != null
+                && other.Value.Equals(Value);
+        }
+
+        public override bool Equals(BaseExpression other)
+        {
+            return other is ConstantString str
+                && str.Equals(this);
         }
 
         public override string ToString()

@@ -4,6 +4,7 @@ using System.Text;
 using JetBrains.Annotations;
 using Yolol.Analysis.TreeVisitor;
 using Yolol.Grammar;
+using Yolol.Grammar.AST;
 using Yolol.Grammar.AST.Statements;
 
 namespace Yolol.Analysis

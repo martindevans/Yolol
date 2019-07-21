@@ -1,4 +1,5 @@
 ﻿using System;
+using JetBrains.Annotations;
 using Yolol.Execution;
 using Yolol.Grammar;
 using Yolol.Grammar.AST.Expressions;
@@ -6,7 +7,7 @@ using Yolol.Grammar.AST.Expressions;
 namespace Yolol.Analysis.ControlFlowGraph.AST
 {
     public class Decrement
-        : BaseExpression
+        : BaseExpression, IEquatable<Decrement>
     {
         public VariableName Name { get; }
 
@@ -22,6 +23,18 @@ namespace Yolol.Analysis.ControlFlowGraph.AST
         public override Value Evaluate(MachineState state)
         {
             throw new InvalidOperationException("Cannot execute `Decrement` node");
+        }
+
+        public bool Equals([CanBeNull] Decrement other)
+        {
+            return other != null
+                && other.Name.Equals(Name);
+        }
+
+        public override bool Equals(BaseExpression other)
+        {
+            return other is Decrement post
+                && post.Equals(this);
         }
 
         public override string ToString()

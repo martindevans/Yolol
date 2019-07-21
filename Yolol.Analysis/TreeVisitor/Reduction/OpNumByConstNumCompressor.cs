@@ -10,6 +10,9 @@ using Variable = Yolol.Grammar.AST.Expressions.Unary.Variable;
 
 namespace Yolol.Analysis.TreeVisitor.Reduction
 {
+    /// <summary>
+    /// Replace trivial mathematical operations including constants with simplified versions (e.g. `x*1 => x`)
+    /// </summary>
     public class OpNumByConstNumCompressor
         : BaseTreeVisitor
     {

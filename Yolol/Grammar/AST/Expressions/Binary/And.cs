@@ -1,10 +1,11 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+using JetBrains.Annotations;
 using Yolol.Execution;
 
 namespace Yolol.Grammar.AST.Expressions.Binary
 {
     public class And
-        : BaseBinaryExpression
+        : BaseBinaryExpression, IEquatable<And>
     {
         public override bool CanRuntimeError => Left.CanRuntimeError || Right.CanRuntimeError;
 
@@ -13,6 +14,19 @@ namespace Yolol.Grammar.AST.Expressions.Binary
         public And([NotNull] BaseExpression left, [NotNull] BaseExpression right)
             : base(left, right)
         {
+        }
+
+        public bool Equals([CanBeNull] And other)
+        {
+            return other != null
+                && other.Left.Equals(Left)
+                && other.Right.Equals(Right);
+        }
+
+        public override bool Equals(BaseExpression other)
+        {
+            return other is And a
+                && a.Equals(this);
         }
 
         public override string ToString()

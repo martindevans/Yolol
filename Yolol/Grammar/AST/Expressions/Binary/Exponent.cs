@@ -5,7 +5,7 @@ using Yolol.Execution;
 namespace Yolol.Grammar.AST.Expressions.Binary
 {
     public class Exponent
-        : BaseBinaryExpression
+        : BaseBinaryExpression, IEquatable<Exponent>
     {
         public override bool CanRuntimeError => true;
 
@@ -32,6 +32,19 @@ namespace Yolol.Grammar.AST.Expressions.Binary
         protected override Value Evaluate(Number l, string r)
         {
             throw new ExecutionException("Attempted to exponent mixed types");
+        }
+
+        public bool Equals([CanBeNull] Exponent other)
+        {
+            return other != null
+                   && other.Left.Equals(Left)
+                   && other.Right.Equals(Right);
+        }
+
+        public override bool Equals(BaseExpression other)
+        {
+            return other is Exponent a
+                   && a.Equals(this);
         }
 
         public override string ToString()

@@ -1,10 +1,11 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+using JetBrains.Annotations;
 using Yolol.Execution;
 
 namespace Yolol.Grammar.AST.Expressions.Binary
 {
     public class Divide
-        : BaseBinaryExpression
+        : BaseBinaryExpression, IEquatable<Divide>
     {
         public override bool CanRuntimeError => true;
 
@@ -31,6 +32,19 @@ namespace Yolol.Grammar.AST.Expressions.Binary
         protected override Value Evaluate(Number l, string r)
         {
             throw new ExecutionException("Attempted to divide mixed types");
+        }
+
+        public bool Equals([CanBeNull] Divide other)
+        {
+            return other != null
+                   && other.Left.Equals(Left)
+                   && other.Right.Equals(Right);
+        }
+
+        public override bool Equals(BaseExpression other)
+        {
+            return other is Divide a
+                && a.Equals(this);
         }
 
         public override string ToString()

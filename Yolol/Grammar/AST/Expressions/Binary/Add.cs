@@ -1,10 +1,11 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+using JetBrains.Annotations;
 using Yolol.Execution;
 
 namespace Yolol.Grammar.AST.Expressions.Binary
 {
     public class Add
-        : BaseBinaryExpression
+        : BaseBinaryExpression, IEquatable<Add>
     {
         public override bool CanRuntimeError => Left.CanRuntimeError || Right.CanRuntimeError;
 
@@ -31,6 +32,19 @@ namespace Yolol.Grammar.AST.Expressions.Binary
         protected override Value Evaluate(Number l, string r)
         {
             return Evaluate(l.ToString(), r);
+        }
+
+        public bool Equals([CanBeNull] Add other)
+        {
+            return other != null
+                && other.Left.Equals(Left)
+                && other.Right.Equals(Right);
+        }
+
+        public override bool Equals(BaseExpression other)
+        {
+            return other is Add a
+                && a.Equals(this);
         }
 
         public override string ToString()

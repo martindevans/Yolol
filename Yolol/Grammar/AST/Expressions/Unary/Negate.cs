@@ -29,6 +29,18 @@ namespace Yolol.Grammar.AST.Expressions.Unary
             return new Value(-v.Number);
         }
 
+        public bool Equals([CanBeNull] Negate other)
+        {
+            return other != null
+                && other.Expression.Equals(Expression);
+        }
+
+        public override bool Equals(BaseExpression other)
+        {
+            return other is Negate neg
+                && neg.Equals(this);
+        }
+
         public override string ToString()
         {
             return $"-{Expression}";

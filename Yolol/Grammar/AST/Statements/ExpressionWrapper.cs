@@ -6,7 +6,7 @@ using Yolol.Grammar.AST.Expressions;
 namespace Yolol.Grammar.AST.Statements
 {
     public class ExpressionWrapper
-        : BaseStatement
+        : BaseStatement, IEquatable<ExpressionWrapper>
     {
         [NotNull] public BaseExpression Expression { get; }
 
@@ -22,6 +22,18 @@ namespace Yolol.Grammar.AST.Statements
             Expression.Evaluate(state);
 
             return new ExecutionResult();
+        }
+
+        public bool Equals([CanBeNull] ExpressionWrapper other)
+        {
+            return other != null
+                && other.Expression.Equals(Expression);
+        }
+
+        public override bool Equals(BaseStatement other)
+        {
+            return other is ExpressionWrapper exp
+                   && exp.Equals(this);
         }
 
         public override string ToString()

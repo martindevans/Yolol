@@ -1,10 +1,11 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+using JetBrains.Annotations;
 using Yolol.Execution;
 
 namespace Yolol.Grammar.AST.Expressions.Binary
 {
     public class Multiply
-        : BaseBinaryExpression
+        : BaseBinaryExpression, IEquatable<Multiply>
     {
         public override bool CanRuntimeError => true;
 
@@ -31,6 +32,19 @@ namespace Yolol.Grammar.AST.Expressions.Binary
         protected override Value Evaluate(Number l, string r)
         {
             throw new ExecutionException("Attempted to multiply mixed types");
+        }
+
+        public bool Equals([CanBeNull] Multiply other)
+        {
+            return other != null
+                   && other.Left.Equals(Left)
+                   && other.Right.Equals(Right);
+        }
+
+        public override bool Equals(BaseExpression other)
+        {
+            return other is Multiply a
+                   && a.Equals(this);
         }
 
         public override string ToString()
