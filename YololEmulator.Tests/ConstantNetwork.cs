@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using JetBrains.Annotations;
 using Yolol.Execution;
 
 namespace YololEmulator.Tests
@@ -7,6 +8,12 @@ namespace YololEmulator.Tests
         : IDeviceNetwork
     {
         private readonly Dictionary<string, IVariable> _variables = new Dictionary<string, IVariable>();
+
+        public ConstantNetwork([NotNull] params KeyValuePair<string, Value>[] values)
+        {
+            foreach (var (key, value) in values)
+                _variables.Add(key, new Variable { Value = value });
+        }
 
         public IVariable Get(string name)
         {

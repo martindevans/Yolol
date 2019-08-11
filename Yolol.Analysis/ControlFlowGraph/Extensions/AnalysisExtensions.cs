@@ -3,8 +3,6 @@ using System.Linq;
 using JetBrains.Annotations;
 using Yolol.Analysis.TreeVisitor.Inspection;
 using Yolol.Grammar;
-using Yolol.Grammar.AST;
-using Yolol.Grammar.AST.Statements;
 
 namespace Yolol.Analysis.ControlFlowGraph.Extensions
 {
@@ -17,9 +15,8 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
 
             foreach (var bb in cfg.Vertices)
             {
-                var p = new Program(new[] {new Line(new StatementList(bb.Statements))});
-                assigned.Visit(p);
-                read.Visit(p);
+                assigned.Visit(bb);
+                read.Visit(bb);
             }
 
             var result = new HashSet<VariableName>(assigned.Names.Where(n => !n.IsExternal));

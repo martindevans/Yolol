@@ -34,8 +34,7 @@ namespace Yolol.Analysis.TreeVisitor
         }
 
         #region expression visiting
-        [NotNull]
-        protected virtual BaseExpression Visit([NotNull] BaseExpression expression)
+        [NotNull] public virtual BaseExpression Visit([NotNull] BaseExpression expression)
         {
             switch (expression)
             {
@@ -100,12 +99,18 @@ namespace Yolol.Analysis.TreeVisitor
 
         [NotNull] protected virtual BaseExpression Visit([NotNull] Increment inc)
         {
-            return new Increment(Visit(inc.Name));
+            var v = new Variable(inc.Name);
+            var r = (Variable)Visit(v);
+
+            return new Increment(r.Name);
         }
 
         [NotNull] protected virtual BaseExpression Visit([NotNull] Decrement dec)
         {
-            return new Decrement(Visit(dec.Name));
+            var v = new Variable(dec.Name);
+            var r = (Variable)Visit(v);
+
+            return new Decrement(r.Name);
         }
 
         [NotNull] protected virtual BaseExpression Visit([NotNull] Phi phi)

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 using CommandLine;
 using JetBrains.Annotations;
+using Yolol.Analysis;
 using Yolol.Analysis.TreeVisitor.Reduction;
 using Yolol.Grammar;
 
@@ -10,10 +12,10 @@ namespace Yololc
 {
     public class Options
     {
-        [Option('i', "input", HelpText = "File to read YOLOL code from", Required = true)]
+        [Option('i', "input", HelpText = "File to read YOLOL code from", Required = false)]
         public string InputFile { get; set; }
 
-        [Option('v', "verbose", HelpText = "Control if output of non-code messages are displayed", Required = false, Default = true)]
+        [Option('v', "verbose", HelpText = "Control if output of non-code messages are displayed", Required = false, Default = false)]
         public bool Verbose { get; set; }
 
         [Option("iterations", HelpText = "Maximum number of times to apply the optimisation passes", Required = false, Default = 10)]
@@ -70,15 +72,33 @@ namespace Yololc
             CommandLine.Parser.Default.ParseArguments<Options>(args).WithParsed(Run);
         }
 
+        private static string ReadInput([NotNull] Options options)
+        {
+            if (options.InputFile == null)
+            {
+                // Read from stdin
+
+                var result = new StringBuilder();
+                string line;
+                while ((line = Console.ReadLine()) != null)
+                    result.AppendLine(line);
+
+                return result.ToString();
+            }
+            else
+            {
+                // Read from file
+
+                if (!File.Exists(options.InputFile))
+                    throw new FileNotFoundException("Input file does not exist", options.InputFile);
+
+                return File.ReadAllText(options.InputFile);
+            }
+        }
+
         private static void Run([NotNull] Options options)
         {
-            if (!File.Exists(options.InputFile))
-            {
-                Console.Error.WriteLine($"Input file `{options.InputFile}` does not exist");
-                return;
-            }
-
-            var input = File.ReadAllText(options.InputFile);
+            var input = ReadInput(options);
             var startLength = input.Length;
 
             var tokens = Tokenizer.TryTokenize(input);
@@ -100,7 +120,7 @@ namespace Yololc
             var ast = astResult.Value;
 
             var i = 0;
-            ast = Fixpoint(options.MaxIterations, ast, a => {
+            ast = ast.Fixpoint(options.MaxIterations, a => {
 
                 i++;
                 if (options.Verbose)
@@ -130,7 +150,7 @@ namespace Yololc
                     a = a.CompressConstants();
 
                 if (options.Verbose)
-                Console.WriteLine($"{timer.ElapsedMilliseconds}ms");
+                    Console.WriteLine($"{timer.ElapsedMilliseconds}ms");
 
                 return a;
             });
@@ -147,21 +167,6 @@ namespace Yololc
             }
 
             Console.WriteLine(output);
-        }
-
-        private static T Fixpoint<T>(int iters, T item, Func<T, T> transform)
-            where T : IEquatable<T>
-        {
-            for (var i = 0; i < iters; i++)
-            {
-                var prev = item;
-                item = transform(prev);
-
-                if (prev.Equals(item))
-                    break;
-            }
-
-            return item;
         }
     }
 }

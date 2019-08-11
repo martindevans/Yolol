@@ -25,7 +25,12 @@ namespace YololEmulator.Tests
 
         [NotNull] public static MachineState Execute([NotNull] params string[] lines)
         {
-            var state = new MachineState(new ConstantNetwork(), new DefaultIntrinsics());
+            return Execute(new ConstantNetwork(), lines);
+        }
+
+        [NotNull] public static MachineState Execute(IDeviceNetwork network, [NotNull] params string[] lines)
+        {
+            var state = new MachineState(network, new DefaultIntrinsics());
 
             var pc = 0;
             while (pc < 20)

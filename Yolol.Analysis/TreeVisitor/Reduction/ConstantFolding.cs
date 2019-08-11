@@ -9,20 +9,33 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
     public class ConstantFoldingVisitor
         : BaseTreeVisitor
     {
-        protected override BaseExpression Visit(BaseExpression expression)
+        private readonly bool _allowLonger;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="allowLonger">Set to true to allow constant folding even when it results in longer code</param>
+        public ConstantFoldingVisitor(bool allowLonger = false)
+        {
+            _allowLonger = allowLonger;
+        }
+
+        public override BaseExpression Visit(BaseExpression expression)
         {
             if (expression.IsConstant)
             {
-                var v = expression.Evaluate(new MachineState(new NullDeviceNetwork(), new DefaultIntrinsics()));
+                var v = expression.TryStaticEvaluate();
+                if (v.HasValue)
+                {
+                    // Do not substitute the constant value if it is a longer string than the expression
+                    if (!_allowLonger && v.ToString().Length > expression.ToString().Length)
+                        return base.Visit(expression);
 
-                //// Do not substitute the constant value if it is a longer string than the expression
-                //if (v.ToString().Length > expression.ToString().Length)
-                //    return base.Visit(expression);
-
-                if (v.Type == Type.Number)
-                    return base.Visit(new ConstantNumber(v.Number));
-                else
-                    return base.Visit(new ConstantString(v.String));
+                    if (v.Value.Type == Type.Number)
+                        return base.Visit(new ConstantNumber(v.Value.Number));
+                    else
+                        return base.Visit(new ConstantString(v.Value.String));
+                }
             }
 
             return base.Visit(expression);

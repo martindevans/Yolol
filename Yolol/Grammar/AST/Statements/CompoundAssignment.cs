@@ -19,17 +19,15 @@ namespace Yolol.Grammar.AST.Statements
             Expression = expression;
         }
 
-        //public override ExecutionResult Evaluate(MachineState state)
-        //{
-        //    var var = state.GetVariable(Left.Name);
-        //    var.Value = Right.Evaluate(state);
-
-        //    return new ExecutionResult();
-        //}
-
         public bool Equals([CanBeNull] CompoundAssignment other)
         {
             return Equals((Assignment)other);
+        }
+
+        public override bool Equals(BaseStatement other)
+        {
+            return other is CompoundAssignment ass
+                && ass.Equals(this);
         }
 
         public override string ToString()

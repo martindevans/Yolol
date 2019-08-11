@@ -6,23 +6,23 @@ namespace YololEmulator.Tests.Expressions.Mixed
     public class NonEquality
     {
         [TestMethod]
-        public void StringNumberFalse()
+        public void StringNumberTrueEqual()
         {
             var result = TestExecutor.Execute("a = 2 != \"2\"");
 
             var a = result.GetVariable("a");
 
-            Assert.AreEqual(0, a.Value.Number);
+            Assert.AreEqual(1, a.Value.Number);
         }
 
         [TestMethod]
-        public void NumberStringFalse()
+        public void NumberStringTrueEqual()
         {
             var result = TestExecutor.Execute("a = \"2\" != 2");
 
             var a = result.GetVariable("a");
 
-            Assert.AreEqual(0, a.Value.Number);
+            Assert.AreEqual(1, a.Value.Number);
         }
 
         [TestMethod]

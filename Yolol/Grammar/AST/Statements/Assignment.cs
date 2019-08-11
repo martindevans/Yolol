@@ -37,7 +37,7 @@ namespace Yolol.Grammar.AST.Statements
         public override bool Equals(BaseStatement other)
         {
             return other is Assignment ass
-                   && ass.Equals(this);
+                && ass.Equals(this);
         }
 
         public override string ToString()

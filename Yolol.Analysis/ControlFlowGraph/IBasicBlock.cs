@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
+using Yolol.Analysis.TreeVisitor;
+using Yolol.Grammar.AST;
 using Yolol.Grammar.AST.Statements;
 
 namespace Yolol.Analysis.ControlFlowGraph
@@ -24,9 +27,13 @@ namespace Yolol.Analysis.ControlFlowGraph
         : IBasicBlock
     {
         void Add(BaseStatement stmt);
+    }
 
-        void AddOutgoing(IEdge edge);
-
-        void AddIncoming(IEdge edge);
+    public static class IBasicBlockExtensions
+    {
+        [NotNull] public static Program Visit([NotNull] this BaseTreeVisitor visitor, [NotNull] IBasicBlock block)
+        {
+            return visitor.Visit(new Program(new Line[] {new Line(new StatementList(block.Statements))}));
+        }
     }
 }

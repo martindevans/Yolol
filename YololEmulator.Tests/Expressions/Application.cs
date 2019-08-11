@@ -9,6 +9,17 @@ namespace YololEmulator.Tests.Expressions
     public class Application
     {
         [TestMethod]
+        public void Tan45()
+        {
+            var result = TestExecutor.Execute(
+                "x = tan(45)"
+            );
+            var x = result.GetVariable("x").Value.Number;
+
+            Assert.AreEqual(1m, x);
+        }
+
+        [TestMethod]
         public void CanNotRuntimeError()
         {
             var app = new Yolol.Grammar.AST.Expressions.Unary.Application(new FunctionName("func"), new ConstantNumber(1));

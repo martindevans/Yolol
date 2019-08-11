@@ -1,13 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Yolol.Analysis;
 using Yolol.Analysis.ControlFlowGraph;
 using Yolol.Analysis.ControlFlowGraph.Extensions;
+using Yolol.Analysis.DataFlowGraph;
+using Yolol.Analysis.DataFlowGraph.Extensions;
 using Yolol.Analysis.TreeVisitor;
 using Yolol.Analysis.TreeVisitor.Reduction;
 using Yolol.Analysis.Types;
+using Yolol.Execution;
 using Yolol.Grammar;
+using Yolol.Grammar.AST.Expressions.Binary;
 using Yolol.Grammar.AST.Statements;
 
 namespace YololEmulator.Tests
@@ -25,8 +30,18 @@ namespace YololEmulator.Tests
             //    "goto 2"
             //);
 
+            //var ast = TestExecutor.Parse(
+            //    "char = :a",
+            //    "min=0 max=10 search=5 k10=10000",
+            //    "l1 = char >= search if l1 then min=search else max=search end search=min+((max-min)/2)/k10*k10",
+            //    "l2 = char >= search if l2 then min=search else max=search end search=min+((max-min)/2)/k10*k10",
+            //    "l3 = char >= search if l3 then min=search else max=search end search=min+((max-min)/2)/k10*k10",
+            //    "l4 = char >= search if l4 then min=search else max=search end search=min+((max-min)/2)/k10*k10",
+            //    ":out=search goto 1"
+            //);
+
             var ast = TestExecutor.Parse(
-                "z = 2 a = :a * z a /= z",
+                "z = 1 :a = z z = 2 a = :a * z a /= z",
                 "flag=a==:a if flag then goto 5 else goto 6 end",
                 "x = \"hello\" * 4 goto \"world\" x = 2",
                 "b*=2 flag=b>30 if flag then :b=a end",
@@ -56,39 +71,58 @@ namespace YololEmulator.Tests
                 (new VariableName(":a"), Yolol.Execution.Type.Number)
             };
 
-            // Find types
-            cfg = cfg.StaticSingleAssignment(out var ssa);
-            cfg = cfg.FlowTypingAssignment(ssa, out var types, hints);
+            cfg = cfg.Fixpoint(cf => {
+                // Find types
+                cf = cf.StaticSingleAssignment(out var ssa);
+                cf = cf.FlowTypingAssignment(ssa, out var types, hints);
 
-            // Optimise graph based on types
-            // ReSharper disable once AccessToModifiedClosure
-            cfg = cfg.VisitBlocks(() => new OpNumByConstNumCompressor(types));
-            cfg = cfg.VisitBlocks(() => new ErrorCompressor());
-            cfg = cfg.VisitBlocks(u => new RemoveUnreadAssignments(u, ssa), c => c.FindUnreadAssignments());
-            cfg = cfg.FlowTypingAssignment(ssa, out types, hints);
-            cfg = cfg.TypeDrivenEdgeTrimming(types);
-            cfg = cfg.NormalizeErrors();
+                // Optimise graph based on types
+                cf = cf.VisitBlocks(() => new ConstantFoldingVisitor(true));
+                cf = cf.VisitBlocks(t => new OpNumByConstNumCompressor(t), types);
+                cf = cf.VisitBlocks(() => new ErrorCompressor());
+                cf = cf.VisitBlocks(u => new RemoveUnreadAssignments(u, ssa), c => c.FindUnreadAssignments());
+                cf = cf.FlowTypingAssignment(ssa, out types, hints);
+                cf = cf.TypeDrivenEdgeTrimming(types);
+                cf = cf.RemoveUnreachableBlocks();
+                cf = cf.MergeAdjacentBasicBlocks();
+                cf = cf.NormalizeErrors();
 
-            // Minify the graph
-            for (var i = 0; i < 10; i++)
-                cfg = cfg.RemoveEmptyNodes();
-            cfg = cfg.RemoveUnreachableBlocks();
+                // Optimise graph based on SSA
+                cf = cf.FoldUnnecessaryCopies(ssa);
 
-            // Convert optimised graph to dot
-            var dot = cfg.ToDot();
+                // Remove SSA before refinding it in the next iteration
+                cf = cf.RemoveStaticSingleAssignment(ssa);
 
-            // Apply some simplifications before conversion into yolol
-            cfg = cfg.RemoveStaticSingleAssignment(ssa);
+                return cf;
+            });
 
-            // Convert back into Yolol
-            var yolol = cfg.ToYolol().StripTypes();
-            Console.WriteLine(yolol);
+            cfg = cfg.Fixpoint(cf => {
+                // Minify the graph
+                cf = cf.ReplaceUnassignedReads();
+                cf = cf.RemoveEmptyNodes();
+                cf = cf.RemoveUnreachableBlocks();
+
+                return cf;
+            });
+
+            //// Convert back into Yolol
+            //var yolol = cfg.ToYolol();//.StripTypes();
+            //Console.WriteLine(yolol);
+            //Console.WriteLine();
+
+            //Console.WriteLine($"{ast.ToString().Length} => {yolol.ToString().Length}");
+            //Console.WriteLine();
+
+            cfg = cfg.StaticSingleAssignment(out var ssa2);
+            var l1 = cfg.Vertices.Where(v => v.LineNumber == 1).OrderByDescending(a => a.Statements.Count()).First();
+            var dfg = l1.DataFlowGraph(ssa2);
+            Console.WriteLine(l1.ToString().Replace("\\n", " "));
             Console.WriteLine();
+            //Console.WriteLine(dfg.ToDot());
+            Console.WriteLine(string.Join(" ", dfg.ToYolol()));
 
-            Console.WriteLine($"{ast.ToString().Length} => {yolol.ToString().Length}");
-            Console.WriteLine();
-
-            Console.WriteLine(dot);
+            //Console.WriteLine();
+            //Console.WriteLine(cfg.ToDot());
         }
 
         [TestMethod]
@@ -145,6 +179,58 @@ namespace YololEmulator.Tests
 
             Console.WriteLine(ast);
             Console.WriteLine($"Score: {ast.ToString().Length}");
+        }
+
+        [TestMethod]
+        public void ParsingNumbers()
+        {
+            for (var i = 0; i < 10; i++)
+            {
+                var result = TestExecutor.Execute(new ConstantNetwork(new KeyValuePair<string, Value>("input", i.ToString())),
+                    "char = :input",
+                    "min=0 max=10 search=5 k10=10000 k20=2*k10",
+                    "l1 = char >= search min=l1--*search-l1*min max=-l1++*search+l1*max search=min+(max-min)/k20*k10",
+                    "l2 = char >= search min=l2--*search-l2*min max=-l2++*search+l2*max search=min+(max-min)/k20*k10",
+                    "l3 = char >= search min=l3--*search-l3*min max=-l3++*search+l3*max search=min+(max-min)/k20*k10",
+                    "l4 = char >= search min=l4--*search-l4*min max=-l4++*search+l4*max search=min+(max-min)/k20*k10"
+                );
+
+                var l1 = result.GetVariable("l1").Value.Number;
+                var l2 = result.GetVariable("l2").Value.Number;
+                var l3 = result.GetVariable("l3").Value.Number;
+                var l4 = result.GetVariable("l4").Value.Number;
+                var s = result.GetVariable("search");
+
+                Console.WriteLine($"i={i} {l4}{l3}{l2}{l1} {s}");
+
+                Assert.AreEqual(i, s.Value.Number);
+            }
+        }
+
+        [TestMethod]
+        public void StringDecMagic()
+        {
+            var result = TestExecutor.Execute(
+                "x = \"42\"",
+                "y = x - (--x)"
+            );
+            var x = result.GetVariable("x").Value.String;
+            var y = result.GetVariable("y").Value.String;
+
+            Console.WriteLine($"{x} {y}");
+
+            Assert.AreEqual("", y);
+        }
+
+        [TestMethod]
+        public void PowOcornoc()
+        {
+            var result = TestExecutor.Execute(
+                "x = 5.2 ^ 3.1"
+            );
+            var x = result.GetVariable("x").Value.Number;
+
+            Assert.AreEqual(165.8098m, x);
         }
     }
 }

@@ -28,12 +28,12 @@ namespace Yolol.Grammar.AST.Expressions.Binary
 
         protected override Value Evaluate(string l, Number r)
         {
-            return Evaluate(l, r.ToString());
+            return 1;
         }
 
         protected override Value Evaluate(Number l, string r)
         {
-            return Evaluate(l.ToString(), r);
+            return 1;
         }
 
         public bool Equals([CanBeNull] NotEqualTo other)

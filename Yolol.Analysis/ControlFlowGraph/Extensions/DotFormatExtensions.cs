@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Text;
 using JetBrains.Annotations;
-using Yolol.Grammar.AST.Statements;
 
 namespace Yolol.Analysis.ControlFlowGraph.Extensions
 {

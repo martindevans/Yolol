@@ -17,9 +17,9 @@ namespace Yolol.Execution
                 { "sin", a => (decimal)Math.Sin(Radians(a.Number.Value)) },
                 { "cos", a => (decimal)Math.Cos(Radians(a.Number.Value)) },
                 { "tan", a => (decimal)Math.Tan(Radians(a.Number.Value)) },
-                { "arcsin", a => Degrees(Math.Asin((double)a.Number.Value)) },
-                { "arccos", a => Degrees(Math.Acos((double)a.Number.Value)) },
-                { "arctan", a => Degrees(Math.Atan((double)a.Number.Value)) },
+                { "asin", a => Degrees(Math.Asin((double)a.Number.Value)) },
+                { "acos", a => Degrees(Math.Acos((double)a.Number.Value)) },
+                { "atan", a => Degrees(Math.Atan((double)a.Number.Value)) },
             };
         }
 

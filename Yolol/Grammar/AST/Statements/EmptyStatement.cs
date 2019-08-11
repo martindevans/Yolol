@@ -21,7 +21,7 @@ namespace Yolol.Grammar.AST.Statements
 
         public override bool Equals(BaseStatement other)
         {
-            return other is EmptyStatement;
+            return Equals(other as EmptyStatement);
         }
 
         public override string ToString()

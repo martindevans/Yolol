@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using Yolol.Grammar.AST.Statements;
+using System.Linq;
 
 namespace Yolol.Analysis.ControlFlowGraph
 {
     public class ControlFlowGraph
-        : IControlFlowGraph
+        : IMutableControlFlowGraph
     {
         private readonly Dictionary<Guid, BasicBlock> _vertexLookup = new Dictionary<Guid, BasicBlock>();
         private readonly List<Edge> _edges = new List<Edge>();
@@ -27,12 +28,12 @@ namespace Yolol.Analysis.ControlFlowGraph
             return block;
         }
 
-        [NotNull] public IEdge CreateEdge([NotNull] IMutableBasicBlock start, [NotNull] IMutableBasicBlock end, EdgeType type)
+        [NotNull] public IEdge CreateEdge(IBasicBlock start, IBasicBlock end, EdgeType type)
         {
             var e = new Edge(start, end, type);
 
-            start.AddOutgoing(e);
-            end.AddIncoming(e);
+            _vertexLookup[start.ID].AddOutgoing(e);
+            _vertexLookup[end.ID].AddIncoming(e);
 
             _edges.Add(e);
 
@@ -45,8 +46,34 @@ namespace Yolol.Analysis.ControlFlowGraph
             return block;
         }
 
-        private class BasicBlock
+        public bool Equals(IControlFlowGraph other)
+        {
+            if (other is null)
+                return false;
+            if (other.EdgeCount != EdgeCount || other.VertexCount != VertexCount)
+                return false;
+
+            // Check all edges are the same
+            if (!other.Edges.OrderBy(a => a.Start.ID).Zip(Edges.OrderBy(a => a.Start.ID), (a, b) => a.Equals(b)).All(a => a))
+                return false;
+
+            // Check all vertices are the same
+            if (!other.Vertices.OrderBy(a => a.ID).Zip(Vertices.OrderBy(a => a.ID), (a, b) => a.Equals(b)).All(a => a))
+                return false;
+
+            return true;
+        }
+
+        private interface IExposedMutableBlock
             : IMutableBasicBlock
+        {
+            void AddOutgoing(IEdge edge);
+
+            void AddIncoming(IEdge edge);
+        }
+
+        private class BasicBlock
+            : IExposedMutableBlock
         {
             public BasicBlockType Type { get; }
 
@@ -86,7 +113,7 @@ namespace Yolol.Analysis.ControlFlowGraph
                 _incoming.Add(edge);
             }
 
-            [NotNull] public override string ToString()
+            public override string ToString()
             {
                 if (Type == BasicBlockType.Entry)
                     return "Entrypoint";
@@ -95,7 +122,7 @@ namespace Yolol.Analysis.ControlFlowGraph
             }
 
             #region equality
-            public bool Equals([CanBeNull] IBasicBlock other)
+            public bool Equals(IBasicBlock other)
             {
                 if (ReferenceEquals(null, other))
                     return false;
@@ -127,19 +154,19 @@ namespace Yolol.Analysis.ControlFlowGraph
                 Type = type;
             }
 
-            [NotNull] public override string ToString()
+            public override string ToString()
             {
                 return $"{Start}=>{End} ({Type})";
             }
 
             #region equality
-            public bool Equals([CanBeNull] IEdge other)
+            public bool Equals(IEdge other)
             {
-                if (ReferenceEquals(null, other))
+                if (other is null)
                     return false;
                 if (ReferenceEquals(this, other))
                     return true;
-                return Equals(Start, other.Start) && Equals(End, other.End) && Type == other.Type;
+                return Start.Equals(other.Start) && End.Equals(other.End) && Type == other.Type;
             }
 
             public override int GetHashCode()

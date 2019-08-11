@@ -63,7 +63,7 @@ namespace YololEmulator.Tests.Expressions.Num
         [TestMethod]
         public void ArcSin()
         {
-            var result = TestExecutor.Execute("a = ARCSIN(1)");
+            var result = TestExecutor.Execute("a = ASIN(1)");
 
             var a = result.GetVariable("a");
             Assert.AreEqual(90, a.Value.Number);
@@ -81,7 +81,7 @@ namespace YololEmulator.Tests.Expressions.Num
         [TestMethod]
         public void ArcCos()
         {
-            var result = TestExecutor.Execute("a = ARCCOS(0)");
+            var result = TestExecutor.Execute("a = ACOS(0)");
 
             var a = result.GetVariable("a");
             Assert.AreEqual(90, a.Value.Number);
@@ -99,7 +99,7 @@ namespace YololEmulator.Tests.Expressions.Num
         [TestMethod]
         public void ArcTan()
         {
-            var result = TestExecutor.Execute("a = ARCTAN(1)");
+            var result = TestExecutor.Execute("a = ATAN(1)");
 
             var a = result.GetVariable("a");
             Assert.AreEqual(45, a.Value.Number);

@@ -104,7 +104,7 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
                 if (!ass.Left.IsExternal)
                 {
                     var bn = _ssa.BaseName(ass.Left);
-                    _previouslyAssignedNamesInBlock.Add(bn, ass.Left);
+                    _previouslyAssignedNamesInBlock[bn] = ass.Left;
                 }
 
                 return r;

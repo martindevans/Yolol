@@ -21,6 +21,9 @@ namespace Yolol.Grammar.AST.Expressions.Binary
 
         protected override Value Evaluate(Number l, Number r)
         {
+            if (r == 0)
+                throw new ExecutionException("Divide by zero");
+
             return new Value(l.Value % r.Value);
         }
 

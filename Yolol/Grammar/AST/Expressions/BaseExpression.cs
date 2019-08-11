@@ -26,6 +26,6 @@ namespace Yolol.Grammar.AST.Expressions
 
         public abstract bool Equals(BaseExpression other);
 
-        [NotNull] public abstract override string ToString();
+        public abstract override string ToString();
     }
 }
