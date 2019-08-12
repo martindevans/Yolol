@@ -26,7 +26,7 @@ namespace Yolol.Grammar.AST.Statements
             if (dest.Type != Type.Number)
                 throw new ExecutionException($"Attempted to goto to a value of type `{dest.Type}`");
 
-            var line = Math.Clamp((int)dest.Number.Value, 1, 20);
+            var line = Math.Min(20, Math.Max(1, (int)dest.Number.Value));
             return new ExecutionResult(line);
         }
 

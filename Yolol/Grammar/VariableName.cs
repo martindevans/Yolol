@@ -8,7 +8,7 @@ namespace Yolol.Grammar
     {
         public string Name { get; }
 
-        public bool IsExternal => Name.StartsWith(':');
+        public bool IsExternal => Name.StartsWith(":");
 
         public VariableName([NotNull] string name)
         {
@@ -20,7 +20,7 @@ namespace Yolol.Grammar
             return Name;
         }
 
-        public bool Equals([CanBeNull] VariableName other)
+        public bool Equals(VariableName other)
         {
             if (other is null)
                 return false;
@@ -29,7 +29,7 @@ namespace Yolol.Grammar
             return string.Equals(Name, other.Name);
         }
 
-        public override bool Equals([CanBeNull] object obj)
+        public override bool Equals(object obj)
         {
             if (obj is null)
                 return false;

@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yolol", "Yolol\Yolol.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yololc", "Yololc\Yololc.csproj", "{ABB9BAC8-66F1-46A2-BA30-529047E1D43E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yolol.Analysis", "Yolol.Analysis\Yolol.Analysis.csproj", "{57A6D271-6356-4185-A8A9-731FB243973F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yolol.Analysis", "Yolol.Analysis\Yolol.Analysis.csproj", "{57A6D271-6356-4185-A8A9-731FB243973F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yolol.Cylon", "Yolol.Cylon\Yolol.Cylon.csproj", "{63CCC02E-8E32-4F89-B9F3-4C42B1FBF13D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{57A6D271-6356-4185-A8A9-731FB243973F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{57A6D271-6356-4185-A8A9-731FB243973F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{57A6D271-6356-4185-A8A9-731FB243973F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{63CCC02E-8E32-4F89-B9F3-4C42B1FBF13D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63CCC02E-8E32-4F89-B9F3-4C42B1FBF13D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63CCC02E-8E32-4F89-B9F3-4C42B1FBF13D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63CCC02E-8E32-4F89-B9F3-4C42B1FBF13D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

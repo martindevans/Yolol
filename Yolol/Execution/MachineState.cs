@@ -20,9 +20,11 @@ namespace Yolol.Execution
             _intrinsics = intrinsics;
         }
 
-        public Func<Value, Value> GetIntrinsic([NotNull] string name)
+        [CanBeNull] public Func<Value, Value> GetIntrinsic([NotNull] string name)
         {
-            return _intrinsics.GetValueOrDefault(name.ToLowerInvariant(), null);
+            if (_intrinsics.TryGetValue(name.ToLowerInvariant(), out var value))
+                return value;
+            return null;
         }
 
         public IVariable GetVariable(string name)
@@ -43,7 +45,7 @@ namespace Yolol.Execution
 
         [NotNull] internal IVariable GetVariable([NotNull] VariableName name) => GetVariable(name.Name);
 
-        [NotNull] public IEnumerator<KeyValuePair<string, IVariable>> GetEnumerator()
+        public IEnumerator<KeyValuePair<string, IVariable>> GetEnumerator()
         {
             return _variables.GetEnumerator();
         }

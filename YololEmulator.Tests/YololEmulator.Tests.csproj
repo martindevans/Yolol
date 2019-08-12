@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Yolol.Analysis\Yolol.Analysis.csproj" />
+    <ProjectReference Include="..\Yolol.Cylon\Yolol.Cylon.csproj" />
     <ProjectReference Include="..\Yolol\Yolol.csproj" />
   </ItemGroup>
 

@@ -1,6 +1,5 @@
 ﻿using System;
 using JetBrains.Annotations;
-using Yolol.Execution;
 using Yolol.Grammar.AST.Expressions;
 using Variable = Yolol.Grammar.AST.Expressions.Unary.Variable;
 

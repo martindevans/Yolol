@@ -1,5 +1,4 @@
-﻿using System.Text.RegularExpressions;
-using Superpower;
+﻿using Superpower;
 using Superpower.Model;
 using Superpower.Parsers;
 using Superpower.Tokenizers;
@@ -66,7 +65,7 @@ namespace Yolol.Grammar
         public static Result<TokenList<YololToken>> TryTokenize(string str)
         {
             // Ensure the last line ends with a newline
-            if (!str.EndsWith('\n'))
+            if (!str.EndsWith("\n"))
                 str += "\n";
 
             return Instance.TryTokenize(str);

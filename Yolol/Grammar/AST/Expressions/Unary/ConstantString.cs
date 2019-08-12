@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reflection.Metadata;
 using JetBrains.Annotations;
 using Yolol.Execution;
 
@@ -26,7 +25,7 @@ namespace Yolol.Grammar.AST.Expressions.Unary
             return new Value(Value);
         }
 
-        public bool Equals([CanBeNull] ConstantString other)
+        public bool Equals(ConstantString other)
         {
             return other != null
                 && other.Value.Equals(Value);
