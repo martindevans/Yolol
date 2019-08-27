@@ -8,3 +8,5 @@ obj
 bin
 _ReSharper.Caches
 /_NCrunch_YololEmulator/
+/YololEmulator.Tests/*.ncrunchproject
+/Yololc/Properties/PublishProfiles/*.pubxml

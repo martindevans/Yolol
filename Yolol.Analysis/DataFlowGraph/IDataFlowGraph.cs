@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using Yolol.Analysis.ControlFlowGraph;
 using Yolol.Analysis.ControlFlowGraph.Extensions;
 using Yolol.Execution;
 using Yolol.Grammar;
 using Yolol.Grammar.AST.Expressions;
-using Yolol.Grammar.AST.Expressions.Unary;
+using Yolol.Grammar.AST.Statements;
 
 namespace Yolol.Analysis.DataFlowGraph
 {
@@ -37,6 +38,8 @@ namespace Yolol.Analysis.DataFlowGraph
         : IDataFlowGraphNode
     {
         DataFlowGraphInputType Type { get; }
+
+        [NotNull] BaseExpression ToExpression();
     }
 
     public interface IDataFlowGraphInputConstant
@@ -54,11 +57,9 @@ namespace Yolol.Analysis.DataFlowGraph
     public interface IDataFlowGraphOp
         : IDataFlowGraphNode
     {
-        string Label { get; }
-
         IEnumerable<IDataFlowGraphNode> Inputs { get; }
 
-        BaseExpression Expression { get; }
+        [NotNull] BaseExpression ToExpression();
     }
 
     public interface IDataFlowGraphOutput
@@ -66,6 +67,6 @@ namespace Yolol.Analysis.DataFlowGraph
     {
         IDataFlowGraphNode Input { get; }
 
-        VariableName Name { get; }
+        [NotNull] BaseStatement ToStatement();
     }
 }

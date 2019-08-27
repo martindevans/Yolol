@@ -1,19 +1,21 @@
 ﻿using System;
 using System.Globalization;
+using JetBrains.Annotations;
 
 namespace Yolol.Execution
 {
     public struct Number
         : IEquatable<Number>
     {
-        public static readonly decimal MaxValue = 9223372036854775.807m;
-        public static readonly decimal MinValue = -9223372036854775.808m;
+        public const decimal MaxValue = 9223372036854775.807m;
+        public const decimal MinValue = -9223372036854775.808m;
+        private const int Scale = 1000;
 
         public decimal Value { get; }
 
         public Number(decimal num)
         {
-            Value = Math.Truncate(num * 10000) / 10000;
+            Value = Math.Truncate(num * Scale) / Scale;
 
             if (Value > MaxValue)
                 Value = MaxValue;
@@ -21,7 +23,7 @@ namespace Yolol.Execution
                 Value = MinValue;
         }
 
-        public string ToString(CultureInfo culture)
+        [NotNull] public string ToString(CultureInfo culture)
         {
             return Value.ToString(culture);
         }

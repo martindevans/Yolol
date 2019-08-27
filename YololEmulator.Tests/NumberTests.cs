@@ -9,10 +9,10 @@ namespace YololEmulator.Tests
         [TestMethod]
         public void TruncateOnConstruction()
         {
-            var n = new Number(1.23456m);
+            var n = new Number(1.234567m);
 
-            Assert.AreEqual(1.2345m, n.Value);
-            Assert.AreEqual("1.2345", n.ToString());
+            Assert.AreEqual(1.234m, n.Value);
+            Assert.AreEqual("1.234", n.ToString());
         }
 
         [TestMethod]

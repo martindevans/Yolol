@@ -12,7 +12,6 @@ using Yolol.Analysis.TreeVisitor.Reduction;
 using Yolol.Analysis.Types;
 using Yolol.Execution;
 using Yolol.Grammar;
-using Yolol.Grammar.AST.Expressions.Binary;
 using Yolol.Grammar.AST.Statements;
 
 namespace YololEmulator.Tests
@@ -188,7 +187,7 @@ namespace YololEmulator.Tests
             {
                 var result = TestExecutor.Execute(new ConstantNetwork(new KeyValuePair<string, Value>("input", i.ToString())),
                     "char = :input",
-                    "min=0 max=10 search=5 k10=10000 k20=2*k10",
+                    "min=0 max=10 search=5 k10=1000 k20=2*k10",
                     "l1 = char >= search min=l1--*search-l1*min max=-l1++*search+l1*max search=min+(max-min)/k20*k10",
                     "l2 = char >= search min=l2--*search-l2*min max=-l2++*search+l2*max search=min+(max-min)/k20*k10",
                     "l3 = char >= search min=l3--*search-l3*min max=-l3++*search+l3*max search=min+(max-min)/k20*k10",
@@ -207,30 +206,19 @@ namespace YololEmulator.Tests
             }
         }
 
-        [TestMethod]
-        public void StringDecMagic()
-        {
-            var result = TestExecutor.Execute(
-                "x = \"42\"",
-                "y = x - (--x)"
-            );
-            var x = result.GetVariable("x").Value.String;
-            var y = result.GetVariable("y").Value.String;
+        //[TestMethod]
+        //public void StringDecMagic()
+        //{
+        //    var result = TestExecutor.Execute(
+        //        "x = \"42\"",
+        //        "y = x - (--x)"
+        //    );
+        //    var x = result.GetVariable("x").Value.String;
+        //    var y = result.GetVariable("y").Value.String;
 
-            Console.WriteLine($"{x} {y}");
+        //    Console.WriteLine($"{x} {y}");
 
-            Assert.AreEqual("", y);
-        }
-
-        [TestMethod]
-        public void PowOcornoc()
-        {
-            var result = TestExecutor.Execute(
-                "x = 5.2 ^ 3.1"
-            );
-            var x = result.GetVariable("x").Value.Number;
-
-            Assert.AreEqual(165.8098m, x);
-        }
+        //    Assert.AreEqual("", y);
+        //}
     }
 }

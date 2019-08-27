@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using JetBrains.Annotations;
+using Yolol.Grammar.AST.Expressions;
 using Yolol.Grammar.AST.Statements;
 
 namespace Yolol.Analysis.DataFlowGraph.Extensions
@@ -11,7 +12,8 @@ namespace Yolol.Analysis.DataFlowGraph.Extensions
     {
         [NotNull] public static IEnumerable<BaseStatement> ToYolol([NotNull] this IDataFlowGraph dfg)
         {
-            throw new NotImplementedException();
+            foreach (var dfgo in dfg.Outputs)
+                yield return dfgo.ToStatement();
         }
 
         [NotNull] public static string ToDot([NotNull] this IDataFlowGraph dfg)
@@ -38,18 +40,19 @@ namespace Yolol.Analysis.DataFlowGraph.Extensions
                 //sb.AppendLine("  }");
             }
             OutputNameSection(dfg.Inputs, "min", "inputs", a => (a is IDataFlowGraphInputVariable v ? v.Name.Name : ((IDataFlowGraphInputConstant)a).Value.ToString()), a => (a as IDataFlowGraphInputVariable)?.Name.IsExternal ?? false);
-            OutputNameSection(dfg.Outputs, "max", "outputs", a => a.Name.Name, a => a.Name.IsExternal);
+            OutputNameSection(dfg.Outputs, "max", "outputs", a => a.ToString(), a => false);
 
             // Insert an invisible edge to line up the input and output blocks
             if (dfg.Inputs.Any() && dfg.Outputs.Any())
                 sb.AppendLine($"  {GetNodeId(dfg.Inputs.First())} -> {GetNodeId(dfg.Outputs.First())} [style=invis]");
 
             // Emit a node for every intermediate op
-            foreach (var op in dfg.Operations)
-            {
-                //p1 [label="+", shape=square];
-                sb.AppendLine($"  {GetNodeId(op)} [label=\"{op.Label}\", shape=square];");
-            }
+            throw new NotImplementedException();
+            //foreach (var op in dfg.Operations)
+            //{
+            //    //p1 [label="+", shape=square];
+            //    sb.AppendLine($"  {GetNodeId(op)} [label=\"{op.Label}\", shape=square];");
+            //}
 
             // Emit connections for nodes
             foreach (var output in dfg.Outputs)

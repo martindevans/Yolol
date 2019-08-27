@@ -27,11 +27,11 @@ namespace Yolol.Analysis.DataFlowGraph
         private readonly List<IDataFlowGraphInput> _inputs = new List<IDataFlowGraphInput>();
         public IEnumerable<IDataFlowGraphInput> Inputs => _inputs;
 
-        private readonly List<DataFlowGraphOp> _ops = new List<DataFlowGraphOp>();
+        private readonly List<IDataFlowGraphOp> _ops = new List<IDataFlowGraphOp>();
         public IEnumerable<IDataFlowGraphOp> Operations => _ops;
 
 
-        private readonly List<DataFlowGraphOutput> _outputs = new List<DataFlowGraphOutput>();
+        private readonly List<IDataFlowGraphOutput> _outputs = new List<IDataFlowGraphOutput>();
         public IEnumerable<IDataFlowGraphOutput> Outputs => _outputs;
         
 
@@ -50,18 +50,44 @@ namespace Yolol.Analysis.DataFlowGraph
             foreach (var stmt in block.Statements)
             {
                 if (stmt is Assignment ass)
-                    _outputs.Add(new DataFlowGraphOutput(ass.Left, new ExpressionConverter(this).Visit(ass.Right), Guid.NewGuid()));
+                    _outputs.Add(new AssignmentOutput(ass.Left, new ExpressionConverter(this).Visit(ass.Right), Guid.NewGuid()));
                 else if (stmt is Conditional con)
-                    _outputs.Add(new DataFlowGraphOutput(new VariableName("conditional"), new ExpressionConverter(this).Visit(con.Condition), Guid.NewGuid()));
+                    _outputs.Add(new ConditionalOutput(new ExpressionConverter(this).Visit(con.Condition), Guid.NewGuid()));
                 else if (stmt is Goto @goto)
-                    _outputs.Add(new DataFlowGraphOutput(new VariableName("goto"), new ExpressionConverter(this).Visit(@goto.Destination), Guid.NewGuid()));
+                    _outputs.Add(new GotoOutput(new ExpressionConverter(this).Visit(@goto.Destination), Guid.NewGuid()));
                 else
                     throw new NotSupportedException(stmt.GetType().Name);
             }
         }
 
-        private class DataFlowGraphOutput
+        private interface IExpressionNode
+            : IDataFlowGraphNode
+        {
+            [NotNull] BaseExpression ToExpression();
+        }
+
+
+        private class ConditionalOutput
             : IDataFlowGraphOutput
+        {
+            public Guid Id { get; }
+
+            public IDataFlowGraphNode Input { get; }
+
+            public ConditionalOutput(IDataFlowGraphNode input, Guid id)
+            {
+                Input = input;
+                Id = id;
+            }
+
+            public BaseStatement ToStatement()
+            {
+                return new Conditional(((IExpressionNode)Input).ToExpression());
+            }
+        }
+
+        private class AssignmentOutput
+            : IDataFlowGraphOutput, IExpressionNode
         {
             public Guid Id { get; }
 
@@ -69,16 +95,48 @@ namespace Yolol.Analysis.DataFlowGraph
 
             public VariableName Name { get; }
 
-            public DataFlowGraphOutput(VariableName name, IDataFlowGraphNode input, Guid id)
+            public AssignmentOutput(VariableName name, IDataFlowGraphNode input, Guid id)
             {
                 Name = name;
                 Input = input;
                 Id = id;
             }
+
+            public BaseStatement ToStatement()
+            {
+                return new Assignment(Name, ((IExpressionNode)Input).ToExpression());
+            }
+
+            public BaseExpression ToExpression()
+            {
+                return new Variable(Name);
+            }
         }
 
+        private class GotoOutput
+            : IDataFlowGraphOutput
+        {
+            public Guid Id { get; }
+
+            public IDataFlowGraphNode Input { get; }
+
+            public GotoOutput(IDataFlowGraphNode input, Guid id)
+            {
+                Input = input;
+                Id = id;
+            }
+
+            public BaseStatement ToStatement()
+            {
+                return new Goto(((IExpressionNode)Input).ToExpression());
+            }
+        }
+
+
+
+
         private class InputVariable
-            : IDataFlowGraphInputVariable
+            : IDataFlowGraphInputVariable, IExpressionNode
         {
             public Guid Id { get; }
             public DataFlowGraphInputType Type => DataFlowGraphInputType.Variable;
@@ -89,13 +147,19 @@ namespace Yolol.Analysis.DataFlowGraph
                 Id = id;
                 Name = name;
             }
+
+            public BaseExpression ToExpression()
+            {
+                return new Variable(Name);
+            }
         }
 
         private class InputConst
-            : IDataFlowGraphInputConstant
+            : IDataFlowGraphInputConstant, IExpressionNode
         {
             public Guid Id { get; }
             public DataFlowGraphInputType Type => DataFlowGraphInputType.Constant;
+            
             public Value Value { get; }
 
             public InputConst(Guid id, Value value)
@@ -104,30 +168,68 @@ namespace Yolol.Analysis.DataFlowGraph
                 Value = value;
             }
 
-            
+            public BaseExpression ToExpression()
+            {
+                if (Value.Type == Execution.Type.Number)
+                    return new ConstantNumber(Value.Number);
+                else if (Value.Type == Execution.Type.String)
+                    return new ConstantString(Value.String);
+                else
+                    throw new InvalidOperationException($"Invalid constant type {Value.Type}");
+            }
         }
 
-        private class DataFlowGraphOp
-            : IDataFlowGraphOp
+        private class PhiOp
+            : IDataFlowGraphOp, IExpressionNode
         {
-            public string Label { get; }
+            private readonly IReadOnlyList<IDataFlowGraphNode> _names;
+            private readonly ISingleStaticAssignmentTable _ssa;
 
             public Guid Id { get; }
 
-            private readonly List<IDataFlowGraphNode> _inputs = new List<IDataFlowGraphNode>();
-            public IEnumerable<IDataFlowGraphNode> Inputs => _inputs;
+            public IEnumerable<IDataFlowGraphNode> Inputs => _names;
 
-            public BaseExpression Expression => throw new NotImplementedException();
-
-            public DataFlowGraphOp(string label, Guid id)
+            public PhiOp(Guid id, IReadOnlyList<IDataFlowGraphNode> names, ISingleStaticAssignmentTable ssa)
             {
-                Label = label;
                 Id = id;
+                _names = names;
+                _ssa = ssa;
+
+                throw new NotImplementedException();
             }
 
-            public void AddInput(IDataFlowGraphNode node)
+            public BaseExpression ToExpression()
             {
-                _inputs.Add(node);
+                throw new NotImplementedException();
+                //return new Phi(_ssa, _names);
+            }
+        }
+
+        private class BinaryOp
+            : IDataFlowGraphOp, IExpressionNode
+        {
+            private YololBinaryOp Op { get; }
+
+            public Guid Id { get; }
+
+            private readonly IExpressionNode[] _inputs = new IExpressionNode[2];
+            public IEnumerable<IDataFlowGraphNode> Inputs => _inputs;
+
+            public BinaryOp(YololBinaryOp op, Guid id, IExpressionNode left, IExpressionNode right)
+            {
+                Op = op;
+                Id = id;
+
+                _inputs[0] = left;
+                _inputs[1] = right;
+            }
+
+            public BaseExpression ToExpression()
+            {
+                var left = _inputs[0].ToExpression();
+                var right = _inputs[1].ToExpression();
+
+                return Op.ToExpression(left, right);
             }
         }
 
@@ -141,22 +243,20 @@ namespace Yolol.Analysis.DataFlowGraph
                 _dataFlowGraph = dataFlowGraph;
             }
 
-            [NotNull] private DataFlowGraphOp VisitBinary([NotNull] BaseBinaryExpression bin, string label)
+            [NotNull] private BinaryOp VisitBinary([NotNull] BaseBinaryExpression bin, YololBinaryOp binop)
             {
                 var l = Visit(bin.Left);
                 var r = Visit(bin.Right);
 
-                var op = new DataFlowGraphOp(label, Guid.NewGuid());
-                op.AddInput(l);
-                op.AddInput(r);
+                var op = new BinaryOp(binop, Guid.NewGuid(), (IExpressionNode)l, (IExpressionNode)r);
 
                 _dataFlowGraph._ops.Add(op);
                 return op;
             }
 
-            protected override IDataFlowGraphNode Visit(Or or) => VisitBinary(or, "or");
+            protected override IDataFlowGraphNode Visit(Or or) => VisitBinary(or, YololBinaryOp.Or);
 
-            protected override IDataFlowGraphNode Visit(And and) => VisitBinary(and, "and");
+            protected override IDataFlowGraphNode Visit(And and) => VisitBinary(and, YololBinaryOp.And);
 
             protected override IDataFlowGraphNode Visit(ErrorExpression err)
             {
@@ -175,29 +275,27 @@ namespace Yolol.Analysis.DataFlowGraph
 
             protected override IDataFlowGraphNode Visit(Phi phi)
             {
-                var op = new DataFlowGraphOp("ϕ", Guid.NewGuid());
+                throw new NotImplementedException();
 
-                foreach (var name in phi.AssignedNames)
-                {
-                    var v = Visit(new Variable(name));
-                    op.AddInput(v);
-                }
+                //var names = phi.AssignedNames.Select(n => Visit(new Variable(n))).ToArray();
 
-                _dataFlowGraph._ops.Add(op);
-                return op;
+                //var op = new PhiOp(Guid.NewGuid(), names);
+
+                //_dataFlowGraph._ops.Add(op);
+                //return op;
             }
 
-            protected override IDataFlowGraphNode Visit(LessThanEqualTo eq) => VisitBinary(eq, "<=");
+            protected override IDataFlowGraphNode Visit(LessThanEqualTo eq) => VisitBinary(eq, YololBinaryOp.LessThanEqualTo);
 
-            protected override IDataFlowGraphNode Visit(LessThan eq) => VisitBinary(eq, "<");
+            protected override IDataFlowGraphNode Visit(LessThan eq) => VisitBinary(eq, YololBinaryOp.LessThan);
 
-            protected override IDataFlowGraphNode Visit(GreaterThanEqualTo eq) => VisitBinary(eq, ">=");
+            protected override IDataFlowGraphNode Visit(GreaterThanEqualTo eq) => VisitBinary(eq, YololBinaryOp.GreaterThanEqualTo);
 
-            protected override IDataFlowGraphNode Visit(GreaterThan eq) => VisitBinary(eq, ">");
+            protected override IDataFlowGraphNode Visit(GreaterThan eq) => VisitBinary(eq, YololBinaryOp.GreaterThan);
 
-            protected override IDataFlowGraphNode Visit(NotEqualTo eq) => VisitBinary(eq, "!=");
+            protected override IDataFlowGraphNode Visit(NotEqualTo eq) => VisitBinary(eq, YololBinaryOp.NotEqualTo);
 
-            protected override IDataFlowGraphNode Visit(EqualTo eq) => VisitBinary(eq, "==");
+            protected override IDataFlowGraphNode Visit(EqualTo eq) => VisitBinary(eq, YololBinaryOp.EqualTo);
 
             protected override IDataFlowGraphNode Visit(Variable var)
             {
@@ -210,7 +308,7 @@ namespace Yolol.Analysis.DataFlowGraph
                 }
 
                 // It's not external, try to find an output node which was previously assigned
-                var output = _dataFlowGraph._outputs.SingleOrDefault(a => a.Name.Equals(var.Name));
+                var output = _dataFlowGraph._outputs.OfType<AssignmentOutput>().SingleOrDefault(a => a.Name.Equals(var.Name));
                 if (output != null)
                     return output;
 
@@ -220,7 +318,7 @@ namespace Yolol.Analysis.DataFlowGraph
                 return input;
             }
 
-            protected override IDataFlowGraphNode Visit(Modulo mod) => VisitBinary(mod, "%");
+            protected override IDataFlowGraphNode Visit(Modulo mod) => VisitBinary(mod, YololBinaryOp.Modulo);
 
             protected override IDataFlowGraphNode Visit(PreDecrement dec)
             {
@@ -252,15 +350,15 @@ namespace Yolol.Analysis.DataFlowGraph
                 throw new NotImplementedException();
             }
 
-            protected override IDataFlowGraphNode Visit(Add add) => VisitBinary(add, "+");
+            protected override IDataFlowGraphNode Visit(Add add) => VisitBinary(add, YololBinaryOp.Add);
 
-            protected override IDataFlowGraphNode Visit(Subtract sub) => VisitBinary(sub, "-");
+            protected override IDataFlowGraphNode Visit(Subtract sub) => VisitBinary(sub, YololBinaryOp.Subtract);
 
-            protected override IDataFlowGraphNode Visit(Multiply mul) => VisitBinary(mul, "*");
+            protected override IDataFlowGraphNode Visit(Multiply mul) => VisitBinary(mul, YololBinaryOp.Multiply);
 
-            protected override IDataFlowGraphNode Visit(Divide div) => VisitBinary(div, "/");
+            protected override IDataFlowGraphNode Visit(Divide div) => VisitBinary(div, YololBinaryOp.Divide);
 
-            protected override IDataFlowGraphNode Visit(Exponent exp) => VisitBinary(exp, "^");
+            protected override IDataFlowGraphNode Visit(Exponent exp) => VisitBinary(exp, YololBinaryOp.Exponent);
 
             protected override IDataFlowGraphNode Visit(Negate neg)
             {
