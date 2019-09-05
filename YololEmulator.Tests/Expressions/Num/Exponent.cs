@@ -38,5 +38,13 @@ namespace YololEmulator.Tests.Expressions.Num
             Assert.AreEqual(2, a.Value.Number);
             Assert.AreEqual(36, b.Value.Number);
         }
+
+        [TestMethod]
+        public void Truncation()
+        {
+            Assert.AreEqual(0.008m, TestExecutor.Execute("a = 5 ^ -3").GetVariable("a").Value.Number);
+            Assert.AreEqual(-0.008m, TestExecutor.Execute("a = -5 ^ -3").GetVariable("a").Value.Number);
+            Assert.AreEqual(165.809m, TestExecutor.Execute("a = 5.2 ^ 3.1").GetVariable("a").Value.Number);
+        }
     }
 }

@@ -1,5 +1,9 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
 using Yolol.Cylon;
+using Yolol.Cylon.Deserialisation;
+using Yolol.Cylon.Serialisation;
 
 namespace YololEmulator.Tests.CylonAst
 {
@@ -23,8 +27,32 @@ namespace YololEmulator.Tests.CylonAst
                                "expression\":{\"type\":\"expression::number\",\"num\":\"1\"}}],\"else_body\":[{\"type\":\"statement::goto\",\"expression\":{\"type\":\"expressio" +
                                "n::number\",\"num\":\"2\"}}]}]}]}}";
 
-            var parser = new CylonParser();
+            var parser = new AstDeserializer();
             parser.Parse(ast);
+        }
+
+        [TestMethod]
+        public void RoundTrip()
+        {
+            var ast = TestExecutor.Parse(
+                "z = 1 :a = z z = 2 a = :a * z a /= z",
+                "flag=a==:a if flag then goto 5 else goto 6 end",
+                "x = \"hello\" * 4 goto \"world\" x = 2",
+                "b*=2 flag=b>30 if flag then :b=a end",
+                "b=b-1 goto 4",
+                "b=b+1 goto 4"
+            );
+
+            Console.WriteLine(ast);
+            Console.WriteLine();
+
+            var s = new AstSerializer().Serialize(ast);
+            Console.WriteLine(s.ToString(Formatting.None));
+            Console.WriteLine();
+
+            var d = new AstDeserializer().Parse(s.ToString());
+
+            Console.WriteLine(d);
         }
     }
 }

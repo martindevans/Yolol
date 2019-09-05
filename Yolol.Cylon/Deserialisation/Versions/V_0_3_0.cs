@@ -1,24 +1,23 @@
 ﻿using System;
-using Newtonsoft.Json.Linq;
-using Yolol.Grammar.AST;
 using System.Linq;
 using JetBrains.Annotations;
+using Newtonsoft.Json.Linq;
 using Yolol.Grammar;
+using Yolol.Grammar.AST;
 using Yolol.Grammar.AST.Expressions;
 using Yolol.Grammar.AST.Expressions.Binary;
 using Yolol.Grammar.AST.Expressions.Unary;
 using Yolol.Grammar.AST.Statements;
-
-using Variable = Yolol.Grammar.AST.Expressions.Unary.Variable;
 using Type = Yolol.Execution.Type;
 
-namespace Yolol.Cylon
+namespace Yolol.Cylon.Versions
 {
-    public class CylonParser
+    // ReSharper disable once InconsistentNaming
+    internal class V_0_3_0
     {
         private readonly bool _typeExtension;
 
-        public CylonParser(bool typeExtension = false)
+        public V_0_3_0(bool typeExtension = false)
         {
             _typeExtension = typeExtension;
         }
@@ -78,7 +77,7 @@ namespace Yolol.Cylon
             var op = jtok["operator"].Value<string>();
             var exp = ParseExpression(jtok["value"]);
 
-            Type? type = null;
+            Execution.Type? type = null;
             var typeMeta = jtok["value"]?["metadata"]?["type"];
             if (_typeExtension && typeMeta != null)
             {
@@ -90,10 +89,10 @@ namespace Yolol.Cylon
                     var str = types.Contains("string");
                     var err = types.Contains("error");
 
-                    var t = Type.Unassigned;
-                    t |= num ? Type.Number : Type.Unassigned;
-                    t |= str ? Type.String : Type.Unassigned;
-                    t |= err ? Type.Error  : Type.Unassigned;
+                    var t = Execution.Type.Unassigned;
+                    t |= num ? Execution.Type.Number : Execution.Type.Unassigned;
+                    t |= str ? Execution.Type.String : Execution.Type.Unassigned;
+                    t |= err ? Execution.Type.Error  : Type.Unassigned;
                     type = t;
                 }
             }

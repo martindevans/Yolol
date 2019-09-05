@@ -1,0 +1,240 @@
+﻿{
+  "version": "1.0.0",
+  "program": {
+    "type": "program",
+    "lines": [
+      {
+        "type": "line",
+        "code": [
+          {
+            "identifier": "z",
+            "value": {
+              "type": "expression::number",
+              "num": "1"
+            },
+            "type": "statement::assignment::assign"
+          },
+          {
+            "identifier": ":a",
+            "value": {
+              "type": "expression::identifier",
+              "name": "z"
+            },
+            "type": "statement::assignment::assign"
+          },
+          {
+            "identifier": "z",
+            "value": {
+              "type": "expression::number",
+              "num": "2"
+            },
+            "type": "statement::assignment::assign"
+          },
+          {
+            "identifier": "a",
+            "value": {
+              "type": "expression::binary_op::multiply",
+              "left": {
+                "type": "expression::identifier",
+                "name": ":a"
+              },
+              "right": {
+                "type": "expression::identifier",
+                "name": "z"
+              }
+            },
+            "type": "statement::assignment::assign"
+          },
+          {
+            "identifier": "a",
+            "value": {
+              "type": "expression::identifier",
+              "name": "z"
+            },
+            "type": "statement::assignment::assign_div"
+          }
+        ]
+      },
+      {
+        "type": "line",
+        "code": [
+          {
+            "identifier": "flag",
+            "value": {
+              "type": "expression::binary_op::equal_to",
+              "left": {
+                "type": "expression::identifier",
+                "name": "a"
+              },
+              "right": {
+                "type": "expression::identifier",
+                "name": ":a"
+              }
+            },
+            "type": "statement::assignment::assign"
+          },
+          {
+            "type": "statement::if",
+            "condition": {
+              "type": "expression::identifier",
+              "name": "flag"
+            },
+            "body": [
+              {
+                "type": "statement::goto",
+                "expression": {
+                  "type": "expression::number",
+                  "num": "5"
+                }
+              }
+            ],
+            "else_body": [
+              {
+                "type": "statement::goto",
+                "expression": {
+                  "type": "expression::number",
+                  "num": "6"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "line",
+        "code": [
+          {
+            "identifier": "x",
+            "value": {
+              "type": "expression::binary_op::multiply",
+              "left": {
+                "type": "expression::string",
+                "str": "hello"
+              },
+              "right": {
+                "type": "expression::number",
+                "num": "4"
+              }
+            },
+            "type": "statement::assignment::assign"
+          },
+          {
+            "type": "statement::goto",
+            "expression": {
+              "type": "expression::string",
+              "str": "world"
+            }
+          },
+          {
+            "identifier": "x",
+            "value": {
+              "type": "expression::number",
+              "num": "2"
+            },
+            "type": "statement::assignment::assign"
+          }
+        ]
+      },
+      {
+        "type": "line",
+        "code": [
+          {
+            "identifier": "b",
+            "value": {
+              "type": "expression::number",
+              "num": "2"
+            },
+            "type": "statement::assignment::assign_mul"
+          },
+          {
+            "identifier": "flag",
+            "value": {
+              "type": "expression::binary_op::greater_than",
+              "left": {
+                "type": "expression::identifier",
+                "name": "b"
+              },
+              "right": {
+                "type": "expression::number",
+                "num": "30"
+              }
+            },
+            "type": "statement::assignment::assign"
+          },
+          {
+            "type": "statement::if",
+            "condition": {
+              "type": "expression::identifier",
+              "name": "flag"
+            },
+            "body": [
+              {
+                "identifier": ":b",
+                "value": {
+                  "type": "expression::identifier",
+                  "name": "a"
+                },
+                "type": "statement::assignment::assign"
+              }
+            ],
+            "else_body": []
+          }
+        ]
+      },
+      {
+        "type": "line",
+        "code": [
+          {
+            "identifier": "b",
+            "value": {
+              "type": "expression::binary_op::subtract",
+              "left": {
+                "type": "expression::identifier",
+                "name": "b"
+              },
+              "right": {
+                "type": "expression::number",
+                "num": "1"
+              }
+            },
+            "type": "statement::assignment::assign"
+          },
+          {
+            "type": "statement::goto",
+            "expression": {
+              "type": "expression::number",
+              "num": "4"
+            }
+          }
+        ]
+      },
+      {
+        "type": "line",
+        "code": [
+          {
+            "identifier": "b",
+            "value": {
+              "type": "expression::binary_op::add",
+              "left": {
+                "type": "expression::identifier",
+                "name": "b"
+              },
+              "right": {
+                "type": "expression::number",
+                "num": "1"
+              }
+            },
+            "type": "statement::assignment::assign"
+          },
+          {
+            "type": "statement::goto",
+            "expression": {
+              "type": "expression::number",
+              "num": "4"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

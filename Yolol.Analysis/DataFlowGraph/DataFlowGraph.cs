@@ -275,14 +275,12 @@ namespace Yolol.Analysis.DataFlowGraph
 
             protected override IDataFlowGraphNode Visit(Phi phi)
             {
-                throw new NotImplementedException();
+                var names = phi.AssignedNames.Select(n => Visit(new Variable(n))).ToArray();
 
-                //var names = phi.AssignedNames.Select(n => Visit(new Variable(n))).ToArray();
+                var op = new PhiOp(Guid.NewGuid(), names, phi.SSA);
 
-                //var op = new PhiOp(Guid.NewGuid(), names);
-
-                //_dataFlowGraph._ops.Add(op);
-                //return op;
+                _dataFlowGraph._ops.Add(op);
+                return op;
             }
 
             protected override IDataFlowGraphNode Visit(LessThanEqualTo eq) => VisitBinary(eq, YololBinaryOp.LessThanEqualTo);

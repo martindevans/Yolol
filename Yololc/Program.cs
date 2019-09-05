@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
 using CommandLine;
 using JetBrains.Annotations;
+using Newtonsoft.Json;
 using Yolol.Analysis;
 using Yolol.Analysis.TreeVisitor.Reduction;
 using Yolol.Grammar;
@@ -17,6 +19,9 @@ namespace Yololc
 
         [Option('v', "verbose", HelpText = "Control if output of non-code messages are displayed", Required = false, Default = false)]
         public bool Verbose { get; set; }
+
+        [Option('a', "ast", HelpText = "Emit Cylon AST instead of Yolol code")]
+        public bool EmitAst { get; set; }
 
         [Option("iterations", HelpText = "Maximum number of times to apply the optimisation passes", Required = false, Default = 10)]
         public int MaxIterations { get; set; }
@@ -77,7 +82,6 @@ namespace Yololc
             if (options.InputFile == null)
             {
                 // Read from stdin
-
                 var result = new StringBuilder();
                 string line;
                 while ((line = Console.ReadLine()) != null)
@@ -88,7 +92,6 @@ namespace Yololc
             else
             {
                 // Read from file
-
                 if (!File.Exists(options.InputFile))
                     throw new FileNotFoundException("Input file does not exist", options.InputFile);
 
@@ -96,28 +99,73 @@ namespace Yololc
             }
         }
 
+        [CanBeNull] private static Yolol.Grammar.AST.Program TryParseStringInput(string input)
+        {
+            Yolol.Grammar.AST.Program TryParseAsYolol(ICollection<string> log)
+            {
+                var tokens = Tokenizer.TryTokenize(input);
+                if (!tokens.HasValue)
+                {
+                    log.Add($"{tokens.FormatErrorMessageFragment()}");
+                    log.Add(tokens.ErrorPosition.ToString());
+                    return null;
+                }
+
+                var astResult = Yolol.Grammar.Parser.TryParseProgram(tokens.Value);
+                if (!astResult.HasValue)
+                {
+                    log.Add($"{astResult.FormatErrorMessageFragment()}");
+                    log.Add(astResult.ErrorPosition.ToString());
+                    return null;
+                }
+
+                return astResult.Value;
+            }
+
+            Yolol.Grammar.AST.Program TryParseAsAst(ICollection<string> log)
+            {
+                try
+                {
+                    return new Yolol.Cylon.Deserialisation.AstDeserializer().Parse(input);
+                }
+                catch (Exception e)
+                {
+                    log.Add(e.ToString());
+                    return null;
+                }
+            }
+
+            var logYolol = new List<string>();
+            var logAst = new List<string>();
+
+            var y = TryParseAsYolol(logYolol);
+            if (y != null)
+                return y;
+
+            var a = TryParseAsAst(logAst);
+            if (a != null)
+                return a;
+
+            Console.Error.WriteLine("Failed to parse input as Yolol or JSON AST");
+            Console.Error.WriteLine("## Yolol Errors:");
+            foreach (var item in logYolol)
+                Console.Error.WriteLine(item);
+            Console.Error.WriteLine();
+            Console.Error.WriteLine("## JSON AST Errors:");
+            foreach (var item in logAst)
+                Console.Error.WriteLine(item);
+
+            return null;
+        }
+
         private static void Run([NotNull] Options options)
         {
             var input = ReadInput(options);
             var startLength = input.Length;
 
-            var tokens = Tokenizer.TryTokenize(input);
-            if (!tokens.HasValue)
-            {
-                Console.Error.WriteLine($"{tokens.FormatErrorMessageFragment()}");
-                Console.Error.WriteLine(tokens.ErrorPosition);
+            var ast = TryParseStringInput(input);
+            if (ast == null)
                 return;
-            }
-
-            var astResult = Yolol.Grammar.Parser.TryParseProgram(tokens.Value);
-            if (!astResult.HasValue)
-            {
-                Console.Error.WriteLine($"{astResult.FormatErrorMessageFragment()}");
-                Console.Error.WriteLine(astResult.ErrorPosition);
-                return;
-            }
-
-            var ast = astResult.Value;
 
             var i = 0;
             ast = ast.Fixpoint(options.MaxIterations, a => {
@@ -156,7 +204,6 @@ namespace Yololc
             });
 
             var output = ast.ToString();
-
             if (options.Verbose)
             {
                 Console.WriteLine("Done");
@@ -166,7 +213,13 @@ namespace Yololc
                 Console.WriteLine();
             }
 
-            Console.WriteLine(output);
+            if (options.EmitAst)
+            {
+                ast = ast.Fixpoint(a => new FlattenStatementLists().Visit(a));
+                Console.WriteLine(new Yolol.Cylon.Serialisation.AstSerializer().Serialize(ast).ToString(Formatting.Indented));
+            }
+            else
+                Console.WriteLine(output);
         }
     }
 }

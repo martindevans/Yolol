@@ -2,7 +2,7 @@
   "profiles": {
     "Yololc": {
       "commandName": "Project",
-      "commandLineArgs": "-i test.lol --verbose"
+      "commandLineArgs": "-i ast.json --verbose -a"
     }
   }
 }
