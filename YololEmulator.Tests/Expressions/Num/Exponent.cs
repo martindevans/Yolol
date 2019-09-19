@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Yolol.Execution;
 
 namespace YololEmulator.Tests.Expressions.Num
 {
@@ -40,11 +41,19 @@ namespace YololEmulator.Tests.Expressions.Num
         }
 
         [TestMethod]
-        public void Truncation()
+        public void Artturi()
         {
-            Assert.AreEqual(0.008m, TestExecutor.Execute("a = 5 ^ -3").GetVariable("a").Value.Number);
-            Assert.AreEqual(-0.008m, TestExecutor.Execute("a = -5 ^ -3").GetVariable("a").Value.Number);
-            Assert.AreEqual(165.809m, TestExecutor.Execute("a = 5.2 ^ 3.1").GetVariable("a").Value.Number);
+            // Results from the actual game, provided by Artturi
+            // https://discordapp.com/channels/590281942184755239/593510152406171707/619082319487172608
+
+            Number Calc(string code) => TestExecutor.Execute(code).GetVariable("a").Value.Number;
+
+            Assert.AreEqual(0.008m, Calc("a = 5 ^ -3"));
+            Assert.AreEqual(-0.008m, Calc("a = -5 ^ -3"));
+            Assert.AreEqual(165.809m, Calc("a = 5.2 ^ 3.1"));
+            Assert.AreEqual(0.006m, Calc("a = 5.2 ^ -3.1"));
+
+            Assert.AreEqual(Number.MinValue, Calc("a = -1 ^ -0.5"));
         }
     }
 }

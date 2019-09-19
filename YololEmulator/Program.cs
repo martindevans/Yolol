@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using CommandLine;
 using JetBrains.Annotations;
-using Newtonsoft.Json;
 using Superpower.Model;
 using Yolol.Execution;
 using Yolol.Grammar;
@@ -27,6 +27,9 @@ namespace YololEmulator
 
             [Option('c', "client", HelpText = "IP/Port to connect on", Required = false)]
             public string Client { get; set; }
+
+            [Option('m', "max_line", HelpText = "Set the max line number", Required = false, Default = 20)]
+            public ushort MaxLineNumber { get; set; }
         }
         // ReSharper restore UnusedAutoPropertyAccessor.Local
 
@@ -51,9 +54,10 @@ namespace YololEmulator
                 if (options.HostPort != null)
                     network = new HttpHostDeviceNetwork(options.HostPort.Value);
 
-                var st = new MachineState(network, new DefaultIntrinsics());
+                var lines = 0;
+                var st = new MachineState(network, new DefaultIntrinsics(), options.MaxLineNumber);
                 var pc = 0;
-                while (pc <= 20)
+                while (pc <= options.MaxLineNumber)
                 {
                     // Read the next line to execute from the file
                     var line = ReadLine(options.InputFile, pc);
@@ -61,8 +65,10 @@ namespace YololEmulator
 
                     // Evaluate this line
                     pc = EvaluateLine(line, pc, st);
+                    lines++;
 
                     // Print machine state
+                    Console.Title = $"Elapsed Game Time: {TimeSpan.FromMilliseconds(200 * lines).TotalSeconds.ToString(CultureInfo.CurrentCulture)}s";
                     Console.WriteLine("State:");
                     foreach (var (key, value) in st)
                         Console.WriteLine($" | {key} = {value}");
@@ -138,7 +144,18 @@ namespace YololEmulator
                 return pc;
             }
 
-            return parsed.Value.Evaluate(pc, state);
+            try
+            {
+                return parsed.Value.Evaluate(pc, state);
+            }
+            catch (ExecutionException ee)
+            {
+                var c = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"Runtime Error: {ee.Message}");
+                Console.ForegroundColor = c;
+                return pc + 1;
+            }
         }
 
         private static void ErrorSpan(TextSpan location)

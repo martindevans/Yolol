@@ -21,7 +21,15 @@ namespace Yolol.Grammar.AST.Expressions.Binary
 
         protected override Value Evaluate(Number l, Number r)
         {
-            return new Value((decimal)Math.Pow((double)l.Value, (double)r.Value));
+            var v = Math.Pow((double)l.Value, (double)r.Value);
+
+            if (double.IsPositiveInfinity(v))
+                return new Value(Number.MaxValue);
+
+            if (double.IsNegativeInfinity(v) || double.IsNaN(v))
+                return new Value(Number.MinValue);
+
+            return new Value((decimal)v);
         }
 
         protected override Value Evaluate(string l, Number r)

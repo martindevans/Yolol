@@ -36,6 +36,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="binary_search_number_parser.lol">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="jump_table_number_parser.lol">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="bf.lol">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="test.lol">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
