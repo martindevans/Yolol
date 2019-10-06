@@ -31,6 +31,11 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
             return new IfThenGotoCompressor().Visit(prog);
         }
 
+        [NotNull] public static Program ConditionalGotoCompression([NotNull] this Program prog, [NotNull] INameGenerator names)
+        {
+            return new IfThenElseGotoCompressor(names).Visit(prog);
+        }
+
         [NotNull] public static Program CompressConditionalAssignment([NotNull] this Program prog)
         {
             return new IfAssignmentCompression().Visit(prog);

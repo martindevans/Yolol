@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
-using Yolol.Analysis.ControlFlowGraph;
 using Yolol.Analysis.ControlFlowGraph.Extensions;
 using Yolol.Execution;
 using Yolol.Grammar;
@@ -12,9 +11,7 @@ namespace Yolol.Analysis.DataFlowGraph
 {
     public interface IDataFlowGraph
     {
-        IBasicBlock Block { get; }
-
-        ISingleStaticAssignmentTable SSA { get; }
+        ISingleStaticAssignmentTable Ssa { get; }
 
         IEnumerable<IDataFlowGraphInput> Inputs { get; }
 
@@ -28,6 +25,14 @@ namespace Yolol.Analysis.DataFlowGraph
         Guid Id { get; }
     }
 
+    public interface IDataFlowGraphExpressionNode
+        : IDataFlowGraphNode
+    {
+        [NotNull] BaseExpression ToExpression();
+
+        [NotNull] IEnumerable<IDataFlowGraphNode> Inputs { get; }
+    }
+
     public enum DataFlowGraphInputType
     {
         Constant,
@@ -35,11 +40,9 @@ namespace Yolol.Analysis.DataFlowGraph
     }
 
     public interface IDataFlowGraphInput
-        : IDataFlowGraphNode
+        : IDataFlowGraphExpressionNode
     {
         DataFlowGraphInputType Type { get; }
-
-        [NotNull] BaseExpression ToExpression();
     }
 
     public interface IDataFlowGraphInputConstant
@@ -55,17 +58,14 @@ namespace Yolol.Analysis.DataFlowGraph
     }
 
     public interface IDataFlowGraphOp
-        : IDataFlowGraphNode
+        : IDataFlowGraphExpressionNode
     {
-        IEnumerable<IDataFlowGraphNode> Inputs { get; }
-
-        [NotNull] BaseExpression ToExpression();
     }
 
     public interface IDataFlowGraphOutput
-        : IDataFlowGraphNode
+        : IDataFlowGraphExpressionNode
     {
-        IDataFlowGraphNode Input { get; }
+        IDataFlowGraphExpressionNode Input { get; }
 
         [NotNull] BaseStatement ToStatement();
     }

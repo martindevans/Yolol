@@ -14,7 +14,7 @@ namespace Yolol.Grammar.AST.Statements
 
         [NotNull] public abstract ExecutionResult Evaluate([NotNull] MachineState state);
 
-        public abstract bool Equals([CanBeNull] BaseStatement other);
+        public abstract bool Equals(BaseStatement other);
 
         [NotNull] public abstract override string ToString();
     }

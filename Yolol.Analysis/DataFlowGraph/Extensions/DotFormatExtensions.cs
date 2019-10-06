@@ -39,7 +39,7 @@ namespace Yolol.Analysis.DataFlowGraph.Extensions
                     sb.AppendLine($"    { string.Join(" -> ", nodes.Select(a => GetNodeId(a))) } [style=invis]");
                 //sb.AppendLine("  }");
             }
-            OutputNameSection(dfg.Inputs, "min", "inputs", a => (a is IDataFlowGraphInputVariable v ? v.Name.Name : ((IDataFlowGraphInputConstant)a).Value.ToString()), a => (a as IDataFlowGraphInputVariable)?.Name.IsExternal ?? false);
+            OutputNameSection(dfg.Inputs, "min", "inputs", a => a.ToString(), a => (a as IDataFlowGraphInputVariable)?.Name.IsExternal ?? false);
             OutputNameSection(dfg.Outputs, "max", "outputs", a => a.ToString(), a => false);
 
             // Insert an invisible edge to line up the input and output blocks
@@ -47,12 +47,8 @@ namespace Yolol.Analysis.DataFlowGraph.Extensions
                 sb.AppendLine($"  {GetNodeId(dfg.Inputs.First())} -> {GetNodeId(dfg.Outputs.First())} [style=invis]");
 
             // Emit a node for every intermediate op
-            throw new NotImplementedException();
-            //foreach (var op in dfg.Operations)
-            //{
-            //    //p1 [label="+", shape=square];
-            //    sb.AppendLine($"  {GetNodeId(op)} [label=\"{op.Label}\", shape=square];");
-            //}
+            foreach (var op in dfg.Operations)
+                sb.AppendLine($"  {GetNodeId(op)} [label=\"{op}\", shape=square];");
 
             // Emit connections for nodes
             foreach (var output in dfg.Outputs)

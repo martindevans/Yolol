@@ -3,10 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 using Yolol.Analysis.ControlFlowGraph.AST;
+using Yolol.Analysis.DataFlowGraph;
+using Yolol.Analysis.DataFlowGraph.Extensions;
+using Yolol.Analysis.TreeVisitor;
 using Yolol.Analysis.TreeVisitor.Inspection;
 using Yolol.Analysis.TreeVisitor.Reduction;
 using Yolol.Analysis.Types;
 using Yolol.Grammar;
+using Yolol.Grammar.AST.Expressions;
+using Yolol.Grammar.AST.Expressions.Unary;
+using Yolol.Grammar.AST.Statements;
 
 namespace Yolol.Analysis.ControlFlowGraph.Extensions
 {
@@ -41,7 +47,7 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
         /// </summary>
         /// <param name="graph"></param>
         /// <returns></returns>
-        [NotNull] public static IControlFlowGraph RemoveEmptyNodes([NotNull] this IControlFlowGraph graph)
+        [NotNull] public static IControlFlowGraph RemoveEmptyBlocks([NotNull] this IControlFlowGraph graph)
         {
             // Find all the vertices we can shortcut
             var emptyVertices = new HashSet<IBasicBlock>(
@@ -160,6 +166,7 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
         /// <returns></returns>
         [NotNull] public static IControlFlowGraph MergeAdjacentBasicBlocks([NotNull] this IControlFlowGraph cfg)
         {
+            // This keeps looping until it finds no work to do
             while (true)
             {
                 // Find all candidates for merging
@@ -169,51 +176,28 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
                                   let outgoing = vertex.Outgoing.Single()
                                   where outgoing.Type == EdgeType.Continue
                                   where outgoing.End.LineNumber == vertex.LineNumber
+                                  where outgoing.End.Type == BasicBlockType.Basic
                                   where outgoing.End.Incoming.Count() == 1
-                                  select (vertex, outgoing.End)).ToArray();
+                                  select (vertex, outgoing.End));
 
-                // Only select candidates which do not collide
-                // i.e. if we can merge a -> b -> c -> d
-                //      then only merge (a -> b) and (c -> d)
-                //      to form ab -> cd
-                var starts = new HashSet<IBasicBlock>(candidates.Select(a => a.vertex));
-                var merges = new Dictionary<IBasicBlock, IBasicBlock>();
-                foreach (var (start, end) in candidates)
-                {
-                    if (starts.Contains(end))
-                        starts.Remove(end);
-                    else
-                        merges.Add(start, end);
-                }
-                var deletions = new HashSet<IBasicBlock>(merges.Values);
+                // Select a single candidate pair (A -> B), if there is no work then exit now
+                var work = candidates.FirstOrDefault();
+                if (work == default)
+                    return cfg;
 
-                // Modify the blocks, hoisting up statements as necessary
-                var output = cfg.Modify((a, b) => {
-
-                    foreach (var stmt in a.Statements)
-                        b.Add(stmt);
-
-                    if (merges.TryGetValue(a, out var mergeAfter))
-                        foreach (var stmt in mergeAfter.Statements)
-                            b.Add(stmt);
+                // Move all the items from the A into B, leaving A empty
+                cfg = cfg.Modify((a, b) => {
+                    if (a.ID == work.End.ID)
+                    {
+                        work.vertex.CopyTo(b);
+                        a.CopyTo(b);
+                    }
+                    else if (a.ID != work.vertex.ID)
+                        a.CopyTo(b);
                 });
 
-                // Delete continue edges we're replacing
-                output = output.Trim(e => !deletions.Contains(e.End));
-
-                // Copy edge edges
-                foreach (var (a, b) in merges)
-                foreach (var edge in b.Outgoing)
-                    output.CreateEdge(a, edge.End, edge.Type);
-
-                // Trim the collapsed blocks
-                output = output.Trim(b => !deletions.Contains(b));
-
-                // Start the entire process again until we don't find any work to do
-                if (merges.Count > 0)
-                    cfg = output;
-                else
-                    return output;
+                // Remove all empty blocks
+                cfg = cfg.RemoveEmptyBlocks();
             }
         }
 
@@ -237,20 +221,81 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
         /// <param name="cfg"></param>
         /// <param name="ssa"></param>
         /// <returns></returns>
-        [NotNull] public static IControlFlowGraph FoldUnnecessaryCopies([NotNull] this IControlFlowGraph cfg, ISingleStaticAssignmentTable ssa)
+        [NotNull] public static IControlFlowGraph FoldUnnecessaryCopies([NotNull] this IControlFlowGraph cfg, [NotNull] ISingleStaticAssignmentTable ssa)
         {
-            // Copy across vertices, modifying them in the process
-            return cfg.Modify((a, b) => {
+            IControlFlowGraph InnerFold(IControlFlowGraph cfgi)
+            {
+                // Copy across vertices, modifying them in the process
+                return cfgi.Modify((a, b) =>
+                {
+                    // generate data flow graph for this block
+                    var dfg = (IDataFlowGraph)new DataFlowGraph.DataFlowGraph(a, ssa);
 
-                // generate data flow graph for this block
-                var dfg = new DataFlowGraph.DataFlowGraph(a, ssa);
+                    // Count how many times each variable in the whole program is read
+                    var readsInProgram = cfgi.FindReadCounts().ToDictionary(x => x.Item1, x => x.Item2);
 
+                    // Find variables which are written in this block (we're in SSA, so everything is written exactly once)
+                    var writesInBlock = a.FindWrites(ssa).ToHashSet();
 
-                //todo: reduce
-                foreach (var stmt in a.Statements)
-                    b.Add(stmt);
+                    // Find variables which are written in this block and read (just once) in this block
+                    var copiesInBlock = (
+                        from x in a.FindReadCounts()
+                        where writesInBlock.Contains(x.Item1)
+                        where x.Item2 == readsInProgram[x.Item1]
+                        where x.Item2 == 1
+                        where !x.Item1.IsExternal
+                        select x.Item1
+                    ).ToArray();
 
-            });
+                    // Select a single var to optimise
+                    var work = (
+                        from op in dfg.Outputs
+                        let exp = op.ToStatement() as Assignment
+                        where exp != null
+                        where copiesInBlock.Contains(exp.Left)
+                        select (exp, op)
+                    ).FirstOrDefault();
+
+                    // Early out if there is nothing to optimise 
+                    if (work == default)
+                    {
+                        a.CopyTo(b);
+                        return;
+                    }
+
+                    // Select the variable to replace and the expression to replace it with
+                    var varToReplace = work.exp.Left;
+                    var expToSubstitute = work.exp.Right;
+
+                    var modified = new SubstituteVariable(varToReplace, expToSubstitute).Visit(a);
+                    foreach (var item in modified.Statements)
+                        b.Add(item);
+                });
+            }
+
+            // Keep applying folding until no more folds are done
+            return cfg.Fixpoint(InnerFold);
+        }
+
+        private class SubstituteVariable
+            : BaseTreeVisitor
+        {
+            private readonly VariableName _var;
+            private readonly BaseExpression _exp;
+
+            public SubstituteVariable(VariableName var, BaseExpression exp)
+            {
+                _var = var;
+                _exp = exp;
+            }
+
+            protected override BaseExpression Visit([NotNull] Variable var)
+            {
+                if (var.Name == _var)
+                    return _exp;
+                else
+                    return var;
+            }
         }
     }
 }

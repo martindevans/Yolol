@@ -12,7 +12,7 @@ o+=6*n n*=10 goto 2
 o+=7*n n*=10 goto 2
 o+=8*n n*=10 goto 2
 o+=9*n n*=10 goto 2
-o+=0*n n+=10 goto 2
+o+=0*n n*=10 goto 2
 
 
 failed="true" empty_input="true" goto 18								// Infinite loop for demo purposes

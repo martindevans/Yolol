@@ -58,6 +58,9 @@ namespace Yololc
         [Option("disable_disabletrailinggotocompression", HelpText = "Do not replace a final `if x then goto y end` statement with a smaller equivalent", Required = false)]
         public bool DisableTrailingConditionalGotoAnyLineCompression { get; set; }
 
+        [Option("disable_ifthengotocompression", HelpText = "Do not replace `if X then goto Y else goto Z end` with a smaller equivalent", Required = false)]
+        public bool DisableIfThenGotoCompression { get; set; }
+
         [Option("disable_disableconditionalassignmentcompression", HelpText = "Do not replace `if a then b = c end` with a smaller equivalent", Required = false)]
         public bool DisableCompressConditionalAssignment { get; set; }
         
@@ -184,18 +187,20 @@ namespace Yololc
                     a = a.HoistConstants();
                 if (!options.DisableCompoundIncrementSubstitution && !options.DisableAstTransformPasses)
                     a = a.CompressCompoundIncrement();
-                if (!options.DisableVariableNameSimplification && !options.DisableAstTransformPasses)
-                    a = a.SimplifyVariableNames();
-                if (!options.DisableDeadPostGotoElimination && !options.DisableAstTransformPasses)
-                    a = a.DeadPostGotoElimination();
                 if (!options.DisableEolGotoElimination && !options.DisableAstTransformPasses)
                     a = a.TrailingGotoNextLineElimination();
                 if (!options.DisableTrailingConditionalGotoAnyLineCompression && !options.DisableAstTransformPasses)
                     a = a.TrailingConditionalGotoAnyLineCompression();
+                if (!options.DisableIfThenGotoCompression && !options.DisableAstTransformPasses)
+                    a = a.ConditionalGotoCompression(new RandomNameGenerator(1));
+                if (!options.DisableDeadPostGotoElimination && !options.DisableAstTransformPasses)
+                    a = a.DeadPostGotoElimination();
                 if (!options.DisableCompressConditionalAssignment && !options.DisableAstTransformPasses)
                     a = a.CompressConditionalAssignment();
                 if (!options.DisableConstantCompression && !options.DisableAstTransformPasses)
                     a = a.CompressConstants();
+                if (!options.DisableVariableNameSimplification && !options.DisableAstTransformPasses)
+                    a = a.SimplifyVariableNames();
 
                 if (options.Verbose)
                     Console.WriteLine($"{timer.ElapsedMilliseconds}ms");

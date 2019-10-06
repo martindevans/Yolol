@@ -3,6 +3,7 @@ using System.Linq;
 using JetBrains.Annotations;
 using Yolol.Analysis.TreeVisitor.Inspection;
 using Yolol.Grammar;
+using Yolol.Grammar.AST;
 
 namespace Yolol.Analysis.ControlFlowGraph.Extensions
 {
@@ -23,6 +24,36 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
             result.ExceptWith(read.Names);
 
             return result;
+        }
+
+        /// <summary>
+        /// Get an enumerable of all variables which are read in the program with a count of how many times they are read
+        /// </summary>
+        /// <param name="cfg"></param>
+        /// <returns></returns>
+        [NotNull] public static IEnumerable<(VariableName, uint)> FindReadCounts([NotNull] this IControlFlowGraph cfg)
+        {
+            return from v in cfg.Vertices
+                   from r in v.FindReadCounts()
+                   group r.Item2 by r.Item1 into counts
+                   let c = counts.Aggregate((a, b) => a + b)
+                   select (counts.Key, c);
+        }
+
+        [NotNull] public static IEnumerable<(VariableName, uint)> FindReadCounts([NotNull] this IBasicBlock block)
+        {
+            var r = new FindReadVariables();
+            r.Visit(block);
+
+            return r.Counts;
+        }
+
+        [NotNull] public static IEnumerable<VariableName> FindWrites([NotNull] this IBasicBlock block, ISingleStaticAssignmentTable ssa)
+        {
+            var r = new FindAssignedVariables();
+            r.Visit(block);
+
+            return r.Names;
         }
     }
 }

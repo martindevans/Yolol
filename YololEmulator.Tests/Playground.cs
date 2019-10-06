@@ -10,6 +10,7 @@ using Yolol.Analysis.DataFlowGraph.Extensions;
 using Yolol.Analysis.TreeVisitor;
 using Yolol.Analysis.TreeVisitor.Reduction;
 using Yolol.Analysis.Types;
+using Yolol.Cylon.Serialisation;
 using Yolol.Execution;
 using Yolol.Grammar;
 using Yolol.Grammar.AST.Statements;
@@ -61,6 +62,8 @@ namespace YololEmulator.Tests
             //    "a++ goto 1",
             //    "b = a * 2 goto 1"
             //);
+
+            Console.WriteLine("## Input");
             Console.WriteLine(ast);
             Console.WriteLine();
 
@@ -86,7 +89,7 @@ namespace YololEmulator.Tests
                 cf = cf.MergeAdjacentBasicBlocks();
                 cf = cf.NormalizeErrors();
 
-                // Optimise graph based on SSA
+                // Optimise graph based on DFG
                 cf = cf.FoldUnnecessaryCopies(ssa);
 
                 // Remove SSA before refinding it in the next iteration
@@ -95,33 +98,27 @@ namespace YololEmulator.Tests
                 return cf;
             });
 
-            cfg = cfg.Fixpoint(cf => {
+            cfg = cfg.Fixpoint(cf =>
+            {
                 // Minify the graph
                 cf = cf.ReplaceUnassignedReads();
-                cf = cf.RemoveEmptyNodes();
+                cf = cf.RemoveEmptyBlocks();
                 cf = cf.RemoveUnreachableBlocks();
 
                 return cf;
             });
 
-            //// Convert back into Yolol
-            //var yolol = cfg.ToYolol();//.StripTypes();
-            //Console.WriteLine(yolol);
-            //Console.WriteLine();
+            // Convert back into Yolol
+            Console.WriteLine("## Output");
+            var yolol = cfg.ToYolol().StripTypes();
+            Console.WriteLine(yolol);
+            Console.WriteLine();
 
             //Console.WriteLine($"{ast.ToString().Length} => {yolol.ToString().Length}");
             //Console.WriteLine();
 
-            cfg = cfg.StaticSingleAssignment(out var ssa2);
-            var l1 = cfg.Vertices.Where(v => v.LineNumber == 1).OrderByDescending(a => a.Statements.Count()).First();
-            var dfg = l1.DataFlowGraph(ssa2);
-            Console.WriteLine(l1.ToString().Replace("\\n", " "));
-            Console.WriteLine();
-            //Console.WriteLine(dfg.ToDot());
-            Console.WriteLine(string.Join(" ", dfg.ToYolol()));
-
-            //Console.WriteLine();
-            //Console.WriteLine(cfg.ToDot());
+            Console.WriteLine("## CFG");
+            Console.WriteLine(cfg.ToDot());
         }
 
         [TestMethod]
@@ -205,6 +202,55 @@ namespace YololEmulator.Tests
                 Assert.AreEqual(i, s.Value.Number);
             }
         }
+
+        //[TestMethod]
+        //public void ParsingNumbers2()
+        //{
+        //    var patterns = new List<((int, int, int, int), int)>();
+
+        //    for (var i = 0; i < 10; i++)
+        //    {
+        //        var result = TestExecutor.Execute(new ConstantNetwork(new KeyValuePair<string, Value>("input", i.ToString())),
+        //            "i = :input",
+        //            "a=i>7 b=(i>3)*(i<8) c=(i>1)*(i<4)+(i>5)*(i<8) goto a*4+b*2+c+3",
+        //            ":output++",
+        //            ":output++",
+        //            ":output++",
+        //            ":output++",
+        //            ":output++",
+        //            ":output++"
+        //        );
+
+        //        // a b c d
+        //        // 0 0 0 0 => 0
+        //        // 0 0 0 1 => 1
+        //        // 0 0 1 0 => 2
+        //        // 0 0 1 1 => 3
+        //        // 0 1 0 0 => 4
+        //        // 0 1 0 1 => 5
+        //        // 0 1 1 0 => 6
+        //        // 0 1 1 1 => 7
+        //        // 1 0 0 0 => 8
+        //        // 1 0 0 1 => 9
+
+        //        var a = (int)result.GetVariable("a").Value.Number.Value;
+        //        var b = (int)result.GetVariable("b").Value.Number.Value;
+        //        var c = (int)result.GetVariable("c").Value.Number.Value;
+        //        var d = (int)result.GetVariable("d").Value.Number.Value;
+
+        //        patterns.Add(((a, b, c, d), i));
+        //        //Console.WriteLine($"a:{a} b:{b} c:{c}  {i}");
+        //    }
+
+        //    var groups = patterns.GroupBy(a => a.Item1, a => a.Item2).ToArray();
+        //    foreach (var grouping in groups.OrderBy(a => a.Key.Item1 * 4 + a.Key.Item2 * 2 + a.Key.Item3))
+        //    {
+        //        var (a, b, c, d) = grouping.Key;
+        //        Console.WriteLine(a * 8 + b * 4 + c * 2 + d + " " + grouping.Key + " " + string.Join(" ", grouping));
+        //    }
+
+        //    Assert.Fail();
+        //}
 
         //[TestMethod]
         //public void StringDecMagic()

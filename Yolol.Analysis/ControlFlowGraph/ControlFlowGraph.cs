@@ -67,8 +67,16 @@ namespace Yolol.Analysis.ControlFlowGraph
         private interface IExposedMutableBlock
             : IMutableBasicBlock
         {
+            /// <summary>
+            /// Add a new outgoing edge from this block to another block
+            /// </summary>
+            /// <param name="edge"></param>
             void AddOutgoing(IEdge edge);
 
+            /// <summary>
+            /// Add a new incoming edge to this block from another block
+            /// </summary>
+            /// <param name="edge"></param>
             void AddIncoming(IEdge edge);
         }
 
@@ -128,7 +136,11 @@ namespace Yolol.Analysis.ControlFlowGraph
                     return false;
                 if (ReferenceEquals(this, other))
                     return true;
-                return ID.Equals(other.ID);
+
+                if (_statements.Count != other.Statements.Count())
+                    return false;
+
+                return _statements.Zip(other.Statements, (a, b) => a.Equals(b)).All(a => a);
             }
 
             public override int GetHashCode()

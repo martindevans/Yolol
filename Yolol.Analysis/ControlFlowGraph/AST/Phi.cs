@@ -21,9 +21,9 @@ namespace Yolol.Analysis.ControlFlowGraph.AST
 
         public ISingleStaticAssignmentTable SSA { get; }
 
-        public Phi([NotNull] ISingleStaticAssignmentTable ssa, [NotNull] params VariableName[] assignedNames)
+        public Phi([NotNull] ISingleStaticAssignmentTable ssa, [NotNull] IReadOnlyList<VariableName> assignedNames)
         {
-            if (assignedNames.Length == 0)
+            if (assignedNames.Count == 0)
                 throw new ArgumentException("Must specify one or more assigned names");
             if (assignedNames.Select(ssa.BaseName).GroupBy(a => a).Count() != 1)
                 throw new ArgumentException("Not all variables in Phi function share a same base variable", nameof(assignedNames));
@@ -32,6 +32,11 @@ namespace Yolol.Analysis.ControlFlowGraph.AST
             AssignedNames = assignedNames.Distinct().ToArray();
 
             SSA = ssa;
+        }
+
+        public Phi([NotNull] ISingleStaticAssignmentTable ssa, [NotNull] params VariableName[] assignedNames)
+            : this(ssa, (IReadOnlyList<VariableName>)assignedNames)
+        {
         }
 
         public override bool IsConstant => false;
@@ -47,10 +52,16 @@ namespace Yolol.Analysis.ControlFlowGraph.AST
 
         public bool Equals([CanBeNull] Phi other)
         {
-            return other != null
-                && other.BaseVariable.Equals(BaseVariable)
-                && other.AssignedNames.Count == AssignedNames.Count
-                && other.AssignedNames.OrderBy(a => a.Name).Zip(AssignedNames.OrderBy(a => a), (a, b) => a.Equals(b)).All(a => a);
+            if (other == null)
+                return false;
+
+            if (!other.BaseVariable.Equals(BaseVariable))
+                return false;
+
+            if (other.AssignedNames.Count != AssignedNames.Count)
+                return false;
+
+            return other.AssignedNames.OrderBy(a => a.Name).Zip(AssignedNames.OrderBy(a => a.Name), (a, b) => a.Equals(b)).All(a => a);
         }
 
         public override bool Equals(BaseExpression other)

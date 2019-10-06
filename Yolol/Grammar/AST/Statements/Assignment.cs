@@ -27,7 +27,7 @@ namespace Yolol.Grammar.AST.Statements
             return new ExecutionResult();
         }
 
-        public bool Equals([CanBeNull] Assignment other)
+        public bool Equals(Assignment other)
         {
             return other != null
                 && other.Left.Equals(Left)

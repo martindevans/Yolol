@@ -18,7 +18,7 @@ namespace Yolol.Analysis.TreeVisitor.Inspection
 
         [NotNull] public IEnumerable<(VariableName, uint)> Counts => _counts.Select(a => (a.Key, a.Value));
 
-        private void Add(VariableName name)
+        private void Add([NotNull] VariableName name)
         {
             _counts.TryGetValue(name, out var value);
             value++;
