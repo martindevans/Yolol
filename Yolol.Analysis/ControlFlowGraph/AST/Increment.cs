@@ -6,6 +6,9 @@ using Yolol.Grammar.AST.Expressions;
 
 namespace Yolol.Analysis.ControlFlowGraph.AST
 {
+    /// <summary>
+    /// Performs the increment operation on a value without modifying the underlying field
+    /// </summary>
     public class Increment
         : BaseExpression
     {

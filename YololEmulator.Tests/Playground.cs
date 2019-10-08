@@ -41,13 +41,15 @@ namespace YololEmulator.Tests
             //);
 
             var ast = TestExecutor.Parse(
-                "z = 1 :a = z z = 2 a = :a * z a /= z",
-                "flag=a==:a if flag then goto 5 else goto 6 end",
-                "x = \"hello\" * 4 goto \"world\" x = 2",
+                "z = -1 z-- :a = z a = sin(:a * (z + 2)) a++ a /= z",
+                "flag=a==:a if flag then goto 5 else goto 6 end b=0/0",
+                ":x = \"hello\" * 4 goto \"world\" x = 2",
                 "b*=2 flag=b>30 if flag then :b=a end",
                 "b=b-1 goto 4",
                 "b=b+1 goto 4"
             );
+
+            //throw new NotImplementedException("Properly handle brackets");
 
             //var ast = TestExecutor.Parse(
             //    ":o1=0+(:a*1)+(:a/1)+:a^1+(:a-0)",
@@ -67,58 +69,66 @@ namespace YololEmulator.Tests
             Console.WriteLine(ast);
             Console.WriteLine();
 
-            var cfg = new Builder(ast).Build();
-
             var hints = new[] {
                 (new VariableName(":a"), Yolol.Execution.Type.Number)
             };
 
-            cfg = cfg.Fixpoint(cf => {
-                // Find types
-                cf = cf.StaticSingleAssignment(out var ssa);
-                cf = cf.FlowTypingAssignment(ssa, out var types, hints);
-
-                // Optimise graph based on types
-                cf = cf.VisitBlocks(() => new ConstantFoldingVisitor(true));
-                cf = cf.VisitBlocks(t => new OpNumByConstNumCompressor(t), types);
-                cf = cf.VisitBlocks(() => new ErrorCompressor());
-                cf = cf.VisitBlocks(u => new RemoveUnreadAssignments(u, ssa), c => c.FindUnreadAssignments());
-                cf = cf.FlowTypingAssignment(ssa, out types, hints);
-                cf = cf.TypeDrivenEdgeTrimming(types);
-                cf = cf.RemoveUnreachableBlocks();
-                cf = cf.MergeAdjacentBasicBlocks();
-                cf = cf.NormalizeErrors();
-
-                // Optimise graph based on DFG
-                cf = cf.FoldUnnecessaryCopies(ssa);
-
-                // Remove SSA before refinding it in the next iteration
-                cf = cf.RemoveStaticSingleAssignment(ssa);
-
-                return cf;
-            });
-
-            cfg = cfg.Fixpoint(cf =>
-            {
-                // Minify the graph
-                cf = cf.ReplaceUnassignedReads();
-                cf = cf.RemoveEmptyBlocks();
-                cf = cf.RemoveUnreachableBlocks();
-
-                return cf;
-            });
-
-            // Convert back into Yolol
+            var p = new OptimisationPipeline(1, false, hints);
+            var r = p.Apply(ast);
             Console.WriteLine("## Output");
-            var yolol = cfg.ToYolol().StripTypes();
-            Console.WriteLine(yolol);
-            Console.WriteLine();
+            Console.WriteLine(r);
 
-            //Console.WriteLine($"{ast.ToString().Length} => {yolol.ToString().Length}");
+            throw new NotImplementedException("Remove inc/dec from output");
+
+            //var cfg = new Builder(ast).Build();
+
+            //cfg = cfg.Fixpoint(cf =>
+            //{
+            //    // Find types
+            //    cf = cf.StaticSingleAssignment(out var ssa);
+            //    cf = cf.FlowTypingAssignment(ssa, out var types, hints);
+
+            //    // Optimise graph based on types
+            //    cf = cf.VisitBlocks(() => new ConstantFoldingVisitor(true));
+            //    cf = cf.VisitBlocks(t => new OpNumByConstNumCompressor(t), types);
+            //    cf = cf.VisitBlocks(() => new ErrorCompressor());
+            //    cf = cf.VisitBlocks(u => new RemoveUnreadAssignments(u, ssa), c => c.FindUnreadAssignments());
+            //    cf = cf.FlowTypingAssignment(ssa, out types, hints);
+            //    cf = cf.TypeDrivenEdgeTrimming(types);
+            //    cf = cf.RemoveUnreachableBlocks();
+            //    cf = cf.MergeAdjacentBasicBlocks();
+            //    cf = cf.NormalizeErrors();
+
+            //    // Optimise graph based on DFG
+            //    cf = cf.FoldUnnecessaryCopies(ssa);
+
+            //    // Remove SSA before refinding it in the next iteration
+            //    cf = cf.RemoveStaticSingleAssignment(ssa);
+
+            //    return cf;
+            //});
+
+            //cfg = cfg.Fixpoint(cf =>
+            //{
+            //    // Minify the graph
+            //    cf = cf.ReplaceUnassignedReads();
+            //    cf = cf.RemoveEmptyBlocks();
+            //    cf = cf.RemoveUnreachableBlocks();
+
+            //    return cf;
+            //});
+
+            //// Convert back into Yolol
+            //Console.WriteLine("## Output");
+            //var yolol = cfg.ToYolol().StripTypes();
+            //Console.WriteLine(yolol);
             //Console.WriteLine();
 
-            Console.WriteLine("## CFG");
-            Console.WriteLine(cfg.ToDot());
+            ////Console.WriteLine($"{ast.ToString().Length} => {yolol.ToString().Length}");
+            ////Console.WriteLine();
+
+            //Console.WriteLine("## CFG");
+            //Console.WriteLine(cfg.ToDot());
         }
 
         [TestMethod]

@@ -100,7 +100,7 @@ namespace Yolol.Cylon.Versions
 
             if (type != null)
             {
-                throw new NotImplementedException("todo: do something with type metadata");
+                //todo: do something with type metadata
             }
 
             switch (op)

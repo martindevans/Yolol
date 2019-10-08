@@ -9,8 +9,10 @@ using Yolol.Analysis.TreeVisitor;
 using Yolol.Analysis.TreeVisitor.Inspection;
 using Yolol.Analysis.TreeVisitor.Reduction;
 using Yolol.Analysis.Types;
+using Yolol.Execution.Extensions;
 using Yolol.Grammar;
 using Yolol.Grammar.AST.Expressions;
+using Yolol.Grammar.AST.Expressions.Binary;
 using Yolol.Grammar.AST.Expressions.Unary;
 using Yolol.Grammar.AST.Statements;
 
@@ -250,10 +252,10 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
                     // Select a single var to optimise
                     var work = (
                         from op in dfg.Outputs
-                        let exp = op.ToStatement() as Assignment
-                        where exp != null
-                        where copiesInBlock.Contains(exp.Left)
-                        select (exp, op)
+                        let ass = op.ToStatement() as Assignment
+                        where ass != null
+                        where copiesInBlock.Contains(ass.Left)
+                        select (ass, op)
                     ).FirstOrDefault();
 
                     // Early out if there is nothing to optimise 
@@ -264,8 +266,8 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
                     }
 
                     // Select the variable to replace and the expression to replace it with
-                    var varToReplace = work.exp.Left;
-                    var expToSubstitute = work.exp.Right;
+                    var varToReplace = work.ass.Left;
+                    var expToSubstitute = work.ass.Right;
 
                     var modified = new SubstituteVariable(varToReplace, expToSubstitute).Visit(a);
                     foreach (var item in modified.Statements)
@@ -289,10 +291,67 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
                 _exp = exp;
             }
 
-            protected override BaseExpression Visit([NotNull] Variable var)
+            protected override BaseExpression Visit(Increment inc)
+            {
+                BaseExpression HandleExpression(BaseExpression right)
+                {
+                    switch (right)
+                    {
+                        case Variable v:
+                            return new Increment(v.Name);
+
+                        case ConstantNumber n:
+                            return new ConstantNumber(new Add(n, new ConstantNumber(1)).StaticEvaluate().Number);
+
+                        case ConstantString s:
+                            return new ConstantString(s.Value + " ");
+
+                        case Bracketed b:
+                            return HandleExpression(b.Expression);
+
+                        default:
+                            throw new InvalidOperationException(right.GetType().Name);
+                    }
+                }
+
+                var r = Visit(new Variable(inc.Name));
+                return HandleExpression(r);
+            }
+
+            protected override BaseExpression Visit(Decrement dec)
+            {
+                BaseExpression HandleExpression(BaseExpression right)
+                {
+                    switch (right)
+                    {
+                        case Variable v:
+                            return new Decrement(v.Name);
+
+                        case ConstantNumber n:
+                            return new ConstantNumber(new Subtract(n, new ConstantNumber(1)).StaticEvaluate().Number);
+
+                        case ConstantString s:
+                            if (s.Value.Length > 0)
+                                return new ConstantString(s.Value.Substring(0, s.Value.Length - 1));
+                            else
+                                return new ErrorExpression();
+
+                        case Bracketed b:
+                            return HandleExpression(b.Expression);
+
+                        default:
+                            return dec;
+                    }
+                }
+
+                var r = Visit(new Variable(dec.Name));
+                return HandleExpression(r);
+            }
+
+            protected override BaseExpression Visit(Variable var)
             {
                 if (var.Name == _var)
-                    return _exp;
+                    return new Bracketed(_exp);
                 else
                     return var;
             }

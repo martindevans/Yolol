@@ -1,11 +1,15 @@
 ﻿using JetBrains.Annotations;
 using Yolol.Grammar.AST;
-using Yolol.Grammar.AST.Statements;
 
 namespace Yolol.Analysis.TreeVisitor.Reduction
 {
     public static class AstExtensions
     {
+        [NotNull] public static Program SimpleBracketElimination([NotNull] this Program prog)
+        {
+            return new SimpleBracketElimination().Visit(prog);
+        }
+
         [NotNull] public static Program SimplifyVariableNames([NotNull] this Program prog)
         {
             return new VariableSimplificationVisitor().Visit(prog);

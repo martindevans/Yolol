@@ -21,7 +21,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
             var t = Visit(@if.TrueBranch);
             var f = Visit(@if.FalseBranch);
 
-            if (t.Statements.Last() is Goto && f.Statements.Count > 0)
+            if (t.Statements.LastOrDefault() is Goto && f.Statements.Count > 0)
             {
                 return base.Visit(new StatementList(new BaseStatement[] {
                     new If(c, t, new StatementList(Array.Empty<BaseStatement>())),

@@ -6,6 +6,9 @@ using Yolol.Grammar.AST.Expressions;
 
 namespace Yolol.Analysis.ControlFlowGraph.AST
 {
+    /// <summary>
+    /// Performs the decrement operation on a value without modifying the underlying field
+    /// </summary>
     public class Decrement
         : BaseExpression, IEquatable<Decrement>
     {

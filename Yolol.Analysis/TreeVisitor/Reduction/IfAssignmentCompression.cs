@@ -15,7 +15,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
             if (@if.TrueBranch.Statements.Count > 1)
                 return base.Visit(@if);
 
-            if (!(@if.TrueBranch.Statements.Single() is Assignment trueAss))
+            if (!(@if.TrueBranch.Statements.SingleOrDefault() is Assignment trueAss))
                 return base.Visit(@if);
 
             var condition = @if.Condition.IsBoolean

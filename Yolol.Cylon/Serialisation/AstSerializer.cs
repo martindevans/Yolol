@@ -69,8 +69,8 @@ namespace Yolol.Cylon.Serialisation
                         ["expression"] = SerializeExpression(e.Expression)
                     };
 
-                case StatementList l:
-                    throw new NotImplementedException();
+                case StatementList _:
+                    throw new NotSupportedException();
 
                 default:
                     throw new NotSupportedException($"Cannot serialize statement type `{stmt.GetType().Name}`");

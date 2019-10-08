@@ -12,7 +12,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
     {
         protected override StatementList Visit(StatementList list)
         {
-            return base.Visit(new StatementList(list.Statements.SelectMany(item => item is StatementList sl ? sl.Statements : new[] {item})));
+            return base.Visit(new StatementList(list.Statements.SelectMany(item => item is StatementList sl ? sl.Statements : new[] { item })));
         }
 
         protected override BaseStatement VisitUnknown(BaseStatement statement)

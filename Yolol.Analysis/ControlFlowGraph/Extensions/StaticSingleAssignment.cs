@@ -169,7 +169,7 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
             private readonly Dictionary<VariableName, List<VariableName>> _baseToAssigned = new Dictionary<VariableName, List<VariableName>>();
             private readonly Dictionary<VariableName, VariableName> _assignedToBase = new Dictionary<VariableName, VariableName>();
 
-            [NotNull] public VariableName Assign(VariableName baseName)
+            [NotNull] public VariableName Assign([NotNull] VariableName baseName)
             {
                 // Get ot create list of assigned names
                 if (!_baseToAssigned.TryGetValue(baseName, out var l))

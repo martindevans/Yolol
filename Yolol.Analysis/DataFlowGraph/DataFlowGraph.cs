@@ -300,6 +300,38 @@ namespace Yolol.Analysis.DataFlowGraph
             }
         }
 
+        private class UnaryOp
+            : IDataFlowGraphOp
+        {
+            private readonly string _name;
+            private readonly Func<BaseExpression, BaseExpression> _toExpression;
+
+            public Guid Id { get; }
+
+            private readonly IDataFlowGraphExpressionNode[] _inputs = new IDataFlowGraphExpressionNode[1];
+            public IEnumerable<IDataFlowGraphNode> Inputs => _inputs;
+
+            public UnaryOp(Guid id, string name, IDataFlowGraphExpressionNode input, Func<BaseExpression, BaseExpression> toExpression)
+            {
+                _name = name;
+                _toExpression = toExpression;
+                _inputs[0] = input;
+
+                Id = id;
+            }
+
+            public override string ToString()
+            {
+                return _name;
+            }
+
+            public BaseExpression ToExpression()
+            {
+                var input = _inputs[0].ToExpression();
+                return _toExpression(input);
+            }
+        }
+
         private class ExpressionConverter
             : BaseExpressionVisitor<IDataFlowGraphExpressionNode>
         {
@@ -332,12 +364,12 @@ namespace Yolol.Analysis.DataFlowGraph
 
             protected override IDataFlowGraphExpressionNode Visit(Increment inc)
             {
-                throw new NotImplementedException();
+                return new UnaryOp(Guid.NewGuid(), "++", Visit(new Variable(inc.Name)), a => new Increment(((Variable)a).Name));
             }
 
             protected override IDataFlowGraphExpressionNode Visit(Decrement dec)
             {
-                throw new NotImplementedException();
+                return new UnaryOp(Guid.NewGuid(), "--", Visit(new Variable(dec.Name)), a => new Decrement(((Variable)a).Name));
             }
 
             protected override IDataFlowGraphExpressionNode Visit(Phi phi)
@@ -387,32 +419,32 @@ namespace Yolol.Analysis.DataFlowGraph
 
             protected override IDataFlowGraphExpressionNode Visit(PreDecrement dec)
             {
-                throw new NotImplementedException();
+                throw new NotSupportedException("PreDecrement must be converted to Decrement before data flow analysis");
             }
 
             protected override IDataFlowGraphExpressionNode Visit(PostDecrement dec)
             {
-                throw new NotImplementedException();
+                throw new NotSupportedException("PostDecrement must be converted to Decrement before data flow analysis");
             }
 
             protected override IDataFlowGraphExpressionNode Visit(PreIncrement inc)
             {
-                throw new NotImplementedException();
+                throw new NotSupportedException("PreIncrement must be converted to Increment before data flow analysis");
             }
 
             protected override IDataFlowGraphExpressionNode Visit(PostIncrement inc)
             {
-                throw new NotImplementedException();
+                throw new NotSupportedException("PostIncrement must be converted to Increment before data flow analysis");
             }
 
             protected override IDataFlowGraphExpressionNode Visit(Application app)
             {
-                throw new NotImplementedException();
+                return new UnaryOp(Guid.NewGuid(), app.Name.Name, Visit(app.Parameter), a => new Application(app.Name, a));
             }
 
             protected override IDataFlowGraphExpressionNode Visit(Bracketed brk)
             {
-                throw new NotImplementedException();
+                return new UnaryOp(Guid.NewGuid(), "()", Visit(brk.Expression), a => new Bracketed(a));
             }
 
             protected override IDataFlowGraphExpressionNode Visit(Add add) => VisitBinary(add, YololBinaryOp.Add);
@@ -427,7 +459,7 @@ namespace Yolol.Analysis.DataFlowGraph
 
             protected override IDataFlowGraphExpressionNode Visit(Negate neg)
             {
-                throw new NotImplementedException();
+                return new UnaryOp(Guid.NewGuid(), "negate", Visit(neg.Expression), a => new Negate(a));
             }
 
             protected override IDataFlowGraphExpressionNode Visit(ConstantNumber con)

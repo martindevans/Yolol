@@ -2,6 +2,7 @@
 using System.Linq;
 using JetBrains.Annotations;
 using Yolol.Analysis.ControlFlowGraph.AST;
+using Yolol.Execution.Extensions;
 using Yolol.Grammar;
 using Yolol.Grammar.AST;
 using Yolol.Grammar.AST.Expressions;
@@ -180,7 +181,7 @@ namespace Yolol.Analysis.TreeVisitor
 
         [NotNull] protected virtual BaseExpression Visit([NotNull] Application app)
         {
-            return new Bracketed(Visit(app.Parameter));
+            return new Application(app.Name, Visit(app.Parameter));
         }
 
         [NotNull] protected virtual BaseExpression Visit([NotNull] Bracketed brk)
