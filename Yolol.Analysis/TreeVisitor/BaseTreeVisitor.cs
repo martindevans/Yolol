@@ -2,7 +2,6 @@
 using System.Linq;
 using JetBrains.Annotations;
 using Yolol.Analysis.ControlFlowGraph.AST;
-using Yolol.Execution.Extensions;
 using Yolol.Grammar;
 using Yolol.Grammar.AST;
 using Yolol.Grammar.AST.Expressions;
@@ -45,7 +44,15 @@ namespace Yolol.Analysis.TreeVisitor
                 case ErrorExpression a: return Visit(a);
 
                 case Bracketed a:   return Visit(a);
-                case Application a: return Visit(a);
+
+                case Abs a:     return Visit(a);
+                case Sqrt a:    return Visit(a);
+                case Sine a:    return Visit(a);
+                case Cosine a:  return Visit(a);
+                case Tangent a: return Visit(a);
+                case ArcSine a: return Visit(a);
+                case ArcCos a:  return Visit(a);
+                case ArcTan a:  return Visit(a);
 
                 case PostIncrement a: return Visit(a);
                 case PreIncrement a:  return Visit(a);
@@ -108,8 +115,8 @@ namespace Yolol.Analysis.TreeVisitor
 
         [NotNull] protected virtual BaseExpression Visit([NotNull] Decrement dec)
         {
-            var v = new Variable(dec.Name);
-            var r = (Variable)Visit(v);
+            var v = Visit(new Variable(dec.Name));
+            var r = (Variable)v;
 
             return new Decrement(r.Name);
         }
@@ -179,9 +186,44 @@ namespace Yolol.Analysis.TreeVisitor
             return new PostIncrement(Visit(inc.Name));
         }
 
-        [NotNull] protected virtual BaseExpression Visit([NotNull] Application app)
+        [NotNull] protected virtual BaseExpression Visit([NotNull] Abs app)
         {
-            return new Application(app.Name, Visit(app.Parameter));
+            return new Abs(Visit(app.Parameter));
+        }
+
+        [NotNull] protected virtual BaseExpression Visit([NotNull] Sqrt app)
+        {
+            return new Sqrt(Visit(app.Parameter));
+        }
+
+        [NotNull] protected virtual BaseExpression Visit([NotNull] Sine app)
+        {
+            return new Sine(Visit(app.Parameter));
+        }
+
+        [NotNull] protected virtual BaseExpression Visit([NotNull] Cosine app)
+        {
+            return new Cosine(Visit(app.Parameter));
+        }
+
+        [NotNull] protected virtual BaseExpression Visit([NotNull] Tangent app)
+        {
+            return new Tangent(Visit(app.Parameter));
+        }
+
+        [NotNull] protected virtual BaseExpression Visit([NotNull] ArcSine app)
+        {
+            return new ArcSine(Visit(app.Parameter));
+        }
+
+        [NotNull] protected virtual BaseExpression Visit([NotNull] ArcCos app)
+        {
+            return new ArcCos(Visit(app.Parameter));
+        }
+
+        [NotNull] protected virtual BaseExpression Visit([NotNull] ArcTan app)
+        {
+            return new ArcTan(Visit(app.Parameter));
         }
 
         [NotNull] protected virtual BaseExpression Visit([NotNull] Bracketed brk)

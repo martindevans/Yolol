@@ -11,14 +11,14 @@ namespace Yolol.Execution.Extensions
             if (!expression.IsConstant)
                 throw new ArgumentException("Cannot statically evaluate a non-constant expression");
 
-            return expression.Evaluate(new MachineState(new NullDeviceNetwork(), new DefaultIntrinsics()));
+            return expression.Evaluate(new MachineState(new NullDeviceNetwork()));
         }
 
         public static Value? TryStaticEvaluate([NotNull] this BaseExpression expression)
         {
             try
             {
-                return expression.Evaluate(new MachineState(new ThrowDeviceNetwork(), new DefaultIntrinsics()));
+                return expression.Evaluate(new MachineState(new ThrowDeviceNetwork()));
             }
             catch (ThrowDeviceNetwork.NullDeviceNetworkAccessException)
             {

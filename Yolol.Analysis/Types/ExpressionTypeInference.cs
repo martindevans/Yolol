@@ -28,13 +28,13 @@ namespace Yolol.Analysis.Types
             var l = Visit(expr.Left);
             var r = Visit(expr.Right);
 
-            // If a type isn't decided yet we can't type this either
-            if (l == Type.Unassigned || r == Type.Unassigned)
-                return Type.Unassigned;
-
             // If either side is guaranteed to produce an error, so is this
             if (l == Type.Error || r == Type.Error)
                 return Type.Error;
+
+            // If a type isn't decided yet we can't type this either
+            if (l == Type.Unassigned || r == Type.Unassigned)
+                return Type.Unassigned;
 
             // If either side may produce an error, so may this
             if (l.HasFlag(Type.Error) || r.HasFlag(Type.Error))
@@ -48,13 +48,13 @@ namespace Yolol.Analysis.Types
             var l = Visit(expr.Left);
             var r = Visit(expr.Right);
 
-            // If a type isn't decided yet we can't type this either
-            if (l == Type.Unassigned || r == Type.Unassigned)
-                return Type.Unassigned;
-
             // If either side is a guaranteed error, so is this
             if (l == Type.Error || r == Type.Error)
                 return Type.Error;
+
+            // If a type isn't decided yet we can't type this either
+            if (l == Type.Unassigned || r == Type.Unassigned)
+                return Type.Unassigned;
 
             // If either side is guaranteed not to be a number this is a guaranteed error
             if (!l.HasFlag(Type.Number) || !r.HasFlag(Type.Number))
@@ -101,17 +101,19 @@ namespace Yolol.Analysis.Types
         }
 
 #pragma warning disable IDE0060 // Remove unused parameter
-        private Type UnaryNumeric([NotNull] BaseExpression expr, [NotNull] BaseExpression parameter, bool forceError)
+        private Type UnaryNumeric([NotNull] BaseExpression expr, [NotNull] BaseExpression parameter, bool forceError, bool allowString)
 #pragma warning restore IDE0060 // Remove unused parameter
         {
             var t = base.Visit(parameter);
 
-            var num = t.HasFlag(Type.Number);
-            var str = t.HasFlag(Type.String);
-            var err = t.HasFlag(Type.Error) || forceError;
+            // Replace strings with errors if strings are not allowed
+            if (t.HasFlag(Type.String) && !allowString)
+            {
+                t &= ~Type.String;
+                t |= Type.Error;
+            }
 
-            return (str || err ? Type.Error : Type.Unassigned)
-                   | (num ? Type.Number : Type.Unassigned);
+            return t;
         }
 
         private Type VariableRead([NotNull] VariableName name)
@@ -181,7 +183,21 @@ namespace Yolol.Analysis.Types
 
         protected override Type Visit(PostIncrement inc) => VariableRead(inc.Name);
 
-        protected override Type Visit(Application app) => UnaryNumeric(app, app.Parameter, true);
+        protected override Type Visit(Abs app) => UnaryNumeric(app, app.Parameter, false, false);
+
+        protected override Type Visit(Sqrt app) => UnaryNumeric(app, app.Parameter, true, false);
+
+        protected override Type Visit(Sine app) => UnaryNumeric(app, app.Parameter, false, false);
+
+        protected override Type Visit(Cosine app) => UnaryNumeric(app, app.Parameter, false, false);
+
+        protected override Type Visit(Tangent app) => UnaryNumeric(app, app.Parameter, true, false);
+
+        protected override Type Visit(ArcSine app) => UnaryNumeric(app, app.Parameter, true, false);
+
+        protected override Type Visit(ArcCos app) => UnaryNumeric(app, app.Parameter, true, false);
+
+        protected override Type Visit(ArcTan app) => UnaryNumeric(app, app.Parameter, true, false);
 
         protected override Type Visit(Bracketed brk) => Visit(brk.Expression);
 
@@ -207,7 +223,7 @@ namespace Yolol.Analysis.Types
 
         protected override Type Visit(Exponent exp) => BinaryNumeric(exp, true);
 
-        protected override Type Visit(Negate neg) => UnaryNumeric(neg, neg.Expression, false);
+        protected override Type Visit(Negate neg) => UnaryNumeric(neg, neg.Expression, false, false);
 
         protected override Type Visit(ConstantNumber con) => Type.Number;
 

@@ -47,6 +47,15 @@
         ExternalIdentifier,
 
         Number,
-        String
+        String,
+
+        Abs,
+        Sqrt,
+        Sine,
+        Cosine,
+        Tangent,
+        ArcSin,
+        ArcCos,
+        ArcTan,
     }
 }

@@ -55,7 +55,7 @@ namespace YololEmulator
                     network = new HttpHostDeviceNetwork(options.HostPort.Value);
 
                 var lines = 0;
-                var st = new MachineState(network, new DefaultIntrinsics(), options.MaxLineNumber);
+                var st = new MachineState(network, options.MaxLineNumber);
                 var pc = 0;
                 while (pc <= options.MaxLineNumber)
                 {

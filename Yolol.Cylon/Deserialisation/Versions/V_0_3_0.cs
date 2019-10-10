@@ -164,8 +164,17 @@ namespace Yolol.Cylon.Versions
                 case "a--": return new PostDecrement(((Variable)exp).Name);
                 case "--a": return new PreDecrement(((Variable)exp).Name);
 
+                case "abs": return new Abs(exp);
+                case "sqrt": return new Sqrt(exp);
+                case "sin": return new Sine(exp);
+                case "cos": return new Cosine(exp);
+                case "tan": return new Tangent(exp);
+                case "asin": return new ArcSine(exp);
+                case "acos": return new ArcCos(exp);
+                case "atan": return new ArcTan(exp);
+
                 default:
-                    return new Application(new FunctionName(op), exp);
+                    throw new InvalidOperationException($"Cannot parse: Unknown unary op `{op}`");
             }
         }
 

@@ -14,7 +14,7 @@ namespace YololEmulator.Tests.Analysis.Reduction
         public void Flatten()
         {
             var ast = new Program(new Line[] {
-                new Line(new StatementList(new Assignment(new VariableName("a"), new Application(new FunctionName("sin"), new Variable(new VariableName("b"))))))
+                new Line(new StatementList(new Assignment(new VariableName("a"), new Sine(new Variable(new VariableName("b"))))))
             });
 
             var r = new FlattenStatementLists().Visit(ast).ToString();

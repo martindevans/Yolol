@@ -21,6 +21,48 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
     public static class ReductionExtensions
     {
         /// <summary>
+        /// Replace inc/dec operations on numbers with a+=1 and a-=1
+        /// </summary>
+        /// <param name="cfg"></param>
+        /// <param name="types"></param>
+        /// <returns></returns>
+        [NotNull] public static IControlFlowGraph SimplifyModificationExpressions([NotNull] this IControlFlowGraph cfg, [NotNull] ITypeAssignments types)
+        {
+            return cfg.VisitBlocks(() => new SimplifyModify(types));
+        }
+
+        private class SimplifyModify
+            : BaseTreeVisitor
+        {
+            private readonly ITypeAssignments _types;
+
+            public SimplifyModify(ITypeAssignments types)
+            {
+                _types = types;
+            }
+
+            protected override BaseExpression Visit(Decrement dec)
+            {
+                var t = _types.TypeOf(dec.Name);
+
+                if (t != Execution.Type.Number)
+                    return base.Visit(dec);
+                else 
+                    return new Subtract(new Variable(dec.Name), new ConstantNumber(1));
+            }
+
+            protected override BaseExpression Visit(Increment inc)
+            {
+                var t = _types.TypeOf(inc.Name);
+
+                if (t != Execution.Type.Number)
+                    return base.Visit(inc);
+                else 
+                    return new Add(new Variable(inc.Name), new ConstantNumber(1));
+            }
+        }
+
+        /// <summary>
         /// Remove blocks that cannot be reached from the entry node
         /// </summary>
         /// <param name="graph"></param>
@@ -255,6 +297,7 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
                         let ass = op.ToStatement() as Assignment
                         where ass != null
                         where copiesInBlock.Contains(ass.Left)
+                        where ass.Right is Variable
                         select (ass, op)
                     ).FirstOrDefault();
 

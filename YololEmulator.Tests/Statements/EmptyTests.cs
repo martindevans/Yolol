@@ -11,7 +11,7 @@ namespace YololEmulator.Tests.Statements
         [TestMethod]
         public void Evaluate()
         {
-            var s = new MachineState(new NullDeviceNetwork(), new DefaultIntrinsics());
+            var s = new MachineState(new NullDeviceNetwork());
             new EmptyStatement().Evaluate(s);
 
             Assert.AreEqual(0, s.Count());

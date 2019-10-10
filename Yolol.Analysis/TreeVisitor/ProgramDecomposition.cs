@@ -271,7 +271,21 @@ namespace Yolol.Analysis.TreeVisitor
             };
         }
 
-        protected override IEnumerable<BaseStatement> Visit(Application app) => Unary(app, app.Parameter, a => new Application(app.Name, a));
+        protected override IEnumerable<BaseStatement> Visit(Abs app) => Unary(app, app.Parameter, a => new Abs(a));
+
+        protected override IEnumerable<BaseStatement> Visit(Sqrt app) => Unary(app, app.Parameter, a => new Sqrt(a));
+
+        protected override IEnumerable<BaseStatement> Visit(Sine app) => Unary(app, app.Parameter, a => new Sine(a));
+
+        protected override IEnumerable<BaseStatement> Visit(Cosine app) => Unary(app, app.Parameter, a => new Cosine(a));
+
+        protected override IEnumerable<BaseStatement> Visit(Tangent app) => Unary(app, app.Parameter, a => new Tangent(a));
+
+        protected override IEnumerable<BaseStatement> Visit(ArcSine app) => Unary(app, app.Parameter, a => new ArcSine(a));
+
+        protected override IEnumerable<BaseStatement> Visit(ArcCos app) => Unary(app, app.Parameter, a => new ArcCos(a));
+
+        protected override IEnumerable<BaseStatement> Visit(ArcTan app) => Unary(app, app.Parameter, a => new ArcTan(a));
 
         protected override IEnumerable<BaseStatement> Visit(Bracketed brk) => Visit(brk.Expression);
 

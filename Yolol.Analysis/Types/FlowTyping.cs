@@ -170,7 +170,7 @@ namespace Yolol.Analysis.Types
             }
 
             
-            public Execution.Type? TypeOf(VariableName varName)
+            public Execution.Type? TypeOf([NotNull] VariableName varName)
             {
                 if (_types.TryGetValue(varName, out var type))
                     return type;

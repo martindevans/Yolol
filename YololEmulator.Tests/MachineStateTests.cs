@@ -10,14 +10,14 @@ namespace YololEmulator.Tests
         [TestMethod]
         public void EnumerateEmpty()
         {
-            var s = new MachineState(new ConstantNetwork(), new DefaultIntrinsics()).ToArray();
+            var s = new MachineState(new ConstantNetwork()).ToArray();
             Assert.AreEqual(0, s.Length);
         }
 
         [TestMethod]
         public void Enumerate()
         {
-            var s = new MachineState(new ConstantNetwork(), new DefaultIntrinsics());
+            var s = new MachineState(new ConstantNetwork());
 
             s.GetVariable("name");
 
@@ -30,7 +30,7 @@ namespace YololEmulator.Tests
         {
             var n = new ConstantNetwork();
             n.Get("name").Value = new Value(13);
-            var s = new MachineState(n, new DefaultIntrinsics());
+            var s = new MachineState(n);
 
             Assert.AreEqual(13, s.GetVariable(":name").Value.Number);
         }

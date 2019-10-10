@@ -25,6 +25,15 @@ namespace Yolol.Grammar
                 .Match(Span.EqualTo("or"), YololToken.Or)
                 .Match(Span.EqualTo("not"), YololToken.Not)
 
+                .Match(Span.EqualToIgnoreCase("abs"), YololToken.Abs)
+                .Match(Span.EqualToIgnoreCase("sqrt"), YololToken.Sqrt)
+                .Match(Span.EqualToIgnoreCase("sin"), YololToken.Sine)
+                .Match(Span.EqualToIgnoreCase("cos"), YololToken.Cosine)
+                .Match(Span.EqualToIgnoreCase("tan"), YololToken.Tangent)
+                .Match(Span.EqualToIgnoreCase("asin"), YololToken.ArcSin)
+                .Match(Span.EqualToIgnoreCase("acos"), YololToken.ArcCos)
+                .Match(Span.EqualToIgnoreCase("atan"), YololToken.ArcTan)
+
                 .Match(Span.EqualTo("<="), YololToken.LessThanEqualTo)
                 .Match(Span.EqualTo(">="), YololToken.GreaterThanEqualTo)
                 .Match(Character.EqualTo('<'), YololToken.LessThan)

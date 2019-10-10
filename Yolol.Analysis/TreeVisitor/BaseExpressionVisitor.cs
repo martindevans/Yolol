@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Linq;
 using JetBrains.Annotations;
 using Yolol.Analysis.ControlFlowGraph.AST;
-using Yolol.Grammar;
 using Yolol.Grammar.AST.Expressions;
 using Yolol.Grammar.AST.Expressions.Binary;
 using Yolol.Grammar.AST.Expressions.Unary;
@@ -22,7 +20,15 @@ namespace Yolol.Analysis.TreeVisitor
                 case ErrorExpression a: return Visit(a);
 
                 case Bracketed a:   return Visit(a);
-                case Application a: return Visit(a);
+                
+                case Abs a:     return Visit(a);
+                case Sqrt a:    return Visit(a);
+                case Sine a:    return Visit(a);
+                case Cosine a:  return Visit(a);
+                case Tangent a: return Visit(a);
+                case ArcSine a: return Visit(a);
+                case ArcCos a:  return Visit(a);
+                case ArcTan a:  return Visit(a);
 
                 case PostIncrement a: return Visit(a);
                 case PreIncrement a:  return Visit(a);
@@ -96,7 +102,21 @@ namespace Yolol.Analysis.TreeVisitor
 
         [NotNull] protected abstract TResult Visit([NotNull] PostIncrement inc);
 
-        [NotNull] protected abstract TResult Visit([NotNull] Application app);
+        [NotNull] protected abstract TResult Visit([NotNull] Abs app);
+
+        [NotNull] protected abstract TResult Visit([NotNull] Sqrt app);
+
+        [NotNull] protected abstract TResult Visit([NotNull] Sine app);
+
+        [NotNull] protected abstract TResult Visit([NotNull] Cosine app);
+
+        [NotNull] protected abstract TResult Visit([NotNull] Tangent app);
+
+        [NotNull] protected abstract TResult Visit([NotNull] ArcSine app);
+
+        [NotNull] protected abstract TResult Visit([NotNull] ArcCos app);
+
+        [NotNull] protected abstract TResult Visit([NotNull] ArcTan app);
 
         [NotNull] protected abstract TResult Visit([NotNull] Bracketed brk);
 

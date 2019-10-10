@@ -49,6 +49,8 @@ namespace YololEmulator.Tests
                 "b=b+1 goto 4"
             );
 
+            //var ast = TestExecutor.Parse("d=r---r n=8-6*(d<5) n+=2*((d>n)-(d<n)) e+=(n+(d>n)-(d<n))*t^j++ goto 7");
+
             //throw new NotImplementedException("Properly handle brackets");
 
             //var ast = TestExecutor.Parse(
@@ -77,8 +79,6 @@ namespace YololEmulator.Tests
             var r = p.Apply(ast);
             Console.WriteLine("## Output");
             Console.WriteLine(r);
-
-            throw new NotImplementedException("Remove inc/dec from output");
 
             //var cfg = new Builder(ast).Build();
 

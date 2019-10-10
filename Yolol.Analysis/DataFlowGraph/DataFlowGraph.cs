@@ -437,9 +437,44 @@ namespace Yolol.Analysis.DataFlowGraph
                 throw new NotSupportedException("PostIncrement must be converted to Increment before data flow analysis");
             }
 
-            protected override IDataFlowGraphExpressionNode Visit(Application app)
+            protected override IDataFlowGraphExpressionNode Visit(Abs app)
             {
-                return new UnaryOp(Guid.NewGuid(), app.Name.Name, Visit(app.Parameter), a => new Application(app.Name, a));
+                return new UnaryOp(Guid.NewGuid(), "Abs", Visit(app.Parameter), a => new Abs(a));
+            }
+
+            protected override IDataFlowGraphExpressionNode Visit(Sqrt app)
+            {
+                return new UnaryOp(Guid.NewGuid(), "sqrt", Visit(app.Parameter), a => new Sqrt(a));
+            }
+
+            protected override IDataFlowGraphExpressionNode Visit(Sine app)
+            {
+                return new UnaryOp(Guid.NewGuid(), "sin", Visit(app.Parameter), a => new Sine(a));
+            }
+
+            protected override IDataFlowGraphExpressionNode Visit(Cosine app)
+            {
+                return new UnaryOp(Guid.NewGuid(), "cos", Visit(app.Parameter), a => new Cosine(a));
+            }
+
+            protected override IDataFlowGraphExpressionNode Visit(Tangent app)
+            {
+                return new UnaryOp(Guid.NewGuid(), "tan", Visit(app.Parameter), a => new Tangent(a));
+            }
+
+            protected override IDataFlowGraphExpressionNode Visit(ArcSine app)
+            {
+                return new UnaryOp(Guid.NewGuid(), "asin", Visit(app.Parameter), a => new ArcSine(a));
+            }
+
+            protected override IDataFlowGraphExpressionNode Visit(ArcCos app)
+            {
+                return new UnaryOp(Guid.NewGuid(), "acos", Visit(app.Parameter), a => new ArcCos(a));
+            }
+
+            protected override IDataFlowGraphExpressionNode Visit(ArcTan app)
+            {
+                return new UnaryOp(Guid.NewGuid(), "atan", Visit(app.Parameter), a => new ArcTan(a));
             }
 
             protected override IDataFlowGraphExpressionNode Visit(Bracketed brk)

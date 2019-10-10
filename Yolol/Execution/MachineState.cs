@@ -12,22 +12,13 @@ namespace Yolol.Execution
         internal ushort MaxLineNumber { get; }
 
         private readonly IDeviceNetwork _network;
-        private readonly IReadOnlyDictionary<string, Func<Value, Value>> _intrinsics;
 
         private readonly Dictionary<string, IVariable> _variables = new Dictionary<string, IVariable>();
 
-        public MachineState([NotNull] IDeviceNetwork network, [NotNull] IReadOnlyDictionary<string, Func<Value, Value>> intrinsics, ushort maxLineNumber = 20)
+        public MachineState([NotNull] IDeviceNetwork network, ushort maxLineNumber = 20)
         {
             MaxLineNumber = maxLineNumber;
             _network = network ?? throw new ArgumentNullException(nameof(network));
-            _intrinsics = intrinsics;
-        }
-
-        [CanBeNull] public Func<Value, Value> GetIntrinsic([NotNull] string name)
-        {
-            if (_intrinsics.TryGetValue(name.ToLowerInvariant(), out var value))
-                return value;
-            return null;
         }
 
         public IVariable GetVariable(string name)

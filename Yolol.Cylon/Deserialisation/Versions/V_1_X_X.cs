@@ -164,14 +164,14 @@ namespace Yolol.Cylon.Versions
                     case "factorial":
                         throw new NotSupportedException("Factorial operator is not supported");
 
-                    case "sqrt": 
-                    case "sin":
-                    case "cos":
-                    case "tan":
-                    case "asin":
-                    case "acos":
-                    case "atan":
-                        return new Application(new FunctionName(type[2]), operand);
+                    case "abs": return new Abs(operand);
+                    case "sqrt": return new Sqrt(operand);
+                    case "sin": return new Sine(operand);
+                    case "cos": return new Cosine(operand);
+                    case "tan": return new Tangent(operand);
+                    case "asin": return new ArcSine(operand);
+                    case "acos": return new ArcCos(operand);
+                    case "atan": return new ArcTan(operand);
 
                     case "not":
                         return new Not(operand);

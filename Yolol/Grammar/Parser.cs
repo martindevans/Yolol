@@ -1,4 +1,5 @@
 ﻿using System;
+using JetBrains.Annotations;
 using Superpower;
 using Superpower.Model;
 using Superpower.Parsers;
@@ -74,12 +75,33 @@ namespace Yolol.Grammar
         private static readonly TokenListParser<YololToken, BaseStatement> PreDecrementStat = PreDecrementExpr.Select(a => (BaseStatement)new ExpressionWrapper(a));
         private static readonly TokenListParser<YololToken, BaseStatement> PostDecrementStat = PostDecrementExpr.Select(a => (BaseStatement)new ExpressionWrapper(a));
 
+        [NotNull] private static TokenListParser<YololToken, BaseExpression> MkFunction(YololToken token, Func<BaseExpression, BaseExpression> make)
+        {
+            return from nm in Token.EqualTo(token)
+                   from lp in Token.EqualTo(YololToken.LParen)
+                   from exp in Expression
+                   from rp in Token.EqualTo(YololToken.RParen)
+                   select make(exp);
+        }
+
+        private static readonly TokenListParser<YololToken, BaseExpression> SqrtExpression = MkFunction(YololToken.Sqrt, a => new Sqrt(a));
+        private static readonly TokenListParser<YololToken, BaseExpression> AbsExpression = MkFunction(YololToken.Abs, a => new Abs(a));
+        private static readonly TokenListParser<YololToken, BaseExpression> SineExpression = MkFunction(YololToken.Sine, a => new Sine(a));
+        private static readonly TokenListParser<YololToken, BaseExpression> CosineExpression = MkFunction(YololToken.Cosine, a => new Cosine(a));
+        private static readonly TokenListParser<YololToken, BaseExpression> TangentExpression = MkFunction(YololToken.Tangent, a => new Tangent(a));
+        private static readonly TokenListParser<YololToken, BaseExpression> ArcSineExpression = MkFunction(YololToken.ArcSin, a => new ArcSine(a));
+        private static readonly TokenListParser<YololToken, BaseExpression> ArcCosExpression = MkFunction(YololToken.ArcCos, a => new ArcCos(a));
+        private static readonly TokenListParser<YololToken, BaseExpression> ArcTanExpression = MkFunction(YololToken.ArcTan, a => new ArcTan(a));
+
         private static readonly TokenListParser<YololToken, BaseExpression> FunctionCall =
-            from func in FunctionName
-            from _ in Token.EqualTo(YololToken.LParen)
-            from expr in Parse.Ref(() => Expression)
-            from __ in Token.EqualTo(YololToken.RParen)
-            select (BaseExpression)new Application(func, expr);
+            SqrtExpression.Try()
+              .Or(AbsExpression.Try())
+              .Or(SineExpression.Try())
+              .Or(CosineExpression.Try())
+              .Or(TangentExpression.Try())
+              .Or(ArcSineExpression.Try())
+              .Or(ArcCosExpression.Try())
+              .Or(ArcTanExpression.Try());
 
         private static readonly TokenListParser<YololToken, BaseExpression> Factor =
             (from lparen in Token.EqualTo(YololToken.LParen)

@@ -216,9 +216,15 @@ namespace YololEmulator.Tests.AST
         }
 
         [TestMethod]
-        public void Function()
+        public void Sqrt()
         {
-            Roundtrip("a=sin(1<=a)");
+            Roundtrip("a=SQRT(1<=a)");
+        }
+
+        [TestMethod]
+        public void Abs()
+        {
+            Roundtrip("a=ABS(3)");
         }
     }
 }

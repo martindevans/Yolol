@@ -5,7 +5,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Yolol.Execution;
 using Yolol.Grammar;
 using Yolol.Grammar.AST;
-using Yolol.Grammar.AST.Statements;
 
 namespace YololEmulator.Tests
 {
@@ -30,7 +29,7 @@ namespace YololEmulator.Tests
 
         [NotNull] public static MachineState Execute([NotNull] IDeviceNetwork network, [NotNull] params string[] lines)
         {
-            var state = new MachineState(network, new DefaultIntrinsics());
+            var state = new MachineState(network);
 
             var pc = 0;
             while (pc < 20)

@@ -75,7 +75,7 @@ namespace YololEmulator.Tests.Analysis.Reduction
 
             ast = ast.CompressConditionalAssignment();
 
-            var state = new MachineState(new ConstantNetwork(), new DefaultIntrinsics());
+            var state = new MachineState(new ConstantNetwork());
             ast.Lines.Single().Evaluate(0, state);
 
             Assert.AreEqual(0, state.GetVariable("a").Value.Number);

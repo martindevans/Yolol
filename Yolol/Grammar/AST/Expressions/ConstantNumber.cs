@@ -2,20 +2,20 @@
 using JetBrains.Annotations;
 using Yolol.Execution;
 
-namespace Yolol.Grammar.AST.Expressions.Unary
+namespace Yolol.Grammar.AST.Expressions
 {
-    public class ConstantString
-        : BaseExpression, IEquatable<ConstantString>
+    public class ConstantNumber
+        : BaseExpression, IEquatable<ConstantNumber>
     {
-        [NotNull] public string Value { get; }
+        public Number Value { get; }
 
         public override bool CanRuntimeError => false;
 
-        public override bool IsBoolean => false;
+        public override bool IsBoolean => Value == 0 || Value == 1;
 
         public override bool IsConstant => true;
 
-        public ConstantString([NotNull] string value)
+        public ConstantNumber(Number value)
         {
             Value = value;
         }
@@ -25,7 +25,7 @@ namespace Yolol.Grammar.AST.Expressions.Unary
             return new Value(Value);
         }
 
-        public bool Equals(ConstantString other)
+        public bool Equals([CanBeNull] ConstantNumber other)
         {
             return other != null
                 && other.Value.Equals(Value);
@@ -33,13 +33,13 @@ namespace Yolol.Grammar.AST.Expressions.Unary
 
         public override bool Equals(BaseExpression other)
         {
-            return other is ConstantString str
-                && str.Equals(this);
+            return other is ConstantNumber num
+                && num.Equals(this);
         }
 
         public override string ToString()
         {
-            return $"\"{Value}\"";
+            return Value.ToString();
         }
     }
 }

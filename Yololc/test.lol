@@ -1,1 +1,1 @@
-﻿if :x then goto :y else goto z end
+﻿d=r---r n=8-6*(d<5) n+=2*((d>n)-(d<n)) e+=(n+(d>n)-(d<n))*t^j++ goto 0
