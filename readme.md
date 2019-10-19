@@ -1,4 +1,22 @@
-## Usage
+This repository contains 4 projects:
+
+#### YololEmulator
+
+This is a commandline emulator for Yolol. It allows you to input a file of Yolol code and execute it line by line.
+
+#### Yololc
+
+This is an optimiser for Yolol. It allows you to input a file of Yolol and it will output a file of better (i.e. shorter) Yolol.
+
+#### Yolol
+
+This is a library for interacting with Yolol code from C#. It allows you to parse a string into an AST and execute the AST.
+
+#### Yolol.Analysis
+
+This ia a library for analysing/optimising Yolol code. It provides easy to use methods for analysing and modifying the AST of a Yolol program.
+
+## YololEmulator Usage
 
 Running the application requires that you have `dotnet` installed. Run the application with:
 
