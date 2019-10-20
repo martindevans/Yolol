@@ -51,8 +51,6 @@ namespace Yololc
         [Option("disable_variablenamesimplification", HelpText = "Do not replace variables with simpler names", Required = false)]
         public bool DisableVariableNameSimplification { get; set; }
 
-        [Option("disable_compoundincrementsubstitution", HelpText = "Do not replace a+=1 with a++", Required = false)]
-        public bool DisableCompoundIncrementSubstitution { get; set; }
 
 
         [Option("disable_disabletrailinggotocompression", HelpText = "Do not replace a final `if x then goto y end` statement with a smaller equivalent", Required = false)]
@@ -61,9 +59,6 @@ namespace Yololc
         [Option("disable_ifthengotocompression", HelpText = "Do not replace `if X then goto Y else goto Z end` with a smaller equivalent", Required = false)]
         public bool DisableIfThenGotoCompression { get; set; }
 
-        [Option("disable_disableconditionalassignmentcompression", HelpText = "Do not replace `if a then b = c end` with a smaller equivalent", Required = false)]
-        public bool DisableCompressConditionalAssignment { get; set; }
-        
 
 
         [Option("disable_deadpostgotoelimination", HelpText = "Do not eliminate code which is unreachable due to preceding unconditional gotos", Required = false)]
@@ -185,8 +180,6 @@ namespace Yololc
                     a = a.FoldConstants();
                 if (!options.DisableConstantHoisting && !options.DisableAstTransformPasses)
                     a = a.HoistConstants();
-                if (!options.DisableCompoundIncrementSubstitution && !options.DisableAstTransformPasses)
-                    a = a.CompressCompoundIncrement();
                 if (!options.DisableEolGotoElimination && !options.DisableAstTransformPasses)
                     a = a.TrailingGotoNextLineElimination();
                 if (!options.DisableTrailingConditionalGotoAnyLineCompression && !options.DisableAstTransformPasses)
@@ -195,8 +188,6 @@ namespace Yololc
                     a = a.ConditionalGotoCompression(new RandomNameGenerator(1));
                 if (!options.DisableDeadPostGotoElimination && !options.DisableAstTransformPasses)
                     a = a.DeadPostGotoElimination();
-                if (!options.DisableCompressConditionalAssignment && !options.DisableAstTransformPasses)
-                    a = a.CompressConditionalAssignment();
                 if (!options.DisableConstantCompression && !options.DisableAstTransformPasses)
                     a = a.CompressConstants();
                 if (!options.DisableVariableNameSimplification && !options.DisableAstTransformPasses)

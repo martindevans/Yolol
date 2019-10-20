@@ -4,7 +4,6 @@ using Yolol.Execution;
 using Yolol.Execution.Extensions;
 using Yolol.Grammar.AST.Expressions;
 using Yolol.Grammar.AST.Expressions.Binary;
-using Yolol.Grammar.AST.Expressions.Unary;
 
 namespace Yolol.Analysis.TreeVisitor.Reduction
 {
@@ -66,6 +65,8 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
                 try
                 {
                     var log = Math.Log((double)value.Value, (double)b);
+                    if (double.IsNaN(log))
+                        continue;
 
                     var exp = new Exponent(new ConstantNumber(b), new ConstantNumber((decimal)log));
                     Submit(exp);
@@ -77,6 +78,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
                 }
                 catch (OverflowException)
                 {
+                    // If the calculation overflows then don't submit this case
                 }
             }
 

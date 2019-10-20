@@ -1,7 +1,6 @@
 ﻿using Yolol.Execution;
 using Yolol.Execution.Extensions;
 using Yolol.Grammar.AST.Expressions;
-using Yolol.Grammar.AST.Expressions.Unary;
 using Yolol.Grammar.AST.Statements;
 
 namespace Yolol.Analysis.TreeVisitor.Reduction

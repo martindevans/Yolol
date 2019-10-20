@@ -1,4 +1,5 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+using JetBrains.Annotations;
 using Yolol.Analysis.ControlFlowGraph.AST;
 using Yolol.Analysis.Types;
 using Yolol.Execution;
@@ -6,6 +7,7 @@ using Yolol.Execution.Extensions;
 using Yolol.Grammar.AST.Expressions;
 using Yolol.Grammar.AST.Expressions.Binary;
 using Yolol.Grammar.AST.Expressions.Unary;
+using Type = Yolol.Execution.Type;
 using Variable = Yolol.Grammar.AST.Expressions.Unary.Variable;
 
 namespace Yolol.Analysis.TreeVisitor.Reduction
@@ -29,9 +31,9 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
             {
                 switch (number.Value)
                 {
-                    case -1: return new Negate(new Bracketed(other));
+                    case -1: return base.Visit(new Negate(new Bracketed(other)));
                     case 0:  return new ConstantNumber(0);
-                    case 1:  return other;
+                    case 1:  return base.Visit(other);
                     default: return null;
                 }
             }
@@ -55,7 +57,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
                 return base.Visit(mul);
 
             // One side has a known value
-            return HandleSingleSideNumber((lv ?? rv).Value, lv.HasValue ? mul.Right : mul.Left) ?? mul;
+            return HandleSingleSideNumber((lv ?? rv).Value, lv.HasValue ? mul.Right : mul.Left) ?? base.Visit(mul);
         }
 
         protected override BaseExpression Visit(Divide div)
@@ -88,9 +90,9 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
 
             switch (rv.Value.Value)
             {
-                case -1: return new Negate(new Bracketed(base.Visit(div.Left)));
+                case -1: return base.Visit(new Negate(new Bracketed(base.Visit(div.Left))));
                 case 0:  return new ErrorExpression();
-                case 1:  return new Bracketed(base.Visit(div.Left));
+                case 1:  return base.Visit(new Bracketed(base.Visit(div.Left)));
                 default: return base.Visit(div);
             }
         }
@@ -101,7 +103,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
             {
                 switch (number.Value)
                 {
-                    case 0: return new Bracketed(other);
+                    case 0: return base.Visit(new Bracketed(other));
                     default: return null;
                 }
             }
@@ -152,24 +154,15 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
 
             switch (rv.Value.Value)
             {
-                case 0:  return new ConstantNumber(1);
-                case 1:  return new Bracketed(base.Visit(exp.Left));
-                case -1: return new Divide(new ConstantNumber(1), new Bracketed(exp.Left));
+                case 0:  return base.Visit(new ConstantNumber(1));
+                case 1:  return base.Visit(new Bracketed(base.Visit(exp.Left)));
+                case -1: return base.Visit(new Divide(new ConstantNumber(1), new Bracketed(exp.Left)));
                 default: return base.Visit(exp);
             }
         }
 
         protected override BaseExpression Visit(Subtract sub)
         {
-            BaseExpression HandleSingleSideNumber(Number number, BaseExpression other)
-            {
-                switch (number.Value)
-                {
-                    case 0:  return new Bracketed(other);
-                    default: return null;
-                }
-            }
-
             // Try to discover type for sides
             var lt = DiscoverType(sub.Left);
             var rt = DiscoverType(sub.Right);
@@ -190,11 +183,78 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
             if (lv.HasValue && rv.HasValue)
                 return new ConstantNumber(sub.StaticEvaluate().Number);
 
-            // One side has a known value
-            return HandleSingleSideNumber((lv ?? rv).Value, lv.HasValue ? sub.Right : sub.Left) ?? sub;
+            // If this is `0 - exp` then return `-exp`
+            if (lv.HasValue && lv == 0)
+                return base.Visit(new Negate(sub.Right));
+
+            // if this is `exp - 0` then return `exp`
+            if (rv.HasValue && rv == 0)
+                return base.Visit(sub.Left);
+
+            return base.Visit(sub);
         }
 
+        protected override BaseExpression Visit(And and)
+        {
+            // Try to discover type for sides
+            var lt = DiscoverType(and.Left);
+            var rt = DiscoverType(and.Right);
 
+            // strings are all `true`, so `str and string` is always true
+            if (lt == Type.String && rt == Type.String)
+                return new ConstantNumber(1);
+
+            // Get values for the two sides
+            var lv = DiscoverNumberValue(and.Left);
+            var rv = DiscoverNumberValue(and.Right);
+
+            // Can't do anything without at least one value
+            if (!lv.HasValue && !rv.HasValue)
+                return base.Visit(and);
+
+            // Replace with constant if both sides are known
+            if (lv.HasValue && rv.HasValue)
+                return new ConstantNumber(and.StaticEvaluate().Number);
+
+            // If the single known value is zero then this must always evaluate to false
+            var v = (lv ?? rv).Value;
+            if (v == 0)
+                return new ConstantNumber(0);
+
+            // The single known value _is_ not zero, so just return the other side
+            return lv.HasValue ? base.Visit(and.Right) : base.Visit(and.Left);
+        }
+
+        protected override BaseExpression Visit(Or or)
+        {
+            // Try to discover type for sides
+            var lt = DiscoverType(or.Left);
+            var rt = DiscoverType(or.Right);
+
+            // strings are all `true`, so `str or anything` is always true
+            if (lt == Type.String || rt == Type.String)
+                return new ConstantNumber(1);
+
+            // Get values for the two sides
+            var lv = DiscoverNumberValue(or.Left);
+            var rv = DiscoverNumberValue(or.Right);
+
+            // Can't do anything without at least one value
+            if (!lv.HasValue && !rv.HasValue)
+                return base.Visit(or);
+
+            // Replace with constant if both sides are known
+            if (lv.HasValue && rv.HasValue)
+                return new ConstantNumber(or.StaticEvaluate().Number);
+
+            // If the single known value is _not_ zero then this must always evaluate to true
+            var v = (lv ?? rv).Value;
+            if (v != 0)
+                return new ConstantNumber(1);
+
+            // The single known value _is_ zero, so just return the other side
+            return lv.HasValue ? base.Visit(or.Right) : base.Visit(or.Left);
+        }
 
         private Type DiscoverType(BaseExpression expr)
         {

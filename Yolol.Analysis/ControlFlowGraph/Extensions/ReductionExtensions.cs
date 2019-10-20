@@ -4,7 +4,6 @@ using System.Linq;
 using JetBrains.Annotations;
 using Yolol.Analysis.ControlFlowGraph.AST;
 using Yolol.Analysis.DataFlowGraph;
-using Yolol.Analysis.DataFlowGraph.Extensions;
 using Yolol.Analysis.TreeVisitor;
 using Yolol.Analysis.TreeVisitor.Inspection;
 using Yolol.Analysis.TreeVisitor.Reduction;
@@ -20,6 +19,27 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
 {
     public static class ReductionExtensions
     {
+        /// <summary>
+        /// Replace expressions which result in a constant with the result
+        /// </summary>
+        /// <param name="cfg"></param>
+        /// <param name="ssa"></param>
+        /// <returns></returns>
+        [NotNull] public static IControlFlowGraph FoldConstants([NotNull] this IControlFlowGraph cfg, ISingleStaticAssignmentTable ssa)
+        {
+            // Kep finding and replacing constants until nothing is found
+            return cfg.Fixpoint(c => {
+
+                // Find variables which are assigned a value which is not tainted by external reads
+                var constants = c.FindConstants(ssa);
+
+                // Replace reads of a constant variable with the expression assigned to that variable
+                c = c.VisitBlocks(() => new ReplaceConstantSubexpressions(constants));
+
+                return c;
+            });
+        }
+
         /// <summary>
         /// Replace inc/dec operations on numbers with a+=1 and a-=1
         /// </summary>

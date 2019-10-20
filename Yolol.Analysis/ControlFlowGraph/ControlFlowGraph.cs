@@ -137,6 +137,8 @@ namespace Yolol.Analysis.ControlFlowGraph
                 if (ReferenceEquals(this, other))
                     return true;
 
+                if (!ID.Equals(other.ID))
+                    return false;
                 if (_statements.Count != other.Statements.Count())
                     return false;
 

@@ -3,12 +3,27 @@ using System.Linq;
 using JetBrains.Annotations;
 using Yolol.Analysis.TreeVisitor.Inspection;
 using Yolol.Grammar;
-using Yolol.Grammar.AST;
+using Yolol.Grammar.AST.Expressions;
 
 namespace Yolol.Analysis.ControlFlowGraph.Extensions
 {
     public static class AnalysisExtensions
     {
+        [NotNull] public static IReadOnlyDictionary<VariableName, BaseExpression> FindConstants([NotNull] this IControlFlowGraph cfg, ISingleStaticAssignmentTable ssa)
+        {
+            var constants = new Dictionary<VariableName, BaseExpression>();
+            var count = -1;
+
+            // Keep finding more constants until no more are found
+            while (count != constants.Count)
+            {
+                count = constants.Count;
+                cfg.VisitBlocks(() => new FindConstantVariables(constants, ssa));
+            }
+
+            return constants;
+        }
+
         [NotNull] public static IReadOnlyCollection<VariableName> FindUnreadAssignments([NotNull] this IControlFlowGraph cfg)
         {
             var assigned = new FindAssignedVariables();

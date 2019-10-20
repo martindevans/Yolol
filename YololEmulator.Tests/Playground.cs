@@ -40,18 +40,21 @@ namespace YololEmulator.Tests
             //    ":out=search goto 1"
             //);
 
+            //var ast = TestExecutor.Parse(
+            //    "b*=2 flag=b>30 if flag then :b=a end if :a then b = 7 end goto 1",
+            //    "goto 1"
+            //);
+
             var ast = TestExecutor.Parse(
-                "z = -1 z-- :a = z a = sin(:a * (z + 2)) a++ a /= z",
+                "z = -1 z-- :a = z a = sin(:a * (z + 2)) a+=1 a /= z",
                 "flag=a==:a if flag then goto 5 else goto 6 end b=0/0",
                 ":x = \"hello\" * 4 goto \"world\" x = 2",
-                "b*=2 flag=b>30 if flag then :b=a end",
+                "b*=2 flag=b>30 if flag then :b=a end if :a then b = 7 end",
                 "b=b-1 goto 4",
                 "b=b+1 goto 4"
             );
 
             //var ast = TestExecutor.Parse("d=r---r n=8-6*(d<5) n+=2*((d>n)-(d<n)) e+=(n+(d>n)-(d<n))*t^j++ goto 7");
-
-            //throw new NotImplementedException("Properly handle brackets");
 
             //var ast = TestExecutor.Parse(
             //    ":o1=0+(:a*1)+(:a/1)+:a^1+(:a-0)",
@@ -75,7 +78,7 @@ namespace YololEmulator.Tests
                 (new VariableName(":a"), Yolol.Execution.Type.Number)
             };
 
-            var p = new OptimisationPipeline(1, false, hints);
+            var p = new OptimisationPipeline(2, false, hints);
             var r = p.Apply(ast);
             Console.WriteLine("## Output");
             Console.WriteLine(r);
@@ -181,7 +184,6 @@ namespace YololEmulator.Tests
             ast = ast.CompressConstants();
             ast = ast.SimplifyVariableNames();
             ast = ast.DeadPostGotoElimination();
-            ast = ast.CompressCompoundIncrement();
 
             Console.WriteLine(ast);
             Console.WriteLine($"Score: {ast.ToString().Length}");

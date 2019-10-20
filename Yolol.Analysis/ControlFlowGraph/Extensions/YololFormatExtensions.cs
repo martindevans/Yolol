@@ -59,6 +59,9 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
         /// <param name="stop"></param>
         private static void RecursiveConvertBlock([NotNull] IBasicBlock block, [NotNull] List<BaseStatement> output, [CanBeNull] IBasicBlock stop = null)
         {
+            if (stop != null && stop.ID.Equals(block.ID))
+                return;
+
             // Copy statements from this block into output
             output.AddRange(block.Statements);
 
@@ -73,7 +76,7 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
             // Serialize if statement
             if (block.Statements.Last() is Conditional con)
             {
-                // Remove conditional, we'll replace with an `if`
+                // Remove `Conditional` node, we'll replace with an `if`
                 output.RemoveAt(output.Count - 1);
 
                 // Find conditional edges leaving this block

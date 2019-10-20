@@ -44,6 +44,7 @@ namespace Yolol.Analysis.ControlFlowGraph
             var ast = new ProgramDecomposition(names).Visit(_program);
             ast = new FlattenStatementLists().Visit(ast);
 
+            //todo: add configurable max line number
             for (var lineNumber = 1; lineNumber <= 20; lineNumber++)
             {
                 var line = lineNumber > ast.Lines.Count ? new Line(new StatementList(Array.Empty<BaseStatement>())) : ast.Lines[lineNumber - 1];
@@ -94,14 +95,12 @@ namespace Yolol.Analysis.ControlFlowGraph
                     cfg.CreateEdge(block, enFals, EdgeType.ConditionalFalse);
 
                     // Link the exit blocks (if they're not null) to the next block
-                    if (exTrue != null || exFals != null)
-                    {
-                        block = cfg.CreateNewBlock(BasicBlockType.Basic, lineNumber);
-                        if (exTrue != null && !exTrue.Equals(block))
-                            cfg.CreateEdge(exTrue, block, EdgeType.Continue);
-                        if (exFals != null && !exFals.Equals(block))
-                            cfg.CreateEdge(exFals, block, EdgeType.Continue);
-                    }
+                    block = cfg.CreateNewBlock(BasicBlockType.Basic, lineNumber);
+                    if (exTrue != null)
+                        cfg.CreateEdge(exTrue, block, EdgeType.Continue);
+                    if (exFals != null)
+                        cfg.CreateEdge(exFals, block, EdgeType.Continue);
+                    
                 }
                 else if (stmt is EmptyStatement)
                 {

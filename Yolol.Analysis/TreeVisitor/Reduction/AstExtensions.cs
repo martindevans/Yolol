@@ -15,11 +15,11 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
             return new VariableSimplificationVisitor().Visit(prog);
         }
 
-        [NotNull] public static Program CompressCompoundIncrement([NotNull] this Program prog)
-        {
-            return new CompoundCompressor().Visit(prog);
-        }
-
+        /// <summary>
+        /// Remove all the code after an unconditional goto
+        /// </summary>
+        /// <param name="prog"></param>
+        /// <returns></returns>
         [NotNull] public static Program DeadPostGotoElimination([NotNull] this Program prog)
         {
             return new DeadStatementAfterGotoElimination().Visit(prog);
@@ -39,13 +39,6 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
         {
             return new IfThenElseGotoCompressor(names).Visit(prog);
         }
-
-        [NotNull] public static Program CompressConditionalAssignment([NotNull] this Program prog)
-        {
-            return new IfAssignmentCompression().Visit(prog);
-        }
-
-        
 
 
         [NotNull] public static Program FoldConstants([NotNull] this Program prog)

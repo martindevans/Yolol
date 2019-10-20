@@ -33,12 +33,18 @@ namespace Yolol.Analysis
         {
             var result = input.Fixpoint(_itersLimit, p => {
 
+                // Remove types  (builder cannot take a typed program)
+                p = p.StripTypes();
+
                 // Convert input into control flow graph and optimise
                 p = Optimise(new Builder(p).Build()).ToYolol();
 
                 // Apply simple AST optimisations
-                p = Optimise(p);
-                p = Optimise(p);
+                for (var i = 0; i < 2; i++)
+                    p = Optimise(p);
+
+                Console.WriteLine(p);
+                Console.WriteLine();
 
                 return p;
             });
@@ -61,10 +67,6 @@ namespace Yolol.Analysis
             // Find any constants which are repeated multiple times in the program and store them into a variable on line 1
             program = program.HoistConstants();
 
-            // Find any compound add/sub operations which can be replaced with inc/dec
-            //todo: move this into the CFG stage and exploit better typing info
-            program = program.CompressCompoundIncrement();
-
             // Find any `goto` statements at the end of a line which goto the next line and remove them
             program = program.TrailingGotoNextLineElimination();
 
@@ -82,14 +84,6 @@ namespace Yolol.Analysis
             //     x=C goto (A)*((B)-x)+x
             program = program.ConditionalGotoCompression(new RandomNameGenerator(1));
 
-            // Remove all code after a goto which can never be executed (because the goto jumps away)
-            //todo: remove this? CFG does the same with dead block elimination
-            program = program.DeadPostGotoElimination();
-
-            // Replace an if branch which assigns a number to the same variable in both branches with an expression that does the same
-            //todo: move this into the CFG stage and exploit type info
-            program = program.CompressConditionalAssignment();
-
             // Replace constant values with smaller equivalents e.g. replace `a=4294967296` with `a=2^32`
             program = program.CompressConstants();
 
@@ -99,63 +93,83 @@ namespace Yolol.Analysis
             return program;
         }
 
-        [NotNull] private IControlFlowGraph Optimise(IControlFlowGraph cf)
+        [NotNull]
+        private IControlFlowGraph Optimise(IControlFlowGraph cf)
         {
-            // Convert CFG into SSA form (i.e. each variable is only assigned once)
-            cf = cf.StaticSingleAssignment(out var ssa);
+            ITypeAssignments types;
 
-            // Infer types for variables
-            cf = cf.FlowTypingAssignment(ssa, out var types, _typeHints);
+            {
+                // Convert CFG into SSA form (i.e. each variable is only assigned once)
+                cf = cf.StaticSingleAssignment(out var ssa);
 
-            // Replace inc/dec with simpler alternatives for numbers
-            cf = cf.SimplifyModificationExpressions(types);
+                // Infer types for variables
+                cf = cf.FlowTypingAssignment(ssa, out types, _typeHints);
 
-            // Fold constant expression (e.g. replace `a=2+2` with `a=4`
-            cf = cf.VisitBlocks(() => new ConstantFoldingVisitor(true));
+                // Replace inc/dec with simpler alternatives for numbers
+                cf = cf.SimplifyModificationExpressions(types);
 
-            // Fold away useless mathematics involving constants (e.g. replace `a=x*1` => `a=x` (if x is a number type)
-            // This can emit `Error` expressions, which always evaluate to an error
-            cf = cf.VisitBlocks(t => new OpNumByConstNumCompressor(t), types);
+                // Fold away useless mathematics involving constants (e.g. replace `a=x*1` => `a=x` (if x is a number type)
+                // This can emit `Error` expressions, which always evaluate to an error
+                cf = cf.VisitBlocks(t => new OpNumByConstNumCompressor(t), types);
 
-            // Replace any expressions involving `Error` subexpressions with `Error()` statements
-            cf = cf.VisitBlocks(() => new ErrorCompressor());
+                // Replace any expressions involving `Error` subexpressions with `Error()` statements
+                cf = cf.VisitBlocks(() => new ErrorCompressor());
 
-            // Find all reads in the entire program and then remove any assignments to variables which are never read
-            cf = cf.VisitBlocks(u => new RemoveUnreadAssignments(u, ssa), c => c.FindUnreadAssignments());
+                // Reapply type finding just before we do edge trimming (it's very important we have as many types as possible here and some previous ops may have invalidated them)
+                cf = cf.FlowTypingAssignment(ssa, out types, _typeHints);
 
-            // Reapply type finding just before we do edge trimming (it's very important we have as many types as possible here and some previous ops may have invalidated them)
-            cf = cf.FlowTypingAssignment(ssa, out types, _typeHints);
+                // Remove edges in the CFG which cannot happen based on type info (e.g. remove `Error` edges if an error cannot happen, or `Continue` edges if an error is guaranteed to happen)
+                cf = cf.TypeDrivenEdgeTrimming(types);
 
-            // Remove edges in the CFG which cannot happen based on type info (e.g. remove `Error` edges if an error cannot happen, or `Continue` edges if an error is guaranteed to happen)
-            cf = cf.TypeDrivenEdgeTrimming(types);
+                //Merge together blocks which do not need to be separate any more(e.g.there used to be an error which has now been proven impossible)
+                cf = cf.MergeAdjacentBasicBlocks();
 
-            // Remove nodes of the CFG which can never be reached
+                // Remove nodes of the CFG which can never be reached
+                cf = cf.RemoveUnreachableBlocks();
+
+                // Remove node of the CFG which contain no statements
+                cf = cf.RemoveEmptyBlocks();
+
+                // Replace errors with normal control flow where possible (if a node is guaranteed to error, remove the error and just continue as normal to the next line)
+                cf = cf.NormalizeErrors();
+
+                // Remove single static assignment, it is probably too broad after trimming the graph
+                cf = cf.RemoveStaticSingleAssignment(ssa);
+            }
+
+            {
+                // Convert CFG into SSA form (i.e. each variable is only assigned once)
+                cf = cf.StaticSingleAssignment(out var ssa);
+
+                // Reapply type finding just before we do edge trimming (it's very important we have as many types as possible here and some previous ops may have invalidated them)
+                cf = cf.FlowTypingAssignment(ssa, out types, _typeHints);
+
+                // Fold away unnecessary copies (e.g. replace `b = a c = b` with `b = a c = a`). This leaves useless variables
+                cf = cf.FoldUnnecessaryCopies(ssa);
+
+                // Replace reads from unassigned variables with `0`
+                cf = cf.ReplaceUnassignedReads();
+
+                // Fold constant expression (e.g. replace `a=2+2` with `a=4`)
+                cf = cf.FoldConstants(ssa);
+
+                // Find any compound add/sub operations (e.g. `a+=1`) which can be replaced with inc/dec (e.g. `a = inc(a)`)
+                cf = cf.VisitBlocks(() => new CompoundCompressor(types));
+
+                // Replace conditional assignments to number fields e.g. `if c then a = b end` with arithmetic `a += (b - a) * c`
+                cf = cf.VisitBlocks(() => new IfAssignmentCompression(types));
+
+                // Find all reads in the entire program and then remove any assignments to variables which are never read
+                cf = cf.VisitBlocks(u => new RemoveUnreadAssignments(u, ssa), c => c.FindUnreadAssignments());
+
+                // Remove SSA so that it does not interfere with the next iteration
+                cf = cf.RemoveStaticSingleAssignment(ssa);
+            }
+
             cf = cf.RemoveUnreachableBlocks();
-
-            // Remove node of the CFG which contain no statements
-            cf = cf.RemoveEmptyBlocks();
-
-            // Merge together blocks which do not need to be separate any more (e.g. there used to be an error which has now been proven impossible)
-            cf = cf.MergeAdjacentBasicBlocks();
-
-            // Replace errors with normal control flow where possible (if a node is guaranteed to error, remove the error and just continue as normal to the next line)
-            cf = cf.NormalizeErrors();
-
-            // Reapply type finding just before we do edge trimming (it's very important we have as many types as possible here and some previous ops may have invalidated them)
-            cf = cf.FlowTypingAssignment(ssa, out types, _typeHints);
-
             Console.WriteLine(cf.ToDot());
 
-            // Fold away unnecessary copies (e.g. replace `b = a c = b` with `b = a c = a`). This leaves useless variables
-            cf = cf.FoldUnnecessaryCopies(ssa);
-
-            // Find all reads in the entire program and then remove any assignments to variables which are never read (clean up after previous fold step)
-            cf = cf.VisitBlocks(u => new RemoveUnreadAssignments(u, ssa), c => c.FindUnreadAssignments());
-
-            // Remove SSA so that it does not interfere with the next iteration
-            cf = cf.RemoveStaticSingleAssignment(ssa);
-
             return cf;
-    }
+        }
     }
 }
