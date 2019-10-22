@@ -32,12 +32,9 @@ namespace Yolol.Analysis.DataFlowGraph.Extensions
                 foreach (var item in nodes)
                     sb.AppendLine($"  {GetNodeId(item)} [rank={rank} label=\"{label(item)}\" shape={(external(item) ? "diamond" : "circle")}];");
 
-                //sb.AppendLine($"  subgraph cluster_{cluster} {{");
-                //sb.AppendLine($"  graph [label={cluster}];");
                 sb.AppendLine($"    {{rank=same { string.Join(" ", nodes.Select(a => GetNodeId(a))) }}}");
                 if (nodes.Count() > 1)
                     sb.AppendLine($"    { string.Join(" -> ", nodes.Select(a => GetNodeId(a))) } [style=invis]");
-                //sb.AppendLine("  }");
             }
             OutputNameSection(dfg.Inputs, "min", "inputs", a => a.ToString(), a => (a as IDataFlowGraphInputVariable)?.Name.IsExternal ?? false);
             OutputNameSection(dfg.Outputs, "max", "outputs", a => a.ToString(), a => false);

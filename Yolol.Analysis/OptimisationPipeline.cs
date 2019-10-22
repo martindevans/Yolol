@@ -31,6 +31,7 @@ namespace Yolol.Analysis
 
         [NotNull] public Program Apply(Program input)
         {
+            int count = 0;
             var result = input.Fixpoint(_itersLimit, p => {
 
                 // Remove types  (builder cannot take a typed program)
@@ -43,6 +44,8 @@ namespace Yolol.Analysis
                 for (var i = 0; i < 2; i++)
                     p = Optimise(p);
 
+                count++;
+                Console.WriteLine($"## Pass {count}");
                 Console.WriteLine(p);
                 Console.WriteLine();
 
@@ -144,7 +147,7 @@ namespace Yolol.Analysis
                 // Reapply type finding just before we do edge trimming (it's very important we have as many types as possible here and some previous ops may have invalidated them)
                 cf = cf.FlowTypingAssignment(ssa, out types, _typeHints);
 
-                // Fold away unnecessary copies (e.g. replace `b = a c = b` with `b = a c = a`). This leaves useless variables
+                // Fold away unnecessary copies (e.g. replace `b = a c = b` with `b = a c = a`). This leaves useless (unread) variables.
                 cf = cf.FoldUnnecessaryCopies(ssa);
 
                 // Replace reads from unassigned variables with `0`
@@ -166,8 +169,8 @@ namespace Yolol.Analysis
                 cf = cf.RemoveStaticSingleAssignment(ssa);
             }
 
-            cf = cf.RemoveUnreachableBlocks();
-            Console.WriteLine(cf.ToDot());
+            //cf = cf.RemoveUnreachableBlocks();
+            //Console.WriteLine(cf.ToDot());
 
             return cf;
         }

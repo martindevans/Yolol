@@ -353,6 +353,12 @@ namespace Yolol.Analysis.DataFlowGraph
                 return op;
             }
 
+            [NotNull] private UnaryOp VisitUnary([NotNull] UnaryOp op)
+            {
+                _dataFlowGraph._ops.Add(op);
+                return op;
+            }
+
             protected override IDataFlowGraphExpressionNode Visit(Or or) => VisitBinary(or, YololBinaryOp.Or);
 
             protected override IDataFlowGraphExpressionNode Visit(And and) => VisitBinary(and, YololBinaryOp.And);
@@ -364,12 +370,12 @@ namespace Yolol.Analysis.DataFlowGraph
 
             protected override IDataFlowGraphExpressionNode Visit(Increment inc)
             {
-                return new UnaryOp(Guid.NewGuid(), "++", Visit(new Variable(inc.Name)), a => new Increment(((Variable)a).Name));
+                return VisitUnary(new UnaryOp(Guid.NewGuid(), "++", Visit(new Variable(inc.Name)), a => new Increment(((Variable)a).Name)));
             }
 
             protected override IDataFlowGraphExpressionNode Visit(Decrement dec)
             {
-                return new UnaryOp(Guid.NewGuid(), "--", Visit(new Variable(dec.Name)), a => new Decrement(((Variable)a).Name));
+                return VisitUnary(new UnaryOp(Guid.NewGuid(), "--", Visit(new Variable(dec.Name)), a => new Decrement(((Variable)a).Name)));
             }
 
             protected override IDataFlowGraphExpressionNode Visit(Phi phi)
@@ -439,47 +445,47 @@ namespace Yolol.Analysis.DataFlowGraph
 
             protected override IDataFlowGraphExpressionNode Visit(Abs app)
             {
-                return new UnaryOp(Guid.NewGuid(), "Abs", Visit(app.Parameter), a => new Abs(a));
+                return VisitUnary(new UnaryOp(Guid.NewGuid(), "Abs", Visit(app.Parameter), a => new Abs(a)));
             }
 
             protected override IDataFlowGraphExpressionNode Visit(Sqrt app)
             {
-                return new UnaryOp(Guid.NewGuid(), "sqrt", Visit(app.Parameter), a => new Sqrt(a));
+                return VisitUnary(new UnaryOp(Guid.NewGuid(), "sqrt", Visit(app.Parameter), a => new Sqrt(a)));
             }
 
             protected override IDataFlowGraphExpressionNode Visit(Sine app)
             {
-                return new UnaryOp(Guid.NewGuid(), "sin", Visit(app.Parameter), a => new Sine(a));
+                return VisitUnary(new UnaryOp(Guid.NewGuid(), "sin", Visit(app.Parameter), a => new Sine(a)));
             }
 
             protected override IDataFlowGraphExpressionNode Visit(Cosine app)
             {
-                return new UnaryOp(Guid.NewGuid(), "cos", Visit(app.Parameter), a => new Cosine(a));
+                return VisitUnary(new UnaryOp(Guid.NewGuid(), "cos", Visit(app.Parameter), a => new Cosine(a)));
             }
 
             protected override IDataFlowGraphExpressionNode Visit(Tangent app)
             {
-                return new UnaryOp(Guid.NewGuid(), "tan", Visit(app.Parameter), a => new Tangent(a));
+                return VisitUnary(new UnaryOp(Guid.NewGuid(), "tan", Visit(app.Parameter), a => new Tangent(a)));
             }
 
             protected override IDataFlowGraphExpressionNode Visit(ArcSine app)
             {
-                return new UnaryOp(Guid.NewGuid(), "asin", Visit(app.Parameter), a => new ArcSine(a));
+                return VisitUnary(new UnaryOp(Guid.NewGuid(), "asin", Visit(app.Parameter), a => new ArcSine(a)));
             }
 
             protected override IDataFlowGraphExpressionNode Visit(ArcCos app)
             {
-                return new UnaryOp(Guid.NewGuid(), "acos", Visit(app.Parameter), a => new ArcCos(a));
+                return VisitUnary(new UnaryOp(Guid.NewGuid(), "acos", Visit(app.Parameter), a => new ArcCos(a)));
             }
 
             protected override IDataFlowGraphExpressionNode Visit(ArcTan app)
             {
-                return new UnaryOp(Guid.NewGuid(), "atan", Visit(app.Parameter), a => new ArcTan(a));
+                return VisitUnary(new UnaryOp(Guid.NewGuid(), "atan", Visit(app.Parameter), a => new ArcTan(a)));
             }
 
             protected override IDataFlowGraphExpressionNode Visit(Bracketed brk)
             {
-                return new UnaryOp(Guid.NewGuid(), "()", Visit(brk.Expression), a => new Bracketed(a));
+                return VisitUnary(new UnaryOp(Guid.NewGuid(), "()", Visit(brk.Expression), a => new Bracketed(a)));
             }
 
             protected override IDataFlowGraphExpressionNode Visit(Add add) => VisitBinary(add, YololBinaryOp.Add);
@@ -494,7 +500,7 @@ namespace Yolol.Analysis.DataFlowGraph
 
             protected override IDataFlowGraphExpressionNode Visit(Negate neg)
             {
-                return new UnaryOp(Guid.NewGuid(), "negate", Visit(neg.Expression), a => new Negate(a));
+                return VisitUnary(new UnaryOp(Guid.NewGuid(), "negate", Visit(neg.Expression), a => new Negate(a)));
             }
 
             protected override IDataFlowGraphExpressionNode Visit(ConstantNumber con)
