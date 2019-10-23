@@ -9,31 +9,13 @@ namespace YololEmulator.Tests.Analysis.Reduction
     [TestClass]
     public class VariableSimplificationTests
     {
-        [TestMethod]
-        public void SimplifyVarNames()
-        {
-            // Parse the initial (complex) code
-            var ast = TestExecutor.Parse("ship=7", "ixf=0 ship=6");
-
-            // Reduce AST to a simpler program
-            var reduced = ast.SimplifyVariableNames().ToString();
-
-            // Check we got the simpler program we expected
-            Assert.AreEqual("a=7\nb=0 a=6", reduced);
-        }
+        private static ReducerTestHelper helper = new ReducerTestHelper(ast => ast.SimplifyVariableNames());
 
         [TestMethod]
-        public void PreserveExternalNames()
-        {
-            // Parse the initial (complex) code
-            var ast = Parser.TryParseProgram(Tokenizer.TryTokenize("ship=7 :counter=0 ship=6").Value).Value;
+        public void SimplifyVarNames() => helper.Run("ship=7\nixf=0 ship=6", "a=7\nb=0 a=6");
 
-            // Reduce AST to a simpler program
-            var reduced = ast.SimplifyVariableNames().ToString();
-
-            // Check we got the simpler program we expected
-            Assert.AreEqual("a=7 :counter=0 a=6", reduced);
-        }
+        [TestMethod]
+        public void PreserveExternalNames() => helper.Run("ship=7 :counter=0 ship=6", "a=7 :counter=0 a=6");
 
         [TestMethod]
         public void LotsOfUniqueNames()

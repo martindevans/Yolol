@@ -7,60 +7,27 @@ namespace YololEmulator.Tests.Analysis.Reduction
     [TestClass]
     public class ConstantFoldingTests
     {
-        [TestMethod]
-        public void FoldNumber()
-        {
-            var ast = TestExecutor.Parse("a=-2+(2*3)/2");
-            var reduced = ast.FoldConstants().ToString();
-            Assert.AreEqual("a=1", reduced);
-        }
+        private static ReducerTestHelper helper = new ReducerTestHelper(ast => ast.FoldConstants());
 
         [TestMethod]
-        public void FoldString()
-        {
-            var ast = Parser.TryParseProgram(Tokenizer.TryTokenize("a=\"sss\"+\"qqq\"").Value).Value;
-            var reduced = ast.FoldConstants().ToString();
-            Assert.AreEqual("a=\"sssqqq\"", reduced);
-        }
+        public void FoldNumber() => helper.Run("a=-2+(2*3)/2", "a=1");
 
         [TestMethod]
-        public void DoNotFoldExternals()
-        {
-            var ast = Parser.TryParseProgram(Tokenizer.TryTokenize("a=:extern+3").Value).Value;
-            var reduced = ast.FoldConstants().ToString();
-            Assert.AreEqual("a=:extern+3", reduced);
-        }
+        public void FoldString() => helper.Run("a=\"sss\"+\"qqq\"", "a=\"sssqqq\"");
 
         [TestMethod]
-        public void FoldIfTrue()
-        {
-            var ast = Parser.TryParseProgram(Tokenizer.TryTokenize("if 1 then a = 1 else a = 2 end").Value).Value;
-            var reduced = ast.FoldConstants().ToString();
-            Assert.AreEqual("a=1", reduced);
-        }
+        public void DoNotFoldExternals() => helper.Run("a=:extern+3", "a=:extern+3");
 
         [TestMethod]
-        public void FoldIfFalse()
-        {
-            var ast = TestExecutor.Parse("if 0 then a = 1 else a = 2 end");
-            var reduced = ast.FoldConstants().ToString();
-            Assert.AreEqual("a=2", reduced);
-        }
+        public void FoldIfTrue() => helper.Run("if 1 then a = 1 else a = 2 end", "a=1");
 
         [TestMethod]
-        public void DoNotFoldIf()
-        {
-            var ast = TestExecutor.Parse("if :extern then a = 1 else a = 2 end");
-            var reduced = ast.FoldConstants().ToString();
-            Assert.AreEqual("if :extern then a=1 else a=2 end", reduced);
-        }
+        public void FoldIfFalse() => helper.Run("if 0 then a = 1 else a = 2 end", "a=2");
 
         [TestMethod]
-        public void DoNotFoldIfError()
-        {
-            var ast = TestExecutor.Parse("if \"err\" then a = 1 else a = 2 end");
-            var reduced = ast.FoldConstants().ToString();
-            Assert.AreEqual("if \"err\" then a=1 else a=2 end", reduced);
-        }
+        public void DoNotFoldIf() => helper.Run("if :extern then a = 1 else a = 2 end", "if :extern then a=1 else a=2 end");
+
+        [TestMethod]
+        public void DoNotFoldIfError() => helper.Run("if \"err\" then a = 1 else a = 2 end", "if \"err\" then a=1 else a=2 end");
     }
 }
