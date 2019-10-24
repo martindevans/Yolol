@@ -54,7 +54,7 @@ namespace Yolol.Grammar.AST.Statements
             return new ExecutionResult();
         }
 
-        public bool Equals([CanBeNull] StatementList other)
+        public bool Equals(StatementList other)
         {
             return other != null
                 && other.Statements.Count == Statements.Count
