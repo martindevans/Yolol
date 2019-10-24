@@ -11,7 +11,7 @@ namespace Yolol.Grammar.AST.Expressions.Unary
         {
         }
 
-        public bool Equals([CanBeNull] PreIncrement other)
+        public bool Equals(PreIncrement other)
         {
             return other != null
                    && other.Name.Equals(Name);

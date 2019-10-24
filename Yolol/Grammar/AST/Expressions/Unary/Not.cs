@@ -31,7 +31,7 @@ namespace Yolol.Grammar.AST.Expressions.Unary
             return new Value(v.Number == 0);
         }
 
-        public bool Equals([CanBeNull] Not other)
+        public bool Equals(Not other)
         {
             return other != null
                 && other.Expression.Equals(Expression);

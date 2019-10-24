@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 namespace Yolol.Grammar.AST.Expressions.Unary
 {
     public class ArcCos
-        : BaseTrigonometry
+        : BaseTrigonometry, IEquatable<ArcCos>
     {
         public ArcCos([NotNull] BaseExpression parameter)
             : base(parameter, "acos", false, true)
@@ -16,7 +16,7 @@ namespace Yolol.Grammar.AST.Expressions.Unary
             return Math.Acos(value);
         }
 
-        public bool Equals([CanBeNull] ArcCos other)
+        public bool Equals(ArcCos other)
         {
             return other != null 
                 && other.Parameter.Equals(Parameter);

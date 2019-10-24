@@ -37,7 +37,7 @@ namespace Yolol.Grammar.AST.Expressions.Binary
             throw new ExecutionException("Attempted to divide mixed types");
         }
 
-        public bool Equals([CanBeNull] Divide other)
+        public bool Equals(Divide other)
         {
             return other != null
                    && other.Left.Equals(Left)

@@ -29,6 +29,7 @@ namespace YololEmulator.Tests.Analysis.Reduction
 
             Run(inputAst, expectedReducedAst, reducer);
         }
+
         public static void Run([NotNull] Program inputAst, [NotNull] string expectedReducedYolol, [NotNull] Func<Program, Program> reducer)
         {
             var expectedReducedAst = TestExecutor.Parse(expectedReducedYolol);

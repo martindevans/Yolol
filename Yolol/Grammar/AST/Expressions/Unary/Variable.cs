@@ -1,7 +1,6 @@
 ﻿using System;
 using JetBrains.Annotations;
 using Yolol.Execution;
-using Yolol.Grammar.AST.Statements;
 
 namespace Yolol.Grammar.AST.Expressions.Unary
 {
@@ -26,7 +25,7 @@ namespace Yolol.Grammar.AST.Expressions.Unary
             return state.GetVariable(Name.Name).Value;
         }
 
-        public bool Equals([CanBeNull] Variable other)
+        public bool Equals(Variable other)
         {
             return other != null
                 && other.Name.Equals(Name);

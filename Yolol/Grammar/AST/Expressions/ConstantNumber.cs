@@ -25,7 +25,7 @@ namespace Yolol.Grammar.AST.Expressions
             return new Value(Value);
         }
 
-        public bool Equals([CanBeNull] ConstantNumber other)
+        public bool Equals(ConstantNumber other)
         {
             return other != null
                 && other.Value.Equals(Value);

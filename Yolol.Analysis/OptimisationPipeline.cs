@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Yolol.Analysis.ControlFlowGraph;
@@ -70,7 +69,7 @@ namespace Yolol.Analysis
             return result;
         }
 
-        private bool CheckFuzz([NotNull] IFuzzResult startFuzz, [NotNull] IFuzzResult endFuzz)
+        private static bool CheckFuzz([NotNull] IFuzzResult startFuzz, [NotNull] IFuzzResult endFuzz)
         {
             if (startFuzz.Count != endFuzz.Count)
                 return false;
@@ -93,7 +92,7 @@ namespace Yolol.Analysis
             return true;
         }
 
-        [NotNull] private Program Optimise(Program program)
+        [NotNull] private static Program Optimise(Program program)
         {
             // Replace thing with unnecessary brackets like `(a)` with `a`
             program = program.SimpleBracketElimination();

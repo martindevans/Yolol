@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 namespace Yolol.Grammar.AST.Expressions.Unary
 {
     public class ArcSine
-        : BaseTrigonometry
+        : BaseTrigonometry, IEquatable<ArcSine>
     {
         public ArcSine([NotNull] BaseExpression parameter)
             : base(parameter, "asin", false, true)
@@ -16,7 +16,7 @@ namespace Yolol.Grammar.AST.Expressions.Unary
             return Math.Asin(value);
         }
 
-        public bool Equals([CanBeNull] ArcSine other)
+        public bool Equals(ArcSine other)
         {
             return other != null 
                 && other.Parameter.Equals(Parameter);

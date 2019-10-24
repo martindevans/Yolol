@@ -5,7 +5,6 @@ using JetBrains.Annotations;
 using Yolol.Analysis.TreeVisitor;
 using Yolol.Grammar;
 using Yolol.Grammar.AST;
-using Yolol.Grammar.AST.Statements;
 
 namespace Yolol.Analysis
 {
@@ -28,7 +27,7 @@ namespace Yolol.Analysis
         {
             private readonly HashSet<string> _names = new HashSet<string>();
 
-            protected override VariableName Visit([NotNull] VariableName var)
+            protected override VariableName Visit(VariableName var)
             {
                 _names.Add(var.Name);
 
@@ -89,7 +88,7 @@ namespace Yolol.Analysis
             return _prefix + GetVar(_nextId++);
         }
 
-        private static string GetVar(int id)
+        [NotNull] private static string GetVar(int id)
         {
             var first = FirstChars[id % FirstChars.Length];
             id /= FirstChars.Length;

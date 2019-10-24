@@ -42,7 +42,6 @@ namespace Yolol.Grammar
             select (BaseExpression)new Not(exp);
 
         private static readonly TokenListParser<YololToken, VariableName> VariableName = Token.EqualTo(YololToken.Identifier).Select(n => new VariableName(n.ToStringValue()));
-        private static readonly TokenListParser<YololToken, FunctionName> FunctionName = Token.EqualTo(YololToken.Identifier).Select(n => new FunctionName(n.ToStringValue()));
         private static readonly TokenListParser<YololToken, VariableName> ExternalVariableName = Token.EqualTo(YololToken.ExternalIdentifier).Select(n => new VariableName(n.ToStringValue()));
 
         private static readonly TokenListParser<YololToken, BaseExpression> ConstantNumExpression = Token.EqualTo(YololToken.Number).Select(n => (BaseExpression)new ConstantNumber(decimal.Parse(n.ToStringValue())));

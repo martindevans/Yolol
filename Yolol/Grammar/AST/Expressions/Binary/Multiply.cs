@@ -34,7 +34,7 @@ namespace Yolol.Grammar.AST.Expressions.Binary
             throw new ExecutionException("Attempted to multiply mixed types");
         }
 
-        public bool Equals([CanBeNull] Multiply other)
+        public bool Equals(Multiply other)
         {
             return other != null
                    && other.Left.Equals(Left)

@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 namespace Yolol.Grammar.AST.Expressions.Unary
 {
     public class Tangent
-        : BaseTrigonometry
+        : BaseTrigonometry, IEquatable<Tangent>
     {
         public Tangent([NotNull] BaseExpression parameter)
             : base(parameter, "tan", true, false)
@@ -16,7 +16,7 @@ namespace Yolol.Grammar.AST.Expressions.Unary
             return Math.Tan(value);
         }
 
-        public bool Equals([CanBeNull] Tangent other)
+        public bool Equals(Tangent other)
         {
             return other != null 
                 && other.Parameter.Equals(Parameter);

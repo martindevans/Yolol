@@ -1,5 +1,4 @@
-﻿using System;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 using Yolol.Analysis.ControlFlowGraph.AST;
 using Yolol.Analysis.Types;
 using Yolol.Execution;

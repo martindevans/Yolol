@@ -10,7 +10,7 @@ using Yolol.Grammar.AST.Expressions.Unary;
 using Yolol.Grammar.AST.Statements;
 using Type = Yolol.Execution.Type;
 
-namespace Yolol.Cylon.Versions
+namespace Yolol.Cylon.Deserialisation.Versions
 {
     // ReSharper disable once InconsistentNaming
     internal class V_1_X_X

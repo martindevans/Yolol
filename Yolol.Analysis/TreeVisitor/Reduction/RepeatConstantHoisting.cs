@@ -41,7 +41,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
                 return program;
 
             // Build set of assignments to insert
-            _constantInitializers = _replacements.Select(a => new Assignment(new VariableName(a.Value), a.Key.Type == Execution.Type.Number ? (BaseExpression)new ConstantNumber(a.Key.Number) : new ConstantString(a.Key.String))).ToArray();
+            _constantInitializers = _replacements.Select(a => new Assignment(new VariableName(a.Value), a.Key.Type == Execution.Type.Number ? (BaseExpression)new ConstantNumber(a.Key.Number) : new ConstantString(a.Key.String))).ToArray<BaseStatement>();
 
             return base.Visit(program);
         }

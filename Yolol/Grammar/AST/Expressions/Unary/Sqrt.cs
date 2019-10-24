@@ -5,7 +5,7 @@ using Yolol.Execution;
 namespace Yolol.Grammar.AST.Expressions.Unary
 {
     public class Sqrt
-        : BaseExpression
+        : BaseExpression, IEquatable<Sqrt>
     {
         [NotNull] public BaseExpression Parameter { get; }
 
@@ -33,7 +33,7 @@ namespace Yolol.Grammar.AST.Expressions.Unary
             return (decimal)Math.Sqrt((double)input.Number.Value);
         }
 
-        public bool Equals([CanBeNull] Sqrt other)
+        public bool Equals(Sqrt other)
         {
             return other != null 
                 && other.Parameter.Equals(Parameter);

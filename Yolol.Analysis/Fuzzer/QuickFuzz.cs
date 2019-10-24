@@ -105,7 +105,7 @@ namespace Yolol.Analysis.Fuzzer
                     const string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
                     // Create a new RNG based on the name and the iteration count. This means that if a program only differs in reads it remains in sync.
-                    var rng = new Random(unchecked(name.GetHashCode() + Iterations));
+                    var rng = new Random(unchecked(name.GetHashCode() + Iterations + _seed));
 
                     // Generate 4 possible values: number, integer, alphanumeric string and boolean
                     var a = new Value((decimal)rng.NextDouble());

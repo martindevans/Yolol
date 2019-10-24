@@ -11,7 +11,7 @@ namespace Yolol.Grammar.AST.Expressions.Unary
         {
         }
 
-        public bool Equals([CanBeNull] PostDecrement other)
+        public bool Equals(PostDecrement other)
         {
             return other != null
                    && other.Name.Equals(Name);

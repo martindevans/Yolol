@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 namespace Yolol.Grammar.AST.Expressions.Unary
 {
     public class ArcTan
-        : BaseTrigonometry
+        : BaseTrigonometry, IEquatable<ArcTan>
     {
         public ArcTan([NotNull] BaseExpression parameter)
             : base(parameter, "atan", false, true)
@@ -16,7 +16,7 @@ namespace Yolol.Grammar.AST.Expressions.Unary
             return Math.Atan(value);
         }
 
-        public bool Equals([CanBeNull] ArcTan other)
+        public bool Equals(ArcTan other)
         {
             return other != null 
                 && other.Parameter.Equals(Parameter);

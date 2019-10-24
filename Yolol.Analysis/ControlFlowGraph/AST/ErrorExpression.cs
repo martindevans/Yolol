@@ -1,8 +1,6 @@
 ﻿using System;
-using JetBrains.Annotations;
 using Yolol.Execution;
 using Yolol.Grammar.AST.Expressions;
-using Yolol.Grammar.AST.Expressions.Binary;
 
 namespace Yolol.Analysis.ControlFlowGraph.AST
 {
@@ -17,7 +15,7 @@ namespace Yolol.Analysis.ControlFlowGraph.AST
             throw new ExecutionException("Static error");
         }
 
-        public bool Equals([CanBeNull] ErrorExpression other)
+        public bool Equals(ErrorExpression other)
         {
             return other != null;
         }

@@ -36,7 +36,7 @@ namespace Yolol.Grammar.AST.Expressions.Binary
             return 1;
         }
 
-        public bool Equals([CanBeNull] NotEqualTo other)
+        public bool Equals(NotEqualTo other)
         {
             return other != null
                 && other.Left.Equals(Left)

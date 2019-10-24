@@ -10,10 +10,10 @@ namespace YololEmulator.Tests.Analysis.Reduction
     [TestClass]
     public class FlattenStatementListsTests
     {
-        private static ReducerTestHelper helper = new ReducerTestHelper(ast => new FlattenStatementLists().Visit(ast));
+        private static readonly ReducerTestHelper Helper = new ReducerTestHelper(ast => new FlattenStatementLists().Visit(ast));
 
         [TestMethod]
-        public void Flatten() => helper.Run("a=sin(b)", new Program(new Line[] {
+        public void Flatten() => Helper.Run("a=sin(b)", new Program(new Line[] {
             new Line(new StatementList(new Assignment(new VariableName("a"), new Sine(new Variable(new VariableName("b"))))))
         }));
     }

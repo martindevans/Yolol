@@ -1,7 +1,7 @@
 ﻿using System;
 using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
-using Yolol.Cylon.Versions;
+using Yolol.Cylon.Deserialisation.Versions;
 using Yolol.Grammar.AST;
 
 namespace Yolol.Cylon.Deserialisation
