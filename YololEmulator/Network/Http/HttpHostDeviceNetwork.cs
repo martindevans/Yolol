@@ -82,7 +82,7 @@ namespace YololEmulator.Network.Http
             return _variables.GetOrAdd(name.ToLowerInvariant(), _ => new NetworkVariable());
         }
 
-        IVariable IDeviceNetwork.Get([NotNull] string name)
+        IVariable IDeviceNetwork.Get(string name)
         {
             return _variables.GetOrAdd(name.ToLowerInvariant(), _ => new NetworkVariable());
         }

@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 namespace Yolol.Grammar.AST.Expressions.Unary
 {
     public class Sine
-        : BaseTrigonometry
+        : BaseTrigonometry, IEquatable<Sine>
     {
         public Sine([NotNull] BaseExpression parameter)
             : base(parameter, "sin", true, false)
@@ -16,7 +16,7 @@ namespace Yolol.Grammar.AST.Expressions.Unary
             return Math.Sin(value);
         }
 
-        public bool Equals([CanBeNull] Sine other)
+        public bool Equals(Sine other)
         {
             return other != null 
                 && other.Parameter.Equals(Parameter);

@@ -5,7 +5,6 @@ using JetBrains.Annotations;
 using Yolol.Analysis.ControlFlowGraph.AST;
 using Yolol.Analysis.ControlFlowGraph.Extensions;
 using Yolol.Grammar;
-using Yolol.Grammar.AST;
 using Yolol.Grammar.AST.Expressions;
 using Yolol.Grammar.AST.Expressions.Binary;
 using Yolol.Grammar.AST.Expressions.Unary;
@@ -17,6 +16,8 @@ namespace Yolol.Analysis.TreeVisitor.Inspection
         : BaseTreeVisitor
     {
         private readonly Dictionary<VariableName, BaseExpression> _constants;
+
+        // ReSharper disable once NotAccessedField.Local (this field is included in the constructor as a hint that SSA form is required)
         private readonly ISingleStaticAssignmentTable _ssa;
 
         public FindConstantVariables(Dictionary<VariableName, BaseExpression> constants, ISingleStaticAssignmentTable ssa)

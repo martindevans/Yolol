@@ -16,7 +16,7 @@ namespace Yolol.Grammar.AST.Expressions.Binary
         {
         }
 
-        public bool Equals([CanBeNull] And other)
+        public bool Equals(And other)
         {
             return other != null
                 && other.Left.Equals(Left)

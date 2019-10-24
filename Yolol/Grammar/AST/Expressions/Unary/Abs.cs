@@ -1,11 +1,12 @@
 ﻿using System;
 using JetBrains.Annotations;
 using Yolol.Execution;
+using Type = Yolol.Execution.Type;
 
 namespace Yolol.Grammar.AST.Expressions.Unary
 {
     public class Abs
-        : BaseExpression
+        : BaseExpression, IEquatable<Abs>
     {
         [NotNull] public BaseExpression Parameter { get; }
 
@@ -24,7 +25,7 @@ namespace Yolol.Grammar.AST.Expressions.Unary
         {
             var input = Parameter.Evaluate(state);
 
-            if (input.Type == Execution.Type.String)
+            if (input.Type == Type.String)
                 throw new ExecutionException("Attempted to Abs a string value");
 
             if (input.Number < 0)
@@ -33,7 +34,7 @@ namespace Yolol.Grammar.AST.Expressions.Unary
                 return input;
         }
 
-        public bool Equals([CanBeNull] Abs other)
+        public bool Equals(Abs other)
         {
             return other != null 
                 && other.Parameter.Equals(Parameter);

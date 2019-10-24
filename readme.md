@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/martindevans/Yolol.svg?branch=master)](https://travis-ci.org/martindevans/Yolol)
+
 This repository contains 4 projects:
 
 #### YololEmulator

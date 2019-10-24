@@ -14,7 +14,7 @@ namespace Yolol.Grammar.AST.Statements
             return new ExecutionResult();
         }
 
-        public bool Equals([CanBeNull] EmptyStatement other)
+        public bool Equals(EmptyStatement other)
         {
             return other != null;
         }

@@ -39,7 +39,7 @@ namespace Yolol.Grammar.AST.Expressions.Binary
             return Evaluate(l.ToString(), r);
         }
 
-        public bool Equals([CanBeNull] Subtract other)
+        public bool Equals(Subtract other)
         {
             return other != null
                    && other.Left.Equals(Left)

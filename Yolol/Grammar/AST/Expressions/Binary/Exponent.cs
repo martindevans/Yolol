@@ -42,7 +42,7 @@ namespace Yolol.Grammar.AST.Expressions.Binary
             throw new ExecutionException("Attempted to exponent mixed types");
         }
 
-        public bool Equals([CanBeNull] Exponent other)
+        public bool Equals(Exponent other)
         {
             return other != null
                    && other.Left.Equals(Left)

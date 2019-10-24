@@ -37,7 +37,7 @@ namespace Yolol.Grammar.AST.Expressions.Binary
             throw new ExecutionException("Attempted to modulo mixed types");
         }
 
-        public bool Equals([CanBeNull] Modulo other)
+        public bool Equals(Modulo other)
         {
             return other != null
                    && other.Left.Equals(Left)

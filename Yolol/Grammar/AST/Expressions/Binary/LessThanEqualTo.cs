@@ -38,7 +38,7 @@ namespace Yolol.Grammar.AST.Expressions.Binary
             return Evaluate(l.ToString(), r);
         }
 
-        public bool Equals([CanBeNull] LessThanEqualTo other)
+        public bool Equals(LessThanEqualTo other)
         {
             return other != null
                    && other.Left.Equals(Left)

@@ -10,6 +10,6 @@ namespace Yolol.Execution
         Number     = 0b00000001,   // Value is a number
         String     = 0b00000010,   // Value is a string
 
-        Error      = 0b00000100,   // Valur produced a runtime error
+        Error      = 0b00000100,   // Value produced a runtime error
     }
 }

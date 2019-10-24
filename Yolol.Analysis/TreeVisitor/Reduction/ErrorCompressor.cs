@@ -1,5 +1,4 @@
-﻿using JetBrains.Annotations;
-using Yolol.Analysis.ControlFlowGraph.AST;
+﻿using Yolol.Analysis.ControlFlowGraph.AST;
 using Yolol.Grammar.AST.Statements;
 
 namespace Yolol.Analysis.TreeVisitor.Reduction

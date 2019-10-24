@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 namespace Yolol.Grammar.AST.Expressions.Unary
 {
     public class Cosine
-        : BaseTrigonometry
+        : BaseTrigonometry, IEquatable<Cosine>
     {
         public Cosine([NotNull] BaseExpression parameter)
             : base(parameter, "cos", true, false)
@@ -16,7 +16,7 @@ namespace Yolol.Grammar.AST.Expressions.Unary
             return Math.Cos(value);
         }
 
-        public bool Equals([CanBeNull] Cosine other)
+        public bool Equals(Cosine other)
         {
             return other != null 
                 && other.Parameter.Equals(Parameter);

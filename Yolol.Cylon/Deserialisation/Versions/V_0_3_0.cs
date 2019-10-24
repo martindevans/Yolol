@@ -2,6 +2,7 @@
 using System.Linq;
 using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
+using Semver;
 using Yolol.Grammar;
 using Yolol.Grammar.AST;
 using Yolol.Grammar.AST.Expressions;
@@ -10,7 +11,7 @@ using Yolol.Grammar.AST.Expressions.Unary;
 using Yolol.Grammar.AST.Statements;
 using Type = Yolol.Execution.Type;
 
-namespace Yolol.Cylon.Versions
+namespace Yolol.Cylon.Deserialisation.Versions
 {
     // ReSharper disable once InconsistentNaming
     internal class V_0_3_0
@@ -26,7 +27,7 @@ namespace Yolol.Cylon.Versions
         {
             var jobj = JObject.Parse(json);
 
-            var version = Semver.SemVersion.Parse(jobj["version"].Value<string>());
+            var version = SemVersion.Parse(jobj["version"].Value<string>());
 
             if (version < "0.3.0")
                 throw new InvalidOperationException("AST version is too low (must be >= 0.3.0)");
@@ -77,22 +78,22 @@ namespace Yolol.Cylon.Versions
             var op = jtok["operator"].Value<string>();
             var exp = ParseExpression(jtok["value"]);
 
-            Execution.Type? type = null;
+            Type? type = null;
             var typeMeta = jtok["value"]?["metadata"]?["type"];
             if (_typeExtension && typeMeta != null)
             {
                 var types = ((JArray)typeMeta["types"]).Values<string>().ToArray();
-                var version = Semver.SemVersion.Parse(typeMeta["version"].Value<string>());
+                var version = SemVersion.Parse(typeMeta["version"].Value<string>());
                 if (version >= "1.0.0" && version <= "2.0.0")
                 {
                     var num = types.Contains("number");
                     var str = types.Contains("string");
                     var err = types.Contains("error");
 
-                    var t = Execution.Type.Unassigned;
-                    t |= num ? Execution.Type.Number : Execution.Type.Unassigned;
-                    t |= str ? Execution.Type.String : Execution.Type.Unassigned;
-                    t |= err ? Execution.Type.Error  : Type.Unassigned;
+                    var t = Type.Unassigned;
+                    t |= num ? Type.Number : Type.Unassigned;
+                    t |= str ? Type.String : Type.Unassigned;
+                    t |= err ? Type.Error  : Type.Unassigned;
                     type = t;
                 }
             }

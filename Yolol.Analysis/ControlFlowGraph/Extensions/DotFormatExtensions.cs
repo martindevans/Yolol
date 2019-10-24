@@ -11,13 +11,12 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
     // ReSharper disable once InconsistentNaming
     public static class DotFormatExtensions
     {
-        [NotNull]
-        private static string ID(Guid guid)
+        [NotNull] private static string ID(Guid guid)
         {
             return $"_{guid.ToString().Replace("-", "_")}";
         }
 
-        public static string ToDot([NotNull] this IControlFlowGraph graph)
+        [NotNull] public static string ToDot([NotNull] this IControlFlowGraph graph)
         {
             var sb = new StringBuilder();
 

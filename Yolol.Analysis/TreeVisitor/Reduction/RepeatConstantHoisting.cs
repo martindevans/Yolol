@@ -8,6 +8,7 @@ using Yolol.Grammar;
 using Yolol.Grammar.AST;
 using Yolol.Grammar.AST.Expressions;
 using Yolol.Grammar.AST.Statements;
+using Variable = Yolol.Grammar.AST.Expressions.Variable;
 
 namespace Yolol.Analysis.TreeVisitor.Reduction
 {
@@ -41,7 +42,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
                 return program;
 
             // Build set of assignments to insert
-            _constantInitializers = _replacements.Select(a => new Assignment(new VariableName(a.Value), a.Key.Type == Execution.Type.Number ? (BaseExpression)new ConstantNumber(a.Key.Number) : new ConstantString(a.Key.String))).ToArray();
+            _constantInitializers = _replacements.Select(a => new Assignment(new VariableName(a.Value), a.Key.Type == Execution.Type.Number ? (BaseExpression)new ConstantNumber(a.Key.Number) : new ConstantString(a.Key.String))).ToArray<BaseStatement>();
 
             return base.Visit(program);
         }
@@ -62,7 +63,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
         protected override BaseExpression Visit(ConstantNumber con)
         {
             if (_replacements.TryGetValue(new Value(con.Value), out var name))
-                return new Grammar.AST.Expressions.Unary.Variable(new VariableName(name));
+                return new Variable(new VariableName(name));
             else
                 return con;
         }
@@ -70,7 +71,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
         protected override BaseExpression Visit(ConstantString con)
         {
             if (_replacements.TryGetValue(new Value(con.Value), out var name))
-                return new Grammar.AST.Expressions.Unary.Variable(new VariableName(name));
+                return new Variable(new VariableName(name));
             else
                 return con;
         }

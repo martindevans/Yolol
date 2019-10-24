@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Yolol.Analysis.ControlFlowGraph;
@@ -19,6 +18,27 @@ namespace Yolol.Analysis
         private readonly int _itersLimit;
         private readonly bool _keepTypes;
 
+        /// <summary>
+        /// How many unique runs of the program will the fuzzer run before and after optimisation to verify correctness
+        /// </summary>
+        public int FuzzSafetyRuns { get; set; } = 250;
+
+        /// <summary>
+        /// How many lines will each fuzzer run execute (max)
+        /// </summary>
+        public int FuzzSafetyIterations { get; set; } = 50;
+
+        /// <summary>
+        /// Disable all AST bsed optimisation passes
+        /// </summary>
+        public bool DisableAstPasses { get; set; }
+
+        /// <summary>
+        /// Disable all CFG based optimisation passes
+        /// </summary>
+        public bool DisableCfgPasses { get; set; }
+
+
         public OptimisationPipeline([NotNull] (VariableName, Type)[] typeHints)
         {
             _typeHints = typeHints;
@@ -35,7 +55,7 @@ namespace Yolol.Analysis
         [NotNull] public async Task<Program> Apply([NotNull] Program input)
         {
             var fuzz = new QuickFuzz(_typeHints);
-            var startFuzz = fuzz.Fuzz(input);
+            var startFuzz = fuzz.Fuzz(input, FuzzSafetyRuns, FuzzSafetyIterations);
 
             var count = 0;
             var result = input.Fixpoint(_itersLimit, p => {
@@ -44,11 +64,13 @@ namespace Yolol.Analysis
                 p = p.StripTypes();
 
                 // Convert input into control flow graph and optimise
-                p = Optimise(new Builder(p).Build()).ToYolol();
+                if (!DisableCfgPasses)
+                    p = Optimise(new Builder(p).Build()).ToYolol();
 
                 // Apply simple AST optimisations
-                for (var i = 0; i < 2; i++)
-                    p = Optimise(p);
+                if (!DisableAstPasses)
+                    for (var i = 0; i < 2; i++)
+                        p = Optimise(p);
 
                 count++;
                 Console.WriteLine($"## Pass {count}");
@@ -70,7 +92,7 @@ namespace Yolol.Analysis
             return result;
         }
 
-        private bool CheckFuzz([NotNull] IFuzzResult startFuzz, [NotNull] IFuzzResult endFuzz)
+        private static bool CheckFuzz([NotNull] IFuzzResult startFuzz, [NotNull] IFuzzResult endFuzz)
         {
             if (startFuzz.Count != endFuzz.Count)
                 return false;
@@ -93,7 +115,7 @@ namespace Yolol.Analysis
             return true;
         }
 
-        [NotNull] private Program Optimise(Program program)
+        [NotNull] private static Program Optimise(Program program)
         {
             // Replace thing with unnecessary brackets like `(a)` with `a`
             program = program.SimpleBracketElimination();

@@ -4,7 +4,6 @@ using System.Linq;
 using JetBrains.Annotations;
 using Yolol.Analysis.ControlFlowGraph.AST;
 using Yolol.Analysis.DataFlowGraph;
-using Yolol.Analysis.DataFlowGraph.Extensions;
 using Yolol.Analysis.TreeVisitor;
 using Yolol.Analysis.TreeVisitor.Inspection;
 using Yolol.Analysis.TreeVisitor.Reduction;
