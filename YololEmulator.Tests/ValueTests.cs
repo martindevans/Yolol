@@ -46,5 +46,50 @@ namespace YololEmulator.Tests
 
             AssertNumber(n, 1);
         }
+
+        [TestMethod]
+        public void StringStringEquality()
+        {
+            var a1 = new Value("a");
+            var a2 = new Value("a");
+            var b = new Value("b");
+
+            Assert.AreEqual(a1.ToObject(), a2.ToObject());
+            Assert.AreEqual(a1, a2);
+            Assert.IsTrue(a1 != b);
+            Assert.IsTrue(a1 == a2);
+
+            Assert.AreEqual(a1.GetHashCode(), a2.GetHashCode());
+        }
+
+        [TestMethod]
+        public void NumNumEquality()
+        {
+            var a1 = new Value(1);
+            var a2 = new Value(1);
+            var b = new Value(2);
+
+            Assert.AreEqual(a1.ToObject(), a2.ToObject());
+            Assert.AreEqual(a1, a2);
+            Assert.IsTrue(a1 != b);
+            Assert.IsTrue(a1 == a2);
+
+            Assert.AreEqual(a1.GetHashCode(), a2.GetHashCode());
+        }
+
+        [TestMethod]
+        public void StringNumEquality()
+        {
+            var a1 = new Value(1);
+            var a2 = new Value(1);
+            var b = new Value("2");
+
+            Assert.AreEqual(a1.ToObject(), a2.ToObject());
+            Assert.AreEqual(a1, a2);
+            Assert.IsTrue(a1 != b);
+            Assert.IsTrue(a1 == a2);
+
+            Assert.AreEqual(a1.GetHashCode(), a2.GetHashCode());
+        }
     }
 }
