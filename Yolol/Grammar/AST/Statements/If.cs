@@ -25,11 +25,11 @@ namespace Yolol.Grammar.AST.Statements
         public override ExecutionResult Evaluate(MachineState state)
         {
             var condition = Condition.Evaluate(state);
-            var todo = condition.Number != 0 ? TrueBranch : FalseBranch;
+            var todo = condition.Type == Execution.Type.String || condition.Number != 0 ? TrueBranch : FalseBranch;
             return todo.Evaluate(state);
         }
 
-        public bool Equals([CanBeNull] If other)
+        public bool Equals(If other)
         {
             return other != null
                 && other.Condition.Equals(Condition)
