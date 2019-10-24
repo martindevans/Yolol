@@ -370,7 +370,7 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
                             return new ConstantString(s.Value + " ");
 
                         case Bracketed b:
-                            return HandleExpression(b.Expression);
+                            return HandleExpression(b.Parameter);
 
                         default:
                             throw new InvalidOperationException(right.GetType().Name);
@@ -400,7 +400,7 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
                                 return new ErrorExpression();
 
                         case Bracketed b:
-                            return HandleExpression(b.Expression);
+                            return HandleExpression(b.Parameter);
 
                         default:
                             return dec;

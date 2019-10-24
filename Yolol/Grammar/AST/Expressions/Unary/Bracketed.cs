@@ -5,30 +5,29 @@ using Yolol.Execution;
 namespace Yolol.Grammar.AST.Expressions.Unary
 {
     public class Bracketed
-        : BaseExpression, IEquatable<Bracketed>
+        : BaseUnaryExpression, IEquatable<Bracketed>
     {
-        [NotNull] public BaseExpression Expression { get; }
+        public override bool CanRuntimeError => Parameter.CanRuntimeError;
 
-        public override bool CanRuntimeError => Expression.CanRuntimeError;
+        public override bool IsBoolean => Parameter.IsBoolean;
 
-        public override bool IsBoolean => Expression.IsBoolean;
 
-        public override bool IsConstant => Expression.IsConstant;
+        public Bracketed([NotNull] BaseExpression parameter) : base(parameter) { }
 
-        public Bracketed([NotNull] BaseExpression expression)
+        protected override Value Evaluate(string parameterValue)
         {
-            Expression = expression;
+            return new Value(parameterValue);
         }
 
-        public override Value Evaluate(MachineState state)
+        protected override Value Evaluate(Number parameterValue)
         {
-            return Expression.Evaluate(state);
+            return new Value(parameterValue);
         }
-
+        
         public bool Equals(Bracketed other)
         {
             return other != null
-                && other.Expression.Equals(Expression);
+                && other.Parameter.Equals(Parameter);
         }
 
         public override bool Equals(BaseExpression other)
@@ -39,7 +38,7 @@ namespace Yolol.Grammar.AST.Expressions.Unary
 
         public override string ToString()
         {
-            return $"({Expression})";
+            return $"({Parameter})";
         }
     }
 }

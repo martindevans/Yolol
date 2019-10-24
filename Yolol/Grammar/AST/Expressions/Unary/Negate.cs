@@ -6,35 +6,28 @@ using Type = Yolol.Execution.Type;
 namespace Yolol.Grammar.AST.Expressions.Unary
 {
     public class Negate
-        : BaseExpression, IEquatable<Negate>
+        : BaseUnaryExpression, IEquatable<Negate>
     {
-        [NotNull] public BaseExpression Expression { get; }
-
-        public override bool CanRuntimeError => Expression.CanRuntimeError;
+        public override bool CanRuntimeError => Parameter.CanRuntimeError;
 
         public override bool IsBoolean => false;
 
-        public override bool IsConstant => Expression.IsConstant;
+        public Negate([NotNull] BaseExpression parameter) : base(parameter) { }
 
-        public Negate([NotNull] BaseExpression expression)
+        protected override Value Evaluate([NotNull] string parameterValue)
         {
-            Expression = expression;
+            throw new ExecutionException("Attempted to negate a String value");
         }
 
-        public override Value Evaluate(MachineState state)
+        protected override Value Evaluate(Number parameterValue)
         {
-            var v = Expression.Evaluate(state);
-
-            if (v.Type == Type.String)
-                throw new ExecutionException("Attempted to negate a String value");
-
-            return new Value(-v.Number);
+            return new Value(-parameterValue);
         }
 
         public bool Equals(Negate other)
         {
             return other != null
-                && other.Expression.Equals(Expression);
+                && other.Parameter.Equals(Parameter);
         }
 
         public override bool Equals(BaseExpression other)
@@ -45,7 +38,7 @@ namespace Yolol.Grammar.AST.Expressions.Unary
 
         public override string ToString()
         {
-            return $"-{Expression}";
+            return $"-{Parameter}";
         }
     }
 }

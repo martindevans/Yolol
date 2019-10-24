@@ -127,7 +127,7 @@ namespace Yolol.Analysis.TreeVisitor.Inspection
 
         protected override bool Visit(ArcTan app) => Visit(app.Parameter);
 
-        protected override bool Visit(Bracketed brk) => Visit(brk.Expression);
+        protected override bool Visit(Bracketed brk) => Visit(brk.Parameter);
 
         protected override bool Visit(Add add) => VisitBinary(add);
 
@@ -139,7 +139,7 @@ namespace Yolol.Analysis.TreeVisitor.Inspection
 
         protected override bool Visit(Exponent exp) => VisitBinary(exp);
 
-        protected override bool Visit(Negate neg) => Visit(neg.Expression);
+        protected override bool Visit(Negate neg) => Visit(neg.Parameter);
 
         protected override bool Visit(ConstantNumber con) => true;
 

@@ -6,32 +6,27 @@ using Type = Yolol.Execution.Type;
 namespace Yolol.Grammar.AST.Expressions.Unary
 {
     public class Abs
-        : BaseExpression, IEquatable<Abs>
+        : BaseUnaryExpression, IEquatable<Abs>
     {
-        [NotNull] public BaseExpression Parameter { get; }
-
         public override bool CanRuntimeError => true;
 
         public override bool IsBoolean => false;
 
         public override bool IsConstant => Parameter.IsConstant;
 
-        public Abs([NotNull] BaseExpression parameter)
+        public Abs([NotNull] BaseExpression parameter):base(parameter) { }
+
+        protected override Value Evaluate(string parameterValue)
         {
-            Parameter = parameter;
+            throw new ExecutionException("Attempted to Abs a string value");
         }
 
-        public override Value Evaluate(MachineState state)
+        protected override Value Evaluate(Number parameterValue)
         {
-            var input = Parameter.Evaluate(state);
-
-            if (input.Type == Type.String)
-                throw new ExecutionException("Attempted to Abs a string value");
-
-            if (input.Number < 0)
-                return new Value(-input.Number);
+            if (parameterValue < 0)
+                return new Value(-parameterValue);
             else
-                return input;
+                return new Value(parameterValue);
         }
 
         public bool Equals(Abs other)
