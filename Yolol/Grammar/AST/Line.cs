@@ -24,12 +24,12 @@ namespace Yolol.Grammar.AST
                 return pc + 1;
         }
 
-        public bool Equals([CanBeNull] Line other)
+        public bool Equals(Line other)
         {
             return other != null && other.Statements.Equals(Statements);
         }
 
-        [NotNull] public override string ToString()
+        public override string ToString()
         {
             return Statements.ToString();
         }

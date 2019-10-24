@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Yolol.Analysis.ControlFlowGraph;
 using Yolol.Analysis.ControlFlowGraph.Extensions;
+using Yolol.Analysis.Fuzzer;
 using Yolol.Analysis.TreeVisitor.Reduction;
 using Yolol.Analysis.Types;
 using Yolol.Grammar;
@@ -16,7 +19,7 @@ namespace Yolol.Analysis
         private readonly int _itersLimit;
         private readonly bool _keepTypes;
 
-        public OptimisationPipeline((VariableName, Type)[] typeHints)
+        public OptimisationPipeline([NotNull] (VariableName, Type)[] typeHints)
         {
             _typeHints = typeHints;
             _itersLimit = int.MaxValue;
@@ -29,9 +32,12 @@ namespace Yolol.Analysis
             _keepTypes = keepTypes;
         }
 
-        [NotNull] public Program Apply(Program input)
+        [NotNull] public async Task<Program> Apply([NotNull] Program input)
         {
-            int count = 0;
+            var fuzz = new QuickFuzz(_typeHints);
+            var startFuzz = fuzz.Fuzz(input);
+
+            var count = 0;
             var result = input.Fixpoint(_itersLimit, p => {
 
                 // Remove types  (builder cannot take a typed program)
@@ -56,7 +62,35 @@ namespace Yolol.Analysis
             if (!_keepTypes)
                 result = result.StripTypes();
 
+            // Check that the fuzz test results are the same before and after optimisation
+            var end = await fuzz.Fuzz(result);
+            if (!CheckFuzz(await startFuzz, end))
+                throw new InvalidOperationException("Fuzz test failed - this program encountered an optimisation bug");
+
             return result;
+        }
+
+        private bool CheckFuzz([NotNull] IFuzzResult startFuzz, [NotNull] IFuzzResult endFuzz)
+        {
+            if (startFuzz.Count != endFuzz.Count)
+                return false;
+
+            for (var i = 0; i < startFuzz.Count; i++)
+            {
+                var a = startFuzz[i];
+                var b = endFuzz[i];
+
+                if (!a.Equals(b))
+                {
+                    Console.WriteLine("# Fuzz Fail!");
+                    Console.WriteLine($"Expected: {a}");
+                    Console.WriteLine($"Actual: {b}");
+                    Console.WriteLine();
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         [NotNull] private Program Optimise(Program program)
@@ -96,8 +130,7 @@ namespace Yolol.Analysis
             return program;
         }
 
-        [NotNull]
-        private IControlFlowGraph Optimise(IControlFlowGraph cf)
+        [NotNull] private IControlFlowGraph Optimise(IControlFlowGraph cf)
         {
             ITypeAssignments types;
 

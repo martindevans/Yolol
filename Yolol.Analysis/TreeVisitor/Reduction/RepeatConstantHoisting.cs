@@ -7,7 +7,6 @@ using Yolol.Execution;
 using Yolol.Grammar;
 using Yolol.Grammar.AST;
 using Yolol.Grammar.AST.Expressions;
-using Yolol.Grammar.AST.Expressions.Unary;
 using Yolol.Grammar.AST.Statements;
 
 namespace Yolol.Analysis.TreeVisitor.Reduction
@@ -20,8 +19,6 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
 
         public override Program Visit(Program program)
         {
-            var first = new FirstPass();
-
             // Find constants which are repeated at least once
             var finder = new FirstPass();
             finder.Visit(program);
