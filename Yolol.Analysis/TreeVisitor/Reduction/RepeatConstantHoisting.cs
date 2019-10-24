@@ -8,6 +8,7 @@ using Yolol.Grammar;
 using Yolol.Grammar.AST;
 using Yolol.Grammar.AST.Expressions;
 using Yolol.Grammar.AST.Statements;
+using Variable = Yolol.Grammar.AST.Expressions.Variable;
 
 namespace Yolol.Analysis.TreeVisitor.Reduction
 {
@@ -62,7 +63,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
         protected override BaseExpression Visit(ConstantNumber con)
         {
             if (_replacements.TryGetValue(new Value(con.Value), out var name))
-                return new Grammar.AST.Expressions.Unary.Variable(new VariableName(name));
+                return new Variable(new VariableName(name));
             else
                 return con;
         }
@@ -70,7 +71,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
         protected override BaseExpression Visit(ConstantString con)
         {
             if (_replacements.TryGetValue(new Value(con.Value), out var name))
-                return new Grammar.AST.Expressions.Unary.Variable(new VariableName(name));
+                return new Variable(new VariableName(name));
             else
                 return con;
         }

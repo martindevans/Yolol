@@ -2,6 +2,7 @@
 using Yolol.Analysis.TreeVisitor.Reduction;
 using Yolol.Grammar;
 using Yolol.Grammar.AST;
+using Yolol.Grammar.AST.Expressions;
 using Yolol.Grammar.AST.Expressions.Unary;
 using Yolol.Grammar.AST.Statements;
 

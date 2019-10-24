@@ -1,8 +1,7 @@
 ﻿using System;
-using JetBrains.Annotations;
 using Yolol.Execution;
 
-namespace Yolol.Grammar.AST.Expressions.Unary
+namespace Yolol.Grammar.AST.Expressions
 {
     public class Variable
         : BaseExpression, IEquatable<Variable>

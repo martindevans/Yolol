@@ -1,7 +1,7 @@
 ﻿using System;
 using JetBrains.Annotations;
 using Yolol.Grammar.AST.Expressions;
-using Variable = Yolol.Grammar.AST.Expressions.Unary.Variable;
+using Variable = Yolol.Grammar.AST.Expressions.Variable;
 
 namespace Yolol.Grammar.AST.Statements
 {
