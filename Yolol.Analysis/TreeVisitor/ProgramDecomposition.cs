@@ -287,7 +287,7 @@ namespace Yolol.Analysis.TreeVisitor
 
         protected override IEnumerable<BaseStatement> Visit(ArcTan app) => Unary(app, app.Parameter, a => new ArcTan(a));
 
-        protected override IEnumerable<BaseStatement> Visit(Bracketed brk) => Visit(brk.Expression);
+        protected override IEnumerable<BaseStatement> Visit(Bracketed brk) => Visit(brk.Parameter);
 
         protected override IEnumerable<BaseStatement> Visit(And and) => Binary(and, (a, b) => new And(a, b));
 
@@ -303,7 +303,7 @@ namespace Yolol.Analysis.TreeVisitor
 
         protected override IEnumerable<BaseStatement> Visit(Exponent exp) => Binary(exp, (a, b) => new Exponent(a, b));
 
-        protected override IEnumerable<BaseStatement> Visit(Negate neg) => Unary(neg, neg.Expression, a => new Negate(a));
+        protected override IEnumerable<BaseStatement> Visit(Negate neg) => Unary(neg, neg.Parameter, a => new Negate(a));
 
         protected override IEnumerable<BaseStatement> Visit(ConstantNumber con) => new[] { new Assignment(MkTmp(), con) };
 

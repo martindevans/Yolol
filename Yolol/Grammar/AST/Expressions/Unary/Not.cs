@@ -6,35 +6,28 @@ using Type = Yolol.Execution.Type;
 namespace Yolol.Grammar.AST.Expressions.Unary
 {
     public class Not
-        : BaseExpression, IEquatable<Not>
+        : BaseUnaryExpression, IEquatable<Not>
     {
-        [NotNull] public BaseExpression Expression { get; }
-
-        public override bool CanRuntimeError => Expression.CanRuntimeError;
+        public override bool CanRuntimeError => Parameter.CanRuntimeError;
 
         public override bool IsBoolean => true;
 
-        public override bool IsConstant => Expression.IsConstant;
+        public Not([NotNull] BaseExpression parameter): base(parameter) { }
 
-        public Not([NotNull] BaseExpression expression)
+        protected override Value Evaluate([NotNull] string parameterValue)
         {
-            Expression = expression;
+            return new Value(false);
         }
 
-        public override Value Evaluate(MachineState state)
+        protected override Value Evaluate(Number parameterValue)
         {
-            var v = Expression.Evaluate(state);
-
-            if (v.Type == Type.String)
-                return new Value(false);
-
-            return new Value(v.Number == 0);
+            return new Value(parameterValue.Value == 0);
         }
 
         public bool Equals([CanBeNull] Not other)
         {
             return other != null
-                && other.Expression.Equals(Expression);
+                && other.Parameter.Equals(Parameter);
         }
 
         public override bool Equals(BaseExpression other)
@@ -45,7 +38,7 @@ namespace Yolol.Grammar.AST.Expressions.Unary
 
         public override string ToString()
         {
-            return $"not {Expression}";
+            return $"not {Parameter}";
         }
     }
 }

@@ -5,32 +5,27 @@ using Yolol.Execution;
 namespace Yolol.Grammar.AST.Expressions.Unary
 {
     public class Sqrt
-        : BaseExpression
+        : BaseUnaryExpression
     {
-        [NotNull] public BaseExpression Parameter { get; }
-
         public override bool CanRuntimeError => true;
 
         public override bool IsBoolean => false;
 
         public override bool IsConstant => Parameter.IsConstant;
 
-        public Sqrt([NotNull] BaseExpression parameter)
+        public Sqrt([NotNull] BaseExpression parameter): base(parameter) { }
+
+        protected override Value Evaluate([NotNull] string parameterValue)
         {
-            Parameter = parameter;
+            throw new ExecutionException("Attempted to Sqrt a string value");
         }
 
-        public override Value Evaluate(MachineState state)
+        protected override Value Evaluate(Number parameterValue)
         {
-            var input = Parameter.Evaluate(state);
-
-            if (input.Type == Execution.Type.String)
-                throw new ExecutionException("Attempted to Sqrt a string value");
-
-            if (input.Number < 0)
+            if (parameterValue < 0)
                 throw new ExecutionException("Attempted to Sqrt a negative value");
 
-            return (decimal)Math.Sqrt((double)input.Number.Value);
+            return (decimal)Math.Sqrt((double)parameterValue.Value);
         }
 
         public bool Equals([CanBeNull] Sqrt other)

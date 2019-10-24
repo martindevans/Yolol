@@ -5,7 +5,7 @@ using Yolol.Execution;
 namespace Yolol.Grammar.AST.Expressions.Unary
 {
     public abstract class BaseModifyInPlace
-        : BaseExpression
+        : BaseUnaryExpression
     {
         [NotNull] public VariableName Name { get; }
 
@@ -19,7 +19,7 @@ namespace Yolol.Grammar.AST.Expressions.Unary
 
         public bool PreOp { get; }
 
-        protected BaseModifyInPlace([NotNull] VariableName name, YololModifyOp op, bool pre)
+        protected BaseModifyInPlace([NotNull] VariableName name, YololModifyOp op, bool pre): base(new Variable(name))
         {
             Name = name;
             Op = op;
@@ -27,6 +27,16 @@ namespace Yolol.Grammar.AST.Expressions.Unary
         }
 
         protected abstract Value Modify(Value value);
+
+        protected override Value Evaluate([NotNull] string parameterValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override Value Evaluate(Number parameterValue)
+        {
+            throw new NotImplementedException();
+        }
 
         public override Value Evaluate(MachineState state)
         {
