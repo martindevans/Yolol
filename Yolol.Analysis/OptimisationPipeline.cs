@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Yolol.Analysis.ControlFlowGraph;
 using Yolol.Analysis.ControlFlowGraph.Extensions;
+using Yolol.Analysis.Fuzzer;
 using Yolol.Analysis.TreeVisitor.Reduction;
 using Yolol.Analysis.Types;
 using Yolol.Grammar;
@@ -16,7 +18,28 @@ namespace Yolol.Analysis
         private readonly int _itersLimit;
         private readonly bool _keepTypes;
 
-        public OptimisationPipeline((VariableName, Type)[] typeHints)
+        /// <summary>
+        /// How many unique runs of the program will the fuzzer run before and after optimisation to verify correctness
+        /// </summary>
+        public int FuzzSafetyRuns { get; set; } = 250;
+
+        /// <summary>
+        /// How many lines will each fuzzer run execute (max)
+        /// </summary>
+        public int FuzzSafetyIterations { get; set; } = 50;
+
+        /// <summary>
+        /// Disable all AST bsed optimisation passes
+        /// </summary>
+        public bool DisableAstPasses { get; set; }
+
+        /// <summary>
+        /// Disable all CFG based optimisation passes
+        /// </summary>
+        public bool DisableCfgPasses { get; set; }
+
+
+        public OptimisationPipeline([NotNull] (VariableName, Type)[] typeHints)
         {
             _typeHints = typeHints;
             _itersLimit = int.MaxValue;
@@ -29,20 +52,25 @@ namespace Yolol.Analysis
             _keepTypes = keepTypes;
         }
 
-        [NotNull] public Program Apply(Program input)
+        [NotNull] public async Task<Program> Apply([NotNull] Program input)
         {
-            int count = 0;
+            var fuzz = new QuickFuzz(_typeHints);
+            var startFuzz = fuzz.Fuzz(input, FuzzSafetyRuns, FuzzSafetyIterations);
+
+            var count = 0;
             var result = input.Fixpoint(_itersLimit, p => {
 
                 // Remove types  (builder cannot take a typed program)
                 p = p.StripTypes();
 
                 // Convert input into control flow graph and optimise
-                p = Optimise(new Builder(p).Build()).ToYolol();
+                if (!DisableCfgPasses)
+                    p = Optimise(new Builder(p).Build()).ToYolol();
 
                 // Apply simple AST optimisations
-                for (var i = 0; i < 2; i++)
-                    p = Optimise(p);
+                if (!DisableAstPasses)
+                    for (var i = 0; i < 2; i++)
+                        p = Optimise(p);
 
                 count++;
                 Console.WriteLine($"## Pass {count}");
@@ -56,10 +84,38 @@ namespace Yolol.Analysis
             if (!_keepTypes)
                 result = result.StripTypes();
 
+            // Check that the fuzz test results are the same before and after optimisation
+            var end = await fuzz.Fuzz(result);
+            if (!CheckFuzz(await startFuzz, end))
+                throw new InvalidOperationException("Fuzz test failed - this program encountered an optimisation bug");
+
             return result;
         }
 
-        [NotNull] private Program Optimise(Program program)
+        private static bool CheckFuzz([NotNull] IFuzzResult startFuzz, [NotNull] IFuzzResult endFuzz)
+        {
+            if (startFuzz.Count != endFuzz.Count)
+                return false;
+
+            for (var i = 0; i < startFuzz.Count; i++)
+            {
+                var a = startFuzz[i];
+                var b = endFuzz[i];
+
+                if (!a.Equals(b))
+                {
+                    Console.WriteLine("# Fuzz Fail!");
+                    Console.WriteLine($"Expected: {a}");
+                    Console.WriteLine($"Actual: {b}");
+                    Console.WriteLine();
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        [NotNull] private static Program Optimise(Program program)
         {
             // Replace thing with unnecessary brackets like `(a)` with `a`
             program = program.SimpleBracketElimination();
@@ -96,8 +152,7 @@ namespace Yolol.Analysis
             return program;
         }
 
-        [NotNull]
-        private IControlFlowGraph Optimise(IControlFlowGraph cf)
+        [NotNull] private IControlFlowGraph Optimise(IControlFlowGraph cf)
         {
             ITypeAssignments types;
 

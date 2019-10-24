@@ -1,5 +1,4 @@
 ﻿using System;
-using JetBrains.Annotations;
 using Yolol.Execution;
 using Yolol.Grammar;
 using Yolol.Grammar.AST.Expressions;
@@ -10,7 +9,7 @@ namespace Yolol.Analysis.ControlFlowGraph.AST
     /// Performs the increment operation on a value without modifying the underlying field
     /// </summary>
     public class Increment
-        : BaseExpression
+        : BaseExpression, IEquatable<Increment>
     {
         public VariableName Name { get; }
 
@@ -28,7 +27,7 @@ namespace Yolol.Analysis.ControlFlowGraph.AST
             throw new InvalidOperationException("Cannot execute `Increment` node");
         }
 
-        public bool Equals([CanBeNull] Increment other)
+        public bool Equals(Increment other)
         {
             return other != null
                 && other.Name.Equals(Name);

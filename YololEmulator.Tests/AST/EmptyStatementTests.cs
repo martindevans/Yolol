@@ -1,7 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Yolol.Grammar;
 using Yolol.Grammar.AST.Expressions;
-using Yolol.Grammar.AST.Expressions.Unary;
 using Yolol.Grammar.AST.Statements;
 
 namespace YololEmulator.Tests.AST

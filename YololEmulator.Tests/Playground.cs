@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Yolol.Analysis;
 using Yolol.Analysis.TreeVisitor;
@@ -15,7 +16,7 @@ namespace YololEmulator.Tests
     public class Playground
     {
         [TestMethod]
-        public void CFG()
+        public async Task CFG()
         {
             //var ast = TestExecutor.Parse(
             //    "a = :a b = :b",
@@ -73,7 +74,7 @@ namespace YololEmulator.Tests
             };
 
             var p = new OptimisationPipeline(2, false, hints);
-            var r = p.Apply(ast);
+            var r = await p.Apply(ast);
             Console.WriteLine("## Output");
             Console.WriteLine(r);
 

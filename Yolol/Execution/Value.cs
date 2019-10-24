@@ -2,7 +2,6 @@
 using System.Globalization;
 using JetBrains.Annotations;
 using Yolol.Grammar.AST.Expressions;
-using Yolol.Grammar.AST.Expressions.Unary;
 
 namespace Yolol.Execution
 {
@@ -92,14 +91,11 @@ namespace Yolol.Execution
                 return false;
 
             if (Type == Type.String)
-            {
                 return _string.Equals(other._string);
-            }
-            else
-            {
-                // ReSharper disable once ImpureMethodCallOnReadonlyValueField
-                return _number.Equals(other._number);
-            }
+
+            // ReSharper disable once ImpureMethodCallOnReadonlyValueField
+            return _number.Equals(other._number);
+            
         }
 
         public override bool Equals(object obj)
@@ -111,11 +107,13 @@ namespace Yolol.Execution
         {
             unchecked
             {
-                var hashCode = (int)Type;
+                var hashCode = (int)Type * 397;
+
                 if (Type == Type.String)
-                    hashCode = (hashCode * 397) ^ (_string != null ? _string.GetHashCode() : 1);
+                    hashCode += _string?.GetHashCode() ?? 1;
                 else
-                    hashCode = (hashCode * 397) ^ _number.GetHashCode();
+                    hashCode += _number.GetHashCode();
+
                 return hashCode;
             }
         }

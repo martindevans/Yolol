@@ -23,10 +23,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
 
             if (t.Statements.LastOrDefault() is Goto && f.Statements.Count > 0)
             {
-                return base.Visit(new StatementList(new BaseStatement[] {
-                    new If(c, t, new StatementList(Array.Empty<BaseStatement>())),
-                    f
-                }));
+                return base.Visit(new StatementList(new If(c, t, new StatementList(Array.Empty<BaseStatement>())), f));
             }
             else
                 return base.Visit(new If(c, t, f));

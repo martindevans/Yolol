@@ -26,7 +26,7 @@ namespace Yolol.Analysis.ControlFlowGraph.AST
             throw new InvalidOperationException("Cannot execute `Conditional` node");
         }
 
-        public bool Equals([CanBeNull] Conditional other)
+        public bool Equals(Conditional other)
         {
             return other != null
                 && other.Condition.Equals(Condition);

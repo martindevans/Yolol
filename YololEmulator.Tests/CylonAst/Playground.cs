@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
-using Yolol.Cylon;
 using Yolol.Cylon.Deserialisation;
 using Yolol.Cylon.Serialisation;
 
@@ -11,7 +10,7 @@ namespace YololEmulator.Tests.CylonAst
     public class Playground
     {
         [TestMethod]
-        public void AST_1()
+        public void AST1()
         {
             const string ast = "{\"version\":\"0.3.0\",\"metadata\":{\"exporter\":\"yoloxide 0.3.3\"},\"program\":{\"type\":\"program\",\"lines\":[{\"type\":\"line\",\"commen" +
                                "t\":\"\",\"code\":[{\"type\":\"statement::assignment\",\"identifier\":\"a\",\"operator\":\"=\",\"value\":{\"type\":\"expression::number\",\"num" +

@@ -28,7 +28,7 @@ namespace YololEmulator.Tests.Expressions.Num
         [TestMethod]
         public void Precise()
         {
-            var result = TestExecutor.Execute("a=1.11111");
+            var result = TestExecutor.Execute("a=1.11111111");
 
             var a = result.GetVariable("a");
 
@@ -38,7 +38,7 @@ namespace YololEmulator.Tests.Expressions.Num
         [TestMethod]
         public void PrecisePrecise()
         {
-            var result = TestExecutor.Execute("a=1.11111 b=1.1111 c=a==b");
+            var result = TestExecutor.Execute("a=1.11111 b=1.111 c=a==b");
 
             var c = result.GetVariable("c");
 
@@ -48,7 +48,7 @@ namespace YololEmulator.Tests.Expressions.Num
         [TestMethod]
         public void PrecisePreciseRounding()
         {
-            var result = TestExecutor.Execute("a=1.11117 b=1.1111 c=a==b");
+            var result = TestExecutor.Execute("a=1.11117 b=1.111 c=a==b");
 
             var c = result.GetVariable("c");
 

@@ -24,7 +24,7 @@ namespace Yolol.Grammar.AST.Expressions.Unary
             return new Value(parameterValue.Value == 0);
         }
 
-        public bool Equals([CanBeNull] Not other)
+        public bool Equals(Not other)
         {
             return other != null
                 && other.Parameter.Equals(Parameter);

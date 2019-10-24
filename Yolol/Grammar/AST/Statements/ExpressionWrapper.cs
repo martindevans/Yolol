@@ -24,7 +24,7 @@ namespace Yolol.Grammar.AST.Statements
             return new ExecutionResult();
         }
 
-        public bool Equals([CanBeNull] ExpressionWrapper other)
+        public bool Equals(ExpressionWrapper other)
         {
             return other != null
                 && other.Expression.Equals(Expression);

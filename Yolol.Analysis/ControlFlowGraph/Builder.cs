@@ -68,7 +68,7 @@ namespace Yolol.Analysis.ControlFlowGraph
         /// <param name="lineNumber"></param>
         /// <param name="entry"></param>
         /// <returns>(entry_block!, exit_block?)</returns>
-        private (IMutableBasicBlock, IMutableBasicBlock) HandleStatementList([NotNull] ControlFlowGraph cfg, [NotNull] StatementList statements, int lineNumber, [NotNull] IMutableBasicBlock entry)
+        private (IMutableBasicBlock, IMutableBasicBlock) HandleStatementList([NotNull] IMutableControlFlowGraph cfg, [NotNull] StatementList statements, int lineNumber, [NotNull] IMutableBasicBlock entry)
         {
             var block = cfg.CreateNewBlock(BasicBlockType.Basic, lineNumber);
             cfg.CreateEdge(entry, block, EdgeType.Continue);
@@ -126,7 +126,7 @@ namespace Yolol.Analysis.ControlFlowGraph
             return (entry, block);
         }
 
-        private void HandleGoto([NotNull] ControlFlowGraph cfg, [NotNull] Goto @goto, [NotNull] IMutableBasicBlock block, int lineNumber)
+        private void HandleGoto([NotNull] IMutableControlFlowGraph cfg, [NotNull] Goto @goto, [NotNull] IMutableBasicBlock block, int lineNumber)
         {
             block.Add(@goto);
 
@@ -154,12 +154,12 @@ namespace Yolol.Analysis.ControlFlowGraph
             }
         }
 
-        private void AddFallthrough([NotNull] ControlFlowGraph cfg, [NotNull] IMutableBasicBlock source, int currentLineNumber, EdgeType type = EdgeType.Continue)
+        private void AddFallthrough([NotNull] IMutableControlFlowGraph cfg, [NotNull] IBasicBlock source, int currentLineNumber, EdgeType type = EdgeType.Continue)
         {
             cfg.CreateEdge(source, GetLineEntryBlock(cfg, currentLineNumber == 20 ? 1 : currentLineNumber + 1), type);
         }
 
-        private IMutableBasicBlock GetLineEntryBlock([NotNull] ControlFlowGraph cfg, int lineNumber)
+        private IMutableBasicBlock GetLineEntryBlock([NotNull] IMutableControlFlowGraph cfg, int lineNumber)
         {
             if (!_lineStartBlocks.TryGetValue(lineNumber, out var block))
             {

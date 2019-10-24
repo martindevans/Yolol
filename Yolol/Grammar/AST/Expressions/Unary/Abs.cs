@@ -1,11 +1,12 @@
 ﻿using System;
 using JetBrains.Annotations;
 using Yolol.Execution;
+using Type = Yolol.Execution.Type;
 
 namespace Yolol.Grammar.AST.Expressions.Unary
 {
     public class Abs
-        : BaseUnaryExpression
+        : BaseUnaryExpression, IEquatable<Abs>
     {
         public override bool CanRuntimeError => true;
 
@@ -28,7 +29,7 @@ namespace Yolol.Grammar.AST.Expressions.Unary
                 return new Value(parameterValue);
         }
 
-        public bool Equals([CanBeNull] Abs other)
+        public bool Equals(Abs other)
         {
             return other != null 
                 && other.Parameter.Equals(Parameter);

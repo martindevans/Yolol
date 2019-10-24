@@ -1,5 +1,4 @@
 ﻿using System;
-using JetBrains.Annotations;
 using Yolol.Execution;
 using Yolol.Grammar.AST.Statements;
 
@@ -14,7 +13,7 @@ namespace Yolol.Analysis.ControlFlowGraph.AST
             throw new ExecutionException("Static error");
         }
 
-        public bool Equals([CanBeNull] ErrorStatement other)
+        public bool Equals(ErrorStatement other)
         {
             return other != null;
         }

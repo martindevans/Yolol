@@ -50,7 +50,7 @@ namespace Yolol.Analysis.ControlFlowGraph.AST
             throw new InvalidOperationException("Cannot execute `Phi` node");
         }
 
-        public bool Equals([CanBeNull] Phi other)
+        public bool Equals(Phi other)
         {
             if (other == null)
                 return false;

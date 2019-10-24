@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Yolol.Execution;
-using Yolol.Grammar.AST;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace YololEmulator.Tests.Expressions.Num
 {

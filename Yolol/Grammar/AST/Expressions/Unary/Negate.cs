@@ -1,10 +1,12 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+using JetBrains.Annotations;
 using Yolol.Execution;
+using Type = Yolol.Execution.Type;
 
 namespace Yolol.Grammar.AST.Expressions.Unary
 {
     public class Negate
-        : BaseUnaryExpression
+        : BaseUnaryExpression, IEquatable<Negate>
     {
         public override bool CanRuntimeError => Parameter.CanRuntimeError;
 
@@ -22,7 +24,7 @@ namespace Yolol.Grammar.AST.Expressions.Unary
             return new Value(-parameterValue);
         }
 
-        public bool Equals([CanBeNull] Negate other)
+        public bool Equals(Negate other)
         {
             return other != null
                 && other.Parameter.Equals(Parameter);

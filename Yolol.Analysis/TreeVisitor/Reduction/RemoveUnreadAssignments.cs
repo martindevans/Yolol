@@ -12,6 +12,8 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
         : BaseTreeVisitor
     {
         private readonly IReadOnlyCollection<VariableName> _toRemove;
+
+        // ReSharper disable once NotAccessedField.Local (this field is included in the constructor as a hint that SSA form is required)
         private readonly ISingleStaticAssignmentTable _ssa;
 
         public RemoveUnreadAssignments([NotNull] IReadOnlyCollection<VariableName> toRemove, [NotNull] ISingleStaticAssignmentTable ssa)

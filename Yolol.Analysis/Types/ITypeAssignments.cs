@@ -1,5 +1,4 @@
-﻿using Yolol.Analysis.ControlFlowGraph;
-using Yolol.Grammar;
+﻿using Yolol.Grammar;
 
 namespace Yolol.Analysis.Types
 {

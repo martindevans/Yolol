@@ -21,7 +21,7 @@ namespace Yolol.Grammar.AST.Expressions.Unary
             return new Value(parameterValue);
         }
         
-        public bool Equals([CanBeNull] Bracketed other)
+        public bool Equals(Bracketed other)
         {
             return other != null
                 && other.Parameter.Equals(Parameter);

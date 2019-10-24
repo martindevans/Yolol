@@ -27,7 +27,7 @@ namespace Yolol.Grammar
 
     public static class YololBinaryOpExtensions
     {
-        [NotNull] public static BaseBinaryExpression ToExpression(this YololBinaryOp op, BaseExpression left, BaseExpression right)
+        [NotNull] public static BaseBinaryExpression ToExpression(this YololBinaryOp op, [NotNull] BaseExpression left, [NotNull] BaseExpression right)
         {
             switch (op)
             {

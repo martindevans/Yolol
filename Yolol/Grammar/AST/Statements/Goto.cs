@@ -30,7 +30,7 @@ namespace Yolol.Grammar.AST.Statements
             return new ExecutionResult(line);
         }
 
-        public bool Equals([CanBeNull] Goto other)
+        public bool Equals(Goto other)
         {
             return other != null
                 && other.Destination.Equals(Destination);

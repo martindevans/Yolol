@@ -1,7 +1,7 @@
 ﻿using System;
 using JetBrains.Annotations;
 using Yolol.Grammar.AST.Expressions;
-using Variable = Yolol.Grammar.AST.Expressions.Unary.Variable;
+using Variable = Yolol.Grammar.AST.Expressions.Variable;
 
 namespace Yolol.Grammar.AST.Statements
 {
@@ -11,14 +11,14 @@ namespace Yolol.Grammar.AST.Statements
         public YololBinaryOp Op { get; }
         public BaseExpression Expression { get; }
 
-        public CompoundAssignment(VariableName variable, YololBinaryOp op, BaseExpression expression)
+        public CompoundAssignment(VariableName variable, YololBinaryOp op, [NotNull] BaseExpression expression)
             : base(variable, op.ToExpression(new Variable(variable), expression))
         {
             Op = op;
             Expression = expression;
         }
 
-        public bool Equals([CanBeNull] CompoundAssignment other)
+        public bool Equals(CompoundAssignment other)
         {
             return Equals((Assignment)other);
         }
