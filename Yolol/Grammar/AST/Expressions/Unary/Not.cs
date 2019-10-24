@@ -1,7 +1,6 @@
 ﻿using System;
 using JetBrains.Annotations;
 using Yolol.Execution;
-using Type = Yolol.Execution.Type;
 
 namespace Yolol.Grammar.AST.Expressions.Unary
 {

@@ -9,9 +9,12 @@ namespace Yolol.Grammar.AST.Expressions.Unary
     {
         public override bool CanRuntimeError => Parameter.CanRuntimeError;
 
+        public override bool IsBoolean => Parameter.IsBoolean;
+
+
         public Bracketed([NotNull] BaseExpression parameter) : base(parameter) { }
 
-        protected override Value Evaluate([NotNull] string parameterValue)
+        protected override Value Evaluate(string parameterValue)
         {
             return new Value(parameterValue);
         }

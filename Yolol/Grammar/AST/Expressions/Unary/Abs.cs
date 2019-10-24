@@ -16,7 +16,7 @@ namespace Yolol.Grammar.AST.Expressions.Unary
 
         public Abs([NotNull] BaseExpression parameter):base(parameter) { }
 
-        protected override Value Evaluate([NotNull] string parameterValue)
+        protected override Value Evaluate(string parameterValue)
         {
             throw new ExecutionException("Attempted to Abs a string value");
         }
