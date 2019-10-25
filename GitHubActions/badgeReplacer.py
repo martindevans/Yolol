@@ -1,8 +1,16 @@
 import sys
+import os
 
 badgeName = sys.argv[1]
 repository = sys.argv[2]
-branch = sys.argv[3]
+ref = sys.argv[3]
+actor = sys.argv[4]
+token = sys.argv[5]
+
+if not ref.startswith('refs/heads/'):
+    exit()
+else:
+    branch = ref.split('/')[-1]
 
 changedFile = False
 
@@ -35,5 +43,7 @@ with open('readme.md') as f:
 if changedFile:
     with open('readme.md', 'w') as f:
         f.write(readme)
+    
+    remoteRepository = "https://{}:{}@github.com/{}.git".format(actor, token, repository)
 
-print("::set-env changedReadme={}".format((changedFile and "1") or "0"))
+    os.system("git push {} HEAD:{}".format(remoteRepository, branch))
