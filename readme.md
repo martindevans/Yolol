@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/martindevans/Yolol.svg?branch=master)](https://travis-ci.org/martindevans/Yolol)
+[![Build status](https://github.com/thomasio101/Yolol/workflows/Build/badge.svg?branch=github-actions)](https://github.com/thomasio101/Yolol/workflows/Build/badge.svg?branch=github-actions)
 [![Test Status](https://github.com/thomasio101/Yolol/workflows/Test/badge.svg?branch=github-actions)](https://github.com/thomasio101/Yolol/workflows/Test/badge.svg?branch=github-actions)
 
 This repository contains 4 projects:
