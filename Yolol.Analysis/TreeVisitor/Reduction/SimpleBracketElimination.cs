@@ -9,7 +9,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
     {
         protected override BaseExpression Visit(Bracketed brk)
         {
-            var inner = Visit(brk.Expression);
+            var inner = Visit(brk.Parameter);
 
             switch (inner)
             {
@@ -28,7 +28,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
             var left = Visit(ass.Left);
 
             if (right is Bracketed brk)
-                return Visit(new Assignment(left, brk.Expression));
+                return Visit(new Assignment(left, brk.Parameter));
             else
                 return base.Visit(new Assignment(left, right));
         }
@@ -38,7 +38,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
             var right = Visit(@goto.Destination);
 
             if (right is Bracketed brk)
-                return Visit(new Goto(brk.Expression));
+                return Visit(new Goto(brk.Parameter));
             else
                 return base.Visit(new Goto(right));
         }
@@ -50,7 +50,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
             var fas = Visit(@if.FalseBranch);
 
             if (cond is Bracketed brk)
-                return Visit(new If(brk.Expression, tru, fas));
+                return Visit(new If(brk.Parameter, tru, fas));
             else
                 return base.Visit(new If(cond, tru, fas));
         }

@@ -199,7 +199,7 @@ namespace Yolol.Analysis.Types
 
         protected override Type Visit(ArcTan app) => UnaryNumeric(app, app.Parameter, true, false);
 
-        protected override Type Visit(Bracketed brk) => Visit(brk.Expression);
+        protected override Type Visit(Bracketed brk) => Visit(brk.Parameter);
 
         protected override Type Visit(Add add) => BinaryDual(add);
 
@@ -223,7 +223,7 @@ namespace Yolol.Analysis.Types
 
         protected override Type Visit(Exponent exp) => BinaryNumeric(exp, true);
 
-        protected override Type Visit(Negate neg) => UnaryNumeric(neg, neg.Expression, false, false);
+        protected override Type Visit(Negate neg) => UnaryNumeric(neg, neg.Parameter, false, false);
 
         protected override Type Visit(ConstantNumber con) => Type.Number;
 

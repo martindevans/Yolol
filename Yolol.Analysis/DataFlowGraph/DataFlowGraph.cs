@@ -485,7 +485,7 @@ namespace Yolol.Analysis.DataFlowGraph
 
             protected override IDataFlowGraphExpressionNode Visit(Bracketed brk)
             {
-                return VisitUnary(new UnaryOp(Guid.NewGuid(), "()", Visit(brk.Expression), a => new Bracketed(a)));
+                return VisitUnary(new UnaryOp(Guid.NewGuid(), "()", Visit(brk.Parameter), a => new Bracketed(a)));
             }
 
             protected override IDataFlowGraphExpressionNode Visit(Add add) => VisitBinary(add, YololBinaryOp.Add);
@@ -500,7 +500,7 @@ namespace Yolol.Analysis.DataFlowGraph
 
             protected override IDataFlowGraphExpressionNode Visit(Negate neg)
             {
-                return VisitUnary(new UnaryOp(Guid.NewGuid(), "negate", Visit(neg.Expression), a => new Negate(a)));
+                return VisitUnary(new UnaryOp(Guid.NewGuid(), "negate", Visit(neg.Parameter), a => new Negate(a)));
             }
 
             protected override IDataFlowGraphExpressionNode Visit(ConstantNumber con)

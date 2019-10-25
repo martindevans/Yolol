@@ -228,7 +228,7 @@ namespace Yolol.Analysis.TreeVisitor
 
         [NotNull] protected virtual BaseExpression Visit([NotNull] Bracketed brk)
         {
-            return new Bracketed(Visit(brk.Expression));
+            return new Bracketed(Visit(brk.Parameter));
         }
 
         [NotNull] protected virtual BaseExpression Visit([NotNull] Add add)
@@ -258,7 +258,7 @@ namespace Yolol.Analysis.TreeVisitor
 
         [NotNull] protected virtual BaseExpression Visit([NotNull] Negate neg)
         {
-            return new Negate(Visit(neg.Expression));
+            return new Negate(Visit(neg.Parameter));
         }
 
         [NotNull] protected virtual BaseExpression Visit([NotNull] ConstantNumber con)

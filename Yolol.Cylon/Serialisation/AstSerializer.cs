@@ -143,7 +143,7 @@ namespace Yolol.Cylon.Serialisation
                 case Bracketed brk:
                     return new JObject {
                         ["type"] = "expression::unary_op::parentheses",
-                        ["operand"] = SerializeExpression(brk.Expression)
+                        ["operand"] = SerializeExpression(brk.Parameter)
                     };
 
                 case PostDecrement postdec:
