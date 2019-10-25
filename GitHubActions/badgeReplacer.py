@@ -44,6 +44,10 @@ if changedFile:
     with open('readme.md', 'w') as f:
         f.write(readme)
     
+    os.system("git add ./readme.md")
+
+    os.system('git commit -m "Update the build badge"')
+    
     remoteRepository = "https://{}:{}@github.com/{}.git".format(actor, token, repository)
 
     os.system("git push {} HEAD:{}".format(remoteRepository, branch))
