@@ -11,3 +11,15 @@ jobs:
     - uses: actions/checkout@v1
     - name: Run all tests
       run: dotnet test
+  update-test-badge:
+    
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-python@v1
+      with:
+          python-version: '3.x'
+          architecture: 'x64'
+    - name: Update the test badge
+      run: python ./GitHubActions/badgeReplacer.py test ${{ github.repository }} ${{ github.ref }} ${{ github.actor }} ${{ secrets.GITHUB_TOKEN }}
