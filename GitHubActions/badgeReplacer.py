@@ -46,6 +46,9 @@ if changedFile:
     
     os.system("git add ./readme.md")
 
+    os.system('git config --global user.email "thomasduursma@outlook.com"')
+    os.system('git config --global user.name "thomasio101"')
+
     os.system('git commit -m "Update the build badge"')
     
     remoteRepository = "https://{}:{}@github.com/{}.git".format(actor, token, repository)
