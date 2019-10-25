@@ -26,5 +26,4 @@ jobs:
           python-version: '3.x'
           architecture: 'x64'
     - name: Update the build badge
-      if: $branch != ""
       run: py ./GitHubActions/badgeReplacer.py build ${{ github.repository }} ${{ github.ref }} ${{ github.actor }} ${{ secrets.GITHUB_TOKEN }}
