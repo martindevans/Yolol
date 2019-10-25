@@ -3,6 +3,8 @@ import sys
 ref = sys.argv[1]
 
 if not ref.startswith('refs/heads/'):
-    print('')
+    branch = ''
 else:
-    print(ref.split('/')[-1])
+    branch = ref.split('/')[-1]
+
+print("::set-env branch={}".format(branch))

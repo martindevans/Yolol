@@ -36,4 +36,4 @@ if changedFile:
     with open('readme.md', 'w') as f:
         f.write(readme)
 
-print((changedFile and "1") or "0")
+print("::set-env changedReadme={}".format((changedFile and "1") or "0"))
