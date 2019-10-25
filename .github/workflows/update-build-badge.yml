@@ -1,0 +1,17 @@
+name: Update build badge
+
+on: [push]
+
+jobs:
+  update-build-badge:
+
+      runs-on: ubuntu-latest
+
+      steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-python@v1
+        with:
+            python-version: '3.x'
+            architecture: 'x64'
+      - name: Update the build badge
+        run: python ./GitHubActions/badgeReplacer.py build ${{ github.repository }} ${{ github.ref }} ${{ github.actor }} ${{ secrets.GITHUB_TOKEN }}
