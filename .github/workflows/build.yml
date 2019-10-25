@@ -25,13 +25,6 @@ jobs:
       with:
           python-version: '3.x'
           architecture: 'x64'
-    - name: Extract the branch from the ref
-      run: echo $(py ./GithubActions/branchExtractor.py ${{ github.ref }})
     - name: Update the build badge
       if: $branch != ""
-      run: echo $(py ./GitHubActions/badgeReplacer.py build ${{ github.repository }} $branch)
-    - name: Push the update
-      if: $changedReadme == 1
-      uses: ad-m/github-push-action@$branch
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+      run: py ./GitHubActions/badgeReplacer.py build ${{ github.repository }} ${{ github.ref }} ${{ github.actor }} ${{ secrets.GITHUB_TOKEN }}
