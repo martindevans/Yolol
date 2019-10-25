@@ -2,12 +2,7 @@ import sys
 
 badgeName = sys.argv[1]
 repository = sys.argv[2]
-ref = sys.argv[3]
-
-if not ref.startswith('refs/heads/'):
-    exit()
-else:
-    branch = ref.split('/')[-1]
+branch = sys.argv[3]
 
 changedFile = False
 
