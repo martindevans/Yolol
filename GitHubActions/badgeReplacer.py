@@ -47,7 +47,7 @@ if changedFile:
     os.system("git add ./readme.md")
 
     os.system('git config --global user.email "thomasduursma@outlook.com"')
-    os.system('git config --global user.name "thomasio101"')
+    os.system('git config --global user.name "Badge replacer"')
 
     os.system('git commit -m "Update the build badge"')
     
