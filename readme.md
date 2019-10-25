@@ -1,5 +1,5 @@
 [![Build status](https://github.com/thomasio101/Yolol/workflows/Build/badge.svg?branch=automatically-replace-badges)](https://github.com/thomasio101/Yolol/workflows/Build/badge.svg?branch=automatically-replace-badges)
-[![Test Status](https://github.com/thomasio101/Yolol/workflows/Test/badge.svg?branch=github-actions)](https://github.com/thomasio101/Yolol/workflows/Test/badge.svg?branch=github-actions)
+[![Test status](https://github.com/thomasio101/Yolol/workflows/Test/badge.svg?branch=automatically-replace-badges)](https://github.com/thomasio101/Yolol/workflows/Test/badge.svg?branch=automatically-replace-badges)
 
 This repository contains 4 projects:
 
