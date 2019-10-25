@@ -46,4 +46,4 @@ if changedFile:
     
     remoteRepository = "https://{}:{}@github.com/{}.git".format(actor, token, repository)
 
-    os.system("git push {} HEAD:{}".format(remoteRepository, branch))
+    print(os.system("git push {} HEAD:{}".format(remoteRepository, branch)))
