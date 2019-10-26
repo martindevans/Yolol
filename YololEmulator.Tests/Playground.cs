@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Google.OrTools.Sat;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Yolol.Analysis;
 using Yolol.Analysis.TreeVisitor;
@@ -15,6 +16,30 @@ namespace YololEmulator.Tests
     [TestClass]
     public class Playground
     {
+        [TestMethod]
+        public void OrTools ()
+        {
+            CpModel model = new CpModel();
+
+            int num_vals = 3;
+
+            IntVar x = model.NewIntVar(0, num_vals - 1, "x");
+            IntVar y = model.NewIntVar(0, num_vals - 1, "y");
+            IntVar z = model.NewIntVar(0, num_vals - 1, "z");
+
+            model.Add(x != y);
+
+            CpSolver solver = new CpSolver();
+            CpSolverStatus status = solver.Solve(model);
+
+            if (status == CpSolverStatus.Feasible)
+            {
+                Console.WriteLine("x = " + solver.Value(x));
+                Console.WriteLine("y = " + solver.Value(y));
+                Console.WriteLine("z = " + solver.Value(z));
+            }
+        }
+
         [TestMethod]
         public async Task CFG()
         {
