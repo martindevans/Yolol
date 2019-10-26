@@ -173,6 +173,9 @@ namespace Yolol.Analysis
                 // Replace any expressions involving `Error` subexpressions with `Error()` statements
                 cf = cf.VisitBlocks(() => new ErrorCompressor());
 
+                // Fold constant expression (e.g. replace `a=2+2` with `a=4`)
+                cf = cf.FoldConstants(ssa);
+
                 // Reapply type finding just before we do edge trimming (it's very important we have as many types as possible here and some previous ops may have invalidated them)
                 cf = cf.FlowTypingAssignment(ssa, out types, _typeHints);
 

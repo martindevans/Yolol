@@ -4,7 +4,7 @@ using Yolol.Analysis.TreeVisitor.Reduction;
 namespace YololEmulator.Tests.Analysis.Reduction
 {
     [TestClass]
-    public class DeadAfterGotoTests
+    public class DeadPostGotoEliminationTests
     {
         private static readonly ReducerTestHelper Helper = new ReducerTestHelper(ast => ast.DeadPostGotoElimination());
 
