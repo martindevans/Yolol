@@ -28,9 +28,9 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
             var left = Visit(ass.Left);
 
             if (right is Bracketed brk)
-                return Visit(new Assignment(left, brk.Parameter));
+                return base.Visit(new Assignment(left, brk.Parameter));
             else
-                return base.Visit(new Assignment(left, right));
+                return base.Visit(ass);
         }
 
         protected override BaseStatement Visit(Goto @goto)
@@ -38,9 +38,9 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
             var right = Visit(@goto.Destination);
 
             if (right is Bracketed brk)
-                return Visit(new Goto(brk.Parameter));
+                return base.Visit(new Goto(brk.Parameter));
             else
-                return base.Visit(new Goto(right));
+                return base.Visit(@goto);
         }
 
         protected override BaseStatement Visit(If @if)
@@ -50,9 +50,9 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
             var fas = Visit(@if.FalseBranch);
 
             if (cond is Bracketed brk)
-                return Visit(new If(brk.Parameter, tru, fas));
+                return base.Visit(new If(brk.Parameter, tru, fas));
             else
-                return base.Visit(new If(cond, tru, fas));
+                return base.Visit(@if);
         }
     }
 }
