@@ -1,5 +1,5 @@
 [![Build status](https://github.com/martindevans/Yolol/workflows/Build/badge.svg?branch=master)](https://github.com/martindevans/Yolol/workflows/Build/badge.svg?branch=master)
-[![Test status](https://github.com/martindevans/Yolol/workflows/Test/badge.svg?branch=master)](https://github.com/martindevans/Yolol/workflows/Test/badge.svg?branch=master)
+[![Test status](https://github.com/martindevans/Yolol/workflows/Test/badge.svg?branch=z3)](https://github.com/martindevans/Yolol/workflows/Test/badge.svg?branch=z3)
 
 This repository contains 4 projects:
 
