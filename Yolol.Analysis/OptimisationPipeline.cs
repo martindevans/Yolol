@@ -182,7 +182,7 @@ namespace Yolol.Analysis
                 // Remove edges in the CFG which cannot happen based on type info (e.g. remove `Error` edges if an error cannot happen, or `Continue` edges if an error is guaranteed to happen)
                 cf = cf.TypeDrivenEdgeTrimming(types);
 
-                //Merge together blocks which do not need to be separate any more(e.g.there used to be an error which has now been proven impossible)
+                // Merge together blocks which do not need to be separate any more (e.g.there used to be an error which has now been proven impossible)
                 cf = cf.MergeAdjacentBasicBlocks();
 
                 // Remove nodes of the CFG which can never be reached
@@ -227,8 +227,8 @@ namespace Yolol.Analysis
                 cf = cf.RemoveStaticSingleAssignment(ssa);
             }
 
-            //cf = cf.RemoveUnreachableBlocks();
-            //Console.WriteLine(cf.ToDot());
+            cf = cf.RemoveUnreachableBlocks();
+            Console.WriteLine(cf.ToDot());
 
             return cf;
         }

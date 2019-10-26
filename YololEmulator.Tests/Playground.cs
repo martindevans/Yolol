@@ -19,25 +19,49 @@ namespace YololEmulator.Tests
         [TestMethod]
         public void OrTools ()
         {
-            CpModel model = new CpModel();
+            //z(Number)=-0.5==(:a)
+            //ab(Number)=(z)
+            //bb(Number)=(ab)
+            //db(Number)=-((bb))
+            //eb(Number)=6+db
+            //goto eb
 
-            int num_vals = 3;
+            var model = new CpModel();
 
-            IntVar x = model.NewIntVar(0, num_vals - 1, "x");
-            IntVar y = model.NewIntVar(0, num_vals - 1, "y");
-            IntVar z = model.NewIntVar(0, num_vals - 1, "z");
+            var _1 = model.NewIntVar(1, 1, "1");
+            model.Add(_1 == 1);
 
-            model.Add(x != y);
+            var _20 = model.NewIntVar(20, 20, "20");
+            model.Add(_20 == 20);
 
-            CpSolver solver = new CpSolver();
-            CpSolverStatus status = solver.Solve(model);
+            var z = model.NewIntVar(0, 1, "z");
 
-            if (status == CpSolverStatus.Feasible)
+            var ab = model.NewIntVar(-10000, 10000, "ab");
+            model.Add(ab == z);
+
+            var bb = model.NewIntVar(-10000, 10000, "bb");
+            model.Add(bb == ab);
+
+            var db = model.NewIntVar(-10000, 10000, "db");
+            model.Add(db == -bb);
+
+            var eb = model.NewIntVar(-10000, 10000, "eb");
+            model.Add(eb == 6 + db);
+
+            var @goto = model.NewIntVar(-100, 100, "gotodest");
+            model.AddMaxEquality(@goto, new[] { _1, eb });
+            model.AddMinEquality(@goto, new[] { _20, eb });
+
+            var solver = new CpSolver();
+            while (solver.Solve(model) == CpSolverStatus.Feasible)
             {
-                Console.WriteLine("x = " + solver.Value(x));
-                Console.WriteLine("y = " + solver.Value(y));
-                Console.WriteLine("z = " + solver.Value(z));
+                var v = @goto;
+                var zv = solver.Value(v);
+                Console.WriteLine($"{v.Name()} = " + zv);
+                model.Add(v != zv);
             }
+
+            Console.WriteLine(solver.Response.Status);
         }
 
         [TestMethod]
