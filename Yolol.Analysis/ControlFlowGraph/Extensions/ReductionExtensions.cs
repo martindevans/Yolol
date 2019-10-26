@@ -28,7 +28,7 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
         [NotNull] public static IControlFlowGraph FoldConstants([NotNull] this IControlFlowGraph cfg, ISingleStaticAssignmentTable ssa)
         {
             // Keep finding and replacing constants until nothing is found
-            return cfg.Fixpoint(c => {
+            cfg = cfg.Fixpoint(c => {
 
                 // Find variables which are assigned a value which is not tainted by external reads
                 var constants = c.FindConstants(ssa);
@@ -38,6 +38,11 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
 
                 return c;
             });
+
+            // Replace constant subexpressions with their value
+            cfg = cfg.VisitBlocks(() => new ConstantFoldingVisitor(true));
+
+            return cfg;
         }
 
         /// <summary>
