@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Z3;
 using Yolol.Analysis;
 using Yolol.Analysis.TreeVisitor;
 using Yolol.Analysis.TreeVisitor.Reduction;
@@ -15,6 +16,19 @@ namespace YololEmulator.Tests
     [TestClass]
     public class Playground
     {
+        [TestMethod]
+        public void Z3()
+        {
+            using (Context ctx = new Context())
+            {
+                var x = ctx.MkConst("x", ctx.MkIntSort());
+                var y = ctx.MkConst("y", ctx.MkIntSort());
+                ctx.MkEq(x, y);
+
+                Console.WriteLine(ctx.MkSolver().Check());
+            }
+        }
+
         [TestMethod]
         public async Task CFG()
         {
