@@ -19,13 +19,47 @@ namespace YololEmulator.Tests
         [TestMethod]
         public void Z3()
         {
-            using (Context ctx = new Context())
-            {
-                var x = ctx.MkConst("x", ctx.MkIntSort());
-                var y = ctx.MkConst("y", ctx.MkIntSort());
-                ctx.MkEq(x, y);
+            //z(Number)=-0.5==(:a)
+            //ab(Number)=(z)
+            //bb(Number)=(ab)
+            //db(Number)=-((bb))
+            //eb(Number)=6+db
+            //goto eb
 
-                Console.WriteLine(ctx.MkSolver().Check());
+            using (var ctx = new Context())
+            using (var solver = ctx.MkSolver())
+            {
+                var z = ctx.MkConst("z", ctx.IntSort);
+                solver.Assert(ctx.MkOr(ctx.MkEq(z, ctx.MkInt(1000)), ctx.MkEq(z, ctx.MkInt(0000))));
+
+                var ab = ctx.MkConst("ab", ctx.IntSort);
+                solver.Assert(ctx.MkEq(ab, z));
+
+                var bb = ctx.MkConst("bb", ctx.IntSort);
+                solver.Assert(ctx.MkEq(bb, ab));
+
+                var db = ctx.MkConst("db", ctx.IntSort);
+                solver.Assert(ctx.MkEq(bb, ctx.MkMul(ctx.MkInt(-1), (IntExpr)db)));
+
+                var eb = ctx.MkConst("eb", ctx.IntSort);
+                solver.Assert(ctx.MkEq(eb, ctx.MkAdd(ctx.MkInt(6000), (IntExpr)db)));
+
+                var @goto = (IntExpr)ctx.MkConst("goto", ctx.IntSort);
+
+                var x = ctx.MkITE(ctx.MkLt((IntExpr)eb, ctx.MkInt(1000)), ctx.MkInt(1000), eb);
+                x = ctx.MkITE(ctx.MkGt((IntExpr)x, ctx.MkInt(20000)), ctx.MkInt(20000), eb);
+                x = ctx.MkDiv((IntExpr)x, ctx.MkInt(1000));
+                solver.Assert(ctx.MkEq(@goto, x));
+
+                while (solver.Check() == Status.SATISFIABLE)
+                {
+                    var v = (IntNum)solver.Model.Eval(@goto);
+                    Console.WriteLine(v);
+
+                    solver.Assert(ctx.MkNot(ctx.MkEq(@goto, v)));
+                }
+
+                Console.WriteLine(solver.Check());
             }
         }
 
