@@ -13,7 +13,7 @@ namespace YololEmulator.Tests.Analysis.Inspection
     public class FindBooleans
     {
         [TestMethod]
-        public void CountBooleans()
+        public void FindBooleansSingleLine()
         {
             var ast = TestExecutor.Parse(
                 "a=30<2 theAnswer=42 b=theAnswer==42"
