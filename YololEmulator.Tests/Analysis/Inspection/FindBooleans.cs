@@ -31,10 +31,52 @@ namespace YololEmulator.Tests.Analysis.Inspection
                 new VariableName("f[0]"),
                 new VariableName("b[0]")
                 }));
+        }
 
-            cfg.FindBooleanVariables(ssa).ToList().ForEach(x => Console.WriteLine(ssa.BaseName(x)));
+        [TestMethod]
+        public void FindBooleanLiterals()
+        {
+            var ast = TestExecutor.Parse(
+                "a=1 theAnswer=42 b=theAnswer==a"
+            );
 
-            Console.WriteLine(cfg.RemoveUnreachableBlocks().MergeAdjacentBasicBlocks().ToDot());
+            var cfg = new Yolol.Analysis.ControlFlowGraph.Builder(ast.StripTypes()).Build();
+
+            cfg = cfg.StaticSingleAssignment(out var ssa);
+
+            var variableNames = cfg.FindBooleanVariables(ssa).ToHashSet();
+
+            Assert.IsTrue(variableNames.SetEquals(new VariableName[] {
+                new VariableName("c[0]"),
+                new VariableName("a[0]"),
+                new VariableName("f[0]"),
+                new VariableName("g[0]"),
+                new VariableName("b[0]")
+                }));
+        }
+
+        [TestMethod]
+        public void FindBooleansMultiLine()
+        {
+            var ast = TestExecutor.Parse(
+                "a=1",
+                "theAnswer=42",
+                "b=theAnswer==a"
+            );
+
+            var cfg = new Yolol.Analysis.ControlFlowGraph.Builder(ast.StripTypes()).Build();
+
+            cfg = cfg.StaticSingleAssignment(out var ssa);
+
+            var variableNames = cfg.FindBooleanVariables(ssa).ToHashSet();
+
+            Assert.IsTrue(variableNames.SetEquals(new VariableName[] {
+                new VariableName("c[0]"),
+                new VariableName("a[0]"),
+                new VariableName("f[0]"),
+                new VariableName("g[0]"),
+                new VariableName("b[0]")
+                }));
         }
     }
 }
