@@ -94,15 +94,13 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
         }
 
         [NotNull]
-        public static IReadOnlyCollection<Assignment> FindVariableAssignments([NotNull] this IControlFlowGraph cfg, ISingleStaticAssignmentTable ssa)
+        public static IReadOnlyCollection<Assignment> FindAssignments([NotNull] this IControlFlowGraph cfg, ISingleStaticAssignmentTable ssa, bool includeExternals = false)
         {
             var assignments = new HashSet<Assignment>();
 
             cfg.VisitBlocks(() => new FindAssignments(assignments, ssa));
 
-            var result = new HashSet<Assignment>(assignments.Where(ass => !ass.Left.IsExternal));
-
-            return result;
+            return includeExternals ? assignments : new HashSet<Assignment>(assignments.Where(ass => !ass.Left.IsExternal));
         }
     }
 }

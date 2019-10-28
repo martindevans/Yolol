@@ -23,7 +23,7 @@ namespace YololEmulator.Tests.Analysis.Inspection
 
             cfg = cfg.StaticSingleAssignment(out var ssa);
 
-            var assignments = cfg.FindVariableAssignments(ssa);
+            var assignments = cfg.FindAssignments(ssa);
 
             var ssaBooleanVariableNames = new HashSet<VariableName>(from variableTreeNode in from originalBooleanVariableName in originalBooleanVariableNames
                                                                     from ssaBooleanVariableName in ssa.AssignedNames(originalBooleanVariableName)
