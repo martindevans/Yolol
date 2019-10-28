@@ -57,7 +57,7 @@ namespace YololEmulator.Tests.Analysis.Inspection
                 "b"
             };
 
-            _test(yolol, originalBooleanVariableNames);
+            Test(yolol, originalBooleanVariableNames);
         }
 
         [TestMethod]
@@ -71,7 +71,7 @@ namespace YololEmulator.Tests.Analysis.Inspection
                 "b"
             };
 
-            _test(yolol, originalBooleanVariableNames);
+            Test(yolol, originalBooleanVariableNames);
         }
 
         [TestMethod]
@@ -85,7 +85,7 @@ namespace YololEmulator.Tests.Analysis.Inspection
                 "b"
             };
 
-            _test(yolol, originalBooleanVariableNames);
+            Test(yolol, originalBooleanVariableNames);
         }
     }
 
