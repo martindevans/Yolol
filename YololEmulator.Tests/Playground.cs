@@ -17,6 +17,25 @@ namespace YololEmulator.Tests
     public class Playground
     {
         [TestMethod]
+        public void Z3Types()
+        {
+            // z = :a == :b
+
+            using (var ctx = new Context())
+            using (var solver = ctx.MkSolver())
+            {
+                var enum_type = ctx.MkEnumSort("types", "str", "int");
+
+                var z_type = (DatatypeExpr)ctx.MkConst("z_type", enum_type);
+                var z_int = ctx.MkConst("z_int", ctx.IntSort);
+                var z_str = (SeqExpr)ctx.MkConst("z_str", ctx.StringSort);
+
+                solver.Assert(ctx.MkOr(ctx.MkEq(z_int, ctx.MkInt(1000)), ctx.MkEq(z_int, ctx.MkInt(0000))));
+                solver.Assert(ctx.MkEq(z_type, (SeqExpr)enum_type.Consts[1]));
+            }
+        }
+
+        [TestMethod]
         public void Z3()
         {
             //z(Number)=-0.5==(:a)
