@@ -1,4 +1,4 @@
-[![Build status](https://github.com/thomasio101/Yolol/workflows/Build/badge.svg?branch=find-booleans)](https://github.com/thomasio101/Yolol/workflows/Build/badge.svg?branch=find-booleans)
+[![Build status](https://github.com/martindevans/Yolol/workflows/Build/badge.svg?branch=find-booleans-2)](https://github.com/martindevans/Yolol/workflows/Build/badge.svg?branch=find-booleans-2)
 [![Test status](https://github.com/martindevans/Yolol/workflows/Test/badge.svg?branch=find-booleans-2)](https://github.com/martindevans/Yolol/workflows/Test/badge.svg?branch=find-booleans-2)
 
 This repository contains 4 projects:
