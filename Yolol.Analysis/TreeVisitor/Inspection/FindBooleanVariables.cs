@@ -25,7 +25,7 @@ namespace Yolol.Analysis.TreeVisitor.Inspection
 
         protected override BaseStatement Visit(Assignment ass)
         {
-            if (!_names.Contains(ass.Left) && (ass.Right.IsBoolean || (ass.Right is Variable variable && _names.Contains(variable.Name))))
+            if (ass.Right.IsBoolean || ass.Right is Variable variable && _names.Contains(variable.Name))
                 _names.Add(ass.Left);
 
             return base.Visit(ass);
