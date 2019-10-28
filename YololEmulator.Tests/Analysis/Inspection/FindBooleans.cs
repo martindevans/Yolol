@@ -42,9 +42,9 @@ namespace YololEmulator.Tests.Analysis.Inspection
             Assert.IsTrue(ssaBooleanVariableNames.SetEquals(cfg.FindBooleanVariables(ssa)));
         }
 
-        private void _test(string yolol, IEnumerable<VariableName> originalBooleanVariableNames) => _test(TestExecutor.Parse(yolol), originalBooleanVariableNames);
+        private void Test(string yolol, IEnumerable<VariableName> originalBooleanVariableNames) => Test(TestExecutor.Parse(yolol), originalBooleanVariableNames);
 
-        private void _test(string yolol, IEnumerable<string> originalBooleanVariableNames) => _test(yolol, originalBooleanVariableNames.Select(originalBooleanVariableName => new VariableName(originalBooleanVariableName)));
+        private void Test(string yolol, IEnumerable<string> originalBooleanVariableNames) => Test(yolol, originalBooleanVariableNames.Select(originalBooleanVariableName => new VariableName(originalBooleanVariableName)));
 
         [TestMethod]
         public void FindBooleansSingleLine()
