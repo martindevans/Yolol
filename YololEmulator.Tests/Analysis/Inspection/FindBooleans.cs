@@ -91,7 +91,6 @@ namespace YololEmulator.Tests.Analysis.Inspection
 
     class VariableTreeNode
     {
-        public bool Top => _parent == null;
         private IEnumerable<Assignment> _assignments;
         private readonly VariableName _variableName;
         private readonly HashSet<VariableTreeNode> _children = new HashSet<VariableTreeNode>();
