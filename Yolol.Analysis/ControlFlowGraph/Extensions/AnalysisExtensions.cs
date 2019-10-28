@@ -4,6 +4,7 @@ using JetBrains.Annotations;
 using Yolol.Analysis.TreeVisitor.Inspection;
 using Yolol.Grammar;
 using Yolol.Grammar.AST.Expressions;
+using Yolol.Grammar.AST.Statements;
 
 namespace Yolol.Analysis.ControlFlowGraph.Extensions
 {
@@ -75,18 +76,31 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
         public static IReadOnlyCollection<VariableName> FindBooleanVariables([NotNull] this IControlFlowGraph cfg, ISingleStaticAssignmentTable ssa)
         {
             var booleans = new HashSet<VariableName>();
+            var nonBooleans = new HashSet<VariableName>();
+            var unknowns = new HashSet<VariableName>();
 
             var count = -1;
 
             // Keep finding more constants until no more are found
-            while (count != booleans.Count)
+            while (count != 0)
             {
-                count = booleans.Count;
-
-                cfg.VisitBlocks(() => new FindBooleanVariables(booleans, ssa));
+                count = unknowns.Count;
+                cfg.VisitBlocks(() => new FindBooleanVariables(booleans, nonBooleans, unknowns, ssa));
             }
 
             var result = new HashSet<VariableName>(booleans.Where(n => !n.IsExternal));
+
+            return result;
+        }
+
+        [NotNull]
+        public static IReadOnlyCollection<Assignment> FindVariableAssignments([NotNull] this IControlFlowGraph cfg, ISingleStaticAssignmentTable ssa)
+        {
+            var assignments = new HashSet<Assignment>();
+
+            cfg.VisitBlocks(() => new FindAssignments(assignments, ssa));
+
+            var result = new HashSet<Assignment>(assignments.Where(ass => !ass.Left.IsExternal));
 
             return result;
         }
