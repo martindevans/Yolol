@@ -15,7 +15,7 @@ namespace YololEmulator.Tests.Analysis.Inspection
     [TestClass]
     public class FindBooleans
     {
-        private void _test(Program ast, IEnumerable<VariableName> originalBooleanVariableNames)
+        private void Test(Program ast, IEnumerable<VariableName> originalBooleanVariableNames)
         {
             var cfg = new Builder(ast.StripTypes()).Build();
 
