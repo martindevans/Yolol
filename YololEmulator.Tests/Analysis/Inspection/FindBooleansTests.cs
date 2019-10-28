@@ -66,7 +66,7 @@ namespace YololEmulator.Tests.Analysis.Inspection
         }
 
         [TestMethod]
-        public void FindBooleansMultiPath()
+        public void FindBooleansMultiPathNotBothBoolean()
         {
             // There are two paths here:
             //
@@ -80,6 +80,25 @@ namespace YololEmulator.Tests.Analysis.Inspection
             };
 
             Test(names, "a=:a/1 goto 3", "a=1", "b=a");
+        }
+
+        [TestMethod]
+        public void FindBooleansMultiPathBothBoolean()
+        {
+            // There are two paths here:
+            //
+            //  - `a[0]` (line 1) is assigned a boolean value and jumps to line 3
+            //  - `:a/1` (line 1) is an error (e.g. `:a` is a string) and goes to line 2, a[1] is assigned a boolean value again
+            //
+            // In both cases `c` is a boolean
+
+            var names = new VariableName[] {
+                new VariableName("a[0]"),
+                new VariableName("a[1]"),
+                new VariableName("c[0]"),
+            };
+
+            Test(names, "a=1 b=:a/1 goto 3", "a=0", "c=a");
         }
     }
 }
