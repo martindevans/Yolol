@@ -14,7 +14,7 @@ namespace Yolol.Analysis.SAT
 
         private readonly EnumSort _enumType;
         public DatatypeExpr StrType => (DatatypeExpr)_enumType.Consts[0];
-        public DatatypeExpr IntType => (DatatypeExpr)_enumType.Consts[1];
+        public DatatypeExpr NumType => (DatatypeExpr)_enumType.Consts[1];
 
         private Dictionary<VariableName, ModelVariable> _variableMapping = new Dictionary<VariableName, ModelVariable>();
 
@@ -32,14 +32,20 @@ namespace Yolol.Analysis.SAT
             Solver?.Dispose();
         }
 
-        public IModelVariable GetOrCreateVariable(VariableName name)
+        public Status Check()
+        {
+            return Solver.Check();
+        }
+
+        public ModelVariable GetOrCreateVariable(VariableName name)
         {
             if (!_variableMapping.TryGetValue(name, out var v))
             {
-                var t = (DatatypeExpr)Context.MkConst(name.Name, _enumType);
-                var n = (IntExpr)Context.MkConst(name.Name, Context.IntSort);
-                var s = (SeqExpr)Context.MkConst(name.Name, Context.StringSort);
-                v = new ModelVariable(this, t, n, s);
+                var t = (DatatypeExpr)Context.MkConst($"typ:{name.Name}", _enumType);
+                var n = (IntExpr)Context.MkConst($"num:{name.Name}", Context.IntSort);
+                var s = (SeqExpr)Context.MkConst($"str:{name.Name}", Context.StringSort);
+                var a = (BoolExpr)Context.MkConst($"inv:{name.Name}", Context.BoolSort);
+                v = new ModelVariable(this, t, n, s, a);
 
                 _variableMapping[name] = v;
             }
@@ -53,14 +59,19 @@ namespace Yolol.Analysis.SAT
             return v;
         }
 
-        public void Assert(BoolExpr expr)
-        {
-            Solver.Assert(expr);
-        }
-
         internal Expr MakeNumber(Number value)
         {
             return Context.MkInt((value * 1000).ToString());
+        }
+
+        public IModelVariable TryGetGotoVariable()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IModelVariable TryGetConditionalVariable()
+        {
+            throw new NotImplementedException();
         }
     }
 }

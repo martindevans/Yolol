@@ -17,21 +17,69 @@ namespace YololEmulator.Tests
     public class Playground
     {
         [TestMethod]
-        public void Z3Types()
+        public void Z3_Int2Str()
         {
-            // z = :a == :b
+            //ctx.IntToString
 
             using (var ctx = new Context())
             using (var solver = ctx.MkSolver())
             {
-                var enum_type = ctx.MkEnumSort("types", "str", "int");
+                var a = (IntExpr)ctx.MkConst("a", ctx.IntSort);
+                solver.Assert(ctx.MkEq(ctx.MkInt(9110), a));
 
-                var z_type = (DatatypeExpr)ctx.MkConst("z_type", enum_type);
-                var z_int = ctx.MkConst("z_int", ctx.IntSort);
-                var z_str = (SeqExpr)ctx.MkConst("z_str", ctx.StringSort);
+                // convert int to string
+                var x = (SeqExpr)ctx.MkConst("x", ctx.StringSort);
+                solver.Assert(
+                    ctx.MkEq(x,
+                        ctx.IntToString(
+                            ctx.MkITE(
+                                ctx.MkLt(a, ctx.MkInt(0)),
+                                ctx.MkMul(ctx.MkInt(-1), a),
+                                a
+                            )
+                        )
+                    )
+                );
 
-                solver.Assert(ctx.MkOr(ctx.MkEq(z_int, ctx.MkInt(1000)), ctx.MkEq(z_int, ctx.MkInt(0000))));
-                solver.Assert(ctx.MkEq(z_type, (SeqExpr)enum_type.Consts[1]));
+                var before = (IntExpr)ctx.MkConst("before", ctx.IntSort);
+                solver.Assert(ctx.MkEq(before, ctx.MkDiv(a, ctx.MkInt(1000))));
+
+                var after = (IntExpr)ctx.MkConst("after", ctx.IntSort);
+                solver.Assert(ctx.MkEq(after, a - before * 1000));
+
+                // store length
+                var y = (IntExpr)ctx.MkConst("y", ctx.IntSort);
+                solver.Assert(ctx.MkEq(y, ctx.MkLength(x)));
+
+                var z1 = (SeqExpr)ctx.MkConst("z1", ctx.StringSort);
+                solver.Assert(ctx.MkIff(ctx.MkLt(a, ctx.MkInt(10)), ctx.MkEq(z1, ctx.MkConcat(ctx.MkString("0.00"), x))));
+                solver.Assert(ctx.MkIff(ctx.MkAnd(ctx.MkLt(a, ctx.MkInt(100)), ctx.MkGt(a, ctx.MkInt(9))), ctx.MkEq(z1, ctx.MkConcat(ctx.MkString("0.0"), x))));
+                solver.Assert(ctx.MkIff(ctx.MkAnd(ctx.MkLt(a, ctx.MkInt(1000)), ctx.MkGt(a, ctx.MkInt(99))), ctx.MkEq(z1, ctx.MkConcat(ctx.MkString("0."), x))));
+                solver.Assert(ctx.MkIff(ctx.MkGt(a, ctx.MkInt(999)), ctx.MkEq(z1, ctx.MkConcat(ctx.MkExtract(x, ctx.MkInt(0), (IntExpr)ctx.MkSub(y, ctx.MkInt(3))), ctx.MkString("."), ctx.MkExtract(x, (IntExpr)ctx.MkSub(y, ctx.MkInt(3)), ctx.MkInt(3))))));
+
+
+                //// Handle all the cases which need extra zeroes prepended, otherwise just stick a "." in the right place. After that, add a negative symbol if necessary
+                //var handleN = ctx.MkConcat(ctx.MkExtract(x, ctx.MkInt(0), (IntExpr)ctx.MkSub(y, ctx.MkInt(3))), ctx.MkString("."), ctx.MkExtract(x, (IntExpr)ctx.MkSub(y, ctx.MkInt(3)), ctx.MkInt(3)));
+                //var handle3 = (SeqExpr)ctx.MkITE(ctx.MkEq(y, ctx.MkInt(3)), ctx.MkConcat(ctx.MkString("0."), x), handleN);
+                //var handle2 = (SeqExpr)ctx.MkITE(ctx.MkEq(y, ctx.MkInt(2)), ctx.MkConcat(ctx.MkString("0.0"), x), handle3);
+                //var handle1 = (SeqExpr)ctx.MkITE(ctx.MkEq(y, ctx.MkInt(1)), ctx.MkConcat(ctx.MkString("0.00"), x), handle2);
+                //var handle0 = (SeqExpr)ctx.MkITE(ctx.MkEq(y, ctx.MkInt(0)), ctx.MkString("0"), handle1);
+                //var handleNeg = (SeqExpr)ctx.MkITE(ctx.MkLt(a, ctx.MkInt(0)), ctx.MkConcat(ctx.MkString("-"), handle0), handle0);
+                //var handleEnd = (SeqExpr)ctx.MkITE(ctx.MkSuffixOf(ctx.MkString(".000"), handleNeg), ctx.MkExtract(handleNeg, ctx.MkInt(0), (IntExpr)ctx.MkSub(ctx.MkLength(handleNeg), ctx.MkInt(4))), handleNeg);
+
+                //var z = (SeqExpr)ctx.MkConst("z", ctx.StringSort);
+                //solver.Assert(ctx.MkEq(z, handleEnd));
+
+                if (solver.Check() == Status.SATISFIABLE)
+                {
+                    foreach (var item in solver.Model.Consts)
+                    {
+                        var v = solver.Model.Eval(item.Value);
+                        Console.WriteLine($"{item.Key.Name} = {v}");
+                    }
+                }
+                else
+                    Console.WriteLine(solver.Check());
             }
         }
 
