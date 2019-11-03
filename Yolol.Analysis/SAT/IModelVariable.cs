@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using JetBrains.Annotations;
 using Microsoft.Z3;
 using Yolol.Analysis.SAT.Extensions;
@@ -54,6 +55,7 @@ namespace Yolol.Analysis.SAT
             }
         }
 
+
         internal void AssertEq(ModelVariable modelVariable)
         {
             _model.Solver.Assert(_model.Context.MkEq(_valTaint, modelVariable._valTaint));
@@ -73,28 +75,6 @@ namespace Yolol.Analysis.SAT
 
         internal void AssertEq(BaseExpression expr)
         {
-            ModelVariable GetOrCreateVar(BaseExpression sub)
-            {
-                if (sub is Variable var)
-                    return _model.GetOrCreateVariable(var.Name);
-
-                if (sub is ConstantNumber num)
-                {
-                    var n = _model.GetOrCreateVariable(new VariableName(Guid.NewGuid().ToString()));
-                    n.AssertEq(num.Value.Value);
-                    return n;
-                }
-
-                if (sub is ConstantString str)
-                {
-                    var n = _model.GetOrCreateVariable(new VariableName(Guid.NewGuid().ToString()));
-                    n.AssertEq(str.Value);
-                    return n;
-                }
-
-                throw new NotSupportedException();
-            }
-
             var ctx = _model.Context;
             var sol = _model.Solver;
             var m = _model;
@@ -140,24 +120,30 @@ namespace Yolol.Analysis.SAT
                 sol.Assert(ctx.MkEq(ctx.MkInt(0), _numValue) | ctx.MkEq(ctx.MkInt(1000), _numValue));
 
                 // number<->number comparison (only compute if values are not tainted)
-                sol.Assert(ctx.MkImplies(
-                    nnt & !l._valTaint & !r._valTaint,
-                    ctx.MkEq(_numValue, ctx.MkITE(
-                        nnr(l._numValue, r._numValue),
-                        ctx.MkInt(1000),
-                        ctx.MkInt(0)
-                    )
-                )));
+                if (nnr != null)
+                {
+                    sol.Assert(ctx.MkImplies(
+                        nnt & !l._valTaint & !r._valTaint,
+                        ctx.MkEq(_numValue, ctx.MkITE(
+                            nnr(l._numValue, r._numValue),
+                            ctx.MkInt(1000),
+                            ctx.MkInt(0)
+                        )
+                    )));
+                }
 
                 // string<->string equality (only compute if values are not tainted)
-                sol.Assert(ctx.MkIff(
-                    sst & !l._valTaint & !r._valTaint,
-                    ctx.MkEq(_numValue, ctx.MkITE(
-                        ssr(l._strValue, r._strValue),
-                        ctx.MkInt(1000),
-                        ctx.MkInt(0)
-                    )
-                )));
+                if (ssr != null)
+                {
+                    sol.Assert(ctx.MkIff(
+                        sst & !l._valTaint & !r._valTaint,
+                        ctx.MkEq(_numValue, ctx.MkITE(
+                            ssr(l._strValue, r._strValue),
+                            ctx.MkInt(1000),
+                            ctx.MkInt(0)
+                        )
+                    )));
+                }
             }
 
             void LogicalOp(BaseBinaryExpression logical, Func<BoolExpr[], BoolExpr> op)
@@ -188,16 +174,22 @@ namespace Yolol.Analysis.SAT
             switch (expr)
             {
                 case ConstantNumber num:
-                    AssertEq(new Value(num.Value));
-                    return;
+                    {
+                        AssertEq(new Value(num.Value));
+                        return;
+                    }
 
                 case ConstantString str:
-                    AssertEq(new Value(str.Value));
-                    return;
+                    {
+                        AssertEq(new Value(str.Value));
+                        return;
+                    }
 
                 case Variable var:
-                    AssertEq(_model.GetOrCreateVariable(var.Name));
-                    return;
+                    {
+                        AssertEq(_model.GetOrCreateVariable(var.Name));
+                        return;
+                    }
 
                 case Add add:
                     {
@@ -209,6 +201,31 @@ namespace Yolol.Analysis.SAT
                         // Setup the 2 valid value cases:
                         var nn = ctx.MkAdd(l._numValue, r._numValue);
                         var ss = ctx.MkConcat(l._strValue, r._strValue);
+
+                        // Value is tained if we have one of the intractable type combinations
+                        sol.Assert(ctx.MkEq(_valTaint, l._valTaint | r._valTaint | nst | snt));
+
+                        // Assert the values
+                        sol.Assert(ctx.MkIff(!_valTaint & nnt, ctx.MkEq(_numValue, nn)));
+                        sol.Assert(ctx.MkIff(!_valTaint & sst, ctx.MkEq(_strValue, ss)));
+
+                        return;
+                    }
+
+                case Subtract sub:
+                    {
+                        var (nnt, sst, nst, snt) = BinaryTypes(sub, m.NumType, m.StrType, m.StrType, m.StrType);
+
+                        var l = GetOrCreateVar(sub.Left);
+                        var r = GetOrCreateVar(sub.Right);
+
+                        // Setup the 2 valid value cases:
+                        var nn = ctx.MkSub(l._numValue, r._numValue);
+                        var ss = ctx.MkITE(
+                            ctx.MkSuffixOf(r._strValue, l._strValue),
+                            ctx.MkExtract(l._strValue, ctx.MkInt(0), (IntExpr)(ctx.MkLength(l._strValue) - ctx.MkLength(r._strValue))),
+                            l._strValue
+                        );
 
                         // Value is tained if we have one of the intractable type combinations
                         sol.Assert(ctx.MkEq(_valTaint, l._valTaint | r._valTaint | nst | snt));
@@ -252,6 +269,12 @@ namespace Yolol.Analysis.SAT
                         return;
                     }
 
+                case Exponent exp:
+                    throw new NotImplementedException();
+
+                case Modulo mod:
+                    throw new NotImplementedException();
+
                 case EqualTo eq:
                     {
                         ComparisonOp(eq, ctx.MkEq, ctx.MkEq);
@@ -261,6 +284,30 @@ namespace Yolol.Analysis.SAT
                 case NotEqualTo neq:
                     {
                         ComparisonOp(neq, (a, b) => ctx.MkNot(ctx.MkEq(a, b)), (a, b) => ctx.MkNot(ctx.MkEq(a, b)));
+                        return;
+                    }
+
+                case LessThan lt:
+                    {
+                        ComparisonOp(lt, (a, b) => ctx.MkLt(a, b), null);
+                        return;
+                    }
+
+                case LessThanEqualTo lteq:
+                    {
+                        ComparisonOp(lteq, (a, b) => ctx.MkLe(a, b), null);
+                        return;
+                    }
+
+                case GreaterThan gt:
+                    {
+                        ComparisonOp(gt, (a, b) => ctx.MkGt(a, b), null);
+                        return;
+                    }
+
+                case GreaterThanEqualTo gt:
+                    {
+                        ComparisonOp(gt, (a, b) => ctx.MkGe(a, b), null);
                         return;
                     }
 
@@ -282,6 +329,28 @@ namespace Yolol.Analysis.SAT
 
                     throw new NotImplementedException(expr.GetType().Name);
             }
+        }
+
+        [NotNull]         ModelVariable GetOrCreateVar([NotNull] BaseExpression sub)
+        {
+            if (sub is Variable var)
+                return _model.GetOrCreateVariable(var.Name);
+
+            if (sub is ConstantNumber num)
+            {
+                var n = _model.GetOrCreateVariable(new VariableName(Guid.NewGuid().ToString()));
+                n.AssertEq(num.Value.Value);
+                return n;
+            }
+
+            if (sub is ConstantString str)
+            {
+                var n = _model.GetOrCreateVariable(new VariableName(Guid.NewGuid().ToString()));
+                n.AssertEq(str.Value);
+                return n;
+            }
+
+            throw new NotSupportedException();
         }
 
         public bool IsValueAvailable()
@@ -327,15 +396,11 @@ namespace Yolol.Analysis.SAT
 
             // Make a model that asserts it is _not_ the given value, and then check the model is _not_ satisfiable
 
-            if (v.Type == Execution.Type.String)
-            {
+            if (v.Type == Type.String)
                 return !_model.Solver.IsSatisfiable(ctx.MkNot(ctx.MkEq(_strValue, _model.Context.MkString(v.String))));
-            }
 
-            if (v.Type == Execution.Type.Number)
-            {
+            if (v.Type == Type.Number)
                 return !_model.Solver.IsSatisfiable(ctx.MkNot(ctx.MkEq(_numValue, _model.Context.MkInt((v.Number.Value * Number.Scale).ToString()))));
-            }
 
             throw new NotSupportedException($"unknown value type {v.Type}");
         }

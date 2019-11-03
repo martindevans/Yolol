@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Z3;
 using Yolol.Analysis.ControlFlowGraph.Extensions;
 using Yolol.Analysis.SAT;
 using Yolol.Analysis.Types;
@@ -33,8 +35,8 @@ namespace YololEmulator.Tests.SAT
             Assert.IsNotNull(a, "variable is null");
             Assert.IsTrue(a.IsValueAvailable(), "value is unavailable (tainted)");
 
-            Assert.AreEqual(v.Type == Type.Number, a.CanBeNumber());
-            Assert.AreEqual(v.Type == Type.String, a.CanBeString());
+            Assert.AreEqual(v.Type == Yolol.Execution.Type.Number, a.CanBeNumber());
+            Assert.AreEqual(v.Type == Yolol.Execution.Type.String, a.CanBeString());
 
             // The expected value can't possible equal all these values, so we can check if it's _not_ these values
             var aString = new Value("abc");
@@ -121,6 +123,56 @@ namespace YololEmulator.Tests.SAT
         {
             var sat = BuildModel("a = 2 + 3");
             AssertValue(sat, "a[0]", 5);
+        }
+
+        [TestMethod]
+        public void StringStringSubtraction()
+        {
+            var sat = BuildModel("a = \"2\" - \"1\" b = \"31\" - \"1\"");
+            AssertValue(sat, "a[0]", "2");
+            AssertValue(sat, "b[0]", "3");
+        }
+
+        [TestMethod]
+        public void StringNumSubtraction()
+        {
+            var sat = BuildModel("a = \"a\" - 2");
+
+            Assert.AreEqual(Microsoft.Z3.Status.SATISFIABLE, sat.Check());
+
+            var a = sat.TryGetVariable(new VariableName("a[0]"));
+
+            Assert.IsNotNull(a);
+            Assert.IsFalse(a.IsValueAvailable());
+            Assert.IsFalse(a.CanBeNumber());
+            Assert.IsTrue(a.CanBeString());
+            //Assert.IsFalse(a.CanBeValue(new Value(new Number(1))));
+            //Assert.IsFalse(a.CanBeValue(new Value("2")));
+            //Assert.IsTrue(a.IsValue(new Value("a2")));
+        }
+
+        [TestMethod]
+        public void NumStringSubtraction()
+        {
+            var sat = BuildModel("a = 2 - \"a\"");
+            Assert.AreEqual(Microsoft.Z3.Status.SATISFIABLE, sat.Check());
+
+            var a = sat.TryGetVariable(new VariableName("a[0]"));
+
+            Assert.IsNotNull(a);
+            Assert.IsFalse(a.IsValueAvailable());
+            Assert.IsFalse(a.CanBeNumber());
+            Assert.IsTrue(a.CanBeString());
+            //Assert.IsFalse(a.CanBeValue(new Value(new Number(1))));
+            //Assert.IsFalse(a.CanBeValue(new Value("2")));
+            //Assert.IsTrue(a.IsValue(new Value("2a")));
+        }
+
+        [TestMethod]
+        public void NumNumSubtraction()
+        {
+            var sat = BuildModel("a = 2 - 3");
+            AssertValue(sat, "a[0]", -1);
         }
 
         [TestMethod]
@@ -222,6 +274,178 @@ namespace YololEmulator.Tests.SAT
             var sat = BuildModel("a = 2 != 3 b = 3 != 3");
             AssertValue(sat, "a[0]", 1);
             AssertValue(sat, "b[0]", 0);
+        }
+
+        [TestMethod]
+        public void StringStringGreaterThan()
+        {
+            var sat = BuildModel("a = \"2\" > \"1\" b = \"a\" > \"b\"");
+            AssertValue(sat, "a[0]", 0, false);
+            AssertValue(sat, "a[0]", 1, false);
+
+            AssertValue(sat, "b[0]", 0, false);
+            AssertValue(sat, "b[0]", 1, false);
+        }
+
+        [TestMethod]
+        public void StringNumLessGreaterThan()
+        {
+            var sat = BuildModel("a = \"2\" > 1 b = \"2\" > 3");
+
+            AssertValue(sat, "a[0]", 1, false);
+            AssertValue(sat, "a[0]", 0, false);
+
+            AssertValue(sat, "b[0]", 1, false);
+            AssertValue(sat, "b[0]", 0, false);
+        }
+
+        [TestMethod]
+        public void NumStringGreaterThan()
+        {
+            var sat = BuildModel("a = 2 > \"1\" b = 2 > \"2\"");
+
+            AssertValue(sat, "a[0]", 1, false);
+            AssertValue(sat, "a[0]", 0, false);
+
+            AssertValue(sat, "b[0]", 1, false);
+            AssertValue(sat, "b[0]", 0, false);
+        }
+
+        [TestMethod]
+        public void NumNumGreaterThan()
+        {
+            var sat = BuildModel("a = 2 > 2 b = 4 > 3");
+            AssertValue(sat, "a[0]", 0);
+            AssertValue(sat, "b[0]", 1);
+        }
+
+        [TestMethod]
+        public void StringStringGreaterThanEqualTo()
+        {
+            var sat = BuildModel("a = \"2\" >= \"1\" b = \"a\" >= \"b\"");
+            AssertValue(sat, "a[0]", 0, false);
+            AssertValue(sat, "a[0]", 1, false);
+
+            AssertValue(sat, "b[0]", 0, false);
+            AssertValue(sat, "b[0]", 1, false);
+        }
+
+        [TestMethod]
+        public void StringNumLessGreaterThanEqualTo()
+        {
+            var sat = BuildModel("a = \"2\" >= 1 b = \"2\" >= 3");
+
+            AssertValue(sat, "a[0]", 1, false);
+            AssertValue(sat, "a[0]", 0, false);
+
+            AssertValue(sat, "b[0]", 1, false);
+            AssertValue(sat, "b[0]", 0, false);
+        }
+
+        [TestMethod]
+        public void NumStringGreaterThanEqualTo()
+        {
+            var sat = BuildModel("a = 2 >= \"1\" b = 2 >= \"2\"");
+
+            AssertValue(sat, "a[0]", 1, false);
+            AssertValue(sat, "a[0]", 0, false);
+
+            AssertValue(sat, "b[0]", 1, false);
+            AssertValue(sat, "b[0]", 0, false);
+        }
+
+        [TestMethod]
+        public void NumNumGreaterThanEqualTo()
+        {
+            var sat = BuildModel("a = 2 >= 3 b = 4 >= 3");
+            AssertValue(sat, "a[0]", 0);
+            AssertValue(sat, "b[0]", 1);
+        }
+
+        [TestMethod]
+        public void StringStringLessThan()
+        {
+            var sat = BuildModel("a = \"2\" < \"1\" b = \"a\" < \"b\"");
+            AssertValue(sat, "a[0]", 0, false);
+            AssertValue(sat, "a[0]", 1, false);
+
+            AssertValue(sat, "b[0]", 0, false);
+            AssertValue(sat, "b[0]", 1, false);
+        }
+
+        [TestMethod]
+        public void StringNumLessThan()
+        {
+            var sat = BuildModel("a = \"2\" < 1 b = \"2\" < 3");
+
+            AssertValue(sat, "a[0]", 1, false);
+            AssertValue(sat, "a[0]", 0, false);
+
+            AssertValue(sat, "b[0]", 1, false);
+            AssertValue(sat, "b[0]", 0, false);
+        }
+
+        [TestMethod]
+        public void NumStringLessThan()
+        {
+            var sat = BuildModel("a = 2 < \"1\" b = 2 < \"2\"");
+
+            AssertValue(sat, "a[0]", 1, false);
+            AssertValue(sat, "a[0]", 0, false);
+
+            AssertValue(sat, "b[0]", 1, false);
+            AssertValue(sat, "b[0]", 0, false);
+        }
+
+        [TestMethod]
+        public void NumNumLessThan()
+        {
+            var sat = BuildModel("a = 2 < 2 b = 3 < 4");
+            AssertValue(sat, "a[0]", 0);
+            AssertValue(sat, "b[0]", 1);
+        }
+
+        [TestMethod]
+        public void StringStringLessThanOrEqual()
+        {
+            var sat = BuildModel("a = \"2\" <= \"1\" b = \"a\" <= \"b\"");
+            AssertValue(sat, "a[0]", 0, false);
+            AssertValue(sat, "a[0]", 1, false);
+
+            AssertValue(sat, "b[0]", 0, false);
+            AssertValue(sat, "b[0]", 1, false);
+        }
+
+        [TestMethod]
+        public void StringNumLessThanOrEqual()
+        {
+            var sat = BuildModel("a = \"2\" <= 1 b = \"2\" <= 2");
+
+            AssertValue(sat, "a[0]", 1, false);
+            AssertValue(sat, "a[0]", 0, false);
+
+            AssertValue(sat, "b[0]", 1, false);
+            AssertValue(sat, "b[0]", 0, false);
+        }
+
+        [TestMethod]
+        public void NumStringLessThanOrEqual()
+        {
+            var sat = BuildModel("a = 2 <= \"1\" b = 2 <= \"2\"");
+
+            AssertValue(sat, "a[0]", 1, false);
+            AssertValue(sat, "a[0]", 0, false);
+
+            AssertValue(sat, "b[0]", 1, false);
+            AssertValue(sat, "b[0]", 0, false);
+        }
+
+        [TestMethod]
+        public void NumNumLessThanOrEqual()
+        {
+            var sat = BuildModel("a = 2 <= 1 b = 3 <= 4");
+            AssertValue(sat, "a[0]", 0);
+            AssertValue(sat, "b[0]", 1);
         }
 
         [TestMethod]
