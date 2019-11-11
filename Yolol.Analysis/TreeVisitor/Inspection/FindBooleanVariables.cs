@@ -1,6 +1,7 @@
 ﻿
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using Yolol.Analysis.ControlFlowGraph.AST;
 using Yolol.Analysis.ControlFlowGraph.Extensions;
 using Yolol.Grammar;
@@ -36,6 +37,14 @@ namespace Yolol.Analysis.TreeVisitor.Inspection
                 return phi.AssignedNames.All(_names.Contains);
 
             return false;
+        }
+
+        protected override BaseStatement Visit([NotNull] TypedAssignment ass)
+        {
+            if (IsBoolean(ass.Right))
+                _names.Add(ass.Left);
+
+            return base.Visit(ass);
         }
 
         protected override BaseStatement Visit(Assignment ass)

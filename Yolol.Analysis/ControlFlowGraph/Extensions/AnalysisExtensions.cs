@@ -71,8 +71,13 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
             return r.Names;
         }
 
-        [NotNull]
-        public static IReadOnlyCollection<VariableName> FindBooleanVariables([NotNull] this IControlFlowGraph cfg, ISingleStaticAssignmentTable ssa)
+        /// <summary>
+        /// Find variables which are guaranteed to be `0` or `1`
+        /// </summary>
+        /// <param name="cfg"></param>
+        /// <param name="ssa"></param>
+        /// <returns></returns>
+        [NotNull] public static ISet<VariableName> FindBooleanVariables([NotNull] this IControlFlowGraph cfg, ISingleStaticAssignmentTable ssa)
         {
             var booleans = new HashSet<VariableName>();
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Yolol.Analysis.ControlFlowGraph;
@@ -169,6 +170,10 @@ namespace Yolol.Analysis
                 // Fold away useless mathematics involving constants (e.g. replace `a=x*1` => `a=x` (if x is a number type)
                 // This can emit `Error` expressions, which always evaluate to an error
                 cf = cf.VisitBlocks(t => new OpNumByConstNumCompressor(t), types);
+
+                // compress logical operators into mathematics where possible
+                var booleans = cf.FindBooleanVariables(ssa);
+                cf = cf.VisitBlocks(() => new BooleanNotCompressor(booleans));
 
                 // Replace any expressions involving `Error` subexpressions with `Error()` statements
                 cf = cf.VisitBlocks(() => new ErrorCompressor());
