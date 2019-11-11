@@ -70,5 +70,23 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
 
             return r.Names;
         }
+
+        [NotNull]
+        public static IReadOnlyCollection<VariableName> FindBooleanVariables([NotNull] this IControlFlowGraph cfg, ISingleStaticAssignmentTable ssa)
+        {
+            var booleans = new HashSet<VariableName>();
+
+            // Keep finding more constants until no more are found
+            var count = -1;
+            while (count != booleans.Count)
+            {
+                count = booleans.Count;
+                cfg.VisitBlocks(() => new FindBooleanVariables(booleans, ssa));
+            }
+
+            var result = new HashSet<VariableName>(booleans.Where(n => !n.IsExternal));
+
+            return result;
+        }
     }
 }
