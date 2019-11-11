@@ -51,6 +51,11 @@ namespace Yolol.Execution
         {
         }
 
+        public static implicit operator Value(Number n)
+        {
+            return new Value(n);
+        }
+
         public static implicit operator Value(decimal d)
         {
             return new Value(new Number(d));

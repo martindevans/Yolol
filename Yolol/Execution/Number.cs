@@ -9,7 +9,7 @@ namespace Yolol.Execution
     {
         public const decimal MaxValue = 9223372036854775.807m;
         public const decimal MinValue = -9223372036854775.808m;
-        private const int Scale = 1000;
+        public const int Scale = 1000;
 
         public decimal Value { get; }
 
