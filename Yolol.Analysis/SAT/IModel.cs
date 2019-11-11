@@ -1,4 +1,5 @@
 ﻿using JetBrains.Annotations;
+using Microsoft.Z3;
 using System;
 using Yolol.Grammar;
 
@@ -7,6 +8,8 @@ namespace Yolol.Analysis.SAT
     public interface IModel
         : IDisposable
     {
+        Solver Solver { get; }
+
         /// <summary>
         /// Try to get the model variable for the given variable name
         /// </summary>

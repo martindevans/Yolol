@@ -24,38 +24,48 @@ namespace YololEmulator.Tests
             using (var ctx = new Context())
             using (var solver = ctx.MkSolver())
             {
-                var a = (IntExpr)ctx.MkConst("a", ctx.IntSort);
-                solver.Assert(ctx.MkEq(ctx.MkInt(9110), a));
 
-                // convert int to string
-                var x = (SeqExpr)ctx.MkConst("x", ctx.StringSort);
-                solver.Assert(
-                    ctx.MkEq(x,
-                        ctx.IntToString(
-                            ctx.MkITE(
-                                ctx.MkLt(a, ctx.MkInt(0)),
-                                ctx.MkMul(ctx.MkInt(-1), a),
-                                a
-                            )
-                        )
-                    )
-                );
+                // sqrt
+                var big = (IntExpr)ctx.MkConst("big", ctx.IntSort);
+                var lil = (IntExpr)ctx.MkConst("lil", ctx.IntSort);
+                solver.Assert(lil * lil / 1000 <= big);
+                solver.Assert((lil + 1) * (lil + 1) / 1000 >= big);
+                solver.Assert(ctx.MkEq(big, ctx.MkInt(75321)));
+                solver.Assert(lil >= ctx.MkInt(0));
 
-                var before = (IntExpr)ctx.MkConst("before", ctx.IntSort);
-                solver.Assert(ctx.MkEq(before, ctx.MkDiv(a, ctx.MkInt(1000))));
 
-                var after = (IntExpr)ctx.MkConst("after", ctx.IntSort);
-                solver.Assert(ctx.MkEq(after, a - before * 1000));
+                //var a = (IntExpr)ctx.MkConst("a", ctx.IntSort);
+                //solver.Assert(ctx.MkEq(ctx.MkInt(9110), a));
 
-                // store length
-                var y = (IntExpr)ctx.MkConst("y", ctx.IntSort);
-                solver.Assert(ctx.MkEq(y, ctx.MkLength(x)));
+                //// convert int to string
+                //var x = (SeqExpr)ctx.MkConst("x", ctx.StringSort);
+                //solver.Assert(
+                //    ctx.MkEq(x,
+                //        ctx.IntToString(
+                //            ctx.MkITE(
+                //                ctx.MkLt(a, ctx.MkInt(0)),
+                //                ctx.MkMul(ctx.MkInt(-1), a),
+                //                a
+                //            )
+                //        )
+                //    )
+                //);
 
-                var z1 = (SeqExpr)ctx.MkConst("z1", ctx.StringSort);
-                solver.Assert(ctx.MkIff(ctx.MkLt(a, ctx.MkInt(10)), ctx.MkEq(z1, ctx.MkConcat(ctx.MkString("0.00"), x))));
-                solver.Assert(ctx.MkIff(ctx.MkAnd(ctx.MkLt(a, ctx.MkInt(100)), ctx.MkGt(a, ctx.MkInt(9))), ctx.MkEq(z1, ctx.MkConcat(ctx.MkString("0.0"), x))));
-                solver.Assert(ctx.MkIff(ctx.MkAnd(ctx.MkLt(a, ctx.MkInt(1000)), ctx.MkGt(a, ctx.MkInt(99))), ctx.MkEq(z1, ctx.MkConcat(ctx.MkString("0."), x))));
-                solver.Assert(ctx.MkIff(ctx.MkGt(a, ctx.MkInt(999)), ctx.MkEq(z1, ctx.MkConcat(ctx.MkExtract(x, ctx.MkInt(0), (IntExpr)ctx.MkSub(y, ctx.MkInt(3))), ctx.MkString("."), ctx.MkExtract(x, (IntExpr)ctx.MkSub(y, ctx.MkInt(3)), ctx.MkInt(3))))));
+                //var before = (IntExpr)ctx.MkConst("before", ctx.IntSort);
+                //solver.Assert(ctx.MkEq(before, ctx.MkDiv(a, ctx.MkInt(1000))));
+
+                //var after = (IntExpr)ctx.MkConst("after", ctx.IntSort);
+                //solver.Assert(ctx.MkEq(after, a - before * 1000));
+
+                //// store length
+                //var y = (IntExpr)ctx.MkConst("y", ctx.IntSort);
+                //solver.Assert(ctx.MkEq(y, ctx.MkLength(x)));
+
+                //var z1 = (SeqExpr)ctx.MkConst("z1", ctx.StringSort);
+                //solver.Assert(ctx.MkIff(ctx.MkLt(a, ctx.MkInt(10)), ctx.MkEq(z1, ctx.MkConcat(ctx.MkString("0.00"), x))));
+                //solver.Assert(ctx.MkIff(ctx.MkAnd(ctx.MkLt(a, ctx.MkInt(100)), ctx.MkGt(a, ctx.MkInt(9))), ctx.MkEq(z1, ctx.MkConcat(ctx.MkString("0.0"), x))));
+                //solver.Assert(ctx.MkIff(ctx.MkAnd(ctx.MkLt(a, ctx.MkInt(1000)), ctx.MkGt(a, ctx.MkInt(99))), ctx.MkEq(z1, ctx.MkConcat(ctx.MkString("0."), x))));
+                //solver.Assert(ctx.MkIff(ctx.MkGt(a, ctx.MkInt(999)), ctx.MkEq(z1, ctx.MkConcat(ctx.MkExtract(x, ctx.MkInt(0), (IntExpr)ctx.MkSub(y, ctx.MkInt(3))), ctx.MkString("."), ctx.MkExtract(x, (IntExpr)ctx.MkSub(y, ctx.MkInt(3)), ctx.MkInt(3))))));
 
 
                 //// Handle all the cases which need extra zeroes prepended, otherwise just stick a "." in the right place. After that, add a negative symbol if necessary
@@ -70,7 +80,8 @@ namespace YololEmulator.Tests
                 //var z = (SeqExpr)ctx.MkConst("z", ctx.StringSort);
                 //solver.Assert(ctx.MkEq(z, handleEnd));
 
-                if (solver.Check() == Status.SATISFIABLE)
+                var status = solver.Check();
+                if (status == Status.SATISFIABLE)
                 {
                     foreach (var item in solver.Model.Consts)
                     {
@@ -79,7 +90,7 @@ namespace YololEmulator.Tests
                     }
                 }
                 else
-                    Console.WriteLine(solver.Check());
+                    Console.WriteLine(status);
             }
         }
 
@@ -157,7 +168,7 @@ namespace YololEmulator.Tests
 
             var ast = TestExecutor.Parse(
                 "z = -1 z-- :a = z a = sin(:a * (z + 2)) a+=1 a /= z",
-                "flag=a==:a if flag then goto 5 else goto 6 end b=0/0",
+                "flag=a==:a if not flag then goto 5 else goto 6 end b=0/0",
                 ":x = \"hello\" * 4 goto \"world\" x = 2",
                 "b*=2 flag=b>30 if flag then :b=a end if :a then b = 7 end",
                 "b=b-1 goto 4",

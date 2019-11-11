@@ -2,6 +2,7 @@
 using JetBrains.Annotations;
 using Yolol.Analysis.ControlFlowGraph.AST;
 using Yolol.Analysis.TreeVisitor;
+using Yolol.Execution;
 using Yolol.Execution.Extensions;
 using Yolol.Grammar;
 using Yolol.Grammar.AST.Expressions;
@@ -158,6 +159,8 @@ namespace Yolol.Analysis.Types
         protected override Type Visit(And and) => BinaryLogical(and);
 
         protected override Type Visit(Or or) => BinaryLogical(or);
+
+        protected override Type Visit([NotNull] Not not) => Type.Number;
 
         protected override Type Visit(LessThanEqualTo eq) => BinaryLogical(eq);
 

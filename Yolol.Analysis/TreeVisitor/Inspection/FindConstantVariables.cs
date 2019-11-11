@@ -67,6 +67,8 @@ namespace Yolol.Analysis.TreeVisitor.Inspection
 
         protected override bool Visit(And and) => VisitBinary(and);
 
+        protected override bool Visit([NotNull] Not not) => Visit(not.Parameter);
+
         protected override bool Visit(ErrorExpression err) => true;
 
         protected override bool Visit(Increment inc) => _constants.ContainsKey(inc.Name);

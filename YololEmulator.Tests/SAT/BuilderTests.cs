@@ -26,17 +26,48 @@ namespace YololEmulator.Tests.SAT
             return cfg.Vertices.Single(x => x.LineNumber == 1 && x.Statements.Any()).BuildSAT(types);
         }
 
-        private void AssertValue(IModel sat, string name, Value v, bool exact = true)
+        private void AssertTainted(IModel sat, string name, Yolol.Execution.Type type)
         {
-            Assert.AreEqual(Microsoft.Z3.Status.SATISFIABLE, sat.Check());
+            Assert.AreEqual(Status.SATISFIABLE, sat.Check());
+
+            foreach (var item in sat.Solver.Model.Consts)
+            {
+                var vv = sat.Solver.Model.Eval(item.Value);
+                Console.WriteLine($"{item.Key.Name} = {vv}");
+            }
 
             var a = sat.TryGetVariable(new VariableName(name));
 
             Assert.IsNotNull(a, "variable is null");
+            Assert.IsFalse(a.IsValueAvailable(), "value is unavailable (tainted)");
+
+            Assert.AreEqual(type == Yolol.Execution.Type.Number, a.CanBeNumber(), "type");
+            Assert.AreEqual(type == Yolol.Execution.Type.String, a.CanBeString(), "type");
+        }
+
+        private void AssertValue(IModel sat, string name, Value v, bool exact = true)
+        {
+            var var = sat.TryGetVariable(new VariableName(name));
+            AssertValue(sat, var, v, exact);
+        }
+
+        private void AssertValue(IModel sat, IModelVariable var, Value v, bool exact = true)
+        {
+            Assert.AreEqual(Status.SATISFIABLE, sat.Check());
+
+            foreach (var item in  sat.Solver.Model.Consts)
+            {
+                var vv = sat.Solver.Model.Eval(item.Value);
+                Console.WriteLine($"{item.Key.Name} = {vv}");
+            }
+
+            var a = var;
+
+            Assert.IsNotNull(a, "variable is null");
             Assert.IsTrue(a.IsValueAvailable(), "value is unavailable (tainted)");
 
-            Assert.AreEqual(v.Type == Yolol.Execution.Type.Number, a.CanBeNumber());
-            Assert.AreEqual(v.Type == Yolol.Execution.Type.String, a.CanBeString());
+            Assert.AreEqual(v.Type == Yolol.Execution.Type.Number, a.CanBeNumber(), "type");
+            Assert.AreEqual(v.Type == Yolol.Execution.Type.String, a.CanBeString(), "type");
 
             // The expected value can't possible equal all these values, so we can check if it's _not_ these values
             var aString = new Value("abc");
@@ -509,6 +540,79 @@ namespace YololEmulator.Tests.SAT
             AssertValue(sat, "a[0]", 1);
             AssertValue(sat, "b[0]", 1);
             AssertValue(sat, "c[0]", 0);
+        }
+
+        [TestMethod]
+        public void NumNegate()
+        {
+            var sat = BuildModel("a = -2");
+            AssertValue(sat, "a[0]", -2);
+        }
+
+        [TestMethod]
+        public void StrNegate()
+        {
+            BuildModel("a = \"-2\"");
+        }
+
+        [TestMethod]
+        public void NumSqrt()
+        {
+            var sat = BuildModel("a = sqrt(4)");
+            AssertTainted(sat, "a[0]", Yolol.Execution.Type.Number);
+        }
+
+        [TestMethod]
+        public void NumAbs()
+        {
+            var sat = BuildModel("a = abs(4) b = abs(-5)");
+            AssertValue(sat, "a[0]", 4);
+            AssertValue(sat, "b[0]", 5);
+        }
+
+        [TestMethod]
+        public void NumSine()
+        {
+            var sat = BuildModel("a = Sin(90)");
+
+            AssertValue(sat, "a[0]", -1, false);
+            AssertValue(sat, "a[0]", 0, false);
+            AssertValue(sat, "a[0]", 1, false);
+        }
+
+        [TestMethod]
+        public void NumCosine()
+        {
+            var sat = BuildModel("a = Cos(90)");
+
+            AssertValue(sat, "a[0]", -1, false);
+            AssertValue(sat, "a[0]", 0, false);
+            AssertValue(sat, "a[0]", 1, false);
+        }
+
+        [TestMethod]
+        public void NumNot()
+        {
+            var sat = BuildModel("a = not 1 b = not 0");
+
+            AssertValue(sat, "a[0]", 0);
+            AssertValue(sat, "b[0]", 1);
+        }
+
+        [TestMethod]
+        public void StrNot()
+        {
+            var sat = BuildModel("a = not \"a\"");
+
+            AssertValue(sat, "a[0]", 0);
+        }
+
+        [TestMethod]
+        public void Goto()
+        {
+            var sat = BuildModel("a = not 3 goto a");
+
+            AssertValue(sat, sat.TryGetGotoVariable(), 0);
         }
     }
 }

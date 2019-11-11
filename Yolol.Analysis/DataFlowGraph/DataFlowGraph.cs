@@ -363,6 +363,8 @@ namespace Yolol.Analysis.DataFlowGraph
 
             protected override IDataFlowGraphExpressionNode Visit(And and) => VisitBinary(and, YololBinaryOp.And);
 
+            protected override IDataFlowGraphExpressionNode Visit([NotNull] Not not) => VisitUnary(new UnaryOp(Guid.NewGuid(), "not", Visit(not.Parameter), a => new Not(a)));
+
             protected override IDataFlowGraphExpressionNode Visit(ErrorExpression err)
             {
                 throw new NotImplementedException();

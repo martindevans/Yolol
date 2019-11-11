@@ -69,6 +69,7 @@ namespace Yolol.Analysis.TreeVisitor
 
                 case Or a:  return Visit(a);
                 case And a: return Visit(a);
+                case Not a: return Visit(a);
 
                 case Variable a:       return Visit(a);
                 case ConstantNumber a: return Visit(a);
@@ -98,6 +99,12 @@ namespace Yolol.Analysis.TreeVisitor
         [NotNull] protected virtual BaseExpression Visit([NotNull] And and)
         {
             return new And(Visit(and.Left), Visit(and.Right));
+        }
+
+        [NotNull]
+        protected virtual BaseExpression Visit([NotNull] Not not)
+        {
+            return new Not(Visit(not.Parameter));
         }
 
         [NotNull] protected virtual BaseExpression Visit([NotNull] ErrorExpression err)

@@ -18,6 +18,8 @@ namespace Yolol.Analysis.SAT
 
         private Dictionary<VariableName, ModelVariable> _variableMapping = new Dictionary<VariableName, ModelVariable>();
 
+        private bool _finalGoto;
+
         internal Model(Context context, Solver solver)
         {
             Context = context;
@@ -64,9 +66,20 @@ namespace Yolol.Analysis.SAT
             return Context.MkInt((value * 1000).ToString());
         }
 
+        public ModelVariable GetGotoVariable()
+        {
+            var g = GetOrCreateVariable(new VariableName("goto"));
+            _finalGoto = true;
+            return g;
+
+            throw new NotImplementedException();
+        }
+
         public IModelVariable TryGetGotoVariable()
         {
-            throw new NotImplementedException();
+            if (_finalGoto)
+                return TryGetVariable(new VariableName("goto"));
+            return null;
         }
 
         public IModelVariable TryGetConditionalVariable()

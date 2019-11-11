@@ -1,12 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using JetBrains.Annotations;
 using Microsoft.Z3;
+using Yolol.Analysis.ControlFlowGraph.AST;
 using Yolol.Analysis.SAT.Extensions;
 using Yolol.Execution;
 using Yolol.Grammar;
 using Yolol.Grammar.AST.Expressions;
 using Yolol.Grammar.AST.Expressions.Binary;
+using Yolol.Grammar.AST.Expressions.Unary;
+
 using Type = Yolol.Execution.Type;
 using Variable = Yolol.Grammar.AST.Expressions.Variable;
 
@@ -54,7 +56,6 @@ namespace Yolol.Analysis.SAT
                     throw new InvalidOperationException($"Unknown type `{value.Type}` for value");
             }
         }
-
 
         internal void AssertEq(ModelVariable modelVariable)
         {
@@ -171,6 +172,22 @@ namespace Yolol.Analysis.SAT
                 ))));
             }
 
+            (BoolExpr str, BoolExpr num) UnaryTypes(BaseUnaryExpression unary, DatatypeExpr n, DatatypeExpr s)
+            {
+                var i = GetOrCreateVar(unary.Parameter);
+
+                // set up type checks for the cases
+                var str = ctx.MkEq(i._type, m.StrType);
+                var num = ctx.MkEq(i._type, m.NumType);
+
+                if (n != null)
+                    sol.Assert(ctx.MkImplies(num, ctx.MkEq(_type, n)));
+                if (s != null)
+                    sol.Assert(ctx.MkImplies(str, ctx.MkEq(_type, s)));
+
+                return (str, num);
+            }
+
             switch (expr)
             {
                 case ConstantNumber num:
@@ -270,10 +287,10 @@ namespace Yolol.Analysis.SAT
                     }
 
                 case Exponent exp:
-                    throw new NotImplementedException();
+                    throw new NotImplementedException("exponent");
 
                 case Modulo mod:
-                    throw new NotImplementedException();
+                    throw new NotImplementedException("modulo");
 
                 case EqualTo eq:
                     {
@@ -323,6 +340,141 @@ namespace Yolol.Analysis.SAT
                         return;
                     }
 
+                case Abs abs:
+                    {
+                        var (str, num) = UnaryTypes(abs, m.NumType, null);
+
+                        var i = GetOrCreateVar(abs.Parameter);
+
+                        // Value is tained if parameter is tainted, or we have an uncomputable type input
+                        sol.Assert(ctx.MkEq(_valTaint, i._valTaint | str));
+
+                        // Assert number value if type is number
+                        sol.Assert(ctx.MkImplies(!_valTaint & num, ctx.MkEq(_numValue, ctx.MkITE(i._numValue < 0, -i._numValue, i._numValue))));
+
+                        return;
+                    }
+
+                case ArcCos acos:
+                    throw new NotImplementedException("acos");
+
+                case ArcSine asin:
+                    throw new NotImplementedException("asin");
+
+                case ArcTan atan:
+                    throw new NotImplementedException("atan");
+
+                case Cosine cos:
+                    {
+                        var (str, num) = UnaryTypes(cos, m.NumType, null);
+
+                        var i = GetOrCreateVar(cos.Parameter);
+
+                        // Value is tained if parameter is tainted, or we have an uncomputable type input
+                        sol.Assert(ctx.MkEq(_valTaint, i._valTaint | str));
+
+                        // Z3 cannot reason about trancendental functions, assert range of result
+                        sol.Assert(ctx.MkImplies(!_valTaint & num, _numValue >= ctx.MkInt(-1000) & _numValue <= ctx.MkInt(1000)));
+
+                        return;
+                    }
+
+                case Sine sin:
+                    {
+                        var (str, num) = UnaryTypes(sin, m.NumType, null);
+
+                        var i = GetOrCreateVar(sin.Parameter);
+
+                        // Value is tained if parameter is tainted, or we have an uncomputable type input
+                        sol.Assert(ctx.MkEq(_valTaint, i._valTaint | str));
+
+                        // Z3 cannot reason about trancendental functions, assert range of result
+                        sol.Assert(ctx.MkImplies(!_valTaint & num, _numValue >= ctx.MkInt(-1000) & _numValue <= ctx.MkInt(1000)));
+
+                        return;
+                    }
+
+                case Tangent tan:
+                    throw new NotImplementedException("tan");
+
+                case Negate neg:
+                    {
+                        var (str, num) = UnaryTypes(neg, m.NumType, null);
+
+                        var i = GetOrCreateVar(neg.Parameter);
+
+                        // Value is tained if parameter is tainted, or we have an uncomputable type input
+                        sol.Assert(ctx.MkEq(_valTaint, i._valTaint | str));
+
+                        // Assert number value if type is number
+                        sol.Assert(ctx.MkImplies(!_valTaint & num, ctx.MkEq(_numValue, -i._numValue)));
+
+                        return;
+                    }
+
+                case Not not:
+                    {
+                        var (str, num) = UnaryTypes(not, m.NumType, m.NumType);
+
+                        var i = GetOrCreateVar(not.Parameter);
+
+                        // logical are always 0 or 1 (multiplied by 1000 like all numbers)
+                        sol.Assert(ctx.MkEq(ctx.MkInt(0), _numValue) | ctx.MkEq(ctx.MkInt(1000), _numValue));
+
+                        // All strings are considered true so `not "any_str" == 0`, with no taint
+                        sol.Assert(ctx.MkImplies(str, ctx.MkNot(_valTaint)));
+                        sol.Assert(ctx.MkImplies(str, ctx.MkEq(_numValue, ctx.MkInt(0))));
+
+                        // If type is number and value is tainted then this value is also tainted
+                        sol.Assert(ctx.MkImplies(num & i._valTaint, _valTaint));
+
+                        // Assert not tainted and the final number value if possible
+                        sol.Assert(ctx.MkImplies(num & !i._valTaint, ctx.MkNot(_valTaint)));
+                        sol.Assert(ctx.MkImplies(num & !i._valTaint, ctx.MkEq(_numValue, ctx.MkITE(ctx.MkEq(i._numValue, ctx.MkInt(0)), ctx.MkInt(1000), ctx.MkInt(0)))));
+
+                        return;
+                    }
+
+                case Sqrt sqrt:
+                    {
+                        var (str, num) = UnaryTypes(sqrt, m.NumType, null);
+
+                        var i = GetOrCreateVar(sqrt.Parameter);
+
+                        // Z3 cannot calculate square root, so we have to taint the value
+                        sol.Assert(_valTaint);
+
+                        // Z3 can compute square roots like this:
+                        //
+                        //    var num = (IntExpr)ctx.MkConst("num", ctx.IntSort);
+                        //    var sqrt = (IntExpr)ctx.MkConst("lil", ctx.IntSort);
+                        //    solver.Assert(sqrt * sqrt / 1000 <= num);
+                        //    solver.Assert((sqrt + 1) * (sqrt + 1) / 1000 >= num);
+                        //    solver.Assert(ctx.MkEq(big, ctx.MkInt(7000)));
+                        //    solver.Assert(sqrt >= ctx.MkInt(0));
+                        //
+                        // Here `sqrt` will have the value of the sqrt of num (7.000), in this example `2.645`.
+                        //
+                        // However, calculating this seems to be _extremely_ slow for Z3. Just this simple case
+                        // is enough to confuse z3 and cause it to timeout sometimes!
+
+                        return;
+                    }
+
+                case Decrement dec:
+                    throw new NotImplementedException("dec");
+
+                case Increment inc:
+                    throw new NotImplementedException("inc");
+
+                case Phi phi:
+                    throw new NotImplementedException("phi");
+
+                case ErrorExpression err:
+                    throw new NotImplementedException("err");
+
+
+
                 default:
                     // It's not known how to handle this expression, so just taint it
                     sol.Assert(ctx.MkEq(_valTaint, ctx.MkTrue()));
@@ -331,7 +483,7 @@ namespace Yolol.Analysis.SAT
             }
         }
 
-        [NotNull]         ModelVariable GetOrCreateVar([NotNull] BaseExpression sub)
+        [NotNull] ModelVariable GetOrCreateVar([NotNull] BaseExpression sub)
         {
             if (sub is Variable var)
                 return _model.GetOrCreateVariable(var.Name);

@@ -45,6 +45,7 @@ namespace Yolol.Analysis.TreeVisitor
 
                 case Or a:  return Visit(a);
                 case And a: return Visit(a);
+                case Not a: return Visit(a);
 
                 case Variable a:       return Visit(a);
                 case ConstantNumber a: return Visit(a);
@@ -69,6 +70,8 @@ namespace Yolol.Analysis.TreeVisitor
         [NotNull] protected abstract TResult Visit([NotNull] Or or);
 
         [NotNull] protected abstract TResult Visit([NotNull] And and);
+
+        [NotNull] protected abstract TResult Visit([NotNull] Not not);
 
         [NotNull] protected abstract TResult Visit([NotNull] ErrorExpression err);
 

@@ -62,7 +62,8 @@ namespace Yolol.Analysis.SAT
 
         private static void Assert(Model model, Goto @goto)
         {
-            throw new NotImplementedException();
+            var d = model.GetGotoVariable();
+            d.AssertEq(@goto.Destination);
         }
 
         private static void Assert([NotNull] Model model, [NotNull] ITypeAssignments types, [NotNull] Assignment assignment)
