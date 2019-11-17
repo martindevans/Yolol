@@ -24,7 +24,7 @@ namespace YololEmulator.Tests
         {
             Assert.AreEqual(Type.String, v.Type);
             Assert.AreEqual(s, v.String);
-            Assert.AreEqual($"\"{s}\"", v.ToString());
+            Assert.AreEqual(s, v.ToString());
 
             Assert.ThrowsException<InvalidCastException>(() => {
                 var _ = v.Number;

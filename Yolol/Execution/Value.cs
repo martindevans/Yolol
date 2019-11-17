@@ -71,7 +71,7 @@ namespace Yolol.Execution
             if (Type == Type.Number)
                 return Number.ToString(CultureInfo.InvariantCulture);
 
-            return $"\"{String}\"";
+            return String;
         }
 
         public bool ToBool()

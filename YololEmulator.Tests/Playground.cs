@@ -399,5 +399,25 @@ namespace YololEmulator.Tests
 
         //    Assert.AreEqual("", y);
         //}
+
+        [TestMethod]
+        public void OTP()
+        {
+            var state = TestExecutor.Execute(
+                "odd=\"13579x\" :r=\"\"",
+                "key = \"123235848934589456891326753\"",
+                "msg = \"547575\"",
+                "goto (((msg==\"\")+(key==\"\"))>0)*4+5",
+                "mc = msg---msg kc = key---key",
+                "mn = 2*((mc>1)+(mc>3)+(mc>5)+(mc>7))+(odd<(odd-mc))",
+                "kn = 2*((kc>1)+(kc>3)+(kc>5)+(kc>7))+(odd<(odd-kc))",
+                ":r += (mn + kn) % 10 goto 4"
+            );
+
+            var r = state.GetVariable(":r").Value;
+            Console.WriteLine(r);
+
+            Assert.AreEqual("822368", r.String);
+        }
     }
 }

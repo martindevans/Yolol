@@ -14,7 +14,9 @@ namespace YololEmulator.Tests.AST
 
             Assert.IsTrue(a == b);
             // ReSharper disable once EqualExpressionComparison
+#pragma warning disable CS1718 // Comparison made to same variable
             Assert.IsTrue(a == a);
+#pragma warning restore CS1718 // Comparison made to same variable
 
             Assert.IsTrue(a.Equals(b));
             Assert.IsTrue(a.Equals(a));

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
     <Authors>Martin Evans</Authors>
     <Company>Martin Evans</Company>
     <Description>Parsing and interpreting of the Yolol language.</Description>
@@ -9,6 +9,7 @@
     <PackageProjectUrl>https://github.com/martindevans/Yolol</PackageProjectUrl>
     <RepositoryUrl>https://github.com/martindevans/Yolol</RepositoryUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>2.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
