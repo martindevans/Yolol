@@ -14,27 +14,9 @@ namespace Yolol.Grammar.AST.Expressions.Binary
         {
         }
 
-        protected override Value Evaluate(string l, string r)
+        protected override Value Evaluate(Value l, Value r)
         {
-            throw new ExecutionException("Attempted to modulo strings");
-        }
-
-        protected override Value Evaluate(Number l, Number r)
-        {
-            if (r == 0)
-                throw new ExecutionException("Divide by zero");
-
-            return new Value(l.Value % r.Value);
-        }
-
-        protected override Value Evaluate(string l, Number r)
-        {
-            throw new ExecutionException("Attempted to modulo mixed types");
-        }
-
-        protected override Value Evaluate(Number l, string r)
-        {
-            throw new ExecutionException("Attempted to modulo mixed types");
+            return l % r;
         }
 
         public bool Equals(Modulo other)

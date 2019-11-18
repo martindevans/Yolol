@@ -20,29 +20,14 @@ namespace Yolol.Grammar.AST.Expressions.Binary
             Right = right;
         }
 
-        protected abstract Value Evaluate([NotNull] string l, [NotNull] string r);
-
-        protected abstract Value Evaluate(Number l, Number r);
-
-        protected abstract Value Evaluate([NotNull] string l, Number r);
-
-        protected abstract Value Evaluate(Number l, [NotNull] string r);
+        protected abstract Value Evaluate(Value left, Value right);
 
         public override Value Evaluate(MachineState state)
         {
             var l = Left.Evaluate(state);
             var r = Right.Evaluate(state);
 
-            if (l.Type == Type.Number && r.Type == Type.Number)
-                return Evaluate(l.Number, r.Number);
-
-            if (l.Type == Type.String && r.Type == Type.String)
-                return Evaluate(l.String, r.String);
-
-            if (l.Type == Type.Number)
-                return Evaluate(l.Number, r.String);
-
-            return Evaluate(l.String, r.Number);
+            return Evaluate(l, r);
         }
 
         [NotNull] public static BaseExpression Create(YololBinaryOp op, [NotNull] BaseExpression lhs, [NotNull] BaseExpression rhs)

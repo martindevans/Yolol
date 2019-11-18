@@ -75,10 +75,10 @@ namespace YololEmulator.Tests.SAT
             var aNum = new Value(19);
             var bNum = new Value(20);
 
-            if (v != aString) Assert.IsFalse(a.CanBeValue(aString), "Can be string it should not be");
-            if (v != bString) Assert.IsFalse(a.CanBeValue(bString), "Can be string it should not be");
-            if (v != aNum) Assert.IsFalse(a.CanBeValue(aNum), "Can be num it should not be");
-            if (v != bNum) Assert.IsFalse(a.CanBeValue(bNum), "Can be num it should not be");
+            if (!v.Equals(aString)) Assert.IsFalse(a.CanBeValue(aString), "Can be string it should not be");
+            if (!v.Equals(bString)) Assert.IsFalse(a.CanBeValue(bString), "Can be string it should not be");
+            if (!v.Equals(aNum)) Assert.IsFalse(a.CanBeValue(aNum), "Can be num it should not be");
+            if (!v.Equals(bNum)) Assert.IsFalse(a.CanBeValue(bNum), "Can be num it should not be");
 
             Assert.IsTrue(a.CanBeValue(v), "Can be value");
 

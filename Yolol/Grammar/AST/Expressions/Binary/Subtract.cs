@@ -14,29 +14,9 @@ namespace Yolol.Grammar.AST.Expressions.Binary
         {
         }
 
-        protected override Value Evaluate(string l, string r)
+        protected override Value Evaluate(Value l, Value r)
         {
-            var index = l.LastIndexOf(r, StringComparison.Ordinal);
-
-            if (index == -1)
-                return new Value(l);
-            else
-                return new Value(l.Remove(index, r.Length));
-        }
-
-        protected override Value Evaluate(Number l, Number r)
-        {
-            return new Value(l - r);
-        }
-
-        protected override Value Evaluate(string l, Number r)
-        {
-            return Evaluate(l, r.ToString());
-        }
-
-        protected override Value Evaluate(Number l, string r)
-        {
-            return Evaluate(l.ToString(), r);
+            return l - r;
         }
 
         public bool Equals(Subtract other)

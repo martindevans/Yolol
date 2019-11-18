@@ -65,6 +65,9 @@ namespace Yolol.Execution
 
         public static Number operator /(Number l, Number r)
         {
+            if (r == 0)
+                throw new ExecutionException("Divide by zero");
+
             return new Number(l.Value / r.Value);
         }
 

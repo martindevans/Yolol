@@ -16,24 +16,9 @@ namespace Yolol.Grammar.AST.Expressions.Binary
         {
         }
 
-        protected override Value Evaluate(string l, string r)
+        protected override Value Evaluate(Value l, Value r)
         {
-            return new Value(l.Equals(r, StringComparison.OrdinalIgnoreCase) ? 1 : 0);
-        }
-
-        protected override Value Evaluate(Number l, Number r)
-        {
-            return new Value(l == r ? 1 : 0);
-        }
-
-        protected override Value Evaluate(string l, Number r)
-        {
-            return 0;
-        }
-
-        protected override Value Evaluate(Number l, string r)
-        {
-            return 0;
+            return l == r;
         }
 
         public bool Equals(EqualTo other)

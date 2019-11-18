@@ -56,8 +56,6 @@ namespace YololEmulator.Tests
 
             Assert.AreEqual(a1.ToObject(), a2.ToObject());
             Assert.AreEqual(a1, a2);
-            Assert.IsTrue(a1 != b);
-            Assert.IsTrue(a1 == a2);
 
             Assert.AreEqual(a1.GetHashCode(), a2.GetHashCode());
         }
@@ -71,8 +69,6 @@ namespace YololEmulator.Tests
 
             Assert.AreEqual(a1.ToObject(), a2.ToObject());
             Assert.AreEqual(a1, a2);
-            Assert.IsTrue(a1 != b);
-            Assert.IsTrue(a1 == a2);
 
             Assert.AreEqual(a1.GetHashCode(), a2.GetHashCode());
         }
@@ -86,8 +82,6 @@ namespace YololEmulator.Tests
 
             Assert.AreEqual(a1.ToObject(), a2.ToObject());
             Assert.AreEqual(a1, a2);
-            Assert.IsTrue(a1 != b);
-            Assert.IsTrue(a1 == a2);
 
             Assert.AreEqual(a1.GetHashCode(), a2.GetHashCode());
         }

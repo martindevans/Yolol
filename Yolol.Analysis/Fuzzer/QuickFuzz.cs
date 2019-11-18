@@ -191,7 +191,7 @@ namespace Yolol.Analysis.Fuzzer
                     return false;
 
                 for (var i = 0; i < Sets.Count; i++)
-                    if (Sets[i] != other.Sets[i])
+                    if (!Sets[i].Equals(other.Sets[i]))
                         return false;
 
                 return true;

@@ -34,24 +34,9 @@ namespace Yolol.Grammar.AST.Expressions.Binary
             return $"{Left} and {Right}";
         }
 
-        protected override Value Evaluate(string l, string r)
+        protected override Value Evaluate(Value l, Value r)
         {
-            return new Value(true);
-        }
-
-        protected override Value Evaluate(Number l, Number r)
-        {
-            return new Value(l != 0 && r != 0);
-        }
-
-        protected override Value Evaluate(string l, Number r)
-        {
-            return new Value(r != 0);
-        }
-
-        protected override Value Evaluate(Number l, string r)
-        {
-            return new Value(l != 0);
+            return l & r;
         }
     }
 }

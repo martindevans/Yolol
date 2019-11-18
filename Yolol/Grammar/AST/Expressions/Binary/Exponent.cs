@@ -14,32 +14,9 @@ namespace Yolol.Grammar.AST.Expressions.Binary
         {
         }
 
-        protected override Value Evaluate(string l, string r)
+        protected override Value Evaluate(Value l, Value r)
         {
-            throw new ExecutionException("Attempted to exponent strings");
-        }
-
-        protected override Value Evaluate(Number l, Number r)
-        {
-            var v = Math.Pow((double)l.Value, (double)r.Value);
-
-            if (double.IsPositiveInfinity(v))
-                return new Value(Number.MaxValue);
-
-            if (double.IsNegativeInfinity(v) || double.IsNaN(v))
-                return new Value(Number.MinValue);
-
-            return new Value((decimal)v);
-        }
-
-        protected override Value Evaluate(string l, Number r)
-        {
-            throw new ExecutionException("Attempted to exponent mixed types");
-        }
-
-        protected override Value Evaluate(Number l, string r)
-        {
-            throw new ExecutionException("Attempted to exponent mixed types");
+            return Value.Exponent(l, r);
         }
 
         public bool Equals(Exponent other)

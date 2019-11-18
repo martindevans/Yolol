@@ -32,7 +32,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
             if (next < 1 || next > 20)
                 next = 1;
 
-            if (destination != next)
+            if (!destination.Equals(next))
                 return base.Visit(line);
 
             return base.Visit(new Line(new StatementList(line.Statements.Statements.Take(line.Statements.Statements.Count - 1))));

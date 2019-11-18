@@ -42,7 +42,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
 
                 case Type.Number: {
 
-                    if (right != 1)
+                    if (!right.Value.Equals(1))
                         return base.Visit(compAss);
 
                     if (compAss.Op == Grammar.YololBinaryOp.Add)
@@ -53,7 +53,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
 
                 case Type.String: {
 
-                    if (right != " " || compAss.Op != Grammar.YololBinaryOp.Add)
+                    if (!right.Value.Equals(" ") || compAss.Op != Grammar.YololBinaryOp.Add)
                         return base.Visit(compAss);
 
                     return new Assignment(compAss.Left, new Increment(compAss.Left));

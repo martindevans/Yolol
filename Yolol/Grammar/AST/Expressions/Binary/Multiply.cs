@@ -14,24 +14,9 @@ namespace Yolol.Grammar.AST.Expressions.Binary
         {
         }
 
-        protected override Value Evaluate(string l, string r)
+        protected override Value Evaluate(Value l, Value r)
         {
-            throw new ExecutionException("Attempted to multiply strings");
-        }
-
-        protected override Value Evaluate(Number l, Number r)
-        {
-            return new Value(l * r);
-        }
-
-        protected override Value Evaluate(string l, Number r)
-        {
-            throw new ExecutionException("Attempted to multiply mixed types");
-        }
-
-        protected override Value Evaluate(Number l, string r)
-        {
-            throw new ExecutionException("Attempted to multiply mixed types");
+            return l * r;
         }
 
         public bool Equals(Multiply other)
