@@ -11,7 +11,7 @@ namespace Yolol.Grammar.AST.Expressions.Unary
         {
         }
 
-        protected override Value Modify(Value value)
+        protected override Value Evaluate(Value value)
         {
             if (value.Type == Type.Number)
                 return new Value(value.Number - 1);

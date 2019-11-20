@@ -1,5 +1,6 @@
 ﻿using System;
 using JetBrains.Annotations;
+using Yolol.Execution;
 
 namespace Yolol.Grammar.AST.Expressions.Unary
 {
@@ -7,13 +8,13 @@ namespace Yolol.Grammar.AST.Expressions.Unary
         : BaseTrigonometry, IEquatable<ArcCos>
     {
         public ArcCos([NotNull] BaseExpression parameter)
-            : base(parameter, "acos", false, true)
+            : base(parameter, "acos")
         {
         }
 
-        protected override double Evaluate(double value)
+        protected override Value Evaluate(Value value)
         {
-            return Math.Acos(value);
+            return Value.ArcCos(value);
         }
 
         public bool Equals(ArcCos other)

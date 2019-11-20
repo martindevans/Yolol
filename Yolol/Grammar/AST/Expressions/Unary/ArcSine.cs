@@ -1,5 +1,6 @@
 ﻿using System;
 using JetBrains.Annotations;
+using Yolol.Execution;
 
 namespace Yolol.Grammar.AST.Expressions.Unary
 {
@@ -7,13 +8,13 @@ namespace Yolol.Grammar.AST.Expressions.Unary
         : BaseTrigonometry, IEquatable<ArcSine>
     {
         public ArcSine([NotNull] BaseExpression parameter)
-            : base(parameter, "asin", false, true)
+            : base(parameter, "asin")
         {
         }
 
-        protected override double Evaluate(double value)
+        protected override Value Evaluate(Value value)
         {
-            return Math.Asin(value);
+            return Value.ArcSin(value);
         }
 
         public bool Equals(ArcSine other)

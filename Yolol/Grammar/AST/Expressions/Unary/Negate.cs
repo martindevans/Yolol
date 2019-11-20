@@ -1,7 +1,6 @@
 ﻿using System;
 using JetBrains.Annotations;
 using Yolol.Execution;
-using Type = Yolol.Execution.Type;
 
 namespace Yolol.Grammar.AST.Expressions.Unary
 {
@@ -12,17 +11,12 @@ namespace Yolol.Grammar.AST.Expressions.Unary
 
         public override bool IsBoolean => false;
 
-        public Negate([NotNull] BaseExpression parameter) : base(parameter) { }
-
-        protected override Value Evaluate([NotNull] string parameterValue)
+        public Negate([NotNull] BaseExpression parameter)
+            : base(parameter)
         {
-            throw new ExecutionException("Attempted to negate a String value");
         }
 
-        protected override Value Evaluate(Number parameterValue)
-        {
-            return new Value(-parameterValue);
-        }
+        protected override Value Evaluate(Value value) => -value;
 
         public bool Equals(Negate other)
         {

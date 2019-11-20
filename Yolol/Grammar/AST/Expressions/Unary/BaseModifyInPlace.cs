@@ -26,24 +26,12 @@ namespace Yolol.Grammar.AST.Expressions.Unary
             PreOp = pre;
         }
 
-        protected abstract Value Modify(Value value);
-
-        protected override Value Evaluate([NotNull] string parameterValue)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override Value Evaluate(Number parameterValue)
-        {
-            throw new NotImplementedException();
-        }
-
         public override Value Evaluate(MachineState state)
         {
             var variable = state.GetVariable(Name);
 
             var original = variable.Value;
-            var modified = Modify(original);
+            var modified = Evaluate(original);
 
             variable.Value = modified;
 

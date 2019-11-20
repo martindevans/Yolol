@@ -13,20 +13,12 @@ namespace Yolol.Grammar.AST.Expressions.Unary
 
         public override bool IsConstant => Parameter.IsConstant;
 
-        public Sqrt([NotNull] BaseExpression parameter): base(parameter) { }
-
-        protected override Value Evaluate([NotNull] string parameterValue)
+        public Sqrt([NotNull] BaseExpression parameter)
+            : base(parameter)
         {
-            throw new ExecutionException("Attempted to Sqrt a string value");
         }
 
-        protected override Value Evaluate(Number parameterValue)
-        {
-            if (parameterValue < 0)
-                throw new ExecutionException("Attempted to Sqrt a negative value");
-
-            return (decimal)Math.Sqrt((double)parameterValue.Value);
-        }
+        protected override Value Evaluate(Value value) => Value.Sqrt(value);
 
         public bool Equals(Sqrt other)
         {

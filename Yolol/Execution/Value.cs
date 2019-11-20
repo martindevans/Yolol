@@ -329,6 +329,107 @@ namespace Yolol.Execution
             }
         }
 
+        public static Value operator !(Value value)
+        {
+            return value == 0;
+        }
+
+        public static Value operator -(Value value)
+        {
+            if (value.Type == Type.Number)
+                return new Value(-value.Number);
+            else
+                throw new ExecutionException("Attempted to negate a String value");
+        }
+
+        public static Value Abs(Value value)
+        {
+            if (value.Type == Type.Number)
+            {
+                if (value.Number < 0)
+                    return -value;
+                else
+                    return value;
+            }
+            else
+            {
+                throw new ExecutionException("Attempted to Abs a string value");
+            }
+        }
+
+        public static Value Sqrt(Value value)
+        {
+            if (value.Type == Type.Number)
+            {
+                if (value.Number < 0)
+                    throw new ExecutionException("Attempted to Sqrt a negative value");
+
+                return (decimal)Math.Sqrt((double)value.Number.Value);
+            }
+            else
+            {
+                throw new ExecutionException("Attempted to Sqrt a string value");
+            }
+        }
+
+        private static decimal ToDegrees(double radians)
+        {
+            return (decimal)(radians * (180.0 / Math.PI));
+        }
+
+        private static double ToRadians(decimal degrees)
+        {
+            return Math.PI * (double)degrees / 180.0;
+        }
+
+        public static Value Sin(Value value)
+        {
+            if (value.Type == Type.String)
+                throw new ExecutionException($"Attempted to `Sin` a string value");
+
+            return new Value((decimal)Math.Sin(ToRadians(value.Number.Value)));
+        }
+
+        public static Value Cos(Value value)
+        {
+            if (value.Type == Type.String)
+                throw new ExecutionException($"Attempted to `Cos` a string value");
+
+            return new Value((decimal)Math.Cos(ToRadians(value.Number.Value)));
+        }
+
+        public static Value Tan(Value value)
+        {
+            if (value.Type == Type.String)
+                throw new ExecutionException($"Attempted to `Tan` a string value");
+
+            return new Value((decimal)Math.Tan(ToRadians(value.Number.Value)));
+        }
+
+        public static Value ArcTan(Value value)
+        {
+            if (value.Type == Type.String)
+                throw new ExecutionException($"Attempted to `ATan` a string value");
+
+            return new Value(ToDegrees(Math.Atan((double)value.Number.Value)));
+        }
+
+        public static Value ArcSin(Value value)
+        {
+            if (value.Type == Type.String)
+                throw new ExecutionException($"Attempted to `ASin` a string value");
+
+            return new Value(ToDegrees(Math.Asin((double)value.Number.Value)));
+        }
+
+        public static Value ArcCos(Value value)
+        {
+            if (value.Type == Type.String)
+                throw new ExecutionException($"Attempted to `ACos` a string value");
+
+            return new Value(ToDegrees(Math.Acos((double)value.Number.Value)));
+        }
+
         [NotNull] public BaseExpression ToConstant()
         {
             if (Type == Type.Number)

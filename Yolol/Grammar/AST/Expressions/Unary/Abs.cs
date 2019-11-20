@@ -1,7 +1,6 @@
 ﻿using System;
 using JetBrains.Annotations;
 using Yolol.Execution;
-using Type = Yolol.Execution.Type;
 
 namespace Yolol.Grammar.AST.Expressions.Unary
 {
@@ -14,20 +13,12 @@ namespace Yolol.Grammar.AST.Expressions.Unary
 
         public override bool IsConstant => Parameter.IsConstant;
 
-        public Abs([NotNull] BaseExpression parameter):base(parameter) { }
-
-        protected override Value Evaluate(string parameterValue)
+        public Abs([NotNull] BaseExpression parameter)
+            : base(parameter)
         {
-            throw new ExecutionException("Attempted to Abs a string value");
         }
 
-        protected override Value Evaluate(Number parameterValue)
-        {
-            if (parameterValue < 0)
-                return new Value(-parameterValue);
-            else
-                return new Value(parameterValue);
-        }
+        protected override Value Evaluate(Value value) => Value.Abs(value);
 
         public bool Equals(Abs other)
         {

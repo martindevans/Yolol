@@ -17,23 +17,12 @@ namespace Yolol.Grammar.AST.Expressions.Unary
             Parameter = parameter;
         }
 
-        protected abstract Value Evaluate([NotNull] string parameterValue);
-
-        protected abstract Value Evaluate(Number parameterValue);
+        protected abstract Value Evaluate(Value value);
 
         public override Value Evaluate(MachineState state)
         {
-            var parameterValue = Parameter.Evaluate(state);
-
-            switch (parameterValue.Type)
-            {
-                case Type.String:
-                    return Evaluate(parameterValue.String);
-                case Type.Number:
-                    return Evaluate(parameterValue.Number);
-                default:
-                    throw new InvalidOperationException($"Unknown type `{parameterValue.Type}` encountered evaluating `{GetType().Name}`");
-            }
+            var value = Parameter.Evaluate(state);
+            return Evaluate(value);
         }
     }
 }

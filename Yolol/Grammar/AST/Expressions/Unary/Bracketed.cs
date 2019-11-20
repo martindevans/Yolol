@@ -12,18 +12,13 @@ namespace Yolol.Grammar.AST.Expressions.Unary
         public override bool IsBoolean => Parameter.IsBoolean;
 
 
-        public Bracketed([NotNull] BaseExpression parameter) : base(parameter) { }
-
-        protected override Value Evaluate(string parameterValue)
+        public Bracketed([NotNull] BaseExpression parameter)
+            : base(parameter)
         {
-            return new Value(parameterValue);
         }
 
-        protected override Value Evaluate(Number parameterValue)
-        {
-            return new Value(parameterValue);
-        }
-        
+        protected override Value Evaluate(Value value) => value;
+
         public bool Equals(Bracketed other)
         {
             return other != null

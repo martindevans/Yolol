@@ -11,17 +11,12 @@ namespace Yolol.Grammar.AST.Expressions.Unary
 
         public override bool IsBoolean => true;
 
-        public Not([NotNull] BaseExpression parameter): base(parameter) { }
-
-        protected override Value Evaluate([NotNull] string parameterValue)
+        public Not([NotNull] BaseExpression parameter)
+            : base(parameter)
         {
-            return new Value(false);
         }
 
-        protected override Value Evaluate(Number parameterValue)
-        {
-            return new Value(parameterValue.Value == 0);
-        }
+        protected override Value Evaluate(Value value) => !value;
 
         public bool Equals(Not other)
         {
