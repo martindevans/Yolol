@@ -306,6 +306,25 @@ namespace Yolol.Execution
             }
         }
 
+        public static Value operator ++(Value value)
+        {
+            if (value.Type == Type.Number)
+                return new Value(value.Number + 1);
+
+            return new Value(value.String + " ");
+        }
+
+        public static Value operator --(Value value)
+        {
+            if (value.Type == Type.Number)
+                return new Value(value.Number - 1);
+
+            if (value.String == "")
+                throw new ExecutionException("Attempted to decrement empty string");
+
+            return new Value(value.String.Substring(0, value.String.Length - 1));
+        }
+
         public static Value Exponent(Value left, Value right)
         {
             switch (left.Type, right.Type)

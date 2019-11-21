@@ -13,12 +13,7 @@ namespace Yolol.Grammar.AST.Expressions.Unary
 
         protected override Value Evaluate(Value value)
         {
-            if (value.Type == Type.Number)
-                return new Value(value.Number - 1);
-
-            if (value.String == "")
-                throw new ExecutionException("Attempted to decrement empty string");
-            return new Value(value.String.Substring(0, value.String.Length - 1));
+            return --value;
         }
     }
 }

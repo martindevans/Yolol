@@ -13,15 +13,7 @@ namespace Yolol.Grammar.AST.Expressions.Unary
 
         protected override Value Evaluate(Value value)
         {
-            if (value.Type == Type.Number)
-                return new Value(value.Number + 1);
-
-            if (value.Type == Type.String)
-                return new Value(value.String + " ");
-
-            //ncrunch: no coverage start
-            throw new ExecutionException($"Attempted to increment a variable of type `{value.Type}`");
-            //ncrunch: no coverage end
+            return ++value;
         }
     }
 }
