@@ -9,7 +9,7 @@ namespace Yolol.Execution
     public class MachineState
         : IEnumerable<KeyValuePair<string, IVariable>>
     {
-        internal ushort MaxLineNumber { get; }
+        public ushort MaxLineNumber { get; }
 
         private readonly IDeviceNetwork _network;
 

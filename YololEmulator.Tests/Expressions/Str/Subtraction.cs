@@ -16,6 +16,16 @@ namespace YololEmulator.Tests.Expressions.Str
         }
 
         [TestMethod]
+        public void ConstantConstant2()
+        {
+            var result = TestExecutor.Execute("a = \"doggo\" - \"o\"");
+
+            var a = result.GetVariable("a");
+
+            Assert.AreEqual("dogg", a.Value.String);
+        }
+
+        [TestMethod]
         public void ConstantConstant_NothingRemoved()
         {
             var result = TestExecutor.Execute("a = \"abc\" - \"d\"");

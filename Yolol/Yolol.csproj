@@ -9,7 +9,7 @@
     <PackageProjectUrl>https://github.com/martindevans/Yolol</PackageProjectUrl>
     <RepositoryUrl>https://github.com/martindevans/Yolol</RepositoryUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>2.4.0</Version>
+    <Version>2.5.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
