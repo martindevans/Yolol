@@ -142,7 +142,7 @@ namespace YololEmulator.Tests
         }
 
         [TestMethod]
-        public async Task CFG()
+        public async Task Optimisation()
         {
             //var ast = TestExecutor.Parse(
             //    "a = :a b = :b",
@@ -166,6 +166,31 @@ namespace YololEmulator.Tests
             //    "goto 1"
             //);
 
+            //var ast = TestExecutor.Parse(
+            //    "p = :p q = :q e = :e n = p * q phi = (p - 1) * (q - 1) t = 1",
+            //    "a = e b = p - 1 d = 0 s = 2",
+            //    "if (0 == a % 2 and 0 == b % 2) then a/= 2 b /= 2 d += 1 goto s+1 end",
+            //    "if a != b then if 0 == a % 2 then a/= 2 goto s+2 end else goto s+4 end",
+            //    "if 0 == b % 2 then b/= 2 else if a > b then a = (a - b) / 2 else b = (b - a) / 2 end end goto s+2",
+            //    "if a != 1 then :answer = \"error: p=\" + p goto 6 end",
+            //    "a = e b = q - 1 d = 0 s = 7",
+            //    "if (0 == a % 2 and 0 == b % 2) then a/= 2 b /= 2 d += 1 goto s+1 end",
+            //    "if a != b then if 0 == a % 2 then a/= 2 goto s+2 end else goto s+4 end",
+            //    "if 0 == b % 2 then b/= 2 else if a > b then a = (a - b) / 2 else b = (b - a) / 2 end end goto s+2",
+            //    "if a != 1 then :answer = \"error: q=\" + q goto 11 end",
+            //    "a = 36 b = phi d = 0 s = 12",
+            //    "if (0 == a % 2 and 0 == b % 2) then a/= 2 b /= 2 d += 1 goto s+1 end",
+            //    "if a != b then if 0 == a % 2 then a/= 2 goto s+2 end else goto s+4 end",
+            //    "if 0 == b % 2 then b/= 2 else if a > b then a = (a - b) / 2 else b = (b - a) / 2 end end goto s+2",
+            //    "if a != 1 then :answer = \"error: phi=\" + phi goto 16 end",
+            //    "if (1 % phi)== (t * e) % phi then goto 18 else t+=1 goto 17 end",  // changing t++ to t+=1 fixes the error (because of Phi nodes in Inc/Dec)
+            //    ":pubkey_n = n :pubkey_e = e :privkey_n = n :privkey_t = t goto 18",
+            //    "",
+            //    "",
+            //    ""  // Must add blank lines to keep quickfuzz happy
+            //);
+
+            // Fuzz fail because of yolol reconstruction adding additional blank lines. These lines are introduced because of `goto expr` type statements which _may_ jump to that line.
             var ast = TestExecutor.Parse(
                 "z = -1 z-- :a = z a = sin(:a * (z + 2)) a+=1 a /= z",
                 "flag=a==:a if not flag then goto 5 else goto 6 end b=0/0",
@@ -199,7 +224,7 @@ namespace YololEmulator.Tests
                 (new VariableName(":a"), Yolol.Execution.Type.Number)
             };
 
-            var p = new OptimisationPipeline(2, false, hints);
+            var p = new OptimisationPipeline(ast.Lines.Count, 2, false, hints);
             var r = await p.Apply(ast);
             Console.WriteLine("## Output");
             Console.WriteLine(r);

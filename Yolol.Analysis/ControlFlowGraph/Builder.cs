@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using JetBrains.Annotations;
 using Yolol.Analysis.ControlFlowGraph.AST;
 using Yolol.Analysis.TreeVisitor;
@@ -24,11 +25,19 @@ namespace Yolol.Analysis.ControlFlowGraph
     public class Builder
     {
         private readonly Program _program;
+        private readonly int _maxLines;
         private readonly Dictionary<long, IMutableBasicBlock> _lineStartBlocks = new Dictionary<long, IMutableBasicBlock>();
 
-        public Builder(Program program)
+        public Builder(Program program, int maxLines)
         {
             _program = program;
+            _maxLines = maxLines;
+        }
+
+        private void CheckValidity([NotNull] IControlFlowGraph cfg)
+        {
+            if (!cfg.Vertices.All(v => v.Outgoing.Any()))
+                throw new NotImplementedException();
         }
 
         [NotNull] public IControlFlowGraph Build()
@@ -44,8 +53,7 @@ namespace Yolol.Analysis.ControlFlowGraph
             var ast = new ProgramDecomposition(names).Visit(_program);
             ast = new FlattenStatementLists().Visit(ast);
 
-            //todo: add configurable max line number
-            for (var lineNumber = 1; lineNumber <= 20; lineNumber++)
+            for (var lineNumber = 1; lineNumber <= _maxLines; lineNumber++)
             {
                 var line = lineNumber > ast.Lines.Count ? new Line(new StatementList(Array.Empty<BaseStatement>())) : ast.Lines[lineNumber - 1];
                 var block = GetLineEntryBlock(cfg, lineNumber);
@@ -136,7 +144,7 @@ namespace Yolol.Analysis.ControlFlowGraph
                 if (dest.Type == Execution.Type.Number)
                 {
                     // We know exactly where this is going, jump to that line
-                    var line = Math.Clamp((int)dest.Number.Value, 1, 20);
+                    var line = Math.Clamp((int)dest.Number.Value, 1, _maxLines);
                     var destBlock = GetLineEntryBlock(cfg, line);
                     cfg.CreateEdge(block, destBlock, EdgeType.GotoConstNum);
                 }
@@ -149,14 +157,14 @@ namespace Yolol.Analysis.ControlFlowGraph
             else
             {
                 // We don't know where this is going, so goto every line
-                for (var j = 1; j <= 20; j++)
+                for (var j = 1; j <= _maxLines; j++)
                     cfg.CreateEdge(block, GetLineEntryBlock(cfg, j), EdgeType.GotoExpression);
             }
         }
 
         private void AddFallthrough([NotNull] IMutableControlFlowGraph cfg, [NotNull] IBasicBlock source, int currentLineNumber, EdgeType type = EdgeType.Continue)
         {
-            cfg.CreateEdge(source, GetLineEntryBlock(cfg, currentLineNumber == 20 ? 1 : currentLineNumber + 1), type);
+            cfg.CreateEdge(source, GetLineEntryBlock(cfg, currentLineNumber == _maxLines ? 1 : currentLineNumber + 1), type);
         }
 
         private IMutableBasicBlock GetLineEntryBlock([NotNull] IMutableControlFlowGraph cfg, int lineNumber)

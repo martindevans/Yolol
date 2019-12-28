@@ -18,6 +18,7 @@ namespace Yolol.Analysis
         private readonly (VariableName, Type)[] _typeHints;
         private readonly int _itersLimit;
         private readonly bool _keepTypes;
+        private int _maxLines;
 
         /// <summary>
         /// How many unique runs of the program will the fuzzer run before and after optimisation to verify correctness
@@ -40,21 +41,26 @@ namespace Yolol.Analysis
         public bool DisableCfgPasses { get; set; }
 
 
-        public OptimisationPipeline([NotNull] (VariableName, Type)[] typeHints)
+        public OptimisationPipeline(int maxLines, [NotNull] (VariableName, Type)[] typeHints)
         {
             _typeHints = typeHints;
             _itersLimit = int.MaxValue;
+            _maxLines = maxLines;
         }
 
-        public OptimisationPipeline(int itersLimit, bool keepTypes, (VariableName, Type)[] typeHints)
+        public OptimisationPipeline(int maxLines, int itersLimit, bool keepTypes, (VariableName, Type)[] typeHints)
         {
             _typeHints = typeHints;
             _itersLimit = itersLimit;
             _keepTypes = keepTypes;
+            _maxLines = maxLines;
         }
 
         [NotNull] public async Task<Program> Apply([NotNull] Program input)
         {
+            if (input.Lines.Count < _maxLines)
+                throw new NotImplementedException("Pad to _maxLines lines");
+
             var fuzz = new QuickFuzz(_typeHints);
             var startFuzz = fuzz.Fuzz(input, FuzzSafetyRuns, FuzzSafetyIterations);
 
@@ -66,7 +72,7 @@ namespace Yolol.Analysis
 
                 // Convert input into control flow graph and optimise
                 if (!DisableCfgPasses)
-                    p = Optimise(new Builder(p).Build()).ToYolol();
+                    p = Optimise(new Builder(p, _maxLines).Build()).ToYolol();
 
                 // Apply simple AST optimisations
                 if (!DisableAstPasses)
@@ -149,6 +155,9 @@ namespace Yolol.Analysis
 
             // Replace non-external variables with smaller alternatives
             program = program.SimplifyVariableNames();
+
+            // Replace `a = a` with nothing
+            program = program.SelfAssignmentElimination();
 
             return program;
         }

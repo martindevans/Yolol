@@ -17,7 +17,7 @@ namespace YololEmulator.Tests.SAT
         {
             var ast = TestExecutor.Parse(line);
 
-            var cfg = new Yolol.Analysis.ControlFlowGraph.Builder(ast).Build();
+            var cfg = new Yolol.Analysis.ControlFlowGraph.Builder(ast, 1).Build();
             cfg = cfg.StaticSingleAssignment(out var ssa);
             cfg = cfg.FlowTypingAssignment(ssa, out var types);
             cfg = cfg.TypeDrivenEdgeTrimming(types);

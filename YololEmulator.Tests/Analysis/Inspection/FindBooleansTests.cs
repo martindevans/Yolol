@@ -14,7 +14,7 @@ namespace YololEmulator.Tests.Analysis.Inspection
         {
             var ast = TestExecutor.Parse(code);
 
-            var cfg = new Yolol.Analysis.ControlFlowGraph.Builder(ast.StripTypes()).Build();
+            var cfg = new Yolol.Analysis.ControlFlowGraph.Builder(ast.StripTypes(), code.Length).Build();
             cfg = cfg.StaticSingleAssignment(out var ssa);
 
             var variableNames = cfg.FindBooleanVariables(ssa).ToHashSet();
@@ -28,9 +28,6 @@ namespace YololEmulator.Tests.Analysis.Inspection
             var names = new VariableName[] {
                 new VariableName("a[0]"),
                 new VariableName("b[0]"),
-
-                new VariableName("c[0]"),
-                new VariableName("f[0]"),
             };
 
             Test(names, "a=30<2 theAnswer=42 b=theAnswer==42");
@@ -41,11 +38,7 @@ namespace YololEmulator.Tests.Analysis.Inspection
         {
             var names = new VariableName[] {
                 new VariableName("a[0]"),
-                new VariableName("b[0]"),
-
-                new VariableName("f[0]"),
-                new VariableName("g[0]"),
-                new VariableName("c[0]")
+                new VariableName("b[0]")
             };
 
             Test(names, "a=1 theAnswer=42 b=theAnswer==a");
@@ -55,10 +48,7 @@ namespace YololEmulator.Tests.Analysis.Inspection
         public void FindBooleansMultiLine()
         {
             var names = new VariableName[] {
-                new VariableName("c[0]"),
                 new VariableName("a[0]"),
-                new VariableName("f[0]"),
-                new VariableName("g[0]"),
                 new VariableName("b[0]")
             };
 

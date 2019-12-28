@@ -6,6 +6,17 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
     public static class AstExtensions
     {
         /// <summary>
+        /// Remove variables assigned to themselves
+        /// </summary>
+        /// <param name="prog"></param>
+        /// <returns></returns>
+        [NotNull]
+        public static Program SelfAssignmentElimination([NotNull] this Program prog)
+        {
+            return new SelfAssignmentElimination().Visit(prog);
+        }
+
+        /// <summary>
         /// Remove brackets where they are not needed in some trivial cases
         /// </summary>
         /// <param name="prog"></param>

@@ -199,7 +199,7 @@ namespace Yolol.Analysis.Fuzzer
 
             public override string ToString()
             {
-                return $"{Index}/{IterCount}/{string.Join(",", Sets)}";
+                return $"idx:{Index} its:{IterCount} vars:{string.Join(",", Sets)}";
             }
         }
 

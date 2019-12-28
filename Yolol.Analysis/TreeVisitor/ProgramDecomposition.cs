@@ -210,7 +210,7 @@ namespace Yolol.Analysis.TreeVisitor
 
         protected override IEnumerable<BaseStatement> Visit(Variable var)
         {
-            return new[] { new Assignment(MkTmp(), var) };
+            return new[] { new Assignment(var.Name, var) };
         }
 
         protected override IEnumerable<BaseStatement> Visit(Modulo mod) => Binary(mod, (a, b) => new Modulo(a, b));
