@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Linq;
+using JetBrains.Annotations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Z3;
 using Yolol.Analysis.ControlFlowGraph.Extensions;
 using Yolol.Analysis.SAT;
+using Yolol.Analysis.TreeVisitor.Reduction;
 using Yolol.Analysis.Types;
 using Yolol.Execution;
 using Yolol.Grammar;
@@ -13,6 +15,7 @@ namespace YololEmulator.Tests.SAT
     [TestClass]
     public class BuilderTests
     {
+        [NotNull]
         private IModel BuildModel(string line)
         {
             var ast = TestExecutor.Parse(line);
@@ -22,11 +25,13 @@ namespace YololEmulator.Tests.SAT
             cfg = cfg.FlowTypingAssignment(ssa, out var types);
             cfg = cfg.TypeDrivenEdgeTrimming(types);
             cfg = cfg.MergeAdjacentBasicBlocks();
+            cfg = cfg.VisitBlocks(t => new OpNumByConstNumCompressor(t), types);
+            cfg = cfg.VisitBlocks(() => new ErrorCompressor());
 
-            return cfg.Vertices.Single(x => x.LineNumber == 1 && x.Statements.Any()).BuildSAT(types);
+            return cfg.Vertices.First(x => x.LineNumber == 1 && x.Statements.Any()).BuildSAT(types);
         }
 
-        private void AssertTainted(IModel sat, string name, Yolol.Execution.Type type)
+        private void AssertTainted([NotNull] IModel sat, [NotNull] string name, Yolol.Execution.Type type)
         {
             Assert.AreEqual(Status.SATISFIABLE, sat.Check());
 
@@ -45,13 +50,13 @@ namespace YololEmulator.Tests.SAT
             Assert.AreEqual(type == Yolol.Execution.Type.String, a.CanBeString(), "type");
         }
 
-        private void AssertValue(IModel sat, string name, Value v, bool exact = true)
+        private void AssertValue([NotNull] IModel sat, [NotNull] string name, Value v, bool exact = true)
         {
             var var = sat.TryGetVariable(new VariableName(name));
             AssertValue(sat, var, v, exact);
         }
 
-        private void AssertValue(IModel sat, IModelVariable var, Value v, bool exact = true)
+        private void AssertValue([NotNull] IModel sat, IModelVariable var, Value v, bool exact = true)
         {
             Assert.AreEqual(Status.SATISFIABLE, sat.Check());
 
@@ -119,9 +124,9 @@ namespace YololEmulator.Tests.SAT
         {
             var sat = BuildModel("a = \"a\" + 2");
 
-            Assert.AreEqual(Microsoft.Z3.Status.SATISFIABLE, sat.Check());
+            Assert.AreEqual(Status.SATISFIABLE, sat.Check());
 
-            var a = sat.TryGetVariable(new VariableName("b[0]"));
+            var a = sat.TryGetVariable(new VariableName("a[0]"));
 
             Assert.IsNotNull(a);
             Assert.IsFalse(a.IsValueAvailable());
@@ -136,9 +141,9 @@ namespace YololEmulator.Tests.SAT
         public void NumStringAddition()
         {
             var sat = BuildModel("a = 2 + \"a\"");
-            Assert.AreEqual(Microsoft.Z3.Status.SATISFIABLE, sat.Check());
+            Assert.AreEqual(Status.SATISFIABLE, sat.Check());
 
-            var a = sat.TryGetVariable(new VariableName("b[0]"));
+            var a = sat.TryGetVariable(new VariableName("a[0]"));
 
             Assert.IsNotNull(a);
             Assert.IsFalse(a.IsValueAvailable());
@@ -613,6 +618,14 @@ namespace YololEmulator.Tests.SAT
             var sat = BuildModel("a = not 3 goto a");
 
             AssertValue(sat, sat.TryGetGotoVariable(), 0);
+        }
+
+        [TestMethod]
+        public void ErrorExpression()
+        {
+            var sat = BuildModel("a = 0/0");
+
+            Assert.IsNull(sat.TryGetVariable(new VariableName("a[0]")));
         }
     }
 }

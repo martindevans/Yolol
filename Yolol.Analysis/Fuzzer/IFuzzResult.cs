@@ -5,7 +5,7 @@ using Yolol.Execution;
 namespace Yolol.Analysis.Fuzzer
 {
     public interface IFuzzResult
-        : IEquatable<IFuzzResult>
+        : IEquatable<IFuzzResult>, IEnumerable<IFuzzResultItem>
     {
         int Count { get; }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using Microsoft.Z3;
 using Yolol.Execution;
 using Yolol.Grammar;
@@ -16,11 +17,11 @@ namespace Yolol.Analysis.SAT
         public DatatypeExpr StrType => (DatatypeExpr)_enumType.Consts[0];
         public DatatypeExpr NumType => (DatatypeExpr)_enumType.Consts[1];
 
-        private Dictionary<VariableName, ModelVariable> _variableMapping = new Dictionary<VariableName, ModelVariable>();
+        private readonly Dictionary<VariableName, ModelVariable> _variableMapping = new Dictionary<VariableName, ModelVariable>();
 
         private bool _finalGoto;
 
-        internal Model(Context context, Solver solver)
+        internal Model([NotNull] Context context, [NotNull] Solver solver)
         {
             Context = context;
             Solver = solver;
@@ -39,7 +40,7 @@ namespace Yolol.Analysis.SAT
             return Solver.Check();
         }
 
-        public ModelVariable GetOrCreateVariable(VariableName name)
+        public ModelVariable GetOrCreateVariable([NotNull] VariableName name)
         {
             if (!_variableMapping.TryGetValue(name, out var v))
             {
@@ -55,7 +56,7 @@ namespace Yolol.Analysis.SAT
             return v;
         }
 
-        public IModelVariable TryGetVariable(VariableName name)
+        public IModelVariable TryGetVariable([NotNull] VariableName name)
         {
             _variableMapping.TryGetValue(name, out var v);
             return v;
@@ -71,8 +72,6 @@ namespace Yolol.Analysis.SAT
             var g = GetOrCreateVariable(new VariableName("goto"));
             _finalGoto = true;
             return g;
-
-            throw new NotImplementedException();
         }
 
         public IModelVariable TryGetGotoVariable()

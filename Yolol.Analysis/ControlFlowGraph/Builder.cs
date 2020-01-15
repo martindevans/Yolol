@@ -49,7 +49,7 @@ namespace Yolol.Analysis.ControlFlowGraph
             cfg.CreateEdge(root, GetLineEntryBlock(cfg, 1), EdgeType.Continue);
 
             // Rewrite program into simpler form
-            var names = new SafeNameGenerator(new SequentialNameGenerator(""), _program);
+            var names = new SafeNameGenerator(new SequentialNameGenerator("_"), _program);
             var ast = new ProgramDecomposition(names).Visit(_program);
             ast = new FlattenStatementLists().Visit(ast);
 

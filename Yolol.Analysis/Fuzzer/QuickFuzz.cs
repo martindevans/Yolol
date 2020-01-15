@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -227,6 +228,16 @@ namespace Yolol.Analysis.Fuzzer
                         return false;
 
                 return true;
+            }
+
+            public IEnumerator<IFuzzResultItem> GetEnumerator()
+            {
+                return ((IEnumerable<IFuzzResultItem>)_results).GetEnumerator();
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return GetEnumerator();
             }
         }
     }

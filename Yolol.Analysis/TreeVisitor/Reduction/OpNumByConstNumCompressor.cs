@@ -195,64 +195,34 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
 
         protected override BaseExpression Visit(And and)
         {
-            // Try to discover type for sides
-            var lt = DiscoverType(and.Left);
-            var rt = DiscoverType(and.Right);
+            var l = DiscoverBoolValue(and.Left, DiscoverType(base.Visit(and.Left)));
+            var r = DiscoverBoolValue(and.Right, DiscoverType(base.Visit(and.Right)));
 
-            // strings are all `true`, so `str and string` is always true
-            if (lt == Type.String && rt == Type.String)
+            // Check if either value is true
+            if ((l.HasValue && l.Value) && (r.HasValue && r.Value))
                 return new ConstantNumber(1);
 
-            // Get values for the two sides
-            var lv = DiscoverNumberValue(and.Left);
-            var rv = DiscoverNumberValue(and.Right);
-
-            // Can't do anything without at least one value
-            if (!lv.HasValue && !rv.HasValue)
-                return base.Visit(and);
-
-            // Replace with constant if both sides are known
-            if (lv.HasValue && rv.HasValue)
-                return new ConstantNumber(and.StaticEvaluate().Number);
-
-            // If the single known value is zero then this must always evaluate to false
-            var v = (lv ?? rv).Value;
-            if (v == 0)
+            // Check if all values are false
+            if (l.HasValue && r.HasValue)
                 return new ConstantNumber(0);
 
-            // The single known value _is_ not zero, so just return the other side
-            return lv.HasValue ? base.Visit(and.Right) : base.Visit(and.Left);
+            return base.Visit(and);
         }
 
         protected override BaseExpression Visit(Or or)
         {
-            // Try to discover type for sides
-            var lt = DiscoverType(or.Left);
-            var rt = DiscoverType(or.Right);
+            var l = DiscoverBoolValue(or.Left, DiscoverType(base.Visit(or.Left)));
+            var r = DiscoverBoolValue(or.Right, DiscoverType(base.Visit(or.Right)));
 
-            // strings are all `true`, so `str or anything` is always true
-            if (lt == Type.String || rt == Type.String)
+            // Check if either value is true
+            if ((l.HasValue && l.Value) || (r.HasValue && r.Value))
                 return new ConstantNumber(1);
 
-            // Get values for the two sides
-            var lv = DiscoverNumberValue(or.Left);
-            var rv = DiscoverNumberValue(or.Right);
+            // Check if all values are false
+            if (l.HasValue && r.HasValue)
+                return new ConstantNumber(0);
 
-            // Can't do anything without at least one value
-            if (!lv.HasValue && !rv.HasValue)
-                return base.Visit(or);
-
-            // Replace with constant if both sides are known
-            if (lv.HasValue && rv.HasValue)
-                return new ConstantNumber(or.StaticEvaluate().Number);
-
-            // If the single known value is _not_ zero then this must always evaluate to true
-            var v = (lv ?? rv).Value;
-            if (v != 0)
-                return new ConstantNumber(1);
-
-            // The single known value _is_ zero, so just return the other side
-            return lv.HasValue ? base.Visit(or.Right) : base.Visit(or.Left);
+            return base.Visit(or);
         }
 
         private Type DiscoverType(BaseExpression expr)
@@ -269,6 +239,22 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
             return Type.Unassigned;
         }
 
+        private static bool? DiscoverBoolValue([NotNull] BaseExpression expr, Type? type)
+        {
+            if (type.HasValue && type.Value == Type.String)
+                return true;
+
+            var n = DiscoverNumberValue(expr);
+            if (n.HasValue)
+                return n != 0;
+
+            var s = DiscoverStringValue(expr);
+            if (s != null)
+                return true;
+
+            return false;
+        }
+
         private static Number? DiscoverNumberValue([NotNull] BaseExpression expr)
         {
             if (expr is ConstantNumber con)
@@ -279,6 +265,21 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
                 var s = expr.StaticEvaluate();
                 if (s.Type == Type.Number)
                     return s.Number;
+            }
+
+            return null;
+        }
+
+        private static string DiscoverStringValue([NotNull] BaseExpression expr)
+        {
+            if (expr is ConstantString con)
+                return con.Value;
+
+            if (expr.IsConstant)
+            {
+                var s = expr.StaticEvaluate();
+                if (s.Type == Type.String)
+                    return s.String;
             }
 
             return null;

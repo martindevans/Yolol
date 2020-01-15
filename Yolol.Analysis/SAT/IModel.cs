@@ -33,6 +33,6 @@ namespace Yolol.Analysis.SAT
         /// Check the solver status
         /// </summary>
         /// <returns></returns>
-        Microsoft.Z3.Status Check();
+        Status Check();
     }
 }

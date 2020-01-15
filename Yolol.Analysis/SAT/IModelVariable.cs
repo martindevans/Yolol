@@ -470,8 +470,8 @@ namespace Yolol.Analysis.SAT
                 case Phi phi:
                     throw new NotImplementedException("phi");
 
-                case ErrorExpression err:
-                    throw new NotImplementedException("err");
+                case ErrorExpression _:
+                    throw new NotSupportedException("Error Expressions should be simplified to Error Statements before running SAT analysis");
 
 
 

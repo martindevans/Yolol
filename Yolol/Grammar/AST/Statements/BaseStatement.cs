@@ -16,6 +16,6 @@ namespace Yolol.Grammar.AST.Statements
 
         public abstract bool Equals(BaseStatement other);
 
-        public abstract override string ToString();
+        [NotNull] public abstract override string ToString();
     }
 }

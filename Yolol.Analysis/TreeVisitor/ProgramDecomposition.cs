@@ -167,11 +167,11 @@ namespace Yolol.Analysis.TreeVisitor
             return ls.Concat(rs).Append(a);
         }
 
-        [NotNull] private IEnumerable<BaseStatement> Unary<T>([NotNull] T _, [NotNull] BaseExpression param, [NotNull] Func<Variable, T> factory)
-            where T : BaseExpression
+        [NotNull] private IEnumerable<BaseStatement> Unary<T>([NotNull] T expr, [NotNull] Func<Variable, T> factory)
+            where T : BaseUnaryExpression
         {
-            var p = Visit(param);
-            var a = new Assignment(MkTmp(), factory(GetResultName(p, param)));
+            var p = Visit(expr.Parameter);
+            var a = new Assignment(MkTmp(), factory(GetResultName(p, expr.Parameter)));
 
             return p.Append(a);
         }
@@ -210,7 +210,7 @@ namespace Yolol.Analysis.TreeVisitor
 
         protected override IEnumerable<BaseStatement> Visit(Variable var)
         {
-            return new[] { new Assignment(var.Name, var) };
+            return new[] { new Assignment(new VariableName(_names.Name()), var) };
         }
 
         protected override IEnumerable<BaseStatement> Visit(Modulo mod) => Binary(mod, (a, b) => new Modulo(a, b));
@@ -271,21 +271,21 @@ namespace Yolol.Analysis.TreeVisitor
             };
         }
 
-        protected override IEnumerable<BaseStatement> Visit(Abs app) => Unary(app, app.Parameter, a => new Abs(a));
+        protected override IEnumerable<BaseStatement> Visit(Abs app) => Unary(app, a => new Abs(a));
 
-        protected override IEnumerable<BaseStatement> Visit(Sqrt app) => Unary(app, app.Parameter, a => new Sqrt(a));
+        protected override IEnumerable<BaseStatement> Visit(Sqrt app) => Unary(app, a => new Sqrt(a));
 
-        protected override IEnumerable<BaseStatement> Visit(Sine app) => Unary(app, app.Parameter, a => new Sine(a));
+        protected override IEnumerable<BaseStatement> Visit(Sine app) => Unary(app, a => new Sine(a));
 
-        protected override IEnumerable<BaseStatement> Visit(Cosine app) => Unary(app, app.Parameter, a => new Cosine(a));
+        protected override IEnumerable<BaseStatement> Visit(Cosine app) => Unary(app, a => new Cosine(a));
 
-        protected override IEnumerable<BaseStatement> Visit(Tangent app) => Unary(app, app.Parameter, a => new Tangent(a));
+        protected override IEnumerable<BaseStatement> Visit(Tangent app) => Unary(app, a => new Tangent(a));
 
-        protected override IEnumerable<BaseStatement> Visit(ArcSine app) => Unary(app, app.Parameter, a => new ArcSine(a));
+        protected override IEnumerable<BaseStatement> Visit(ArcSine app) => Unary(app, a => new ArcSine(a));
 
-        protected override IEnumerable<BaseStatement> Visit(ArcCos app) => Unary(app, app.Parameter, a => new ArcCos(a));
+        protected override IEnumerable<BaseStatement> Visit(ArcCos app) => Unary(app, a => new ArcCos(a));
 
-        protected override IEnumerable<BaseStatement> Visit(ArcTan app) => Unary(app, app.Parameter, a => new ArcTan(a));
+        protected override IEnumerable<BaseStatement> Visit(ArcTan app) => Unary(app, a => new ArcTan(a));
 
         protected override IEnumerable<BaseStatement> Visit(Bracketed brk) => Visit(brk.Parameter);
 
@@ -293,7 +293,7 @@ namespace Yolol.Analysis.TreeVisitor
 
         protected override IEnumerable<BaseStatement> Visit(Or or) => Binary(or, (a, b) => new Or(a, b));
 
-        protected override IEnumerable<BaseStatement> Visit(Not not) => Unary(not, not.Parameter, a => new Not(a));
+        protected override IEnumerable<BaseStatement> Visit(Not not) => Unary(not, a => new Not(a));
 
         protected override IEnumerable<BaseStatement> Visit(Add add) => Binary(add, (a, b) => new Add(a, b));
 
@@ -305,7 +305,7 @@ namespace Yolol.Analysis.TreeVisitor
 
         protected override IEnumerable<BaseStatement> Visit(Exponent exp) => Binary(exp, (a, b) => new Exponent(a, b));
 
-        protected override IEnumerable<BaseStatement> Visit(Negate neg) => Unary(neg, neg.Parameter, a => new Negate(a));
+        protected override IEnumerable<BaseStatement> Visit(Negate neg) => Unary(neg, a => new Negate(a));
 
         protected override IEnumerable<BaseStatement> Visit(ConstantNumber con) => new[] { new Assignment(MkTmp(), con) };
 

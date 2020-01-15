@@ -60,7 +60,7 @@ namespace Yolol.Analysis.SAT
             }
         }
 
-        private static void Assert(Model model, Goto @goto)
+        private static void Assert([NotNull] Model model, [NotNull] Goto @goto)
         {
             var d = model.GetGotoVariable();
             d.AssertEq(@goto.Destination);
@@ -74,7 +74,7 @@ namespace Yolol.Analysis.SAT
 
         private static void Assert(IModel model, ErrorStatement error)
         {
-            throw new NotImplementedException();
+            // Nothing needs asserting for an error
         }
 
         private static void Assert(IModel model, Conditional conditional)
