@@ -182,7 +182,7 @@ namespace Yolol.Analysis
 
                 // compress logical operators into mathematics where possible
                 var booleans = cf.FindBooleanVariables(ssa);
-                cf = cf.VisitBlocks(() => new BooleanNotCompressor(booleans));
+                cf = cf.VisitBlocks(() => new BooleanLogicCompressor(booleans));
 
                 // Replace any expressions involving `Error` subexpressions with `Error()` statements
                 cf = cf.VisitBlocks(() => new ErrorCompressor());

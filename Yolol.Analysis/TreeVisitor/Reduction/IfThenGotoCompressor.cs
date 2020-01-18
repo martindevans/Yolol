@@ -28,15 +28,15 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
 
         protected override BaseStatement Visit(If @if)
         {
+            // Check that each branch contains just one statement...
             if (@if.FalseBranch.Statements.Count != 1)
                 return @if;
-
             if (@if.TrueBranch.Statements.Count != 1)
                 return @if;
 
+            // ...and that those statements are goto statements
             if (!(@if.TrueBranch.Statements.Single() is Goto gotoTrue))
                 return @if;
-
             if (!(@if.FalseBranch.Statements.Single() is Goto gotoFalse))
                 return @if;
 

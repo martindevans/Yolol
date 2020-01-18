@@ -1,4 +1,5 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+using JetBrains.Annotations;
 using Yolol.Analysis.ControlFlowGraph.AST;
 using Yolol.Analysis.Types;
 using Yolol.Execution;
@@ -31,8 +32,8 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
                 switch (number.Value)
                 {
                     case -1: return base.Visit(new Negate(new Bracketed(other)));
-                    case 0:  return new ConstantNumber(0);
-                    case 1:  return base.Visit(other);
+                    case 0: return new ConstantNumber(0);
+                    case 1: return base.Visit(other);
                     default: return null;
                 }
             }
@@ -90,8 +91,8 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
             switch (rv.Value.Value)
             {
                 case -1: return base.Visit(new Negate(new Bracketed(base.Visit(div.Left))));
-                case 0:  return new ErrorExpression();
-                case 1:  return base.Visit(new Bracketed(base.Visit(div.Left)));
+                case 0: return new ErrorExpression();
+                case 1: return base.Visit(new Bracketed(base.Visit(div.Left)));
                 default: return base.Visit(div);
             }
         }
@@ -153,8 +154,8 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
 
             switch (rv.Value.Value)
             {
-                case 0:  return base.Visit(new ConstantNumber(1));
-                case 1:  return base.Visit(new Bracketed(base.Visit(exp.Left)));
+                case 0: return base.Visit(new ConstantNumber(1));
+                case 1: return base.Visit(new Bracketed(base.Visit(exp.Left)));
                 case -1: return base.Visit(new Divide(new ConstantNumber(1), new Bracketed(exp.Left)));
                 default: return base.Visit(exp);
             }
@@ -214,13 +215,13 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
             var l = DiscoverBoolValue(or.Left, DiscoverType(base.Visit(or.Left)));
             var r = DiscoverBoolValue(or.Right, DiscoverType(base.Visit(or.Right)));
 
+            // Check if all values are false
+            if (l.HasValue && !l.Value && r.HasValue && !r.Value)
+                return new ConstantNumber(0);
+
             // Check if either value is true
             if ((l.HasValue && l.Value) || (r.HasValue && r.Value))
                 return new ConstantNumber(1);
-
-            // Check if all values are false
-            if (l.HasValue && r.HasValue)
-                return new ConstantNumber(0);
 
             return base.Visit(or);
         }
@@ -252,7 +253,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
             if (s != null)
                 return true;
 
-            return false;
+            return null;
         }
 
         private static Number? DiscoverNumberValue([NotNull] BaseExpression expr)
