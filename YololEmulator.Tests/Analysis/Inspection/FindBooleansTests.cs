@@ -1,8 +1,11 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using Yolol.Analysis.ControlFlowGraph.Extensions;
 using Yolol.Analysis.TreeVisitor.Reduction;
+using Yolol.Analysis.Types;
 using Yolol.Grammar;
 
 namespace YololEmulator.Tests.Analysis.Inspection
@@ -10,16 +13,22 @@ namespace YololEmulator.Tests.Analysis.Inspection
     [TestClass]
     public class FindBooleansTests
     {
-        private static void Test(IEnumerable<VariableName> bools, params string[] code)
+        private static void Test([NotNull] IEnumerable<VariableName> bools, [NotNull] params string[] code)
         {
             var ast = TestExecutor.Parse(code);
 
             var cfg = new Yolol.Analysis.ControlFlowGraph.Builder(ast.StripTypes(), code.Length).Build();
             cfg = cfg.StaticSingleAssignment(out var ssa);
+            cfg = cfg.FlowTypingAssignment(ssa, out var types);
 
-            var variableNames = cfg.FindBooleanVariables(ssa).ToHashSet();
+            var variableNames = cfg.FindBooleanVariables(ssa, types).ToHashSet();
 
-            Assert.IsTrue(variableNames.IsSupersetOf(bools));
+            var ok = variableNames.IsSupersetOf(bools);
+            if (!ok)
+            {
+                Console.WriteLine("Not found: " + string.Join(",", bools.Where(b => !variableNames.Contains(b)).Select(a => a.ToString()).ToArray()));
+                Assert.Fail();
+            }
         }
 
         [TestMethod]
@@ -89,6 +98,17 @@ namespace YololEmulator.Tests.Analysis.Inspection
             };
 
             Test(names, "a=1 b=:a/1 goto 3", "a=0", "c=a");
+        }
+
+        [TestMethod]
+        public void FindBooleansOpportunistic()
+        {
+            var names = new VariableName[] {
+                new VariableName("c[0]"),
+                new VariableName("d[0]")
+            };
+
+            Test(names, "a=0 b=1 c=a+b d=a*b e=b/a");
         }
     }
 }

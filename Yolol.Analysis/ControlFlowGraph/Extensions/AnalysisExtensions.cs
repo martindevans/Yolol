@@ -2,6 +2,7 @@
 using System.Linq;
 using JetBrains.Annotations;
 using Yolol.Analysis.TreeVisitor.Inspection;
+using Yolol.Analysis.Types;
 using Yolol.Grammar;
 using Yolol.Grammar.AST.Expressions;
 
@@ -76,8 +77,9 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
         /// </summary>
         /// <param name="cfg"></param>
         /// <param name="ssa"></param>
+        /// <param name="types"></param>
         /// <returns></returns>
-        [NotNull] public static ISet<VariableName> FindBooleanVariables([NotNull] this IControlFlowGraph cfg, ISingleStaticAssignmentTable ssa)
+        [NotNull] public static ISet<VariableName> FindBooleanVariables([NotNull] this IControlFlowGraph cfg, ISingleStaticAssignmentTable ssa, ITypeAssignments types)
         {
             var booleans = new HashSet<VariableName>();
 
@@ -86,7 +88,7 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
             while (count != booleans.Count)
             {
                 count = booleans.Count;
-                cfg.VisitBlocks(() => new FindBooleanVariables(booleans, ssa));
+                cfg.VisitBlocks(() => new FindBooleanVariables(booleans, ssa, types));
             }
 
             var result = new HashSet<VariableName>(booleans.Where(n => !n.IsExternal));

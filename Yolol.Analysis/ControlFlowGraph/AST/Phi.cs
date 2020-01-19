@@ -47,7 +47,7 @@ namespace Yolol.Analysis.ControlFlowGraph.AST
 
         public override Value Evaluate(MachineState state)
         {
-            throw new InvalidOperationException("Cannot execute `Phi` node");
+            throw new PhiExecutionException();
         }
 
         public bool Equals(Phi other)
@@ -73,6 +73,15 @@ namespace Yolol.Analysis.ControlFlowGraph.AST
         public override string ToString()
         {
             return $"φ({string.Join(",", AssignedNames)})";
+        }
+
+        public class PhiExecutionException
+            : ExecutionException
+        {
+            public PhiExecutionException()
+                : base("Attempted to execute a `Phi` node")
+            {
+            }
         }
     }
 }

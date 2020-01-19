@@ -181,7 +181,7 @@ namespace Yolol.Analysis
                 cf = cf.VisitBlocks(t => new OpNumByConstNumCompressor(t), types);
 
                 // compress logical operators into mathematics where possible
-                var booleans = cf.FindBooleanVariables(ssa);
+                var booleans = cf.FindBooleanVariables(ssa, types);
                 cf = cf.VisitBlocks(() => new BooleanLogicCompressor(booleans));
 
                 // Replace any expressions involving `Error` subexpressions with `Error()` statements
