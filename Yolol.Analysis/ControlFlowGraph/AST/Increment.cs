@@ -25,6 +25,10 @@ namespace Yolol.Analysis.ControlFlowGraph.AST
         public override Value Evaluate(MachineState state)
         {
             throw new InvalidOperationException("Cannot execute `Increment` node");
+
+            //var v = state.GetVariable(Name.Name).Value;
+            //v++;
+            //return v;
         }
 
         public bool Equals(Increment other)

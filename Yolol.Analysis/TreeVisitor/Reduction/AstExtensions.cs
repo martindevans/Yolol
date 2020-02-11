@@ -1,4 +1,9 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using JetBrains.Annotations;
+using Yolol.Analysis.TreeVisitor.Inspection;
+using Yolol.Analysis.TreeVisitor.Modification;
 using Yolol.Grammar.AST;
 
 namespace Yolol.Analysis.TreeVisitor.Reduction
@@ -78,6 +83,54 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
         }
 
 
+        [NotNull]  public static Program FoldSingleUseVariables([NotNull] this Program prog)
+        {
+            // Find all variables associated with a count of how many times they are read
+            var readsInProgram = new FindReadVariables();
+            readsInProgram.Visit(prog);
+
+            // Find all variables associated with a count of how many times they are assigned
+            var writesInProgram = new FindAssignedVariables();
+            writesInProgram.Visit(prog);
+
+            var lines = new List<Line>();
+
+            foreach (var item in prog.Lines)
+            {
+                lines.Add(item.Fixpoint(20, line => {
+
+                    // Find all reads in this line
+                    var readsInLine = new FindReadVariables();
+                    readsInLine.Visit(line);
+
+                    // Find all writes in this line
+                    var writesInLine = new FindAssignedVariables();
+                    writesInLine.Visit(line);
+
+                    // Find variables that can be folded away
+                    var toReplace = (from v in readsInLine.Counts
+                                     where !v.Key.IsExternal
+                                     where v.Value == 1                         // Filter to things only read once in this line
+                                     where readsInProgram.Counts[v.Key] == 1    // Filter to things only read once in the entire program
+                                     where writesInProgram.Counts[v.Key] == 1   // Filter to things on written once in the entire program
+                                     where writesInLine.Counts[v.Key] == 1      // Filter to things written once in this line
+                                     select v.Key).FirstOrDefault();
+
+                    // If nothing was found to fold we can break out of the loop
+                    if (toReplace == null)
+                        return line;
+
+                    // Find the value that was assigned to this
+                    var expr = writesInLine.Expressions[toReplace].Single();
+
+                    // Substitute it into the line
+                    var result = new SubstituteVariable(toReplace, expr).Visit(line);
+                    return result;
+                }));
+            }
+
+            return new Program(lines);
+        }
 
 
         [NotNull] public static Program StripTypes([NotNull] this Program prog)

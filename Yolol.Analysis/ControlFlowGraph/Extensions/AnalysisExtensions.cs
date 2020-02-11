@@ -61,7 +61,7 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
             var r = new FindReadVariables();
             r.Visit(block);
 
-            return r.Counts;
+            return r.Counts.Select(a => (a.Key, a.Value));
         }
 
         [NotNull] public static IEnumerable<VariableName> FindWrites([NotNull] this IBasicBlock block, ISingleStaticAssignmentTable ssa)

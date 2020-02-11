@@ -11,21 +11,47 @@ namespace Yolol.Execution
         public const decimal MinValue = -9223372036854775.808m;
         public const int Scale = 1000;
 
+        public static readonly Number Min = new Number(MinValue);
+        public static readonly Number Max = new Number(MaxValue);
+        public static readonly Number One = new Number(1);
+        public static readonly Number Zero = new Number(0);
+
         public decimal Value { get; }
 
-        public Number(decimal num)
+        private Number(decimal num)
         {
-            Value = Math.Truncate(num * Scale) / Scale;
+            Value = num;
+        }
 
+        private Number Truncate()
+        {
+            return new Number(Math.Truncate(Value * Scale) / Scale);
+        }
+
+        private Number RangeCheck()
+        {
             if (Value > MaxValue)
-                Value = MaxValue;
+                return Max;
+
             if (Value < MinValue)
-                Value = MinValue;
+                return Min;
+
+            return this;
+        }
+
+        private static Number SafeNew(decimal num)
+        {
+            return new Number(num).Truncate().RangeCheck();
         }
 
         [NotNull] public string ToString(CultureInfo culture)
         {
             return Value.ToString(culture);
+        }
+
+        [NotNull]  public override string ToString()
+        {
+            return ToString(CultureInfo.InvariantCulture);
         }
 
         public bool Equals(Number other)
@@ -43,11 +69,6 @@ namespace Yolol.Execution
             return Value.GetHashCode();
         }
 
-        public override string ToString()
-        {
-            return ToString(CultureInfo.InvariantCulture);
-        }
-
         public static implicit operator Number(int i)
         {
             return new Number(i);
@@ -55,35 +76,35 @@ namespace Yolol.Execution
 
         public static implicit operator Number(decimal d)
         {
-            return new Number(d);
+            return SafeNew(d);
         }
 
         public static Number operator *(Number l, Number r)
         {
-            return new Number(l.Value * r.Value);
+            return SafeNew(l.Value * r.Value);
         }
 
         public static Number operator /(Number l, Number r)
         {
-            if (r == 0)
+            if (r == Zero)
                 throw new ExecutionException("Divide by zero");
 
-            return new Number(l.Value / r.Value);
+            return SafeNew(l.Value / r.Value);
         }
 
         public static Number operator +(Number l, Number r)
         {
-            return new Number(l.Value + r.Value);
+            return SafeNew(l.Value + r.Value);
         }
 
         public static Number operator -(Number l, Number r)
         {
-            return new Number(l.Value - r.Value);
+            return SafeNew(l.Value - r.Value);
         }
 
         public static Number operator -(Number n)
         {
-            return new Number(-n.Value);
+            return new Number(-n.Value).RangeCheck();
         }
 
         public static bool operator >(Number l, Number r)

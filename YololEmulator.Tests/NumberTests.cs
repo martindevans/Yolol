@@ -9,7 +9,7 @@ namespace YololEmulator.Tests
         [TestMethod]
         public void TruncateOnConstruction()
         {
-            var n = new Number(1.234567m);
+            var n = (Number)1.234567m;
 
             Assert.AreEqual(1.234m, n.Value);
             Assert.AreEqual("1.234", n.ToString());
@@ -18,7 +18,7 @@ namespace YololEmulator.Tests
         [TestMethod]
         public void Equal()
         {
-            var a = new Number(3.1415m);
+            var a = (Number)3.1415m;
 
             // ReSharper disable EqualExpressionComparison
 #pragma warning disable CS1718 // Comparison made to same variable
@@ -36,8 +36,8 @@ namespace YololEmulator.Tests
         [TestMethod]
         public void NotEqual()
         {
-            var a = new Number(3.1415m);
-            var b = new Number(1);
+            var a = (Number)3.1415m;
+            var b = (Number)1;
 
             // ReSharper disable EqualExpressionComparison
 #pragma warning disable CS1718 // Comparison made to same variable

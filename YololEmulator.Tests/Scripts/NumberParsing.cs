@@ -1,4 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Yolol.Execution;
 
 namespace YololEmulator.Tests.Scripts
 {
@@ -41,6 +43,29 @@ namespace YololEmulator.Tests.Scripts
             var output = result.GetVariable("output");
 
             Assert.AreEqual(8473426, output.Value.Number);
+        }
+
+        public Number Azurethi(Number value)
+        {
+            var lines = new[] {
+                $"i=\"{value}\" o=0 j=0",
+                "c=i---i d=3*((c>1)+(c>4)+(c>7)) o+=(d+(c>d)-(c<d))*(10^j++) goto 2",
+                ":o=o"
+            };
+
+            var result = TestExecutor.Execute2(100, lines);
+
+            var output = result.GetVariable(":o");
+
+            Assert.AreEqual(value, output.Value.Number);
+
+            return output.Value.Number;
+        }
+
+        [TestMethod]
+        public void Azurethi()
+        {
+            Azurethi(DateTime.UtcNow.Ticks);
         }
     }
 }

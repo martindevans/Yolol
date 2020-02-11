@@ -47,7 +47,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
             return base.Visit(program);
         }
 
-        protected override Line Visit(Line line)
+        public override Line Visit(Line line)
         {
             if (_constantInitializers == null)
                 return base.Visit(line);

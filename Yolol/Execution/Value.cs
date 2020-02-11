@@ -35,7 +35,7 @@ namespace Yolol.Execution
         public Value(string str)
         {
             _string = str;
-            _number = new Number(0);
+            _number = Number.Zero;
             Type = Type.String;
         }
 
@@ -47,7 +47,7 @@ namespace Yolol.Execution
         }
 
         public Value(bool @bool)
-            : this(@bool ? 1 : 0)
+            : this(@bool ? Number.One : Number.Zero)
         {
         }
 
@@ -58,7 +58,7 @@ namespace Yolol.Execution
 
         public static implicit operator Value(decimal d)
         {
-            return new Value(new Number(d));
+            return new Value(d);
         }
 
         public static implicit operator Value(string s)
@@ -131,13 +131,13 @@ namespace Yolol.Execution
             switch (left.Type, right.Type)
             {
                 case (Type.Number, Type.Number):
-                    return new Value(left.Number < right.Number ? 1 : 0);
+                    return new Value(left.Number < right.Number ? Number.One : Number.Zero);
 
                 default:
                     var l = left.ToString();
                     var r = right.ToString();
                     var comparison = StringComparer.OrdinalIgnoreCase.Compare(l, r);
-                    return new Value(comparison < 0 ? 1 : 0);
+                    return new Value(comparison < 0 ? Number.One : Number.Zero);
             }
         }
 
@@ -146,13 +146,13 @@ namespace Yolol.Execution
             switch (left.Type, right.Type)
             {
                 case (Type.Number, Type.Number):
-                    return new Value(left.Number <= right.Number ? 1 : 0);
+                    return new Value(left.Number <= right.Number ? Number.One : Number.Zero);
 
                 default:
                     var l = left.ToString();
                     var r = right.ToString();
                     var comparison = StringComparer.OrdinalIgnoreCase.Compare(l, r);
-                    return new Value(comparison <= 0 ? 1 : 0);
+                    return new Value(comparison <= 0 ? Number.One : Number.Zero);
             }
         }
 
@@ -161,13 +161,13 @@ namespace Yolol.Execution
             switch (left.Type, right.Type)
             {
                 case (Type.Number, Type.Number):
-                    return new Value(left.Number > right.Number ? 1 : 0);
+                    return new Value(left.Number > right.Number ? Number.One : Number.Zero);
 
                 default:
                     var l = left.ToString();
                     var r = right.ToString();
                     var comparison = StringComparer.OrdinalIgnoreCase.Compare(l, r);
-                    return new Value(comparison > 0 ? 1 : 0);
+                    return new Value(comparison > 0 ? Number.One : Number.Zero);
             }
         }
 
@@ -176,24 +176,24 @@ namespace Yolol.Execution
             switch (left.Type, right.Type)
             {
                 case (Type.Number, Type.Number):
-                    return new Value(left.Number >= right.Number ? 1 : 0);
+                    return new Value(left.Number >= right.Number ? Number.One : Number.Zero);
 
                 default:
                     var l = left.ToString();
                     var r = right.ToString();
                     var comparison = StringComparer.OrdinalIgnoreCase.Compare(l, r);
-                    return new Value(comparison >= 0 ? 1 : 0);
+                    return new Value(comparison >= 0 ? Number.One : Number.Zero);
             }
         }
 
         public static Value operator ==(Value left, Value right)
         {
-            return left.Equals(right) ? 1 : 0;
+            return left.Equals(right) ? Number.One : Number.Zero;
         }
 
         public static Value operator !=(Value left, Value right)
         {
-            return !left.Equals(right) ? 1 : 0;
+            return !left.Equals(right) ? Number.One : Number.Zero;
         }
 
         public static Value operator -(Value left, Value right)
@@ -317,12 +317,12 @@ namespace Yolol.Execution
         public static Value operator --(Value value)
         {
             if (value.Type == Type.Number)
-                return new Value(value.Number - 1);
+                return new Value(value.Number - Number.One);
 
             if (value.String == "")
                 throw new ExecutionException("Attempted to decrement empty string");
 
-            return new Value(value.String.Substring(0, value.String.Length - 1));
+            return new Value(value.String[..^1]);
         }
 
         public static Value Exponent(Value left, Value right)

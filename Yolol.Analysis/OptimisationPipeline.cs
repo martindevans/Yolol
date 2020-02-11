@@ -48,7 +48,7 @@ namespace Yolol.Analysis
             _maxLines = maxLines;
         }
 
-        public OptimisationPipeline(int maxLines, int itersLimit, bool keepTypes, (VariableName, Type)[] typeHints)
+        public OptimisationPipeline(int maxLines, int itersLimit, bool keepTypes, params (VariableName, Type)[] typeHints)
         {
             _typeHints = typeHints;
             _itersLimit = itersLimit;
@@ -159,19 +159,20 @@ namespace Yolol.Analysis
             // Replace `a = a` with nothing
             program = program.SelfAssignmentElimination();
 
+            // If there is a variable that is only used once, and it's used in the line it is assigned, just use the value it was assigned initially
+            program = program.FoldSingleUseVariables();
+
             return program;
         }
 
         [NotNull] private IControlFlowGraph Optimise(IControlFlowGraph cf)
         {
-            ITypeAssignments types;
-
             {
                 // Convert CFG into SSA form (i.e. each variable is only assigned once)
                 cf = cf.StaticSingleAssignment(out var ssa);
 
                 // Infer types for variables
-                cf = cf.FlowTypingAssignment(ssa, out types, _typeHints);
+                cf = cf.FlowTypingAssignment(ssa, out var types, _typeHints);
 
                 // Replace inc/dec with simpler alternatives for numbers
                 cf = cf.SimplifyModificationExpressions(types);
@@ -216,8 +217,8 @@ namespace Yolol.Analysis
                 // Convert CFG into SSA form (i.e. each variable is only assigned once)
                 cf = cf.StaticSingleAssignment(out var ssa);
 
-                // Reapply type finding just before we do edge trimming (it's very important we have as many types as possible here and some previous ops may have invalidated them)
-                cf = cf.FlowTypingAssignment(ssa, out types, _typeHints);
+                // Infer types for variables
+                cf = cf.FlowTypingAssignment(ssa, out var types, _typeHints);
 
                 // Fold away unnecessary copies (e.g. replace `b = a c = b` with `b = a c = a`). This leaves useless (unread) variables.
                 cf = cf.FoldUnnecessaryCopies(ssa);
@@ -239,10 +240,10 @@ namespace Yolol.Analysis
 
                 // Remove SSA so that it does not interfere with the next iteration
                 cf = cf.RemoveStaticSingleAssignment(ssa);
-            }
 
-            //cf = cf.RemoveUnreachableBlocks();
-            //Console.WriteLine(cf.ToDot());
+                // Replace `inc` and `dec` methods with `++` and `--`
+                cf = cf.RecomposeModify();
+            }
 
             return cf;
         }

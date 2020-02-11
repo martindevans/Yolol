@@ -16,7 +16,7 @@ namespace Yolol.Analysis.TreeVisitor.Inspection
 
         [NotNull] public IEnumerable<VariableName> Names => _counts.Keys;
 
-        [NotNull] public IEnumerable<(VariableName, uint)> Counts => _counts.Select(a => (a.Key, a.Value));
+        [NotNull] public IReadOnlyDictionary<VariableName, uint> Counts => _counts;
 
         private void Add([NotNull] VariableName name)
         {

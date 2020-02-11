@@ -217,10 +217,15 @@ namespace Yolol.Analysis.TreeVisitor
 
         protected override IEnumerable<BaseStatement> Visit(PreDecrement dec)
         {
+            var tmp = MkTmp();
+
             return new BaseStatement[] {
 
-                // Increment in place
-                new Assignment(dec.Name, new Decrement(dec.Name)),
+                // Increment into a temp
+                new Assignment(tmp, new Decrement(dec.Name)),
+
+                // Copy in modified value back to original var
+                new Assignment(dec.Name, new Variable(tmp)),
 
                 // Return modified value
                 new Assignment(MkTmp(), new Variable(dec.Name))

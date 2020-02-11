@@ -14,7 +14,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
     {
         private int _lineNumber;
 
-        protected override Line Visit(Line line)
+        public override Line Visit(Line line)
         {
             _lineNumber++;
 

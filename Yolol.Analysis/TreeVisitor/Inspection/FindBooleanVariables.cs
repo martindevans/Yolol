@@ -103,9 +103,9 @@ namespace Yolol.Analysis.TreeVisitor.Inspection
 
             protected override bool Visit(ErrorExpression err) => false;
 
-            protected override bool Visit(Increment inc) => throw new NotSupportedException();
+            protected override bool Visit(Increment inc) => false;
 
-            protected override bool Visit(Decrement dec) => throw new NotSupportedException();
+            protected override bool Visit(Decrement dec) => false;
 
             protected override bool Visit(Phi phi) => phi.AssignedNames.All(_bools.Contains);
 
@@ -126,13 +126,13 @@ namespace Yolol.Analysis.TreeVisitor.Inspection
             // Potentially `A % B` could be considered a boolean iff `A` is a number and `B` is `0` or `1`
             protected override bool Visit(Modulo mod) => StaticFalse(mod);
 
-            protected override bool Visit(PreDecrement dec) => false;
+            protected override bool Visit(PreDecrement dec) => throw new NotSupportedException();
 
-            protected override bool Visit(PostDecrement dec) => false;
+            protected override bool Visit(PostDecrement dec) => throw new NotSupportedException();
 
-            protected override bool Visit(PreIncrement inc) => false;
+            protected override bool Visit(PreIncrement inc) => throw new NotSupportedException();
 
-            protected override bool Visit(PostIncrement inc) => false;
+            protected override bool Visit(PostIncrement inc) => throw new NotSupportedException();
 
             // `ABS(A)` where A is a boolean always results in a boolean
             protected override bool Visit(Abs app) => StaticFalse(app) || Visit(app.Parameter);

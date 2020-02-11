@@ -150,7 +150,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
 
             var (fn, fd) = RealToFraction((double)number.Value, 0.001f);
 
-            var replacement = new Divide(new ConstantNumber(new Number((decimal)fn)), new ConstantNumber(new Number((decimal)fd)));
+            var replacement = new Divide(new ConstantNumber((decimal)fn), new ConstantNumber((decimal)fd));
 
             if (replacement.StaticEvaluate().Number == number)
                 return replacement;

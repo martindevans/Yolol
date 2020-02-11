@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using JetBrains.Annotations;
 using Yolol.Analysis.ControlFlowGraph.AST;
 using Yolol.Grammar;
 using Yolol.Grammar.AST.Expressions;
@@ -10,54 +12,78 @@ namespace Yolol.Analysis.TreeVisitor.Inspection
     public class FindAssignedVariables
         : BaseTreeVisitor
     {
-        private readonly HashSet<VariableName> _names = new HashSet<VariableName>();
-        public IReadOnlyCollection<VariableName> Names => _names;
+        private readonly Dictionary<VariableName, uint> _counts = new Dictionary<VariableName, uint>();
+        private readonly Dictionary<VariableName, IReadOnlyList<BaseExpression>> _assigned = new Dictionary<VariableName, IReadOnlyList<BaseExpression>>();
+
+        [NotNull] public IEnumerable<VariableName> Names => _counts.Keys;
+        [NotNull] public IReadOnlyDictionary<VariableName, uint> Counts => _counts;
+        [NotNull] public IReadOnlyDictionary<VariableName, IReadOnlyList<BaseExpression>> Expressions => _assigned;
+
+        private void Add([NotNull] VariableName name, BaseExpression assignedExpr)
+        {
+            // Increment count
+            _counts.TryGetValue(name, out var value);
+            value++;
+            _counts[name] = value;
+
+            // Add to assigned set
+            if (!_assigned.TryGetValue(name, out var list))
+            {
+                list = new List<BaseExpression>();
+                _assigned.Add(name, list);
+            }
+            ((List<BaseExpression>)list).Add(assignedExpr);
+        }
 
         protected override BaseStatement Visit(Assignment ass)
         {
-            _names.Add(ass.Left);
+            Add(ass.Left, ass.Right);
 
             return base.Visit(ass);
         }
 
         protected override BaseStatement Visit(TypedAssignment ass)
         {
-            _names.Add(ass.Left);
+            Add(ass.Left, ass.Right);
 
             return base.Visit(ass);
         }
 
         protected override BaseStatement Visit(CompoundAssignment compAss)
         {
-            _names.Add(compAss.Left);
+            Add(compAss.Left, compAss.Right);
 
             return base.Visit(compAss);
         }
 
         protected override BaseExpression Visit(PostDecrement dec)
         {
-            _names.Add(dec.Name);
+            //Add(dec.Name, dec);
+            throw new NotImplementedException();
 
             return base.Visit(dec);
         }
 
         protected override BaseExpression Visit(PreDecrement dec)
         {
-            _names.Add(dec.Name);
+            //Add(dec.Name);
+            throw new NotImplementedException();
 
             return base.Visit(dec);
         }
 
         protected override BaseExpression Visit(PostIncrement inc)
         {
-            _names.Add(inc.Name);
+            //Add(inc.Name);
+            throw new NotImplementedException();
 
             return base.Visit(inc);
         }
 
         protected override BaseExpression Visit(PreIncrement inc)
         {
-            _names.Add(inc.Name);
+            //Add(inc.Name);
+            throw new NotImplementedException();
 
             return base.Visit(inc);
         }
