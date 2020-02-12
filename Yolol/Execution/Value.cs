@@ -296,7 +296,7 @@ namespace Yolol.Execution
                 case (Type.Number, Type.Number):
                     if (right.Number == 0)
                         throw new ExecutionException("Divide by zero");
-                    return new Value(left.Number.Value % right.Number.Value);
+                    return new Value(left.Number % right.Number);
 
                 case (Type.String, Type.String):
                     throw new ExecutionException("Attempted to modulo strings");

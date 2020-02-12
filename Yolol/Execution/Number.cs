@@ -10,6 +10,7 @@ namespace Yolol.Execution
         public const decimal MaxValue = 9223372036854775.807m;
         public const decimal MinValue = -9223372036854775.808m;
         public const int Scale = 1000;
+        public const int Decimals = 3;
 
         public static readonly Number Min = new Number(MinValue);
         public static readonly Number Max = new Number(MaxValue);
@@ -25,7 +26,19 @@ namespace Yolol.Execution
 
         private Number Truncate()
         {
-            return new Number(Math.Truncate(Value * Scale) / Scale);
+            var d = Value;
+
+            // https://stackoverflow.com/a/43639947/108234
+            var r = Math.Round(d, Decimals);
+            if (d > 0 && r > d)
+                return r - new decimal(1, 0, 0, false, Decimals);
+            else if (d < 0 && r < d)
+                return r + new decimal(1, 0, 0, false, Decimals);
+
+            return new Number(r);
+
+            // Naieve approach
+            //return new Number(Math.Truncate(Value * Scale) / Scale);
         }
 
         private Number RangeCheck()
@@ -77,6 +90,12 @@ namespace Yolol.Execution
         public static implicit operator Number(decimal d)
         {
             return SafeNew(d);
+        }
+
+        public static Number operator %(Number l, Number r)
+        {
+            var v = new Number(l.Value % r.Value);
+            return v.Truncate();
         }
 
         public static Number operator *(Number l, Number r)
