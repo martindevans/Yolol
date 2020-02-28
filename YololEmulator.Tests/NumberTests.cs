@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Yolol.Execution;
 
 namespace YololEmulator.Tests
@@ -50,6 +51,13 @@ namespace YololEmulator.Tests
             Assert.IsFalse(a.Equals((object)b));
 
             Assert.AreNotEqual(a.GetHashCode(), b.GetHashCode());
+        }
+
+        [TestMethod]
+        public void BigNegativeParsing()
+        {
+            var r = TestExecutor.Execute("a = -9223372036854775.808");
+            Assert.AreEqual(-9223372036854775.808m, r.GetVariable("a").Value.Number);
         }
     }
 }

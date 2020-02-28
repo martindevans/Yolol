@@ -44,7 +44,14 @@ namespace Yolol.Grammar
         private static readonly TokenListParser<YololToken, VariableName> VariableName = Token.EqualTo(YololToken.Identifier).Select(n => new VariableName(n.ToStringValue()));
         private static readonly TokenListParser<YololToken, VariableName> ExternalVariableName = Token.EqualTo(YololToken.ExternalIdentifier).Select(n => new VariableName(n.ToStringValue()));
 
-        private static readonly TokenListParser<YololToken, BaseExpression> ConstantNumExpression = Token.EqualTo(YololToken.Number).Select(n => (BaseExpression)new ConstantNumber(decimal.Parse(n.ToStringValue())));
+        private static readonly TokenListParser<YololToken, BaseExpression> PositiveNumExpression = Token.EqualTo(YololToken.Number).Select(n => (BaseExpression)new ConstantNumber(decimal.Parse(n.ToStringValue())));
+        private static readonly TokenListParser<YololToken, BaseExpression> NegativeNumExpression =
+            from neg in Token.EqualTo(YololToken.Subtract)
+            from num in Token.EqualTo(YololToken.Number)
+            select (BaseExpression)new ConstantNumber(-decimal.Parse(num.ToStringValue()));
+
+        private static readonly TokenListParser<YololToken, BaseExpression> ConstantNumExpression = PositiveNumExpression.Or(NegativeNumExpression);
+
         private static readonly TokenListParser<YololToken, BaseExpression> ConstantStrExpression = Token.EqualTo(YololToken.String).Select(n => (BaseExpression)new ConstantString(n.ToStringValue().Trim('"')));
         private static readonly TokenListParser<YololToken, BaseExpression> VariableExpression = from name in VariableName select (BaseExpression)new Variable(name);
         private static readonly TokenListParser<YololToken, BaseExpression> ExternalVariableExpression = from name in ExternalVariableName select (BaseExpression)new Variable(name);
@@ -118,9 +125,10 @@ namespace Yolol.Grammar
             .Or(ExternalVariableExpression.Try());
 
         private static readonly TokenListParser<YololToken, BaseExpression> Operand =
-            (from sign in Token.EqualTo(YololToken.Subtract)
-             from factor in Factor
-             select (BaseExpression)new Negate(factor))
+            ConstantNumExpression
+            .Try().Or(from sign in Token.EqualTo(YololToken.Subtract)
+                  from factor in Factor
+                  select (BaseExpression)new Negate(factor))
             .Or(Not.Try())
             .Or(Factor.Try())
             .Named("expression");

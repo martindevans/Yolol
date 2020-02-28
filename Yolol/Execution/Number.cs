@@ -7,13 +7,11 @@ namespace Yolol.Execution
     public struct Number
         : IEquatable<Number>
     {
-        public const decimal MaxValue = 9223372036854775.807m;
-        public const decimal MinValue = -9223372036854775.808m;
         public const int Scale = 1000;
         public const int Decimals = 3;
 
-        public static readonly Number Min = new Number(MinValue);
-        public static readonly Number Max = new Number(MaxValue);
+        public static readonly Number MinValue = new Number(-9223372036854775.808m);
+        public static readonly Number MaxValue = new Number(9223372036854775.807m);
         public static readonly Number One = new Number(1);
         public static readonly Number Zero = new Number(0);
 
@@ -31,9 +29,9 @@ namespace Yolol.Execution
             // https://stackoverflow.com/a/43639947/108234
             var r = Math.Round(d, Decimals);
             if (d > 0 && r > d)
-                return r - new decimal(1, 0, 0, false, Decimals);
+                return new Number(r - new decimal(1, 0, 0, false, Decimals));
             else if (d < 0 && r < d)
-                return r + new decimal(1, 0, 0, false, Decimals);
+                return new Number(r + new decimal(1, 0, 0, false, Decimals));
 
             return new Number(r);
 
@@ -43,11 +41,11 @@ namespace Yolol.Execution
 
         private Number RangeCheck()
         {
-            if (Value > MaxValue)
-                return Max;
+            if (Value > MaxValue.Value)
+                return MaxValue;
 
-            if (Value < MinValue)
-                return Min;
+            if (Value < MinValue.Value)
+                return MinValue;
 
             return this;
         }

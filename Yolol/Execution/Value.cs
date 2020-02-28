@@ -350,7 +350,7 @@ namespace Yolol.Execution
 
         public static Value operator !(Value value)
         {
-            return value == 0;
+            return value == Number.Zero;
         }
 
         public static Value operator -(Value value)
@@ -383,7 +383,7 @@ namespace Yolol.Execution
                 if (value.Number < 0)
                     throw new ExecutionException("Attempted to Sqrt a negative value");
 
-                return (decimal)Math.Sqrt((double)value.Number.Value);
+                return (Number)(decimal)Math.Sqrt((double)value.Number.Value);
             }
             else
             {
