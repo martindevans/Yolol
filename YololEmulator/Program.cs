@@ -30,6 +30,9 @@ namespace YololEmulator
 
             [Option('m', "max_line", HelpText = "Set the max line number", Required = false, Default = 20)]
             public ushort MaxLineNumber { get; set; }
+
+            [Option('a', "auto", HelpText = "Automaticaly run each line", Required = false)]
+            public bool Auto { get; set; }
         }
         // ReSharper restore UnusedAutoPropertyAccessor.Local
 
@@ -74,9 +77,16 @@ namespace YololEmulator
                         Console.WriteLine($" | {key} = {value}");
                     Console.WriteLine();
 
-                    // Pause until made to continue
-                    Console.Write("Press F5 to continue");
-                    while (Console.ReadKey(true).Key != ConsoleKey.F5) { }
+                    if (options.Auto)
+                    {
+                        System.Threading.Thread.Sleep(200); //Wait 0.2 seconds until we execute the next line
+                    }
+                    else
+                    {
+                        // Pause until made to continue
+                        Console.Write("Press F5 to continue");
+                        while (Console.ReadKey(true).Key != ConsoleKey.F5) { }
+                    }
                     Console.CursorLeft = 0;
                     Console.WriteLine(string.Join("", Enumerable.Repeat('=', Console.WindowWidth)));
                 }
