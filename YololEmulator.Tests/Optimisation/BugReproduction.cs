@@ -2,9 +2,6 @@
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Yolol.Analysis;
-using Yolol.Analysis.ControlFlowGraph;
-using Yolol.Analysis.ControlFlowGraph.Extensions;
-using Yolol.Analysis.TreeVisitor;
 using Yolol.Grammar;
 using Yolol.Grammar.AST;
 

@@ -33,6 +33,9 @@ namespace YololEmulator
 
             [Option('a', "auto", HelpText = "Automaticaly run each line", Required = false)]
             public bool Auto { get; set; }
+
+            [Option('d', "delay", HelpText = "Set how long to wait (in ms) between automatically running lines", Required = false, Default = (ushort)200)]
+            public ushort Delay { get; set; }
         }
         // ReSharper restore UnusedAutoPropertyAccessor.Local
 
@@ -79,7 +82,12 @@ namespace YololEmulator
 
                     if (options.Auto)
                     {
-                        System.Threading.Thread.Sleep(200); //Wait 0.2 seconds until we execute the next line
+                        // Delay execution of the next line
+                        System.Threading.Thread.Sleep(options.Delay);
+
+                        // Press F5 to halt execution
+                        if (Console.KeyAvailable && Console.ReadKey(true).Key == ConsoleKey.F5)
+                            break;
                     }
                     else
                     {
