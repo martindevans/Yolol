@@ -28,7 +28,7 @@ namespace YololEmulator
             [Option('c', "client", HelpText = "IP/Port to connect on", Required = false)]
             public string Client { get; set; }
 
-            [Option('m', "max_line", HelpText = "Set the max line number", Required = false, Default = 20)]
+            [Option('m', "max_line", HelpText = "Set the max line number", Required = false, Default = (ushort)20)]
             public ushort MaxLineNumber { get; set; }
 
             [Option('a', "auto", HelpText = "Automaticaly run each line", Required = false)]
