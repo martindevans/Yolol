@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 using Yolol.Analysis.ControlFlowGraph.AST;
 using Yolol.Analysis.TreeVisitor;
 using Yolol.Analysis.TreeVisitor.Reduction;
@@ -34,13 +33,13 @@ namespace Yolol.Analysis.ControlFlowGraph
             _maxLines = maxLines;
         }
 
-        private void CheckValidity([NotNull] IControlFlowGraph cfg)
+        private void CheckValidity(IControlFlowGraph cfg)
         {
             if (!cfg.Vertices.All(v => v.Outgoing.Any()))
                 throw new NotImplementedException();
         }
 
-        [NotNull] public IControlFlowGraph Build()
+        public IControlFlowGraph Build()
         {
             var cfg = new ControlFlowGraph();
 
@@ -76,7 +75,7 @@ namespace Yolol.Analysis.ControlFlowGraph
         /// <param name="lineNumber"></param>
         /// <param name="entry"></param>
         /// <returns>(entry_block!, exit_block?)</returns>
-        private (IMutableBasicBlock, IMutableBasicBlock) HandleStatementList([NotNull] IMutableControlFlowGraph cfg, [NotNull] StatementList statements, int lineNumber, [NotNull] IMutableBasicBlock entry)
+        private (IMutableBasicBlock, IMutableBasicBlock) HandleStatementList(IMutableControlFlowGraph cfg, StatementList statements, int lineNumber, IMutableBasicBlock entry)
         {
             var block = cfg.CreateNewBlock(BasicBlockType.Basic, lineNumber);
             cfg.CreateEdge(entry, block, EdgeType.Continue);
@@ -134,7 +133,7 @@ namespace Yolol.Analysis.ControlFlowGraph
             return (entry, block);
         }
 
-        private void HandleGoto([NotNull] IMutableControlFlowGraph cfg, [NotNull] Goto @goto, [NotNull] IMutableBasicBlock block, int lineNumber)
+        private void HandleGoto(IMutableControlFlowGraph cfg, Goto @goto, IMutableBasicBlock block, int lineNumber)
         {
             block.Add(@goto);
 
@@ -162,12 +161,12 @@ namespace Yolol.Analysis.ControlFlowGraph
             }
         }
 
-        private void AddFallthrough([NotNull] IMutableControlFlowGraph cfg, [NotNull] IBasicBlock source, int currentLineNumber, EdgeType type = EdgeType.Continue)
+        private void AddFallthrough(IMutableControlFlowGraph cfg, IBasicBlock source, int currentLineNumber, EdgeType type = EdgeType.Continue)
         {
             cfg.CreateEdge(source, GetLineEntryBlock(cfg, currentLineNumber == _maxLines ? 1 : currentLineNumber + 1), type);
         }
 
-        private IMutableBasicBlock GetLineEntryBlock([NotNull] IMutableControlFlowGraph cfg, int lineNumber)
+        private IMutableBasicBlock GetLineEntryBlock(IMutableControlFlowGraph cfg, int lineNumber)
         {
             if (!_lineStartBlocks.TryGetValue(lineNumber, out var block))
             {

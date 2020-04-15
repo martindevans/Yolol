@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 using Yolol.Analysis.TreeVisitor;
 using Yolol.Grammar.AST;
 using Yolol.Grammar.AST.Statements;
@@ -10,11 +9,11 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
 {
     public static class ModificationExtensions
     {
-        [NotNull] private static IReadOnlyDictionary<IBasicBlock, IMutableBasicBlock> CloneVertices(
-            [NotNull] this IControlFlowGraph input,
+        private static IReadOnlyDictionary<IBasicBlock, IMutableBasicBlock> CloneVertices(
+            this IControlFlowGraph input,
             IMutableControlFlowGraph output,
-            [NotNull] Func<IBasicBlock, bool> keep,
-            [CanBeNull] Action<IBasicBlock, IMutableBasicBlock> copy = null
+            Func<IBasicBlock, bool> keep,
+            Action<IBasicBlock, IMutableBasicBlock>? copy = null
             )
         {
             // Clone vertices (without edges)
@@ -34,12 +33,11 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
             return replacements;
         }
 
-        [NotNull]
         private static IReadOnlyDictionary<IEdge, IEdge> CloneEdges(
-            [NotNull] this IControlFlowGraph input,
+            this IControlFlowGraph input,
             IMutableControlFlowGraph output,
             IReadOnlyDictionary<IBasicBlock, IMutableBasicBlock> vertexReplacements,
-            [NotNull] Func<IEdge, bool> keep)
+            Func<IEdge, bool> keep)
         {
             var replacements = new Dictionary<IEdge, IEdge>();
 
@@ -64,7 +62,7 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
         /// <param name="input"></param>
         /// <param name="keep"></param>
         /// <returns></returns>
-        [NotNull] public static IMutableControlFlowGraph Trim([NotNull] this IControlFlowGraph input, [NotNull] Func<IBasicBlock, bool> keep)
+        public static IMutableControlFlowGraph Trim(this IControlFlowGraph input, Func<IBasicBlock, bool> keep)
         {
             var cfg = new ControlFlowGraph();
 
@@ -80,7 +78,7 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
         /// <param name="input"></param>
         /// <param name="keep"></param>
         /// <returns></returns>
-        [NotNull] public static IMutableControlFlowGraph Trim([NotNull] this IControlFlowGraph input, [NotNull] Func<IEdge, bool> keep)
+        public static IMutableControlFlowGraph Trim(this IControlFlowGraph input, Func<IEdge, bool> keep)
         {
             var cfg = new ControlFlowGraph();
 
@@ -97,7 +95,7 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
         /// <param name="input"></param>
         /// <param name="copy"></param>
         /// <returns></returns>
-        [NotNull] public static IMutableControlFlowGraph Modify([NotNull] this IControlFlowGraph input, [NotNull] Action<IBasicBlock, IMutableBasicBlock> copy)
+        public static IMutableControlFlowGraph Modify(this IControlFlowGraph input, Action<IBasicBlock, IMutableBasicBlock> copy)
         {
             var cfg = new ControlFlowGraph();
 
@@ -114,7 +112,7 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
             return cfg;
         }
 
-        [NotNull] public static IMutableControlFlowGraph Modify([NotNull] this IControlFlowGraph input, [NotNull] Action<IEdge, Action<IBasicBlock, IBasicBlock, EdgeType>> copy)
+        public static IMutableControlFlowGraph Modify(this IControlFlowGraph input, Action<IEdge, Action<IBasicBlock, IBasicBlock, EdgeType>> copy)
         {
             var cfg = new ControlFlowGraph();
 
@@ -140,7 +138,7 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
         /// <param name="input"></param>
         /// <param name="create"></param>
         /// <returns></returns>
-        [NotNull] public static IMutableControlFlowGraph Add([NotNull] this IControlFlowGraph input, [NotNull] IEnumerable<(Guid, Guid, EdgeType)> create)
+        public static IMutableControlFlowGraph Add(this IControlFlowGraph input, IEnumerable<(Guid, Guid, EdgeType)> create)
         {
             var cfg = new ControlFlowGraph();
 
@@ -151,8 +149,8 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
             // Add the extra edges
             foreach (var (start, end, type) in create)
             {
-                var a = rv[input.Vertex(start)];
-                var b = rv[input.Vertex(end)];
+                var a = rv[input.Vertex(start)!];
+                var b = rv[input.Vertex(end)!];
                 cfg.CreateEdge(a, b, type);
             }
 
@@ -166,7 +164,7 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
         /// <param name="input"></param>
         /// <param name="factory"></param>
         /// <returns></returns>
-        [NotNull] public static IMutableControlFlowGraph VisitBlocks<T>([NotNull] this IControlFlowGraph input, Func<T> factory)
+        public static IMutableControlFlowGraph VisitBlocks<T>(this IControlFlowGraph input, Func<T> factory)
             where T : BaseTreeVisitor
         {
             return input.Modify((a, b) => {
@@ -189,14 +187,14 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
         /// <param name="factory"></param>
         /// <param name="prepare"></param>
         /// <returns></returns>
-        [NotNull] public static IMutableControlFlowGraph VisitBlocks<TVisitor, TPrep>([NotNull] this IControlFlowGraph input, [NotNull] Func<TPrep, TVisitor> factory, [NotNull] Func<IControlFlowGraph, TPrep> prepare)
+        public static IMutableControlFlowGraph VisitBlocks<TVisitor, TPrep>(this IControlFlowGraph input, Func<TPrep, TVisitor> factory, Func<IControlFlowGraph, TPrep> prepare)
             where TVisitor : BaseTreeVisitor
         {
             var prep = prepare(input);
             return VisitBlocks(input, () => factory(prep));
         }
 
-        [NotNull] public static IMutableControlFlowGraph VisitBlocks<TVisitor, TContext>([NotNull] this IControlFlowGraph input, [NotNull] Func<TContext, TVisitor> factory, [NotNull] TContext context)
+        public static IMutableControlFlowGraph VisitBlocks<TVisitor, TContext>(this IControlFlowGraph input, Func<TContext, TVisitor> factory, TContext context)
             where TVisitor : BaseTreeVisitor
         {
             return VisitBlocks(input, () => factory(context));

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 using Yolol.Analysis.ControlFlowGraph;
 using Yolol.Analysis.ControlFlowGraph.AST;
 using Yolol.Analysis.ControlFlowGraph.Extensions;
@@ -14,7 +13,7 @@ namespace Yolol.Analysis.Types
 {
     public static class FlowTypingExtensions
     {
-        [NotNull] private static IControlFlowGraph RemoveTypeAssignments([NotNull] this IControlFlowGraph graph)
+        private static IControlFlowGraph RemoveTypeAssignments(this IControlFlowGraph graph)
         {
             return graph.Modify((a, b) => {
                 foreach (var stmt in a.Statements)
@@ -27,11 +26,11 @@ namespace Yolol.Analysis.Types
             });
         }
 
-        [NotNull] public static IControlFlowGraph FlowTypingAssignment(
-            [NotNull] this IControlFlowGraph graph,
-            [NotNull] ISingleStaticAssignmentTable ssa, // We require the SSA object because SSA must be done before flow typing
-            [NotNull] out ITypeAssignments types,
-            [NotNull] params (VariableName, Execution.Type)[] hints)
+        public static IControlFlowGraph FlowTypingAssignment(
+            this IControlFlowGraph graph,
+            ISingleStaticAssignmentTable ssa, // We require the SSA object because SSA must be done before flow typing
+            out ITypeAssignments types,
+            params (VariableName, Execution.Type)[] hints)
         {
             var typesMut = new TypeAssignmentTable();
             types = typesMut;
@@ -63,7 +62,7 @@ namespace Yolol.Analysis.Types
             return output;
         }
 
-        [NotNull] private static IEnumerable<VariableName> UnassignedReadNames([NotNull] IControlFlowGraph graph)
+        private static IEnumerable<VariableName> UnassignedReadNames(IControlFlowGraph graph)
         {
             var assignedVars = new FindAssignedVariables();
             var readVars = new FindReadVariables();
@@ -161,7 +160,7 @@ namespace Yolol.Analysis.Types
         {
             private readonly Dictionary<VariableName, Execution.Type> _types = new Dictionary<VariableName, Execution.Type>();
 
-            public void Assign([NotNull] VariableName name, Execution.Type type)
+            public void Assign(VariableName name, Execution.Type type)
             {
                 if (_types.TryGetValue(name, out var t))
                     _types[name] = t | type;
@@ -170,7 +169,7 @@ namespace Yolol.Analysis.Types
             }
 
             
-            public Execution.Type? TypeOf([NotNull] VariableName varName)
+            public Execution.Type? TypeOf(VariableName varName)
             {
                 if (_types.TryGetValue(varName, out var type))
                     return type;

@@ -1,5 +1,4 @@
 ﻿using System;
-using JetBrains.Annotations;
 using Yolol.Execution;
 using Yolol.Grammar.AST.Expressions;
 using Yolol.Grammar.AST.Statements;
@@ -14,9 +13,9 @@ namespace Yolol.Analysis.ControlFlowGraph.AST
     {
         public override bool CanRuntimeError => Condition.CanRuntimeError;
 
-        [NotNull] public BaseExpression Condition { get; }
+        public BaseExpression Condition { get; }
 
-        public Conditional([NotNull] BaseExpression condition)
+        public Conditional(BaseExpression condition)
         {
             Condition = condition;
         }

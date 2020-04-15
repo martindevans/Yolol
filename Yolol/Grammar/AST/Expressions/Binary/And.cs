@@ -1,5 +1,4 @@
 ﻿using System;
-using JetBrains.Annotations;
 using Yolol.Execution;
 
 namespace Yolol.Grammar.AST.Expressions.Binary
@@ -11,19 +10,19 @@ namespace Yolol.Grammar.AST.Expressions.Binary
 
         public override bool IsBoolean => true;
 
-        public And([NotNull] BaseExpression left, [NotNull] BaseExpression right)
+        public And(BaseExpression left, BaseExpression right)
             : base(left, right)
         {
         }
 
-        public bool Equals(And other)
+        public bool Equals(And? other)
         {
             return other != null
                 && other.Left.Equals(Left)
                 && other.Right.Equals(Right);
         }
 
-        public override bool Equals(BaseExpression other)
+        public override bool Equals(BaseExpression? other)
         {
             return other is And a
                 && a.Equals(this);

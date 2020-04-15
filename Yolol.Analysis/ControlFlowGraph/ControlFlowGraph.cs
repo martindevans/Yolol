@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using Yolol.Grammar.AST.Statements;
 using System.Linq;
 
@@ -20,7 +19,7 @@ namespace Yolol.Analysis.ControlFlowGraph
 
         public uint VertexCount => (uint)_vertexLookup.Count;
 
-        [NotNull] public IMutableBasicBlock CreateNewBlock(BasicBlockType type, int lineNumber, Guid? id = null)
+        public IMutableBasicBlock CreateNewBlock(BasicBlockType type, int lineNumber, Guid? id = null)
         {
             var block = new BasicBlock(id ?? Guid.NewGuid(), type, lineNumber);
 
@@ -28,7 +27,7 @@ namespace Yolol.Analysis.ControlFlowGraph
             return block;
         }
 
-        [NotNull] public IEdge CreateEdge(IBasicBlock start, IBasicBlock end, EdgeType type)
+        public IEdge CreateEdge(IBasicBlock start, IBasicBlock end, EdgeType type)
         {
             var e = new Edge(start, end, type);
 
@@ -130,9 +129,9 @@ namespace Yolol.Analysis.ControlFlowGraph
             }
 
             #region equality
-            public bool Equals(IBasicBlock other)
+            public bool Equals(IBasicBlock? other)
             {
-                if (ReferenceEquals(null, other))
+                if (other is null)
                     return false;
                 if (ReferenceEquals(this, other))
                     return true;
@@ -147,7 +146,7 @@ namespace Yolol.Analysis.ControlFlowGraph
 
             public override int GetHashCode()
             {
-                return ID.GetHashCode();
+                return HashCode.Combine(ID);
             }
             #endregion
         }
@@ -185,13 +184,7 @@ namespace Yolol.Analysis.ControlFlowGraph
 
             public override int GetHashCode()
             {
-                unchecked
-                {
-                    var hashCode = (Start != null ? Start.GetHashCode() : 0);
-                    hashCode = (hashCode * 397) ^ (End != null ? End.GetHashCode() : 0);
-                    hashCode = (hashCode * 397) ^ (int)Type;
-                    return hashCode;
-                }
+                return HashCode.Combine(Start, End, Type);
             }
             #endregion
         }

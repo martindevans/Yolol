@@ -1,5 +1,4 @@
 ﻿using System;
-using JetBrains.Annotations;
 using Yolol.Analysis.ControlFlowGraph.AST;
 using Yolol.Execution.Extensions;
 using Yolol.Grammar;
@@ -24,25 +23,15 @@ namespace Yolol.Analysis.TreeVisitor.Modification
 
         protected override BaseExpression Visit(Increment inc)
         {
-            BaseExpression HandleExpression(BaseExpression right)
+            static BaseExpression HandleExpression(BaseExpression right)
             {
-                switch (right)
-                {
-                    case Variable v:
-                        return new Increment(v.Name);
-
-                    case ConstantNumber n:
-                        return new ConstantNumber(new Add(n, new ConstantNumber(1)).StaticEvaluate().Number);
-
-                    case ConstantString s:
-                        return new ConstantString(s.Value + " ");
-
-                    case Bracketed b:
-                        return HandleExpression(b.Parameter);
-
-                    default:
-                        throw new InvalidOperationException(right.GetType().Name);
-                }
+                return right switch {
+                    Variable v => new Increment(v.Name),
+                    ConstantNumber n => new ConstantNumber(new Add(n, new ConstantNumber(1)).StaticEvaluate().Number),
+                    ConstantString s => new ConstantString(s.Value + " "),
+                    Bracketed b => HandleExpression(b.Parameter),
+                    _ => throw new InvalidOperationException(right.GetType().Name)
+                };
             }
 
             var r = Visit(new Variable(inc.Name));
@@ -63,7 +52,7 @@ namespace Yolol.Analysis.TreeVisitor.Modification
 
                     case ConstantString s:
                         if (s.Value.Length > 0)
-                            return new ConstantString(s.Value.Substring(0, s.Value.Length - 1));
+                            return new ConstantString(s.Value[0..^1]);
                         else
                             return new ErrorExpression();
 

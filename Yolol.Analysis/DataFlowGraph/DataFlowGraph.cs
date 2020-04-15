@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 using Yolol.Analysis.ControlFlowGraph;
 using Yolol.Analysis.ControlFlowGraph.AST;
 using Yolol.Analysis.ControlFlowGraph.Extensions;
@@ -30,12 +29,12 @@ namespace Yolol.Analysis.DataFlowGraph
         private readonly List<IDataFlowGraphOutput> _outputs = new List<IDataFlowGraphOutput>();
         public IEnumerable<IDataFlowGraphOutput> Outputs => _outputs;
 
-        public DataFlowGraph([NotNull] ISingleStaticAssignmentTable ssa)
+        public DataFlowGraph(ISingleStaticAssignmentTable ssa)
         {
             Ssa = ssa;
         }
 
-        public DataFlowGraph([NotNull] IBasicBlock block, [NotNull] ISingleStaticAssignmentTable ssa)
+        public DataFlowGraph(IBasicBlock block, ISingleStaticAssignmentTable ssa)
             : this(ssa)
         {
             // Convert statements
@@ -52,26 +51,26 @@ namespace Yolol.Analysis.DataFlowGraph
             }
         }
 
-        [NotNull] public IDataFlowGraphExpressionNode Add([NotNull] BaseExpression expression)
+        public IDataFlowGraphExpressionNode Add(BaseExpression expression)
         {
             return new ExpressionConverter(this).Visit(expression);
         }
 
-        [NotNull] public IDataFlowGraphOutput AddAssignment(VariableName name, IDataFlowGraphExpressionNode value)
+        public IDataFlowGraphOutput AddAssignment(VariableName name, IDataFlowGraphExpressionNode value)
         {
             var node = new AssignmentOutput(name, value, Guid.NewGuid());
             _outputs.Add(node);
             return node;
         }
 
-        [NotNull] public IDataFlowGraphOutput AddConditional(IDataFlowGraphExpressionNode value)
+        public IDataFlowGraphOutput AddConditional(IDataFlowGraphExpressionNode value)
         {
             var node = new ConditionalOutput(value, Guid.NewGuid());
             _outputs.Add(node);
             return node;
         }
 
-        [NotNull] public IDataFlowGraphOutput AddGoto(IDataFlowGraphExpressionNode value)
+        public IDataFlowGraphOutput AddGoto(IDataFlowGraphExpressionNode value)
         {
             var node = new GotoOutput(value, Guid.NewGuid());
             _outputs.Add(node);
@@ -251,7 +250,7 @@ namespace Yolol.Analysis.DataFlowGraph
                 _ssa = ssa;
             }
 
-            [NotNull] private Phi Phi()
+            private Phi Phi()
             {
                 return new Phi(_ssa, _names.Cast<IDataFlowGraphInputVariable>().Select(a => a.Name).ToArray());
             }
@@ -342,18 +341,18 @@ namespace Yolol.Analysis.DataFlowGraph
                 _dataFlowGraph = dataFlowGraph;
             }
 
-            [NotNull] private BinaryOp VisitBinary([NotNull] BaseBinaryExpression bin, YololBinaryOp binop)
+            private BinaryOp VisitBinary(BaseBinaryExpression bin, YololBinaryOp binop)
             {
                 var l = Visit(bin.Left);
                 var r = Visit(bin.Right);
 
-                var op = new BinaryOp(binop, Guid.NewGuid(), (IDataFlowGraphExpressionNode)l, (IDataFlowGraphExpressionNode)r);
+                var op = new BinaryOp(binop, Guid.NewGuid(), l, r);
 
                 _dataFlowGraph._ops.Add(op);
                 return op;
             }
 
-            [NotNull] private UnaryOp VisitUnary([NotNull] UnaryOp op)
+            private UnaryOp VisitUnary(UnaryOp op)
             {
                 _dataFlowGraph._ops.Add(op);
                 return op;
@@ -363,7 +362,7 @@ namespace Yolol.Analysis.DataFlowGraph
 
             protected override IDataFlowGraphExpressionNode Visit(And and) => VisitBinary(and, YololBinaryOp.And);
 
-            protected override IDataFlowGraphExpressionNode Visit([NotNull] Not not) => VisitUnary(new UnaryOp(Guid.NewGuid(), "not", Visit(not.Parameter), a => new Not(a)));
+            protected override IDataFlowGraphExpressionNode Visit(Not not) => VisitUnary(new UnaryOp(Guid.NewGuid(), "not", Visit(not.Parameter), a => new Not(a)));
 
             protected override IDataFlowGraphExpressionNode Visit(ErrorExpression err)
             {

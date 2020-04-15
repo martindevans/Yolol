@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Yolol.Execution;
 
 namespace YololEmulator.Network
@@ -6,9 +7,28 @@ namespace YololEmulator.Network
     public class ConsoleInputDeviceNetwork
         : IDeviceNetwork
     {
+        private readonly bool _save;
+        private readonly Dictionary<string, IVariable> _saved = new Dictionary<string, IVariable>();
+
+        public ConsoleInputDeviceNetwork(bool save)
+        {
+            _save = save;
+        }
+
         public IVariable Get(string name)
         {
-            return new ConsoleInputVariable(name);
+            if (_save)
+            {
+                if (!_saved.TryGetValue(name, out var v))
+                {
+                    v = new ConsoleInputVariable(name);
+                    _saved.Add(name, v);
+                }
+
+                return v;
+            }
+            else
+                return new ConsoleInputVariable(name);
         }
 
         private class ConsoleInputVariable
@@ -16,10 +36,14 @@ namespace YololEmulator.Network
         {
             private readonly string _name;
 
+            private Value? _savedValue;
             public Value Value
             {
                 get
                 {
+                    if (_savedValue.HasValue)
+                        return _savedValue.Value;
+
                     var c = Console.ForegroundColor;
                     try
                     {
@@ -33,7 +57,7 @@ namespace YololEmulator.Network
                                 continue;
 
                             if (value.StartsWith('"') && value.EndsWith('"'))
-                                return new Value(value.Substring(1, value.Length - 2));
+                                return new Value(value[1..^1]);
 
                             if (decimal.TryParse(value, out var result))
                                 return new Value(result);
@@ -48,6 +72,8 @@ namespace YololEmulator.Network
                 }
                 set
                 {
+                    _savedValue = value;
+
                     var c = Console.ForegroundColor;
                     try
                     {

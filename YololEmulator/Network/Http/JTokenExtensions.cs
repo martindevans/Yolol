@@ -1,12 +1,11 @@
-﻿using JetBrains.Annotations;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using Yolol.Execution;
 
 namespace YololEmulator.Network.Http
 {
     public static class JTokenExtensions
     {
-        public static Value? TryAsYololValue([NotNull] this JToken token)
+        public static Value? TryAsYololValue(this JToken token)
         {
             if (token.Type == JTokenType.String)
                 return new Value(token.Value<string>());

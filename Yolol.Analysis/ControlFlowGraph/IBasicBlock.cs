@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 using Yolol.Analysis.TreeVisitor;
 using Yolol.Grammar.AST;
 using Yolol.Grammar.AST.Statements;
@@ -33,14 +32,14 @@ namespace Yolol.Analysis.ControlFlowGraph
     // ReSharper disable once InconsistentNaming
     public static class IBasicBlockExtensions
     {
-        [NotNull] public static StatementList Visit([NotNull] this BaseTreeVisitor visitor, [NotNull] IBasicBlock block)
+        public static StatementList Visit(this BaseTreeVisitor visitor, IBasicBlock block)
         {
             var result = visitor.Visit(new Program(new Line[] {new Line(new StatementList(block.Statements))}));
 
             return result.Lines.Single().Statements;
         }
 
-        public static void CopyTo([NotNull] this IBasicBlock a, [NotNull] IMutableBasicBlock b)
+        public static void CopyTo(this IBasicBlock a, IMutableBasicBlock b)
         {
             foreach (var stmt in a.Statements)
                 b.Add(stmt);

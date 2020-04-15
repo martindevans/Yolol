@@ -1,5 +1,4 @@
 ﻿using System;
-using JetBrains.Annotations;
 using Yolol.Execution;
 
 namespace Yolol.Grammar.AST.Expressions.Unary
@@ -7,7 +6,7 @@ namespace Yolol.Grammar.AST.Expressions.Unary
     public class ArcTan
         : BaseTrigonometry, IEquatable<ArcTan>
     {
-        public ArcTan([NotNull] BaseExpression parameter)
+        public ArcTan(BaseExpression parameter)
             : base(parameter, "atan")
         {
         }
@@ -17,13 +16,13 @@ namespace Yolol.Grammar.AST.Expressions.Unary
             return Value.ArcTan(value);
         }
 
-        public bool Equals(ArcTan other)
+        public bool Equals(ArcTan? other)
         {
             return other != null 
                 && other.Parameter.Equals(Parameter);
         }
 
-        public override bool Equals(BaseExpression other)
+        public override bool Equals(BaseExpression? other)
         {
             return other is ArcTan atan
                 && atan.Equals(this);

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 using Yolol.Analysis.ControlFlowGraph.AST;
 using Yolol.Analysis.ControlFlowGraph.Extensions;
 using Yolol.Grammar;
@@ -18,7 +17,9 @@ namespace Yolol.Analysis.TreeVisitor.Inspection
         private readonly Dictionary<VariableName, BaseExpression> _constants;
 
         // ReSharper disable once NotAccessedField.Local (this field is included in the constructor as a hint that SSA form is required)
+#pragma warning disable IDE0052 // Remove unread private members
         private readonly ISingleStaticAssignmentTable _ssa;
+#pragma warning restore IDE0052 // Remove unread private members
 
         public FindConstantVariables(Dictionary<VariableName, BaseExpression> constants, ISingleStaticAssignmentTable ssa)
         {
@@ -61,7 +62,7 @@ namespace Yolol.Analysis.TreeVisitor.Inspection
             _constants = constants;
         }
 
-        private bool VisitBinary([NotNull] BaseBinaryExpression bin) => Visit(bin.Left) && Visit(bin.Right);
+        private bool VisitBinary(BaseBinaryExpression bin) => Visit(bin.Left) && Visit(bin.Right);
 
         protected override bool Visit(Or or) => VisitBinary(or);
 

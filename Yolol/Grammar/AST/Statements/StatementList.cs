@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 using Yolol.Execution;
 
 namespace Yolol.Grammar.AST.Statements
@@ -11,7 +10,7 @@ namespace Yolol.Grammar.AST.Statements
     {
         public override bool CanRuntimeError => Statements.Any(s => s.CanRuntimeError);
 
-        [NotNull] public IReadOnlyList<BaseStatement> Statements { get; }
+        public IReadOnlyList<BaseStatement> Statements { get; }
 
         public StatementList()
             : this(Array.Empty<BaseStatement>())
@@ -19,13 +18,13 @@ namespace Yolol.Grammar.AST.Statements
             
         }
 
-        public StatementList([NotNull] params BaseStatement[] stmts)
+        public StatementList(params BaseStatement[] stmts)
             : this((IEnumerable<BaseStatement>)stmts)
         {
             
         }
 
-        public StatementList([NotNull] IEnumerable<BaseStatement> statements)
+        public StatementList(IEnumerable<BaseStatement> statements)
         {
             Statements = statements.Where(a => !(a is EmptyStatement)).ToArray();
         }
@@ -54,14 +53,14 @@ namespace Yolol.Grammar.AST.Statements
             return new ExecutionResult();
         }
 
-        public bool Equals(StatementList other)
+        public bool Equals(StatementList? other)
         {
             return other != null
                 && other.Statements.Count == Statements.Count
                 && other.Statements.Zip(Statements, (a, b) => a.Equals(b)).All(a => a);
         }
 
-        public override bool Equals(BaseStatement other)
+        public override bool Equals(BaseStatement? other)
         {
             return other is StatementList sl
                 && sl.Equals(this);

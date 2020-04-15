@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 using Yolol.Analysis.ControlFlowGraph.AST;
 using Yolol.Analysis.TreeVisitor;
 using Yolol.Grammar;
@@ -11,7 +10,7 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
 {
     public static class StaticSingleAssignmentExtensions
     {
-        [NotNull] public static IControlFlowGraph StaticSingleAssignment([NotNull] this IControlFlowGraph graph, [NotNull] out ISingleStaticAssignmentTable ssa)
+        public static IControlFlowGraph StaticSingleAssignment(this IControlFlowGraph graph, out ISingleStaticAssignmentTable ssa)
         {
             var ssaMut = new SingleStaticAssignmentTable();
             ssa = ssaMut;
@@ -50,8 +49,7 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
             return output;
         }
 
-        [NotNull]
-        public static IControlFlowGraph RemoveStaticSingleAssignment([NotNull] this IControlFlowGraph graph, ISingleStaticAssignmentTable ssa)
+        public static IControlFlowGraph RemoveStaticSingleAssignment(this IControlFlowGraph graph, ISingleStaticAssignmentTable ssa)
         {
             return graph.VisitBlocks(() => new RemoveSsaPass(ssa));
         }
@@ -156,7 +154,7 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
                     return new Phi(_ssa, names.ToArray());
             }
 
-            [NotNull] public IEnumerable<BaseStatement> Visit([NotNull] IEnumerable<BaseStatement> statements)
+            public IEnumerable<BaseStatement> Visit(IEnumerable<BaseStatement> statements)
             {
                 return base.Visit(new StatementList(statements)).Statements;
             }
@@ -168,7 +166,7 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
             private readonly Dictionary<VariableName, List<VariableName>> _baseToAssigned = new Dictionary<VariableName, List<VariableName>>();
             private readonly Dictionary<VariableName, VariableName> _assignedToBase = new Dictionary<VariableName, VariableName>();
 
-            [NotNull] public VariableName Assign([NotNull] VariableName baseName)
+            public VariableName Assign(VariableName baseName)
             {
                 // Get ot create list of assigned names
                 if (!_baseToAssigned.TryGetValue(baseName, out var l))
@@ -187,12 +185,12 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
                 return assignedName;
             }
 
-            [NotNull] public IEnumerable<VariableName> AssignedNames([NotNull] VariableName baseVariable)
+            public IEnumerable<VariableName> AssignedNames(VariableName baseVariable)
             {
                 return _baseToAssigned[baseVariable];
             }
 
-            [NotNull] public VariableName BaseName([NotNull] VariableName ssaName)
+            public VariableName BaseName(VariableName ssaName)
             {
                 return _assignedToBase[ssaName];
             }

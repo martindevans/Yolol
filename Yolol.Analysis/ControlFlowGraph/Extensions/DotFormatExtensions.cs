@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
-using JetBrains.Annotations;
 
 namespace Yolol.Analysis.ControlFlowGraph.Extensions
 {
@@ -11,12 +10,12 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
     // ReSharper disable once InconsistentNaming
     public static class DotFormatExtensions
     {
-        [NotNull] private static string ID(Guid guid)
+        private static string ID(Guid guid)
         {
             return $"_{guid.ToString().Replace("-", "_")}";
         }
 
-        [NotNull] public static string ToDot([NotNull] this IControlFlowGraph graph)
+        public static string ToDot(this IControlFlowGraph graph)
         {
             var sb = new StringBuilder();
 
@@ -28,7 +27,7 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
             var root = graph.Vertices.Single(a => a.Type == BasicBlockType.Entry);
             sb.AppendLine($"  {ID(root.ID)} [label=\"entry\" shape=circle rank=min];");
 
-            string EdgeAsString(IEdge edge)
+            static string EdgeAsString(IEdge edge)
             {
                 // 35 -> 36 [label="eol_fallthrough" color="r g b"];
                 var a = ID(edge.Start.ID);

@@ -1,5 +1,4 @@
 ﻿using System;
-using JetBrains.Annotations;
 using Yolol.Execution;
 
 namespace Yolol.Grammar.AST.Expressions.Binary
@@ -11,7 +10,7 @@ namespace Yolol.Grammar.AST.Expressions.Binary
 
         public override bool IsBoolean => true;
 
-        public EqualTo([NotNull] BaseExpression lhs, [NotNull] BaseExpression rhs)
+        public EqualTo(BaseExpression lhs, BaseExpression rhs)
             : base(lhs, rhs)
         {
         }
@@ -21,14 +20,14 @@ namespace Yolol.Grammar.AST.Expressions.Binary
             return l == r;
         }
 
-        public bool Equals(EqualTo other)
+        public bool Equals(EqualTo? other)
         {
             return other != null
                    && other.Left.Equals(Left)
                    && other.Right.Equals(Right);
         }
 
-        public override bool Equals(BaseExpression other)
+        public override bool Equals(BaseExpression? other)
         {
             return other is EqualTo a
                    && a.Equals(this);

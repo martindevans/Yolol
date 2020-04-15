@@ -1,5 +1,4 @@
 ﻿using System;
-using JetBrains.Annotations;
 using Superpower;
 using Superpower.Model;
 using Superpower.Parsers;
@@ -81,7 +80,7 @@ namespace Yolol.Grammar
         private static readonly TokenListParser<YololToken, BaseStatement> PreDecrementStat = PreDecrementExpr.Select(a => (BaseStatement)new ExpressionWrapper(a));
         private static readonly TokenListParser<YololToken, BaseStatement> PostDecrementStat = PostDecrementExpr.Select(a => (BaseStatement)new ExpressionWrapper(a));
 
-        [NotNull] private static TokenListParser<YololToken, BaseExpression> MkFunction(YololToken token, Func<BaseExpression, BaseExpression> make)
+        private static TokenListParser<YololToken, BaseExpression> MkFunction(YololToken token, Func<BaseExpression, BaseExpression> make)
         {
             return from nm in Token.EqualTo(token)
                    from lp in Token.EqualTo(YololToken.LParen)

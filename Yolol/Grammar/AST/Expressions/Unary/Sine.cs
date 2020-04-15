@@ -1,5 +1,4 @@
 ﻿using System;
-using JetBrains.Annotations;
 using Yolol.Execution;
 
 namespace Yolol.Grammar.AST.Expressions.Unary
@@ -7,7 +6,7 @@ namespace Yolol.Grammar.AST.Expressions.Unary
     public class Sine
         : BaseTrigonometry, IEquatable<Sine>
     {
-        public Sine([NotNull] BaseExpression parameter)
+        public Sine(BaseExpression parameter)
             : base(parameter, "sin")
         {
         }
@@ -17,13 +16,13 @@ namespace Yolol.Grammar.AST.Expressions.Unary
             return Value.Sin(value);
         }
 
-        public bool Equals(Sine other)
+        public bool Equals(Sine? other)
         {
             return other != null 
                 && other.Parameter.Equals(Parameter);
         }
 
-        public override bool Equals(BaseExpression other)
+        public override bool Equals(BaseExpression? other)
         {
             return other is Sine sine
                 && sine.Equals(this);

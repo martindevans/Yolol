@@ -1,5 +1,4 @@
-﻿using JetBrains.Annotations;
-using Yolol.Analysis.ControlFlowGraph.AST;
+﻿using Yolol.Analysis.ControlFlowGraph.AST;
 using Yolol.Grammar.AST.Expressions;
 using Yolol.Grammar.AST.Statements;
 
@@ -8,7 +7,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
     public class SelfAssignmentElimination
         : BaseTreeVisitor
     {
-        protected override BaseStatement Visit([NotNull] Assignment ass)
+        protected override BaseStatement Visit(Assignment ass)
         {
             if (ass.Left.IsExternal)
                 return base.Visit(ass);
@@ -22,7 +21,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
             return base.Visit(ass);
         }
 
-        protected override BaseStatement Visit([NotNull] TypedAssignment ass)
+        protected override BaseStatement Visit(TypedAssignment ass)
         {
             if (ass.Left.IsExternal)
                 return base.Visit(ass);

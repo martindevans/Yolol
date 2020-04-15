@@ -10,6 +10,17 @@
     <RepositoryUrl>https://github.com/martindevans/Yolol</RepositoryUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Version>2.8.0</Version>
+    <LangVersion>8.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <WarningsAsErrors>NU1605,CS8600</WarningsAsErrors>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <WarningsAsErrors>NU1605,CS8600</WarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,7 +29,6 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="ReSharper.Annotations" Version="7.1.3.130415" />
     <PackageReference Include="Superpower" Version="2.3.0" />
   </ItemGroup>
 

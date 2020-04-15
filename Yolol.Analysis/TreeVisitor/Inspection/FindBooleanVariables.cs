@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 using Yolol.Analysis.ControlFlowGraph.AST;
 using Yolol.Analysis.ControlFlowGraph.Extensions;
 using Yolol.Analysis.Types;
@@ -32,7 +31,7 @@ namespace Yolol.Analysis.TreeVisitor.Inspection
             _types = types;
         }
 
-        private bool IsBoolean([NotNull] BaseExpression expr)
+        private bool IsBoolean(BaseExpression expr)
         {
             if (expr.IsBoolean)
                 return true;
@@ -66,7 +65,11 @@ namespace Yolol.Analysis.TreeVisitor.Inspection
             : BaseExpressionVisitor<bool>
         {
             private readonly HashSet<VariableName> _bools;
+
+            // ReSharper disable once NotAccessedField.Local
+#pragma warning disable IDE0052 // Remove unread private members
             private readonly ITypeAssignments _types;
+#pragma warning restore IDE0052 // Remove unread private members
 
             public BooleanExpressionInspector(HashSet<VariableName> bools, ITypeAssignments types)
             {
@@ -79,7 +82,7 @@ namespace Yolol.Analysis.TreeVisitor.Inspection
             /// </summary>
             /// <param name="expr"></param>
             /// <returns></returns>
-            private static bool StaticFalse([NotNull] BaseExpression expr)
+            private static bool StaticFalse(BaseExpression expr)
             {
                 if (expr.IsBoolean)
                     return true;

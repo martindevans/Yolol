@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using Yolol.Grammar;
 
 namespace Yolol.Execution
@@ -15,7 +14,7 @@ namespace Yolol.Execution
 
         private readonly Dictionary<string, IVariable> _variables = new Dictionary<string, IVariable>();
 
-        public MachineState([NotNull] IDeviceNetwork network, ushort maxLineNumber = 20)
+        public MachineState(IDeviceNetwork network, ushort maxLineNumber = 20)
         {
             MaxLineNumber = maxLineNumber;
             _network = network ?? throw new ArgumentNullException(nameof(network));
@@ -37,7 +36,7 @@ namespace Yolol.Execution
             }
         }
 
-        [NotNull] internal IVariable GetVariable([NotNull] VariableName name) => GetVariable(name.Name);
+        internal IVariable GetVariable(VariableName name) => GetVariable(name.Name);
 
         public IEnumerator<KeyValuePair<string, IVariable>> GetEnumerator()
         {

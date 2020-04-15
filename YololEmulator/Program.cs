@@ -3,7 +3,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using CommandLine;
-using JetBrains.Annotations;
 using Superpower.Model;
 using Yolol.Execution;
 using Yolol.Grammar;
@@ -20,13 +19,15 @@ namespace YololEmulator
         private class Options
         {
             [Option('i', "input", HelpText = "File to read YOLOL code from", Required = true)]
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
             public string InputFile { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
             [Option('h', "host", HelpText = "Port to host a network on", Required = false)]
             public ushort? HostPort { get; set; }
 
             [Option('c', "client", HelpText = "IP/Port to connect on", Required = false)]
-            public string Client { get; set; }
+            public string? Client { get; set; }
 
             [Option('m', "max_line", HelpText = "Set the max line number", Required = false, Default = (ushort)20)]
             public ushort MaxLineNumber { get; set; }
@@ -36,6 +37,9 @@ namespace YololEmulator
 
             [Option('d', "delay", HelpText = "Set how long to wait (in ms) between automatically running lines", Required = false, Default = (ushort)200)]
             public ushort Delay { get; set; }
+
+            [Option('s', "save", HelpText = "Values written to externals will be saved and automatically returned as the value next time", Required = false, Default = false)]
+            public bool SaveOutputs { get; set; }
         }
         // ReSharper restore UnusedAutoPropertyAccessor.Local
 
@@ -48,13 +52,13 @@ namespace YololEmulator
         {
             try
             {
-                if (!File.Exists(options.InputFile))
+                if (options.InputFile == null || !File.Exists(options.InputFile))
                 {
                     Console.Error.WriteLine($"Input file `{options.InputFile}` does not exist");
                     return;
                 }
 
-                IDeviceNetwork network = new ConsoleInputDeviceNetwork();
+                IDeviceNetwork network = new ConsoleInputDeviceNetwork(options.SaveOutputs);
                 if (options.Client != null)
                     network = new HttpClientDeviceNetwork(options.Client);
                 if (options.HostPort != null)
@@ -109,7 +113,7 @@ namespace YololEmulator
             }
         }
 
-        [NotNull] private static string ReadLine([NotNull] string filepath, int lineNumber)
+        private static string ReadLine(string filepath, int lineNumber)
         {
             if (lineNumber < 0)
                 throw new ArgumentOutOfRangeException(nameof(lineNumber), "Line number is negative");
@@ -184,7 +188,7 @@ namespace YololEmulator
                 Console.Error.Write('^');
         }
 
-        private static void Error([NotNull] Action act)
+        private static void Error(Action act)
         {
             var fg = Console.ForegroundColor;
             Console.ForegroundColor = ConsoleColor.Red;

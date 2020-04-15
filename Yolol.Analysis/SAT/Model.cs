@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using Microsoft.Z3;
 using Yolol.Execution;
 using Yolol.Grammar;
@@ -21,7 +20,7 @@ namespace Yolol.Analysis.SAT
 
         private bool _finalGoto;
 
-        internal Model([NotNull] Context context, [NotNull] Solver solver)
+        internal Model(Context context, Solver solver)
         {
             Context = context;
             Solver = solver;
@@ -31,8 +30,8 @@ namespace Yolol.Analysis.SAT
 
         public void Dispose()
         {
-            Context?.Dispose();
-            Solver?.Dispose();
+            Context.Dispose();
+            Solver.Dispose();
         }
 
         public Status Check()
@@ -40,7 +39,7 @@ namespace Yolol.Analysis.SAT
             return Solver.Check();
         }
 
-        public ModelVariable GetOrCreateVariable([NotNull] VariableName name)
+        public ModelVariable GetOrCreateVariable(VariableName name)
         {
             if (!_variableMapping.TryGetValue(name, out var v))
             {
@@ -56,7 +55,7 @@ namespace Yolol.Analysis.SAT
             return v;
         }
 
-        public IModelVariable TryGetVariable([NotNull] VariableName name)
+        public IModelVariable? TryGetVariable(VariableName name)
         {
             _variableMapping.TryGetValue(name, out var v);
             return v;
@@ -74,14 +73,14 @@ namespace Yolol.Analysis.SAT
             return g;
         }
 
-        public IModelVariable TryGetGotoVariable()
+        public IModelVariable? TryGetGotoVariable()
         {
             if (_finalGoto)
                 return TryGetVariable(new VariableName("goto"));
             return null;
         }
 
-        public IModelVariable TryGetConditionalVariable()
+        public IModelVariable? TryGetConditionalVariable()
         {
             throw new NotImplementedException();
         }

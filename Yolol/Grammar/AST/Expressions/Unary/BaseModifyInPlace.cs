@@ -1,5 +1,4 @@
 ﻿using System;
-using JetBrains.Annotations;
 using Yolol.Execution;
 
 namespace Yolol.Grammar.AST.Expressions.Unary
@@ -7,7 +6,7 @@ namespace Yolol.Grammar.AST.Expressions.Unary
     public abstract class BaseModifyInPlace
         : BaseUnaryExpression
     {
-        [NotNull] public VariableName Name { get; }
+        public VariableName Name { get; }
 
         public override bool CanRuntimeError => false;
 
@@ -19,7 +18,7 @@ namespace Yolol.Grammar.AST.Expressions.Unary
 
         public bool PreOp { get; }
 
-        protected BaseModifyInPlace([NotNull] VariableName name, YololModifyOp op, bool pre): base(new Variable(name))
+        protected BaseModifyInPlace(VariableName name, YololModifyOp op, bool pre): base(new Variable(name))
         {
             Name = name;
             Op = op;
@@ -38,15 +37,13 @@ namespace Yolol.Grammar.AST.Expressions.Unary
             return PreOp ? modified : original;
         }
 
-        [NotNull] public static BaseModifyInPlace Create([NotNull] VariableName name, YololModifyOp op, bool pre)
+        public static BaseModifyInPlace Create(VariableName name, YololModifyOp op, bool pre)
         {
-            switch (op)
-            {
-                case YololModifyOp.Increment: return pre ? new PreIncrement(name) : (BaseModifyInPlace)new PostIncrement(name);
-                case YololModifyOp.Decrement: return pre ? new PreDecrement(name) : (BaseModifyInPlace)new PostIncrement(name);
-
-                default: throw new ArgumentException($"Unknown YololModifyOp type `{op}`");
-            }
+            return op switch {
+                YololModifyOp.Increment => (pre ? new PreIncrement(name) : (BaseModifyInPlace)new PostIncrement(name)),
+                YololModifyOp.Decrement => (pre ? new PreDecrement(name) : (BaseModifyInPlace)new PostIncrement(name)),
+                _ => throw new ArgumentException($"Unknown YololModifyOp type `{op}`")
+            };
         }
     }
 }

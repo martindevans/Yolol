@@ -1,5 +1,5 @@
 ﻿using System;
-using JetBrains.Annotations;
+using System.Globalization;
 using Microsoft.Z3;
 using Yolol.Analysis.ControlFlowGraph.AST;
 using Yolol.Analysis.SAT.Extensions;
@@ -45,13 +45,15 @@ namespace Yolol.Analysis.SAT
             switch (value.Type)
             {
                 case Type.Number:
-                    _model.Solver.Assert(ctx.MkEq(_numValue, _model.Context.MkInt((value.Number.Value * Number.Scale).ToString())));
+                    _model.Solver.Assert(ctx.MkEq(_numValue, _model.Context.MkInt((value.Number.Value * Number.Scale).ToString(CultureInfo.InvariantCulture))));
                     return;
 
                 case Type.String:
                     _model.Solver.Assert(ctx.MkEq(_strValue, _model.Context.MkString(value.String)));
                     return;
 
+                case Type.Unassigned:
+                case Type.Error:
                 default:
                     throw new InvalidOperationException($"Unknown type `{value.Type}` for value");
             }
@@ -80,7 +82,7 @@ namespace Yolol.Analysis.SAT
             var sol = _model.Solver;
             var m = _model;
 
-            (BoolExpr nnt, BoolExpr sst, BoolExpr nst, BoolExpr snt) BinaryTypes(BaseBinaryExpression bin, DatatypeExpr nn, DatatypeExpr ss, DatatypeExpr sn, DatatypeExpr ns)
+            (BoolExpr nnt, BoolExpr sst, BoolExpr nst, BoolExpr snt) BinaryTypes(BaseBinaryExpression bin, DatatypeExpr? nn, DatatypeExpr? ss, DatatypeExpr? sn, DatatypeExpr? ns)
             {
                 var l = GetOrCreateVar(bin.Left);
                 var r = GetOrCreateVar(bin.Right);
@@ -104,7 +106,7 @@ namespace Yolol.Analysis.SAT
                 return (nnt, sst, nst, snt);
             }
 
-            void ComparisonOp(BaseBinaryExpression comparison, Func<IntExpr, IntExpr, BoolExpr> nnr, Func<SeqExpr, SeqExpr, BoolExpr> ssr)
+            void ComparisonOp(BaseBinaryExpression comparison, Func<IntExpr, IntExpr, BoolExpr>? nnr, Func<SeqExpr, SeqExpr, BoolExpr>? ssr)
             {
                 var (nnt, sst, _, _) = BinaryTypes(comparison, m.NumType, m.NumType, m.NumType, m.NumType);
 
@@ -172,7 +174,7 @@ namespace Yolol.Analysis.SAT
                 ))));
             }
 
-            (BoolExpr str, BoolExpr num) UnaryTypes(BaseUnaryExpression unary, DatatypeExpr n, DatatypeExpr s)
+            (BoolExpr str, BoolExpr num) UnaryTypes(BaseUnaryExpression unary, DatatypeExpr? n, DatatypeExpr? s)
             {
                 var i = GetOrCreateVar(unary.Parameter);
 
@@ -483,7 +485,7 @@ namespace Yolol.Analysis.SAT
             }
         }
 
-        [NotNull] ModelVariable GetOrCreateVar([NotNull] BaseExpression sub)
+        ModelVariable GetOrCreateVar(BaseExpression sub)
         {
             if (sub is Variable var)
                 return _model.GetOrCreateVariable(var.Name);

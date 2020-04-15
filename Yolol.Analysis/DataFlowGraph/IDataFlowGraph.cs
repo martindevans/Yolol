@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using Yolol.Analysis.ControlFlowGraph.Extensions;
 using Yolol.Execution;
 using Yolol.Grammar;
@@ -28,9 +27,9 @@ namespace Yolol.Analysis.DataFlowGraph
     public interface IDataFlowGraphExpressionNode
         : IDataFlowGraphNode
     {
-        [NotNull] BaseExpression ToExpression();
+        BaseExpression ToExpression();
 
-        [NotNull] IEnumerable<IDataFlowGraphNode> Inputs { get; }
+        IEnumerable<IDataFlowGraphNode> Inputs { get; }
     }
 
     public enum DataFlowGraphInputType
@@ -67,6 +66,6 @@ namespace Yolol.Analysis.DataFlowGraph
     {
         IDataFlowGraphExpressionNode Input { get; }
 
-        [NotNull] BaseStatement ToStatement();
+        BaseStatement ToStatement();
     }
 }

@@ -1,8 +1,4 @@
-﻿using System;
-using JetBrains.Annotations;
-using Yolol.Execution;
-
-namespace Yolol.Grammar.AST.Expressions.Unary
+﻿namespace Yolol.Grammar.AST.Expressions.Unary
 {
     public abstract class BaseTrigonometry
         : BaseUnaryExpression
@@ -12,7 +8,7 @@ namespace Yolol.Grammar.AST.Expressions.Unary
         public override bool CanRuntimeError => true;
         public override bool IsBoolean => false;
 
-        protected BaseTrigonometry([NotNull] BaseExpression parameter, string name)
+        protected BaseTrigonometry(BaseExpression parameter, string name)
             : base(parameter)
         {
             _name = name;

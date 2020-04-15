@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using Yolol.Analysis.ControlFlowGraph.AST;
 using Yolol.Grammar;
 using Yolol.Grammar.AST.Expressions;
@@ -15,11 +14,11 @@ namespace Yolol.Analysis.TreeVisitor.Inspection
         private readonly Dictionary<VariableName, uint> _counts = new Dictionary<VariableName, uint>();
         private readonly Dictionary<VariableName, IReadOnlyList<BaseExpression>> _assigned = new Dictionary<VariableName, IReadOnlyList<BaseExpression>>();
 
-        [NotNull] public IEnumerable<VariableName> Names => _counts.Keys;
-        [NotNull] public IReadOnlyDictionary<VariableName, uint> Counts => _counts;
-        [NotNull] public IReadOnlyDictionary<VariableName, IReadOnlyList<BaseExpression>> Expressions => _assigned;
+        public IEnumerable<VariableName> Names => _counts.Keys;
+        public IReadOnlyDictionary<VariableName, uint> Counts => _counts;
+        public IReadOnlyDictionary<VariableName, IReadOnlyList<BaseExpression>> Expressions => _assigned;
 
-        private void Add([NotNull] VariableName name, BaseExpression assignedExpr)
+        private void Add(VariableName name, BaseExpression assignedExpr)
         {
             // Increment count
             _counts.TryGetValue(name, out var value);

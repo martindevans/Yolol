@@ -2,7 +2,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 using Yolol.Execution;
 using Yolol.Grammar;
 using Yolol.Grammar.AST;
@@ -16,7 +15,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
         : BaseTreeVisitor
     {
         private readonly Dictionary<Value, string> _replacements = new Dictionary<Value, string>();
-        private BaseStatement[] _constantInitializers;
+        private BaseStatement[]? _constantInitializers;
 
         public override Program Visit(Program program)
         {
@@ -95,7 +94,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
                 return base.Visit(con);
             }
 
-            [NotNull] public ConcurrentDictionary<Value, uint> Constants => _constantCount;
+            public ConcurrentDictionary<Value, uint> Constants => _constantCount;
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
 using Yolol.Cylon.Deserialisation.Versions;
 using Yolol.Grammar.AST;
@@ -15,11 +14,11 @@ namespace Yolol.Cylon.Deserialisation
             _typeExtension = typeExtension;
         }
 
-        [NotNull] public Program Parse([NotNull] string json)
+        public Program Parse(string json)
         {
             var jobj = JObject.Parse(json);
 
-            var version = Semver.SemVersion.Parse(jobj["version"].Value<string>());
+            var version = Semver.SemVersion.Parse(jobj.Tok("version").Value<string>());
 
             if (version == "0.3.0")
                 return new V_0_3_0(_typeExtension).Parse(json);

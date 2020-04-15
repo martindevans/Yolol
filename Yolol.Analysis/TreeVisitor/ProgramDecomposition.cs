@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 using Yolol.Analysis.ControlFlowGraph.AST;
 using Yolol.Execution.Extensions;
 using Yolol.Grammar;
@@ -23,13 +22,12 @@ namespace Yolol.Analysis.TreeVisitor
             _names = names;
         }
 
-        [NotNull]
-        public Program Visit([NotNull] Program program)
+        public Program Visit(Program program)
         {
             return new Program(program.Lines.Select(DecomposeLine));
         }
 
-        [NotNull] private Line DecomposeLine([NotNull] Line line)
+        private Line DecomposeLine(Line line)
         {
             return new Line(new StatementList(line.Statements.Statements.SelectMany(a => new StatementDecomposition(_names).Visit(a))));
         }
@@ -133,9 +131,9 @@ namespace Yolol.Analysis.TreeVisitor
             _names = names;
         }
 
-        [NotNull] private VariableName MkTmp() => new VariableName(_names.Name());
+        private VariableName MkTmp() => new VariableName(_names.Name());
 
-        [NotNull] private static Variable GetResultName([NotNull] IEnumerable<BaseStatement> stmts, BaseExpression original)
+        private static Variable GetResultName(IEnumerable<BaseStatement> stmts, BaseExpression original)
         {
             if (stmts.Any())
                 return new Variable(((Assignment)stmts.Last()).Left);
@@ -146,7 +144,7 @@ namespace Yolol.Analysis.TreeVisitor
             throw new InvalidOperationException("Failed to get result from previous decomposed expression");
         }
 
-        [NotNull] private IEnumerable<BaseStatement> Binary<T>([NotNull] T expr, [NotNull] Func<BaseExpression, BaseExpression, T> factory)
+        private IEnumerable<BaseStatement> Binary<T>(T expr, Func<BaseExpression, BaseExpression, T> factory)
             where T : BaseBinaryExpression
         {
             (BaseExpression, IEnumerable<BaseStatement>) EvalSide(BaseExpression ex)
@@ -167,7 +165,7 @@ namespace Yolol.Analysis.TreeVisitor
             return ls.Concat(rs).Append(a);
         }
 
-        [NotNull] private IEnumerable<BaseStatement> Unary<T>([NotNull] T expr, [NotNull] Func<Variable, T> factory)
+        private IEnumerable<BaseStatement> Unary<T>(T expr, Func<Variable, T> factory)
             where T : BaseUnaryExpression
         {
             var p = Visit(expr.Parameter);

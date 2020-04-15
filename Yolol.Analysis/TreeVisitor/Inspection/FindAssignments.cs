@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using Yolol.Analysis.ControlFlowGraph.Extensions;
-using Yolol.Grammar;
-using Yolol.Grammar.AST.Expressions;
 using Yolol.Grammar.AST.Statements;
 
 namespace Yolol.Analysis.TreeVisitor.Inspection

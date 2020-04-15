@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 using Yolol.Analysis.ControlFlowGraph.Extensions;
 using Yolol.Execution;
 using Yolol.Grammar;
@@ -21,7 +20,7 @@ namespace Yolol.Analysis.ControlFlowGraph.AST
 
         public ISingleStaticAssignmentTable SSA { get; }
 
-        public Phi([NotNull] ISingleStaticAssignmentTable ssa, [NotNull] IReadOnlyList<VariableName> assignedNames)
+        public Phi(ISingleStaticAssignmentTable ssa, IReadOnlyList<VariableName> assignedNames)
         {
             if (assignedNames.Count == 0)
                 throw new ArgumentException("Must specify one or more assigned names");
@@ -34,7 +33,7 @@ namespace Yolol.Analysis.ControlFlowGraph.AST
             SSA = ssa;
         }
 
-        public Phi([NotNull] ISingleStaticAssignmentTable ssa, [NotNull] params VariableName[] assignedNames)
+        public Phi(ISingleStaticAssignmentTable ssa, params VariableName[] assignedNames)
             : this(ssa, (IReadOnlyList<VariableName>)assignedNames)
         {
         }

@@ -1,5 +1,4 @@
-﻿using JetBrains.Annotations;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Yolol.Grammar;
 using Yolol.Grammar.AST.Expressions;
 using Yolol.Grammar.AST.Expressions.Binary;
@@ -12,7 +11,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
     {
         private readonly ISet<VariableName> _booleans;
 
-        public BooleanLogicCompressor([NotNull] ISet<VariableName> booleans)
+        public BooleanLogicCompressor(ISet<VariableName> booleans)
         {
             _booleans = booleans;
         }

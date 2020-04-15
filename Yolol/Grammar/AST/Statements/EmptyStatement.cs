@@ -1,5 +1,4 @@
 ﻿using System;
-using JetBrains.Annotations;
 using Yolol.Execution;
 
 namespace Yolol.Grammar.AST.Statements
@@ -14,12 +13,12 @@ namespace Yolol.Grammar.AST.Statements
             return new ExecutionResult();
         }
 
-        public bool Equals(EmptyStatement other)
+        public bool Equals(EmptyStatement? other)
         {
             return other != null;
         }
 
-        public override bool Equals(BaseStatement other)
+        public override bool Equals(BaseStatement? other)
         {
             return Equals(other as EmptyStatement);
         }

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 using Yolol.Analysis.TreeVisitor.Inspection;
 using Yolol.Analysis.Types;
 using Yolol.Grammar;
@@ -10,7 +9,7 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
 {
     public static class AnalysisExtensions
     {
-        [NotNull] public static IReadOnlyDictionary<VariableName, BaseExpression> FindConstants([NotNull] this IControlFlowGraph cfg, ISingleStaticAssignmentTable ssa)
+        public static IReadOnlyDictionary<VariableName, BaseExpression> FindConstants(this IControlFlowGraph cfg, ISingleStaticAssignmentTable ssa)
         {
             var constants = new Dictionary<VariableName, BaseExpression>();
             var count = -1;
@@ -25,7 +24,7 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
             return constants;
         }
 
-        [NotNull] public static IReadOnlyCollection<VariableName> FindUnreadAssignments([NotNull] this IControlFlowGraph cfg)
+        public static IReadOnlyCollection<VariableName> FindUnreadAssignments(this IControlFlowGraph cfg)
         {
             var assigned = new FindAssignedVariables();
             var read = new FindReadVariables();
@@ -47,7 +46,7 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
         /// </summary>
         /// <param name="cfg"></param>
         /// <returns></returns>
-        [NotNull] public static IEnumerable<(VariableName, uint)> FindReadCounts([NotNull] this IControlFlowGraph cfg)
+        public static IEnumerable<(VariableName, uint)> FindReadCounts(this IControlFlowGraph cfg)
         {
             return from v in cfg.Vertices
                    from r in v.FindReadCounts()
@@ -56,7 +55,7 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
                    select (counts.Key, c);
         }
 
-        [NotNull] public static IEnumerable<(VariableName, uint)> FindReadCounts([NotNull] this IBasicBlock block)
+        public static IEnumerable<(VariableName, uint)> FindReadCounts(this IBasicBlock block)
         {
             var r = new FindReadVariables();
             r.Visit(block);
@@ -64,7 +63,7 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
             return r.Counts.Select(a => (a.Key, a.Value));
         }
 
-        [NotNull] public static IEnumerable<VariableName> FindWrites([NotNull] this IBasicBlock block, ISingleStaticAssignmentTable ssa)
+        public static IEnumerable<VariableName> FindWrites(this IBasicBlock block, ISingleStaticAssignmentTable ssa)
         {
             var r = new FindAssignedVariables();
             r.Visit(block);
@@ -79,7 +78,7 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
         /// <param name="ssa"></param>
         /// <param name="types"></param>
         /// <returns></returns>
-        [NotNull] public static ISet<VariableName> FindBooleanVariables([NotNull] this IControlFlowGraph cfg, ISingleStaticAssignmentTable ssa, ITypeAssignments types)
+        public static ISet<VariableName> FindBooleanVariables(this IControlFlowGraph cfg, ISingleStaticAssignmentTable ssa, ITypeAssignments types)
         {
             var booleans = new HashSet<VariableName>();
 

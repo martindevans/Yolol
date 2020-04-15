@@ -1,5 +1,4 @@
 ﻿using System;
-using JetBrains.Annotations;
 using Yolol.Execution;
 
 namespace Yolol.Grammar.AST.Statements
@@ -12,10 +11,10 @@ namespace Yolol.Grammar.AST.Statements
         /// </summary>
         public abstract bool CanRuntimeError { get; }
 
-        [NotNull] public abstract ExecutionResult Evaluate([NotNull] MachineState state);
+        public abstract ExecutionResult Evaluate(MachineState state);
 
         public abstract bool Equals(BaseStatement other);
 
-        [NotNull] public abstract override string ToString();
+        public abstract override string ToString();
     }
 }

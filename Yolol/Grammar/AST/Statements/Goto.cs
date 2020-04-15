@@ -1,5 +1,4 @@
 ﻿using System;
-using JetBrains.Annotations;
 using Yolol.Execution;
 using Yolol.Grammar.AST.Expressions;
 
@@ -30,13 +29,13 @@ namespace Yolol.Grammar.AST.Statements
             return new ExecutionResult(line);
         }
 
-        public bool Equals(Goto other)
+        public bool Equals(Goto? other)
         {
             return other != null
                 && other.Destination.Equals(Destination);
         }
 
-        public override bool Equals(BaseStatement other)
+        public override bool Equals(BaseStatement? other)
         {
             return other is Goto @goto
                    && @goto.Equals(this);

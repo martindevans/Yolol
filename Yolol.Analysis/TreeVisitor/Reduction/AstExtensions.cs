@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 using Yolol.Analysis.TreeVisitor.Inspection;
 using Yolol.Analysis.TreeVisitor.Modification;
 using Yolol.Grammar.AST;
@@ -15,8 +13,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
         /// </summary>
         /// <param name="prog"></param>
         /// <returns></returns>
-        [NotNull]
-        public static Program SelfAssignmentElimination([NotNull] this Program prog)
+        public static Program SelfAssignmentElimination(this Program prog)
         {
             return new SelfAssignmentElimination().Visit(prog);
         }
@@ -26,7 +23,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
         /// </summary>
         /// <param name="prog"></param>
         /// <returns></returns>
-        [NotNull] public static Program SimpleBracketElimination([NotNull] this Program prog)
+        public static Program SimpleBracketElimination(this Program prog)
         {
             return new SimpleBracketElimination().Visit(prog);
         }
@@ -36,7 +33,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
         /// </summary>
         /// <param name="prog"></param>
         /// <returns></returns>
-        [NotNull] public static Program SimplifyVariableNames([NotNull] this Program prog)
+        public static Program SimplifyVariableNames(this Program prog)
         {
             return new VariableSimplificationVisitor().Visit(prog);
         }
@@ -46,44 +43,44 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
         /// </summary>
         /// <param name="prog"></param>
         /// <returns></returns>
-        [NotNull] public static Program DeadPostGotoElimination([NotNull] this Program prog)
+        public static Program DeadPostGotoElimination(this Program prog)
         {
             return new DeadStatementAfterGotoElimination().Visit(prog);
         }
 
-        [NotNull] public static Program TrailingGotoNextLineElimination([NotNull] this Program prog)
+        public static Program TrailingGotoNextLineElimination(this Program prog)
         {
             return new EndOfLineGotoElimination().Visit(prog);
         }
 
-        [NotNull] public static Program TrailingConditionalGotoAnyLineCompression([NotNull] this Program prog)
+        public static Program TrailingConditionalGotoAnyLineCompression(this Program prog)
         {
             return new IfThenGotoCompressor().Visit(prog);
         }
 
-        [NotNull] public static Program ConditionalGotoCompression([NotNull] this Program prog, [NotNull] INameGenerator names)
+        public static Program ConditionalGotoCompression(this Program prog, INameGenerator names)
         {
             return new IfThenElseGotoCompressor(names).Visit(prog);
         }
 
 
-        [NotNull] public static Program FoldConstants([NotNull] this Program prog)
+        public static Program FoldConstants(this Program prog)
         {
             return new ConstantFoldingVisitor().Visit(prog);
         }
 
-        [NotNull] public static Program HoistConstants([NotNull] this Program prog)
+        public static Program HoistConstants(this Program prog)
         {
             return new RepeatConstantHoisting().Visit(prog);
         }
 
-        [NotNull] public static Program CompressConstants([NotNull] this Program prog)
+        public static Program CompressConstants(this Program prog)
         {
             return new ConstantCompressor().Visit(prog);
         }
 
 
-        [NotNull]  public static Program FoldSingleUseVariables([NotNull] this Program prog)
+         public static Program FoldSingleUseVariables(this Program prog)
         {
             // Find all variables associated with a count of how many times they are read
             var readsInProgram = new FindReadVariables();
@@ -133,7 +130,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
         }
 
 
-        [NotNull] public static Program StripTypes([NotNull] this Program prog)
+        public static Program StripTypes(this Program prog)
         {
             return new StripTypes().Visit(prog);
         }

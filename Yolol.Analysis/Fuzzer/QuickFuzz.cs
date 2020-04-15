@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using JetBrains.Annotations;
 using Yolol.Execution;
 using Yolol.Grammar;
 using Yolol.Grammar.AST;
@@ -16,12 +15,12 @@ namespace Yolol.Analysis.Fuzzer
     {
         private readonly Dictionary<VariableName, Type> _hints;
 
-        public QuickFuzz([NotNull] params (VariableName, Type)[] typeHints)
+        public QuickFuzz(params (VariableName, Type)[] typeHints)
         {
             _hints = typeHints.ToDictionary(a => a.Item1, a => a.Item2);
         }
 
-        [NotNull] public async Task<IFuzzResult> Fuzz([NotNull] Program program, int runs = 250, int iterations = 50)
+        public async Task<IFuzzResult> Fuzz(Program program, int runs = 250, int iterations = 50)
         {
             // Start as many tasks as necessary
             var work = new Task<FuzzResultItem>[runs];
@@ -99,7 +98,7 @@ namespace Yolol.Analysis.Fuzzer
                 _sets.Add((name, Iterations, value));
             }
 
-            private Value GetValue([NotNull] string name)
+            private Value GetValue(string name)
             {
                 Value GetInner()
                 {

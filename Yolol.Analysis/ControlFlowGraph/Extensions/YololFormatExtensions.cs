@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 using Yolol.Analysis.ControlFlowGraph.AST;
 using Yolol.Grammar.AST;
 using Yolol.Grammar.AST.Statements;
@@ -10,7 +9,7 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
 {
     public static class YololFormatExtensions
     {
-        [NotNull] public static Program ToYolol([NotNull] this IControlFlowGraph cfg)
+        public static Program ToYolol(this IControlFlowGraph cfg)
         {
             // Convert all lines with code on them
             var lines = from start in cfg.Vertices.Where(v => v.Type == BasicBlockType.LineStart)
@@ -37,7 +36,7 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
             return new Program(output);
         }
 
-        [NotNull] private static Line ConvertLine([NotNull] IBasicBlock entry)
+        private static Line ConvertLine(IBasicBlock entry)
         {
             var statements = new List<BaseStatement>();
 
@@ -57,7 +56,7 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
         /// <param name="block"></param>
         /// <param name="output"></param>
         /// <param name="stop"></param>
-        private static void RecursiveConvertBlock([NotNull] IBasicBlock block, [NotNull] List<BaseStatement> output, [CanBeNull] IBasicBlock stop = null)
+        private static void RecursiveConvertBlock(IBasicBlock block, List<BaseStatement> output, IBasicBlock? stop = null)
         {
             if (stop != null && stop.ID.Equals(block.ID))
                 return;
@@ -125,9 +124,9 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
                 RecursiveConvertBlock(e.End, output, stop);
         }
 
-        [CanBeNull] private static IBasicBlock FindCommonSubsequentBlock([NotNull] IBasicBlock a, [NotNull] IBasicBlock b)
+        private static IBasicBlock? FindCommonSubsequentBlock(IBasicBlock a, IBasicBlock b)
         {
-            IReadOnlyDictionary<IBasicBlock, uint> Visit(IBasicBlock block, uint depth, Dictionary<IBasicBlock, uint> depths)
+            static IReadOnlyDictionary<IBasicBlock, uint> Visit(IBasicBlock block, uint depth, Dictionary<IBasicBlock, uint> depths)
             {
                 // If we've already been to this block by a shorter route early exit
                 if (depths.TryGetValue(block, out var prevDepth))

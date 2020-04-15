@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Globalization;
-using JetBrains.Annotations;
 
 namespace Yolol.Execution
 {
@@ -55,12 +54,12 @@ namespace Yolol.Execution
             return new Number(num).Truncate().RangeCheck();
         }
 
-        [NotNull] public string ToString(CultureInfo culture)
+        public string ToString(CultureInfo culture)
         {
             return Value.ToString(culture);
         }
 
-        [NotNull]  public override string ToString()
+        public override string ToString()
         {
             return ToString(CultureInfo.InvariantCulture);
         }
@@ -77,7 +76,7 @@ namespace Yolol.Execution
 
         public override int GetHashCode()
         {
-            return Value.GetHashCode();
+            return HashCode.Combine(Value);
         }
 
         public static implicit operator Number(int i)

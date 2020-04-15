@@ -1,5 +1,4 @@
 ﻿using System;
-using JetBrains.Annotations;
 using Yolol.Execution;
 
 namespace Yolol.Grammar.AST.Expressions
@@ -22,7 +21,7 @@ namespace Yolol.Grammar.AST.Expressions
         /// </summary>
         public abstract bool CanRuntimeError { get; }
 
-        public abstract Value Evaluate([NotNull] MachineState state);
+        public abstract Value Evaluate(MachineState state);
 
         public abstract bool Equals(BaseExpression other);
 

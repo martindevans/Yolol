@@ -1,5 +1,4 @@
 ﻿using System;
-using JetBrains.Annotations;
 using Yolol.Execution;
 
 namespace Yolol.Grammar.AST.Expressions.Unary
@@ -13,20 +12,20 @@ namespace Yolol.Grammar.AST.Expressions.Unary
 
         public override bool IsConstant => Parameter.IsConstant;
 
-        public Sqrt([NotNull] BaseExpression parameter)
+        public Sqrt(BaseExpression parameter)
             : base(parameter)
         {
         }
 
         protected override Value Evaluate(Value value) => Value.Sqrt(value);
 
-        public bool Equals(Sqrt other)
+        public bool Equals(Sqrt? other)
         {
             return other != null 
                 && other.Parameter.Equals(Parameter);
         }
 
-        public override bool Equals(BaseExpression other)
+        public override bool Equals(BaseExpression? other)
         {
             return other is Sqrt sqrt
                 && sqrt.Equals(this);

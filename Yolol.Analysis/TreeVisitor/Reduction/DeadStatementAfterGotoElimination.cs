@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 using Yolol.Grammar.AST.Statements;
 
 namespace Yolol.Analysis.TreeVisitor.Reduction
@@ -32,7 +31,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
 
     internal static class Ext
     {
-        public static IEnumerable<T> TakeUntilIncluding<T>([NotNull] this IEnumerable<T> list, Func<T, bool> predicate)
+        public static IEnumerable<T> TakeUntilIncluding<T>(this IEnumerable<T> list, Func<T, bool> predicate)
         {
             foreach(var el in list)
             {

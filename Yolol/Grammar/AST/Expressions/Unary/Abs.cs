@@ -1,5 +1,4 @@
 ﻿using System;
-using JetBrains.Annotations;
 using Yolol.Execution;
 
 namespace Yolol.Grammar.AST.Expressions.Unary
@@ -13,20 +12,20 @@ namespace Yolol.Grammar.AST.Expressions.Unary
 
         public override bool IsConstant => Parameter.IsConstant;
 
-        public Abs([NotNull] BaseExpression parameter)
+        public Abs(BaseExpression parameter)
             : base(parameter)
         {
         }
 
         protected override Value Evaluate(Value value) => Value.Abs(value);
 
-        public bool Equals(Abs other)
+        public bool Equals(Abs? other)
         {
             return other != null 
                 && other.Parameter.Equals(Parameter);
         }
 
-        public override bool Equals(BaseExpression other)
+        public override bool Equals(BaseExpression? other)
         {
             return other is Abs abs
                 && abs.Equals(this);

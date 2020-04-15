@@ -1,5 +1,4 @@
 ﻿using System;
-using JetBrains.Annotations;
 using Yolol.Analysis.ControlFlowGraph.AST;
 using Yolol.Grammar.AST.Statements;
 
@@ -7,49 +6,46 @@ namespace Yolol.Analysis.TreeVisitor
 {
     public abstract class BaseStatementVisitor<TResult>
     {
-        [NotNull] public TResult Visit([NotNull] BaseStatement statement)
+        public TResult Visit(BaseStatement statement)
         {
-            switch (statement)
-            {
-                case Conditional a: return Visit(a);
-                case TypedAssignment a: return Visit(a);
-                case ErrorStatement a: return Visit(a);
-
-                case CompoundAssignment a: return Visit(a);
-                case Assignment a:   return Visit(a);
-                case ExpressionWrapper a: return Visit(a);
-                case Goto a: return Visit(a);
-                case If a: return Visit(a);
-                case StatementList a: return Visit(a);
-                case EmptyStatement a: return Visit(a);
-            }
-
-            return VisitUnknown(statement);
+            return statement switch {
+                Conditional a => Visit(a),
+                TypedAssignment a => Visit(a),
+                ErrorStatement a => Visit(a),
+                CompoundAssignment a => Visit(a),
+                Assignment a => Visit(a),
+                ExpressionWrapper a => Visit(a),
+                Goto a => Visit(a),
+                If a => Visit(a),
+                StatementList a => Visit(a),
+                EmptyStatement a => Visit(a),
+                _ => VisitUnknown(statement)
+            };
         }
 
-        [NotNull] protected virtual TResult VisitUnknown(BaseStatement statement)
+        protected virtual TResult VisitUnknown(BaseStatement statement)
         {
             throw new InvalidOperationException($"`Visit` invalid for statement type `{statement.GetType().FullName}`");
         }
 
-        [NotNull] protected abstract TResult Visit([NotNull] ErrorStatement err);
+        protected abstract TResult Visit(ErrorStatement err);
 
-        [NotNull] protected abstract TResult Visit([NotNull] Conditional con);
+        protected abstract TResult Visit(Conditional con);
 
-        [NotNull] protected abstract TResult Visit([NotNull] TypedAssignment ass);
+        protected abstract TResult Visit(TypedAssignment ass);
 
-        [NotNull] protected abstract TResult Visit([NotNull] EmptyStatement empty);
+        protected abstract TResult Visit(EmptyStatement empty);
 
-        [NotNull] protected abstract TResult Visit([NotNull] StatementList list);
+        protected abstract TResult Visit(StatementList list);
 
-        [NotNull] protected abstract TResult Visit([NotNull] CompoundAssignment compAss);
+        protected abstract TResult Visit(CompoundAssignment compAss);
 
-        [NotNull] protected abstract TResult Visit([NotNull] Assignment ass);
+        protected abstract TResult Visit(Assignment ass);
 
-        [NotNull] protected abstract TResult Visit([NotNull] ExpressionWrapper expr);
+        protected abstract TResult Visit(ExpressionWrapper expr);
 
-        [NotNull] protected abstract TResult Visit([NotNull] Goto @goto);
+        protected abstract TResult Visit(Goto @goto);
 
-        [NotNull] protected abstract TResult Visit([NotNull] If @if);
+        protected abstract TResult Visit(If @if);
     }
 }

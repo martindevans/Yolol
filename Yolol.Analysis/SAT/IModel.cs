@@ -1,5 +1,4 @@
-﻿using JetBrains.Annotations;
-using Microsoft.Z3;
+﻿using Microsoft.Z3;
 using System;
 using Yolol.Grammar;
 
@@ -15,19 +14,19 @@ namespace Yolol.Analysis.SAT
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        [CanBeNull] IModelVariable TryGetVariable(VariableName name);
+        IModelVariable? TryGetVariable(VariableName name);
 
         /// <summary>
         /// Try to get the model variable for the final goto in the program
         /// </summary>
         /// <returns></returns>
-        [CanBeNull] IModelVariable TryGetGotoVariable();
+        IModelVariable? TryGetGotoVariable();
 
         /// <summary>
         /// Try to get the model variable for the final conditional in the program
         /// </summary>
         /// <returns></returns>
-        [CanBeNull] IModelVariable TryGetConditionalVariable();
+        IModelVariable? TryGetConditionalVariable();
 
         /// <summary>
         /// Check the solver status

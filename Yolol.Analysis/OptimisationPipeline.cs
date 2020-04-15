@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
-using JetBrains.Annotations;
 using Yolol.Analysis.ControlFlowGraph;
 using Yolol.Analysis.ControlFlowGraph.Extensions;
 using Yolol.Analysis.Fuzzer;
@@ -18,7 +16,7 @@ namespace Yolol.Analysis
         private readonly (VariableName, Type)[] _typeHints;
         private readonly int _itersLimit;
         private readonly bool _keepTypes;
-        private int _maxLines;
+        private readonly int _maxLines;
 
         /// <summary>
         /// How many unique runs of the program will the fuzzer run before and after optimisation to verify correctness
@@ -41,7 +39,7 @@ namespace Yolol.Analysis
         public bool DisableCfgPasses { get; set; }
 
 
-        public OptimisationPipeline(int maxLines, [NotNull] (VariableName, Type)[] typeHints)
+        public OptimisationPipeline(int maxLines, (VariableName, Type)[] typeHints)
         {
             _typeHints = typeHints;
             _itersLimit = int.MaxValue;
@@ -56,8 +54,10 @@ namespace Yolol.Analysis
             _maxLines = maxLines;
         }
 
-        [NotNull] public async Task<Program> Apply([NotNull] Program input)
+        public async Task<Program> Apply(Program input)
         {
+            await Task.CompletedTask;
+
             if (input.Lines.Count < _maxLines)
                 throw new NotImplementedException("Pad to _maxLines lines");
 
@@ -99,7 +99,7 @@ namespace Yolol.Analysis
             return result;
         }
 
-        private static bool CheckFuzz([NotNull] IFuzzResult startFuzz, [NotNull] IFuzzResult endFuzz)
+        private static bool CheckFuzz(IFuzzResult startFuzz, IFuzzResult endFuzz)
         {
             if (startFuzz.Count != endFuzz.Count)
                 return false;
@@ -122,7 +122,7 @@ namespace Yolol.Analysis
             return true;
         }
 
-        [NotNull] private static Program Optimise(Program program)
+        private static Program Optimise(Program program)
         {
             // Replace thing with unnecessary brackets like `(a)` with `a`
             program = program.SimpleBracketElimination();
@@ -165,7 +165,7 @@ namespace Yolol.Analysis
             return program;
         }
 
-        [NotNull] private IControlFlowGraph Optimise(IControlFlowGraph cf)
+        private IControlFlowGraph Optimise(IControlFlowGraph cf)
         {
             {
                 // Convert CFG into SSA form (i.e. each variable is only assigned once)

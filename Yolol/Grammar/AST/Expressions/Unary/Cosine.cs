@@ -1,5 +1,4 @@
 ﻿using System;
-using JetBrains.Annotations;
 using Yolol.Execution;
 
 namespace Yolol.Grammar.AST.Expressions.Unary
@@ -7,7 +6,7 @@ namespace Yolol.Grammar.AST.Expressions.Unary
     public class Cosine
         : BaseTrigonometry, IEquatable<Cosine>
     {
-        public Cosine([NotNull] BaseExpression parameter)
+        public Cosine(BaseExpression parameter)
             : base(parameter, "cos")
         {
         }
@@ -17,13 +16,13 @@ namespace Yolol.Grammar.AST.Expressions.Unary
             return Value.Cos(value);
         }
 
-        public bool Equals(Cosine other)
+        public bool Equals(Cosine? other)
         {
             return other != null 
                 && other.Parameter.Equals(Parameter);
         }
 
-        public override bool Equals(BaseExpression other)
+        public override bool Equals(BaseExpression? other)
         {
             return other is Cosine cos
                 && cos.Equals(this);

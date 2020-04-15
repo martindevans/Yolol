@@ -7,7 +7,6 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
-using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
 using uhttpsharp;
 using uhttpsharp.Listeners;
@@ -30,7 +29,7 @@ namespace YololEmulator.Network.Http
             _httpServer.Start();
         }
 
-        private async Task OnHttpRequest([NotNull] IHttpContext context, Func<Task> next)
+        private async Task OnHttpRequest(IHttpContext context, Func<Task> next)
         {
             var name = context.Request.Uri.OriginalString.Trim('/');
 
@@ -63,13 +62,13 @@ namespace YololEmulator.Network.Http
             );
         }
 
-        private JObject HttpGet([NotNull] string name)
+        private JObject HttpGet(string name)
         {
             var v = Get(name);
             return JObject.FromObject(new { value = v.Value.ToObject() });
         }
 
-        private JObject HttpPut([NotNull] string name, [NotNull] JObject request)
+        private JObject HttpPut(string name, JObject request)
         {
             var v = request.GetValue("value")?.TryAsYololValue() ?? throw new ExecutionException("Could not parse network request into a yolol value: `{json}`");
             Get(name).Value = v;
@@ -77,7 +76,7 @@ namespace YololEmulator.Network.Http
             return HttpGet(name);
         }
 
-        private NetworkVariable Get([NotNull] string name)
+        private NetworkVariable Get(string name)
         {
             return _variables.GetOrAdd(name.ToLowerInvariant(), _ => new NetworkVariable());
         }

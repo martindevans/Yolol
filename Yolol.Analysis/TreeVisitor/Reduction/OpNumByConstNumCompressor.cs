@@ -1,6 +1,4 @@
-﻿using System;
-using JetBrains.Annotations;
-using Yolol.Analysis.ControlFlowGraph.AST;
+﻿using Yolol.Analysis.ControlFlowGraph.AST;
 using Yolol.Analysis.Types;
 using Yolol.Execution;
 using Yolol.Execution.Extensions;
@@ -27,15 +25,14 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
 
         protected override BaseExpression Visit(Multiply mul)
         {
-            BaseExpression HandleSingleSideNumber(Number number, BaseExpression other)
+            BaseExpression? HandleSingleSideNumber(Number number, BaseExpression other)
             {
-                switch (number.Value)
-                {
-                    case -1: return base.Visit(new Negate(new Bracketed(other)));
-                    case 0: return new ConstantNumber(0);
-                    case 1: return base.Visit(other);
-                    default: return null;
-                }
+                return number.Value switch {
+                    -1 => base.Visit(new Negate(new Bracketed(other))),
+                    0 => new ConstantNumber(0),
+                    1 => base.Visit(other),
+                    _ => null
+                };
             }
 
             // Try to discover value/type for sides
@@ -52,12 +49,13 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
             if (lv.HasValue && rv.HasValue)
                 return new ConstantNumber(mul.StaticEvaluate().Number);
 
-            // iAt least one side needs a known value
-            if (!lv.HasValue && !rv.HasValue)
+            // At least one side needs a known value
+            var num = lv ?? rv;
+            if (!num.HasValue)
                 return base.Visit(mul);
 
             // One side has a known value
-            return HandleSingleSideNumber((lv ?? rv).Value, lv.HasValue ? mul.Right : mul.Left) ?? base.Visit(mul);
+            return HandleSingleSideNumber(num.Value, lv.HasValue ? mul.Right : mul.Left) ?? base.Visit(mul);
         }
 
         protected override BaseExpression Visit(Divide div)
@@ -88,24 +86,23 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
             if (!rv.HasValue)
                 return base.Visit(div);
 
-            switch (rv.Value.Value)
-            {
-                case -1: return base.Visit(new Negate(new Bracketed(base.Visit(div.Left))));
-                case 0: return new ErrorExpression();
-                case 1: return base.Visit(new Bracketed(base.Visit(div.Left)));
-                default: return base.Visit(div);
-            }
+            return rv.Value.Value switch {
+                -1 => base.Visit(new Negate(new Bracketed(base.Visit(div.Left)))),
+                0 => new ErrorExpression(),
+                1 => base.Visit(new Bracketed(base.Visit(div.Left))),
+                _ => base.Visit(div)
+            };
         }
 
         protected override BaseExpression Visit(Add add)
         {
-            BaseExpression HandleSingleSideNumber(Number number, BaseExpression other)
+            BaseExpression? HandleSingleSideNumber(Number number, BaseExpression other)
             {
-                switch (number.Value)
+                return number.Value switch
                 {
-                    case 0: return base.Visit(new Bracketed(other));
-                    default: return null;
-                }
+                    0 => base.Visit(new Bracketed(other)),
+                    _ => null,
+                };
             }
 
             // Try to discover type for sides
@@ -129,7 +126,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
                 return new ConstantNumber(add.StaticEvaluate().Number);
 
             // One side has a known value
-            return HandleSingleSideNumber((lv ?? rv).Value, lv.HasValue ? add.Right : add.Left) ?? add;
+            return HandleSingleSideNumber((lv ?? rv)!.Value, lv.HasValue ? add.Right : add.Left) ?? add;
         }
 
         protected override BaseExpression Visit(Exponent exp)
@@ -152,13 +149,12 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
             if (!rv.HasValue)
                 return base.Visit(exp);
 
-            switch (rv.Value.Value)
-            {
-                case 0: return base.Visit(new ConstantNumber(1));
-                case 1: return base.Visit(new Bracketed(base.Visit(exp.Left)));
-                case -1: return base.Visit(new Divide(new ConstantNumber(1), new Bracketed(exp.Left)));
-                default: return base.Visit(exp);
-            }
+            return rv.Value.Value switch {
+                0 => base.Visit(new ConstantNumber(1)),
+                1 => base.Visit(new Bracketed(base.Visit(exp.Left))),
+                -1 => base.Visit(new Divide(new ConstantNumber(1), new Bracketed(exp.Left))),
+                _ => base.Visit(exp)
+            };
         }
 
         protected override BaseExpression Visit(Subtract sub)
@@ -240,7 +236,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
             return Type.Unassigned;
         }
 
-        private static bool? DiscoverBoolValue([NotNull] BaseExpression expr, Type? type)
+        private static bool? DiscoverBoolValue(BaseExpression expr, Type? type)
         {
             if (type.HasValue && type.Value == Type.String)
                 return true;
@@ -256,7 +252,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
             return null;
         }
 
-        private static Number? DiscoverNumberValue([NotNull] BaseExpression expr)
+        private static Number? DiscoverNumberValue(BaseExpression expr)
         {
             if (expr is ConstantNumber con)
                 return con.Value;
@@ -271,7 +267,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
             return null;
         }
 
-        private static string DiscoverStringValue([NotNull] BaseExpression expr)
+        private static string? DiscoverStringValue(BaseExpression expr)
         {
             if (expr is ConstantString con)
                 return con.Value;

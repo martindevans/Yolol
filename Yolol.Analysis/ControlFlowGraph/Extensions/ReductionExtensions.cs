@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 using Yolol.Analysis.ControlFlowGraph.AST;
 using Yolol.Analysis.DataFlowGraph;
 using Yolol.Analysis.TreeVisitor;
@@ -19,7 +18,7 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
 {
     public static class ReductionExtensions
     {
-        [NotNull] public static IControlFlowGraph RecomposeModify([NotNull] this IControlFlowGraph cfg)
+        public static IControlFlowGraph RecomposeModify(this IControlFlowGraph cfg)
         {
             return cfg.VisitBlocks(() => new RecomposeModifyIR());
         }
@@ -59,7 +58,7 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
         /// <param name="cfg"></param>
         /// <param name="ssa"></param>
         /// <returns></returns>
-        [NotNull] public static IControlFlowGraph FoldConstants([NotNull] this IControlFlowGraph cfg, ISingleStaticAssignmentTable ssa)
+        public static IControlFlowGraph FoldConstants(this IControlFlowGraph cfg, ISingleStaticAssignmentTable ssa)
         {
             // Keep finding and replacing constants until nothing is found
             cfg = cfg.Fixpoint(c =>
@@ -86,7 +85,7 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
         /// <param name="cfg"></param>
         /// <param name="types"></param>
         /// <returns></returns>
-        [NotNull] public static IControlFlowGraph SimplifyModificationExpressions([NotNull] this IControlFlowGraph cfg, [NotNull] ITypeAssignments types)
+        public static IControlFlowGraph SimplifyModificationExpressions(this IControlFlowGraph cfg, ITypeAssignments types)
         {
             return cfg.VisitBlocks(() => new SimplifyModify(types));
         }
@@ -127,7 +126,7 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
         /// </summary>
         /// <param name="graph"></param>
         /// <returns></returns>
-        [NotNull] public static IControlFlowGraph RemoveUnreachableBlocks([NotNull] this IControlFlowGraph graph)
+        public static IControlFlowGraph RemoveUnreachableBlocks(this IControlFlowGraph graph)
         {
             var reachable = new HashSet<IBasicBlock>();
             var queue = new Queue<IBasicBlock>();
@@ -151,7 +150,7 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
         /// </summary>
         /// <param name="graph"></param>
         /// <returns></returns>
-        [NotNull] public static IControlFlowGraph RemoveEmptyBlocks([NotNull] this IControlFlowGraph graph)
+        public static IControlFlowGraph RemoveEmptyBlocks(this IControlFlowGraph graph)
         {
             // Find all the vertices we can shortcut
             var emptyVertices = new HashSet<IBasicBlock>(
@@ -190,7 +189,7 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
         /// <param name="graph"></param>
         /// <param name="types"></param>
         /// <returns></returns>
-        [NotNull] public static IControlFlowGraph TypeDrivenEdgeTrimming([NotNull] this IControlFlowGraph graph, ITypeAssignments types)
+        public static IControlFlowGraph TypeDrivenEdgeTrimming(this IControlFlowGraph graph, ITypeAssignments types)
         {
             return graph.Trim(edge => {
 
@@ -236,7 +235,7 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
         /// </summary>
         /// <param name="cfg"></param>
         /// <returns></returns>
-        [NotNull] public static IControlFlowGraph NormalizeErrors([NotNull] this IControlFlowGraph cfg)
+        public static IControlFlowGraph NormalizeErrors(this IControlFlowGraph cfg)
         {
             var todo = new HashSet<IBasicBlock>();
 
@@ -268,7 +267,7 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
         /// </summary>
         /// <param name="cfg"></param>
         /// <returns></returns>
-        [NotNull] public static IControlFlowGraph MergeAdjacentBasicBlocks([NotNull] this IControlFlowGraph cfg)
+        public static IControlFlowGraph MergeAdjacentBasicBlocks(this IControlFlowGraph cfg)
         {
             // This keeps looping until it finds no work to do
             while (true)
@@ -310,7 +309,7 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
         /// </summary>
         /// <param name="cfg"></param>
         /// <returns></returns>
-        [NotNull] public static IControlFlowGraph ReplaceUnassignedReads([NotNull] this IControlFlowGraph cfg)
+        public static IControlFlowGraph ReplaceUnassignedReads(this IControlFlowGraph cfg)
         {
             var v = new FindAssignedVariables();
             foreach (var vertex in cfg.Vertices)
@@ -325,7 +324,7 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
         /// <param name="cfg"></param>
         /// <param name="ssa"></param>
         /// <returns></returns>
-        [NotNull] public static IControlFlowGraph FoldUnnecessaryCopies([NotNull] this IControlFlowGraph cfg, [NotNull] ISingleStaticAssignmentTable ssa)
+        public static IControlFlowGraph FoldUnnecessaryCopies(this IControlFlowGraph cfg, ISingleStaticAssignmentTable ssa)
         {
             IControlFlowGraph InnerFold(IControlFlowGraph cfgi)
             {

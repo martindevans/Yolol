@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using JetBrains.Annotations;
 using Yolol.Execution.Extensions;
 using Yolol.Grammar.AST;
 using Yolol.Grammar.AST.Expressions;
@@ -28,7 +27,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
             return base.Visit(new Line(new StatementList(line.Statements.Statements.Take(line.Statements.Statements.Count - 1).Append(Replace(@if)))));
         }
 
-        [NotNull] private BaseStatement Replace([NotNull] If @if)
+        private BaseStatement Replace(If @if)
         {
             if (@if.FalseBranch.Statements.Count != 0)
                 return @if;
@@ -57,20 +56,17 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
             return new Goto(dest2);
         }
 
-        [NotNull] private static BaseExpression Invert([NotNull] BaseExpression expression)
+        private static BaseExpression Invert(BaseExpression expression)
         {
-            switch (expression)
-            {
-                case EqualTo a:            return new NotEqualTo(a.Left, a.Right);
-                case GreaterThan a:        return new LessThanEqualTo(a.Left, a.Right);
-                case GreaterThanEqualTo a: return new LessThan(a.Left, a.Right);
-                case LessThan a:           return new GreaterThanEqualTo(a.Left, a.Right);
-                case LessThanEqualTo a:    return new GreaterThan(a.Left, a.Right);
-                case NotEqualTo a:         return new EqualTo(a.Left, a.Right);
-
-                default:
-                    return new EqualTo(new ConstantNumber(0), new Bracketed(expression));
-            }
+            return expression switch {
+                EqualTo a => (BaseExpression)new NotEqualTo(a.Left, a.Right),
+                GreaterThan a => new LessThanEqualTo(a.Left, a.Right),
+                GreaterThanEqualTo a => new LessThan(a.Left, a.Right),
+                LessThan a => new GreaterThanEqualTo(a.Left, a.Right),
+                LessThanEqualTo a => new GreaterThan(a.Left, a.Right),
+                NotEqualTo a => new EqualTo(a.Left, a.Right),
+                _ => new EqualTo(new ConstantNumber(0), new Bracketed(expression))
+            };
         }
     }
 }

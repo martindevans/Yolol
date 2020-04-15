@@ -1,5 +1,4 @@
 ﻿using System;
-using JetBrains.Annotations;
 using Yolol.Execution;
 
 namespace Yolol.Grammar.AST.Expressions.Binary
@@ -9,7 +8,7 @@ namespace Yolol.Grammar.AST.Expressions.Binary
     {
         public override bool CanRuntimeError => Left.CanRuntimeError || Right.CanRuntimeError;
 
-        public Add([NotNull] BaseExpression left, [NotNull] BaseExpression right)
+        public Add(BaseExpression left, BaseExpression right)
             : base(left, right)
         {
         }

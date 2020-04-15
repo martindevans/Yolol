@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Globalization;
-using JetBrains.Annotations;
 using Yolol.Grammar.AST.Expressions;
 
 namespace Yolol.Execution
@@ -92,18 +91,11 @@ namespace Yolol.Execution
 
         public bool Equals(Value other)
         {
-            switch (Type, other.Type)
-            {
-                case (Type.Number, Type.Number):
-                    return Number == other.Number;
-
-                case (Type.String, Type.String):
-                    return String.Equals(other.String, StringComparison.OrdinalIgnoreCase);
-
-                default:
-                    return false;
-            }
-
+            return (Type, other.Type) switch {
+                (Type.Number, Type.Number) => (Number == other.Number),
+                (Type.String, Type.String) => String.Equals(other.String, StringComparison.OrdinalIgnoreCase),
+                _ => false
+            };
         }
 
         public override bool Equals(object obj)
@@ -218,75 +210,47 @@ namespace Yolol.Execution
 
         public static Value operator +(Value left, Value right)
         {
-            switch (left.Type, right.Type)
-            {
-                case (Type.Number, Type.Number):
-                    return new Value(left.Number + right.Number);
-
-                default:
-                    return left.ToString() + right.ToString();
-            }
+            return (left.Type, right.Type) switch {
+                (Type.Number, Type.Number) => new Value(left.Number + right.Number),
+                _ => (left.ToString() + right.ToString())
+            };
         }
 
         public static Value operator *(Value left, Value right)
         {
-            switch (left.Type, right.Type)
-            {
-                case (Type.Number, Type.Number):
-                    return new Value(left.Number * right.Number);
-
-                case (Type.String, Type.String):
-                    throw new ExecutionException("Attempted to multiply strings");
-
-                default:
-                    throw new ExecutionException("Attempted to multiply mixed types");
-            }
+            return (left.Type, right.Type) switch {
+                (Type.Number, Type.Number) => new Value(left.Number * right.Number),
+                (Type.String, Type.String) => throw new ExecutionException("Attempted to multiply strings"),
+                _ => throw new ExecutionException("Attempted to multiply mixed types")
+            };
         }
 
         public static Value operator /(Value left, Value right)
         {
-            switch (left.Type, right.Type)
-            {
-                case (Type.Number, Type.Number):
-                    return new Value(left.Number / right.Number);
-
-                case (Type.String, Type.String):
-                    throw new ExecutionException("Attempted to divide strings");
-
-                default:
-                    throw new ExecutionException("Attempted to divide mixed types");
-            }
+            return (left.Type, right.Type) switch {
+                (Type.Number, Type.Number) => new Value(left.Number / right.Number),
+                (Type.String, Type.String) => throw new ExecutionException("Attempted to divide strings"),
+                _ => throw new ExecutionException("Attempted to divide mixed types")
+            };
         }
 
         public static Value operator &(Value left, Value right)
         {
-            switch (left.Type, right.Type)
-            {
-                case (Type.Number, Type.Number):
-                    return new Value(left.Number != 0 && right.Number != 0);
-
-                case (Type.String, Type.String):
-                    return new Value(true);
-
-                case (Type.String, Type.Number):
-                    return new Value(right.Number != 0);
-
-                default:
-                case (Type.Number, Type.String):
-                    return new Value(left.Number != 0);
-            }
+            return (left.Type, right.Type) switch {
+                (Type.Number, Type.Number) => new Value(left.Number != 0 && right.Number != 0),
+                (Type.String, Type.String) => new Value(true),
+                (Type.String, Type.Number) => new Value(right.Number != 0),
+                (Type.Number, Type.String) => new Value(left.Number != 0),
+                _ => new Value(left.Number != 0)
+            };
         }
 
         public static Value operator |(Value left, Value right)
         {
-            switch (left.Type, right.Type)
-            {
-                case (Type.Number, Type.Number):
-                    return new Value(left.Number != 0 || right.Number != 0);
-
-                default:
-                    return new Value(true);
-            }
+            return (left.Type, right.Type) switch {
+                (Type.Number, Type.Number) => new Value(left.Number != 0 || right.Number != 0),
+                _ => new Value(true)
+            };
         }
 
         public static Value operator %(Value left, Value right)
@@ -449,7 +413,7 @@ namespace Yolol.Execution
             return new Value(ToDegrees(Math.Acos((double)value.Number.Value)));
         }
 
-        [NotNull] public BaseExpression ToConstant()
+        public BaseExpression ToConstant()
         {
             if (Type == Type.Number)
                 return new ConstantNumber(Number);

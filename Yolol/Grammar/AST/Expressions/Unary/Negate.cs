@@ -1,5 +1,4 @@
 ﻿using System;
-using JetBrains.Annotations;
 using Yolol.Execution;
 
 namespace Yolol.Grammar.AST.Expressions.Unary
@@ -11,20 +10,20 @@ namespace Yolol.Grammar.AST.Expressions.Unary
 
         public override bool IsBoolean => false;
 
-        public Negate([NotNull] BaseExpression parameter)
+        public Negate(BaseExpression parameter)
             : base(parameter)
         {
         }
 
         protected override Value Evaluate(Value value) => -value;
 
-        public bool Equals(Negate other)
+        public bool Equals(Negate? other)
         {
             return other != null
                 && other.Parameter.Equals(Parameter);
         }
 
-        public override bool Equals(BaseExpression other)
+        public override bool Equals(BaseExpression? other)
         {
             return other is Negate neg
                 && neg.Equals(this);

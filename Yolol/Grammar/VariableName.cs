@@ -1,5 +1,4 @@
 ﻿using System;
-using JetBrains.Annotations;
 
 namespace Yolol.Grammar
 {
@@ -10,7 +9,7 @@ namespace Yolol.Grammar
 
         public bool IsExternal => Name.StartsWith(":");
 
-        public VariableName([NotNull] string name)
+        public VariableName(string name)
         {
             Name = name.ToLowerInvariant();
         }
@@ -20,7 +19,7 @@ namespace Yolol.Grammar
             return Name;
         }
 
-        public bool Equals(VariableName other)
+        public bool Equals(VariableName? other)
         {
             if (other is null)
                 return false;
@@ -29,7 +28,7 @@ namespace Yolol.Grammar
             return string.Equals(Name, other.Name);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj is null)
                 return false;
@@ -42,15 +41,15 @@ namespace Yolol.Grammar
 
         public override int GetHashCode()
         {
-            return (Name != null ? Name.GetHashCode() : 0);
+            return HashCode.Combine(Name);
         }
 
-        public static bool operator ==([CanBeNull] VariableName left, [CanBeNull] VariableName right)
+        public static bool operator ==(VariableName? left, VariableName? right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=([CanBeNull] VariableName left, [CanBeNull] VariableName right)
+        public static bool operator !=(VariableName? left, VariableName? right)
         {
             return !Equals(left, right);
         }

@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using CommandLine;
-using JetBrains.Annotations;
 using Newtonsoft.Json;
 using Yolol.Analysis;
 using Yolol.Analysis.TreeVisitor.Reduction;
@@ -15,7 +14,7 @@ namespace Yololc
     public class Options
     {
         [Option('i', "input", HelpText = "File to read YOLOL code from", Required = false)]
-        public string InputFile { get; set; }
+        public string? InputFile { get; set; }
 
         [Option('v', "verbose", HelpText = "Control if output of non-code messages are displayed", Required = false, Default = false)]
         public bool Verbose { get; set; }
@@ -75,7 +74,7 @@ namespace Yololc
             CommandLine.Parser.Default.ParseArguments<Options>(args).WithParsed(Run);
         }
 
-        private static string ReadInput([NotNull] Options options)
+        private static string ReadInput(Options options)
         {
             if (options.InputFile == null)
             {
@@ -97,9 +96,9 @@ namespace Yololc
             }
         }
 
-        [CanBeNull] private static Yolol.Grammar.AST.Program TryParseStringInput(string input)
+        private static Yolol.Grammar.AST.Program? TryParseStringInput(string input)
         {
-            Yolol.Grammar.AST.Program TryParseAsYolol(ICollection<string> log)
+            Yolol.Grammar.AST.Program? TryParseAsYolol(ICollection<string> log)
             {
                 var tokens = Tokenizer.TryTokenize(input);
                 if (!tokens.HasValue)
@@ -120,7 +119,7 @@ namespace Yololc
                 return astResult.Value;
             }
 
-            Yolol.Grammar.AST.Program TryParseAsAst(ICollection<string> log)
+            Yolol.Grammar.AST.Program? TryParseAsAst(ICollection<string> log)
             {
                 try
                 {
@@ -156,7 +155,7 @@ namespace Yololc
             return null;
         }
 
-        private static void Run([NotNull] Options options)
+        private static void Run(Options options)
         {
             var input = ReadInput(options);
             var startLength = input.Length;

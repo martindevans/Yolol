@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using JetBrains.Annotations;
 using Yolol.Analysis.TreeVisitor;
 using Yolol.Grammar;
 using Yolol.Grammar.AST;
@@ -14,7 +13,7 @@ namespace Yolol.Analysis
         private readonly INameGenerator _inner;
         private readonly FindVarNames _taken;
 
-        public SafeNameGenerator([NotNull] INameGenerator inner, [NotNull] Program program)
+        public SafeNameGenerator(INameGenerator inner, Program program)
         {
             _inner = inner;
             _taken = new FindVarNames();
@@ -88,7 +87,7 @@ namespace Yolol.Analysis
             return _prefix + GetVar(_nextId++);
         }
 
-        [NotNull] private static string GetVar(int id)
+        private static string GetVar(int id)
         {
             var first = FirstChars[id % FirstChars.Length];
             id /= FirstChars.Length;
@@ -109,6 +108,6 @@ namespace Yolol.Analysis
 
     public interface INameGenerator
     {
-        [NotNull] string Name();
+        string Name();
     }
 }

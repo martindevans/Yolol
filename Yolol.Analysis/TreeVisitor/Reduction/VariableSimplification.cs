@@ -1,7 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 using Yolol.Grammar;
 using Yolol.Grammar.AST;
 
@@ -13,7 +12,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
         private readonly INameGenerator _names;
         private readonly Dictionary<string, string> _remap = new Dictionary<string, string>();
         
-        public VariableSimplificationVisitor([CanBeNull] INameGenerator names = null)
+        public VariableSimplificationVisitor(INameGenerator? names = null)
         {
             _names = names ?? new SequentialNameGenerator("");
         }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
 using Semver;
 using Yolol.Grammar;
@@ -23,67 +22,67 @@ namespace Yolol.Cylon.Deserialisation.Versions
             _typeExtension = typeExtension;
         }
 
-        [NotNull] public Program Parse([NotNull] string json)
+        public Program Parse(string json)
         {
             var jobj = JObject.Parse(json);
 
-            var version = SemVersion.Parse(jobj["version"].Value<string>());
+            var version = SemVersion.Parse(jobj.Tok("version").Value<string>());
 
             if (version < "0.3.0")
                 throw new InvalidOperationException("AST version is too low (must be >= 0.3.0)");
             if (version > "0.3.0")
                 throw new InvalidOperationException("AST version is too high (must be <= 0.3.0)");
 
-            var program = jobj["program"];
+            var program = jobj.Tok("program");
             if (program.Type != JTokenType.Object)
-                throw new InvalidOperationException("Cannot parse: `program` field is not an object");
+                throw new ArgumentException("Cannot parse: `program` field is not an object");
 
-            return new Program(((JArray)program["lines"]).Select(ParseLine));
+            return new Program(((JArray)program.Tok("lines")).Select(ParseLine));
         }
 
-        [NotNull] private Line ParseLine([NotNull] JToken jtok)
+        private Line ParseLine(JToken jtok)
         {
-            return new Line(new StatementList(((JArray)jtok["code"]).Select(ParseStatement)));
+            return new Line(new StatementList(((JArray)jtok.Tok("code")).Select(ParseStatement)));
         }
 
-        [NotNull] private BaseStatement ParseStatement([NotNull] JToken jtok)
+        private BaseStatement ParseStatement(JToken jtok)
         {
-            var type = jtok["type"].Value<string>();
+            var type = jtok.Tok("type").Value<string>();
 
             switch (type)
             {
                 case "statement::goto":
-                    return new Goto(ParseExpression(jtok["expression"]));
+                    return new Goto(ParseExpression(jtok.Tok("expression")));
 
                 case "statement::if":
-                    var @if = ParseExpression(jtok["condition"]);
-                    var @true = new StatementList(((JArray)jtok["body"]).Select(ParseStatement));
-                    var @false = new StatementList(((JArray)jtok["else_body"]).Select(ParseStatement));
+                    var @if = ParseExpression(jtok.Tok("condition"));
+                    var @true = new StatementList(((JArray)jtok.Tok("body")).Select(ParseStatement));
+                    var @false = new StatementList(((JArray)jtok.Tok("else_body")).Select(ParseStatement));
                     return new If(@if, @true, @false);
 
                 case "statement::assignment":
                     return ParseAssignment(jtok);
 
                 case "statement::expression":
-                    return new ExpressionWrapper(ParseExpression(jtok["expression"]));
+                    return new ExpressionWrapper(ParseExpression(jtok.Tok("expression")));
 
                 default:
                     throw new InvalidOperationException($"Cannot parse: Unknown statement type `{type}`");
             }
         }
 
-        [NotNull] private BaseStatement ParseAssignment([NotNull] JToken jtok)
+        private BaseStatement ParseAssignment(JToken jtok)
         {
-            var id = jtok["identifier"].Value<string>();
-            var op = jtok["operator"].Value<string>();
-            var exp = ParseExpression(jtok["value"]);
+            var id = jtok.Tok("identifier").Value<string>();
+            var op = jtok.Tok("operator").Value<string>();
+            var exp = ParseExpression(jtok.Tok("value"));
 
             Type? type = null;
             var typeMeta = jtok["value"]?["metadata"]?["type"];
             if (_typeExtension && typeMeta != null)
             {
-                var types = ((JArray)typeMeta["types"]).Values<string>().ToArray();
-                var version = SemVersion.Parse(typeMeta["version"].Value<string>());
+                var types = ((JArray)typeMeta.Tok("types")).Values<string>().ToArray();
+                var version = SemVersion.Parse(typeMeta.Tok("version").Value<string>());
                 if (version >= "1.0.0" && version <= "2.0.0")
                 {
                     var num = types.Contains("number");
@@ -103,30 +102,26 @@ namespace Yolol.Cylon.Deserialisation.Versions
                 // todo: do something with type metadata
             }
 
-            switch (op)
-            {
-                case "=": return new Assignment(new VariableName(id), exp);
-
-                case "+=": return new CompoundAssignment(new VariableName(id), YololBinaryOp.Add, exp);
-                case "-=": return new CompoundAssignment(new VariableName(id), YololBinaryOp.Subtract, exp);
-                case "*=": return new CompoundAssignment(new VariableName(id), YololBinaryOp.Multiply, exp);
-                case "/=": return new CompoundAssignment(new VariableName(id), YololBinaryOp.Divide, exp);
-                case "^=": return new CompoundAssignment(new VariableName(id), YololBinaryOp.Exponent, exp);
-                case "%=": return new CompoundAssignment(new VariableName(id), YololBinaryOp.Modulo, exp);
-
-                default:
-                    throw new InvalidOperationException($"Cannot parse: Unknown op type `{op}`");
-            }
+            return op switch {
+                "=" => new Assignment(new VariableName(id), exp),
+                "+=" => new CompoundAssignment(new VariableName(id), YololBinaryOp.Add, exp),
+                "-=" => new CompoundAssignment(new VariableName(id), YololBinaryOp.Subtract, exp),
+                "*=" => new CompoundAssignment(new VariableName(id), YololBinaryOp.Multiply, exp),
+                "/=" => new CompoundAssignment(new VariableName(id), YololBinaryOp.Divide, exp),
+                "^=" => new CompoundAssignment(new VariableName(id), YololBinaryOp.Exponent, exp),
+                "%=" => new CompoundAssignment(new VariableName(id), YololBinaryOp.Modulo, exp),
+                _ => throw new InvalidOperationException($"Cannot parse: Unknown op type `{op}`")
+            };
         }
 
-        [NotNull] private BaseExpression ParseExpression([NotNull] JToken jtok)
+        private BaseExpression ParseExpression(JToken jtok)
         {
-            var type = jtok["type"].Value<string>();
+            var type = jtok.Tok("type").Value<string>();
 
             switch (type)
             {
                 case "expression::group":
-                    return new Bracketed(ParseExpression(jtok["group"]));
+                    return new Bracketed(ParseExpression(jtok.Tok("group")));
 
                 case "expression::binary_op":
                     return ParseBinaryExpression(jtok);
@@ -149,66 +144,54 @@ namespace Yolol.Cylon.Deserialisation.Versions
             }
         }
 
-        [NotNull] private BaseExpression ParseUnaryExpression([NotNull] JToken jtok)
+        private BaseExpression ParseUnaryExpression(JToken jtok)
         {
-            var op = jtok["operator"].Value<string>();
-            var exp = ParseExpression(jtok["operand"]);
+            var op = jtok.Tok("operator").Value<string>();
+            var exp = ParseExpression(jtok.Tok("operand"));
 
-            switch (op)
-            {
-                case "not": return new Not(exp);
-
-                case "-": return new Negate(exp);
-
-                case "a++": return new PostIncrement(((Variable)exp).Name);
-                case "++a": return new PreIncrement(((Variable)exp).Name);
-                case "a--": return new PostDecrement(((Variable)exp).Name);
-                case "--a": return new PreDecrement(((Variable)exp).Name);
-
-                case "abs": return new Abs(exp);
-                case "sqrt": return new Sqrt(exp);
-                case "sin": return new Sine(exp);
-                case "cos": return new Cosine(exp);
-                case "tan": return new Tangent(exp);
-                case "asin": return new ArcSine(exp);
-                case "acos": return new ArcCos(exp);
-                case "atan": return new ArcTan(exp);
-
-                default:
-                    throw new InvalidOperationException($"Cannot parse: Unknown unary op `{op}`");
-            }
+            return op switch {
+                "not" => (BaseExpression)new Not(exp),
+                "-" => new Negate(exp),
+                "a++" => new PostIncrement(((Variable)exp).Name),
+                "++a" => new PreIncrement(((Variable)exp).Name),
+                "a--" => new PostDecrement(((Variable)exp).Name),
+                "--a" => new PreDecrement(((Variable)exp).Name),
+                "abs" => new Abs(exp),
+                "sqrt" => new Sqrt(exp),
+                "sin" => new Sine(exp),
+                "cos" => new Cosine(exp),
+                "tan" => new Tangent(exp),
+                "asin" => new ArcSine(exp),
+                "acos" => new ArcCos(exp),
+                "atan" => new ArcTan(exp),
+                _ => throw new InvalidOperationException($"Cannot parse: Unknown unary op `{op}`")
+            };
         }
 
-        [NotNull] private BaseExpression ParseBinaryExpression([NotNull] JToken jtok)
+        private BaseExpression ParseBinaryExpression(JToken jtok)
         {
-            var op = jtok["operator"].Value<string>();
+            var op = jtok.Tok("operator").Value<string>();
 
-            var left = ParseExpression(jtok["left"]);
-            var right = ParseExpression(jtok["right"]);
+            var left = ParseExpression(jtok.Tok("left"));
+            var right = ParseExpression(jtok.Tok("right"));
 
-            switch (op)
-            {
-                case "*": return new Multiply(left, right);
-                case "/": return new Divide(left, right);
-                case "+": return new Add(left, right);
-                case "-": return new Subtract(left, right);
-                case "%": return new Modulo(left, right);
-                case "^": return new Exponent(left, right);
-
-                case "and": return new And(left, right);
-                case "or": return new Or(left, right);
-
-                case "==": return new EqualTo(left, right);
-                case "!=": return new NotEqualTo(left, right);
-
-                case "<=": return new LessThanEqualTo(left, right);
-                case "<": return new LessThan(left, right);
-                case ">=": return new GreaterThanEqualTo(left, right);
-                case ">": return new GreaterThan(left, right);
-
-                default:
-                    throw new InvalidOperationException($"Cannot parse: Unknown binary op `{op}`");
-            }
+            return op switch {
+                "*" => new Multiply(left, right),
+                "/" => new Divide(left, right),
+                "+" => new Add(left, right),
+                "-" => new Subtract(left, right),
+                "%" => new Modulo(left, right),
+                "^" => new Exponent(left, right),
+                "and" => new And(left, right),
+                "or" => new Or(left, right),
+                "==" => new EqualTo(left, right),
+                "!=" => new NotEqualTo(left, right),
+                "<=" => new LessThanEqualTo(left, right),
+                "<" => new LessThan(left, right),
+                ">=" => new GreaterThanEqualTo(left, right),
+                ">" => new GreaterThan(left, right),
+                _ => throw new InvalidOperationException($"Cannot parse: Unknown binary op `{op}`")
+            };
         }
     }
 }

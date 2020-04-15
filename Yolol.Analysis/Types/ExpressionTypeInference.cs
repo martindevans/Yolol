@@ -1,8 +1,6 @@
 ﻿using System.Linq;
-using JetBrains.Annotations;
 using Yolol.Analysis.ControlFlowGraph.AST;
 using Yolol.Analysis.TreeVisitor;
-using Yolol.Execution;
 using Yolol.Execution.Extensions;
 using Yolol.Grammar;
 using Yolol.Grammar.AST.Expressions;
@@ -24,7 +22,7 @@ namespace Yolol.Analysis.Types
             _types = types;
         }
 
-        private Type BinaryLogical([NotNull] BaseBinaryExpression expr)
+        private Type BinaryLogical(BaseBinaryExpression expr)
         {
             var l = Visit(expr.Left);
             var r = Visit(expr.Right);
@@ -44,7 +42,7 @@ namespace Yolol.Analysis.Types
             return Type.Number;
         }
 
-        private Type BinaryNumeric([NotNull] BaseBinaryExpression expr, bool forceError)
+        private Type BinaryNumeric(BaseBinaryExpression expr, bool forceError)
         {
             var l = Visit(expr.Left);
             var r = Visit(expr.Right);
@@ -72,7 +70,7 @@ namespace Yolol.Analysis.Types
             return Type.Number | err;
         }
 
-        private Type BinaryDual([NotNull] BaseBinaryExpression expr)
+        private Type BinaryDual(BaseBinaryExpression expr)
         {
             var l = Visit(expr.Left);
             var r = Visit(expr.Right);
@@ -102,7 +100,7 @@ namespace Yolol.Analysis.Types
         }
 
 #pragma warning disable IDE0060 // Remove unused parameter
-        private Type UnaryNumeric([NotNull] BaseExpression expr, [NotNull] BaseExpression parameter, bool forceError, bool allowString)
+        private Type UnaryNumeric(BaseExpression expr, BaseExpression parameter, bool forceError, bool allowString)
 #pragma warning restore IDE0060 // Remove unused parameter
         {
             var t = base.Visit(parameter);
@@ -117,7 +115,7 @@ namespace Yolol.Analysis.Types
             return t;
         }
 
-        private Type VariableRead([NotNull] VariableName name)
+        private Type VariableRead(VariableName name)
         {
             var t = _types.TypeOf(name);
             if (t.HasValue)
@@ -160,7 +158,7 @@ namespace Yolol.Analysis.Types
 
         protected override Type Visit(Or or) => BinaryLogical(or);
 
-        protected override Type Visit([NotNull] Not not) => Type.Number;
+        protected override Type Visit(Not not) => Type.Number;
 
         protected override Type Visit(LessThanEqualTo eq) => BinaryLogical(eq);
 

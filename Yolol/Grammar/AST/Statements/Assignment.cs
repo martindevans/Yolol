@@ -26,14 +26,14 @@ namespace Yolol.Grammar.AST.Statements
             return new ExecutionResult();
         }
 
-        public bool Equals(Assignment other)
+        public bool Equals(Assignment? other)
         {
             return other != null
                 && other.Left.Equals(Left)
                 && other.Right.Equals(Right);
         }
 
-        public override bool Equals(BaseStatement other)
+        public override bool Equals(BaseStatement? other)
         {
             return other is Assignment ass
                 && ass.Equals(this);

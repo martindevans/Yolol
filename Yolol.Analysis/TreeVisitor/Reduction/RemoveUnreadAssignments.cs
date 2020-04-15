@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 using Yolol.Analysis.ControlFlowGraph.AST;
 using Yolol.Analysis.ControlFlowGraph.Extensions;
 using Yolol.Grammar;
@@ -16,7 +15,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
         // ReSharper disable once NotAccessedField.Local (this field is included in the constructor as a hint that SSA form is required)
         private readonly ISingleStaticAssignmentTable _ssa;
 
-        public RemoveUnreadAssignments([NotNull] IReadOnlyCollection<VariableName> toRemove, [NotNull] ISingleStaticAssignmentTable ssa)
+        public RemoveUnreadAssignments(IReadOnlyCollection<VariableName> toRemove, ISingleStaticAssignmentTable ssa)
         {
             _toRemove = toRemove;
             _ssa = ssa;

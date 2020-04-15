@@ -1,5 +1,4 @@
 ﻿using System;
-using JetBrains.Annotations;
 using Yolol.Execution;
 using Yolol.Execution.Extensions;
 using Yolol.Grammar.AST.Expressions;
@@ -21,7 +20,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
             };
 
             var shortestLength = int.MaxValue;
-            BaseExpression shortest = null;
+            BaseExpression? shortest = null;
             foreach (var replacement in replacements)
             {
                 if (replacement == null)
@@ -41,10 +40,10 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
             return base.Visit(con);
         }
 
-        [CanBeNull] private static BaseExpression SmallestExponents(Number value)
+        private static BaseExpression? SmallestExponents(Number value)
         {
             var bestLength = int.MaxValue;
-            BaseExpression best = null;
+            BaseExpression? best = null;
 
             void Submit(BaseExpression exp)
             {
@@ -85,9 +84,9 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
             return best;
         }
 
-        [NotNull] private static BaseExpression BestFraction(Number number)
+        private static BaseExpression BestFraction(Number number)
         {
-            (double, double) RealToFraction(double value, double accuracy)
+            static (double, double) RealToFraction(double value, double accuracy)
             {
                 if (accuracy <= 0.0 || accuracy >= 1.0)
                     throw new ArgumentOutOfRangeException(nameof(accuracy), "Must be > 0 and < 1.");

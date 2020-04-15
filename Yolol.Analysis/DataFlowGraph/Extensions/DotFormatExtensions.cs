@@ -2,22 +2,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using JetBrains.Annotations;
 using Yolol.Grammar.AST.Statements;
 
 namespace Yolol.Analysis.DataFlowGraph.Extensions
 {
     public static class DotFormatExtensions
     {
-        [NotNull] public static IEnumerable<BaseStatement> ToYolol([NotNull] this IDataFlowGraph dfg)
+        public static IEnumerable<BaseStatement> ToYolol(this IDataFlowGraph dfg)
         {
             foreach (var dfgo in dfg.Outputs)
                 yield return dfgo.ToStatement();
         }
 
-        [NotNull] public static string ToDot([NotNull] this IDataFlowGraph dfg)
+        public static string ToDot(this IDataFlowGraph dfg)
         {
-            string GetNodeId(IDataFlowGraphNode node) => $"_{node.Id.ToString().Replace("-", "")}";
+            static string GetNodeId(IDataFlowGraphNode node) => $"_{node.Id.ToString().Replace("-", "")}";
 
             var sb = new StringBuilder();
             sb.AppendLine("digraph {");

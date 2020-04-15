@@ -1,18 +1,15 @@
-﻿using System;
-using JetBrains.Annotations;
-using Yolol.Execution;
-using Type = Yolol.Execution.Type;
+﻿using Yolol.Execution;
 
 namespace Yolol.Grammar.AST.Expressions.Unary
 {
     public abstract class BaseUnaryExpression
         : BaseExpression
     {
-        [NotNull] public BaseExpression Parameter { get; }
+        public BaseExpression Parameter { get; }
 
         public override bool IsConstant => Parameter.IsConstant;
 
-        protected BaseUnaryExpression([NotNull] BaseExpression parameter)
+        protected BaseUnaryExpression(BaseExpression parameter)
         {
             Parameter = parameter;
         }

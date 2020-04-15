@@ -1,5 +1,4 @@
 ﻿using System;
-using JetBrains.Annotations;
 using Yolol.Execution;
 
 namespace Yolol.Grammar.AST.Expressions.Unary
@@ -12,20 +11,20 @@ namespace Yolol.Grammar.AST.Expressions.Unary
         public override bool IsBoolean => Parameter.IsBoolean;
 
 
-        public Bracketed([NotNull] BaseExpression parameter)
+        public Bracketed(BaseExpression parameter)
             : base(parameter)
         {
         }
 
         protected override Value Evaluate(Value value) => value;
 
-        public bool Equals(Bracketed other)
+        public bool Equals(Bracketed? other)
         {
             return other != null
                 && other.Parameter.Equals(Parameter);
         }
 
-        public override bool Equals(BaseExpression other)
+        public override bool Equals(BaseExpression? other)
         {
             return other is Bracketed brk
                 && brk.Equals(this);

@@ -1,5 +1,4 @@
 ﻿using System;
-using JetBrains.Annotations;
 using Microsoft.Z3;
 using Yolol.Analysis.ControlFlowGraph;
 using Yolol.Analysis.ControlFlowGraph.AST;
@@ -10,7 +9,7 @@ namespace Yolol.Analysis.SAT
 {
     public static class BuilderExtensions
     {
-        [NotNull] public static IModel BuildSAT([NotNull] this IBasicBlock block, [NotNull] ITypeAssignments types)
+        public static IModel BuildSAT(this IBasicBlock block, ITypeAssignments types)
         {
             var ctx = new Context();
             var solver = ctx.MkSolver();
@@ -22,7 +21,7 @@ namespace Yolol.Analysis.SAT
             return model;
         }
 
-        private static void Assert([NotNull] Model model, [NotNull] ITypeAssignments types, [NotNull] BaseStatement stmt)
+        private static void Assert(Model model, ITypeAssignments types, BaseStatement stmt)
         {
             switch (stmt)
             {
@@ -60,13 +59,13 @@ namespace Yolol.Analysis.SAT
             }
         }
 
-        private static void Assert([NotNull] Model model, [NotNull] Goto @goto)
+        private static void Assert(Model model, Goto @goto)
         {
             var d = model.GetGotoVariable();
             d.AssertEq(@goto.Destination);
         }
 
-        private static void Assert([NotNull] Model model, [NotNull] ITypeAssignments types, [NotNull] Assignment assignment)
+        private static void Assert(Model model, ITypeAssignments types, Assignment assignment)
         {
             var l = model.GetOrCreateVariable(assignment.Left);
             l.AssertEq(assignment.Right);

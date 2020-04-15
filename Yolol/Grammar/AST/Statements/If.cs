@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Text;
-using JetBrains.Annotations;
 using Yolol.Execution;
 using Yolol.Grammar.AST.Expressions;
 
@@ -11,11 +10,11 @@ namespace Yolol.Grammar.AST.Statements
     {
         public override bool CanRuntimeError => Condition.CanRuntimeError || TrueBranch.CanRuntimeError || FalseBranch.CanRuntimeError;
 
-        [NotNull] public BaseExpression Condition { get; }
-        [NotNull] public StatementList TrueBranch { get; }
-        [NotNull] public StatementList FalseBranch { get; }
+        public BaseExpression Condition { get; }
+        public StatementList TrueBranch { get; }
+        public StatementList FalseBranch { get; }
 
-        public If([NotNull] BaseExpression condition, [NotNull] StatementList trueBranch, [NotNull] StatementList falseBranch)
+        public If(BaseExpression condition,  StatementList trueBranch, StatementList falseBranch)
         {
             Condition = condition;
             TrueBranch = trueBranch;
@@ -29,7 +28,7 @@ namespace Yolol.Grammar.AST.Statements
             return todo.Evaluate(state);
         }
 
-        public bool Equals(If other)
+        public bool Equals(If? other)
         {
             return other != null
                 && other.Condition.Equals(Condition)
@@ -37,7 +36,7 @@ namespace Yolol.Grammar.AST.Statements
                 && other.FalseBranch.Equals(FalseBranch);
         }
 
-        public override bool Equals(BaseStatement other)
+        public override bool Equals(BaseStatement? other)
         {
             return other is If @if
                 && @if.Equals(this);

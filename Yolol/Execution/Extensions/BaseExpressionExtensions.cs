@@ -1,12 +1,11 @@
 ﻿using System;
-using JetBrains.Annotations;
 using Yolol.Grammar.AST.Expressions;
 
 namespace Yolol.Execution.Extensions
 {
     public static class BaseExpressionExtensions
     {
-        public static Value StaticEvaluate([NotNull] this BaseExpression expression)
+        public static Value StaticEvaluate(this BaseExpression expression)
         {
             if (!expression.IsConstant)
                 throw new ArgumentException("Cannot statically evaluate a non-constant expression");
@@ -14,7 +13,7 @@ namespace Yolol.Execution.Extensions
             return expression.Evaluate(new MachineState(new NullDeviceNetwork()));
         }
 
-        public static Value? TryStaticEvaluate([NotNull] this BaseExpression expression)
+        public static Value? TryStaticEvaluate(this BaseExpression expression)
         {
             try
             {
