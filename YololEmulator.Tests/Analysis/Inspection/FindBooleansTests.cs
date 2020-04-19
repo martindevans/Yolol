@@ -2,7 +2,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 using Yolol.Analysis.ControlFlowGraph.Extensions;
 using Yolol.Analysis.TreeVisitor.Reduction;
 using Yolol.Analysis.Types;
@@ -13,7 +12,7 @@ namespace YololEmulator.Tests.Analysis.Inspection
     [TestClass]
     public class FindBooleansTests
     {
-        private static void Test([NotNull] IEnumerable<VariableName> bools, [NotNull] params string[] code)
+        private static void Test(IEnumerable<VariableName> bools, params string[] code)
         {
             var ast = TestExecutor.Parse(code);
 

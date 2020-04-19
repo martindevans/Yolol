@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using JetBrains.Annotations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Z3;
 using Yolol.Analysis.ControlFlowGraph.Extensions;
@@ -15,7 +14,6 @@ namespace YololEmulator.Tests.SAT
     [TestClass]
     public class BuilderTests
     {
-        [NotNull]
         private IModel BuildModel(string line)
         {
             var ast = TestExecutor.Parse(line);
@@ -31,7 +29,7 @@ namespace YololEmulator.Tests.SAT
             return cfg.Vertices.First(x => x.LineNumber == 1 && x.Statements.Any()).BuildSAT(types);
         }
 
-        private void AssertTainted([NotNull] IModel sat, [NotNull] string name, Yolol.Execution.Type type)
+        private void AssertTainted(IModel sat, string name, Yolol.Execution.Type type)
         {
             Assert.AreEqual(Status.SATISFIABLE, sat.Check());
 
@@ -50,13 +48,13 @@ namespace YololEmulator.Tests.SAT
             Assert.AreEqual(type == Yolol.Execution.Type.String, a.CanBeString(), "type");
         }
 
-        private void AssertValue([NotNull] IModel sat, [NotNull] string name, Value v, bool exact = true)
+        private void AssertValue(IModel sat, string name, Value v, bool exact = true)
         {
             var var = sat.TryGetVariable(new VariableName(name));
             AssertValue(sat, var, v, exact);
         }
 
-        private void AssertValue([NotNull] IModel sat, IModelVariable var, Value v, bool exact = true)
+        private void AssertValue(IModel sat, IModelVariable var, Value v, bool exact = true)
         {
             Assert.AreEqual(Status.SATISFIABLE, sat.Check());
 

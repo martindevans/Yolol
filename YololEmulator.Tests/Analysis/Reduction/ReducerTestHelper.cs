@@ -1,5 +1,4 @@
 ﻿using System;
-using JetBrains.Annotations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Yolol.Grammar.AST;
 
@@ -9,20 +8,20 @@ namespace YololEmulator.Tests.Analysis.Reduction
     {
         private readonly Func<Program, Program> _reducer;
 
-        public ReducerTestHelper([NotNull] Func<Program, Program> reducer)
+        public ReducerTestHelper(Func<Program, Program> reducer)
         {
             this._reducer = reducer;
         }
 
-        public void Run([NotNull] string inputYolol, [NotNull] string expectedReducedYolol) => Run(inputYolol, expectedReducedYolol, _reducer);
+        public void Run(string inputYolol, string expectedReducedYolol) => Run(inputYolol, expectedReducedYolol, _reducer);
 
-        public void Run([NotNull] Program inputAst, [NotNull] string expectedReducedYolol) => Run(inputAst, expectedReducedYolol, _reducer);
+        public void Run(Program inputAst, string expectedReducedYolol) => Run(inputAst, expectedReducedYolol, _reducer);
 
-        public void Run([NotNull] string inputYolol, [NotNull] Program expectedReducedYolol) => Run(inputYolol, expectedReducedYolol, _reducer);
+        public void Run(string inputYolol, Program expectedReducedYolol) => Run(inputYolol, expectedReducedYolol, _reducer);
 
-        public void Run([NotNull] Program inputAst, [NotNull] Program expectedReducedAst) => Run(inputAst, expectedReducedAst, _reducer);
+        public void Run(Program inputAst, Program expectedReducedAst) => Run(inputAst, expectedReducedAst, _reducer);
 
-        public static void Run([NotNull] string inputYolol, [NotNull] string expectedReducedYolol, [NotNull] Func<Program, Program> reducer)
+        public static void Run(string inputYolol, string expectedReducedYolol, Func<Program, Program> reducer)
         {
             var inputAst = TestExecutor.Parse(inputYolol);
             var expectedReducedAst = TestExecutor.Parse(expectedReducedYolol);
@@ -30,21 +29,21 @@ namespace YololEmulator.Tests.Analysis.Reduction
             Run(inputAst, expectedReducedAst, reducer);
         }
 
-        public static void Run([NotNull] Program inputAst, [NotNull] string expectedReducedYolol, [NotNull] Func<Program, Program> reducer)
+        public static void Run(Program inputAst, string expectedReducedYolol, Func<Program, Program> reducer)
         {
             var expectedReducedAst = TestExecutor.Parse(expectedReducedYolol);
 
             Run(inputAst, expectedReducedAst, reducer);
         }
         
-        public static void Run([NotNull] string inputYolol, [NotNull] Program expectedReducedAst, [NotNull] Func<Program, Program> reducer)
+        public static void Run(string inputYolol, Program expectedReducedAst, Func<Program, Program> reducer)
         {
             var inputAst = TestExecutor.Parse(inputYolol);
 
             Run(inputAst, expectedReducedAst, reducer);
         }
 
-        public static void Run([NotNull] Program inputAst, [NotNull] Program expectedReducedAst, [NotNull] Func<Program, Program> reducer)
+        public static void Run(Program inputAst, Program expectedReducedAst, Func<Program, Program> reducer)
         {
             if (reducer == null)
                 throw new ArgumentNullException(nameof(reducer));

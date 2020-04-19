@@ -69,6 +69,9 @@ namespace YololEmulator
                 var pc = 0;
                 while (pc <= options.MaxLineNumber)
                 {
+                    if ((st.GetVariable("PROGRAM_ENDED").Value == 1).ToBool())
+                        break;
+
                     // Read the next line to execute from the file
                     var line = ReadLine(options.InputFile, pc);
                     Console.WriteLine($"[{pc + 1:00}] {line}");
@@ -102,6 +105,8 @@ namespace YololEmulator
                     Console.CursorLeft = 0;
                     Console.WriteLine(string.Join("", Enumerable.Repeat('=', Console.WindowWidth)));
                 }
+
+                Console.WriteLine($"{TimeSpan.FromMilliseconds(200 * lines).TotalSeconds.ToString(CultureInfo.CurrentCulture)}s");
             }
             catch (Exception e)
             {

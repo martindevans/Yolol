@@ -1,4 +1,4 @@
-﻿program= "+." program_rev="" OUTPUT=""																								// BrainFuck program to execute
+﻿program= "+[-[<<[+[--->]-[<<<]]]>>>-]>-.---.>..>.<<<<-.<+.>>>>>.>.<<.<-." program_rev="" OUTPUT=""																								// BrainFuck program to execute
 if program == "" then goto 12 end instr = (program - --program)																		// Convert Program to backwards BoolFuck (1 bit brainfuck, with the string reversed): http://samuelhughes.com/boof/
 goto (instr==">")*4+(instr=="<")*5+(instr=="]")*6+(instr=="[")*7+(instr==".")*8+(instr==",")*9+(instr=="+")*10+(instr=="-")*11		// Jump table for BrainFuck instructions
 program_rev += ">>>>>>>>>" goto 2																									// >

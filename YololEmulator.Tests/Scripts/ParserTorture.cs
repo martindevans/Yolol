@@ -8,7 +8,7 @@ namespace YololEmulator.Tests.Scripts
         [TestMethod]
         public void MethodName()
         {
-            
+            var ast = TestExecutor.Parse(":d=1 goto (:a--)");
         }
     }
 }

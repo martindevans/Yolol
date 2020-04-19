@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using JetBrains.Annotations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Yolol.Execution;
 using Yolol.Grammar;
@@ -10,8 +9,7 @@ namespace YololEmulator.Tests
 {
     public static class TestExecutor
     {
-        [NotNull]
-        public static Program Parse([NotNull] params string[] lines)
+        public static Program Parse(params string[] lines)
         {
             var tokens = Tokenizer.TryTokenize(string.Join("\n", lines));
             Assert.IsTrue(tokens.HasValue, tokens.FormatErrorMessageFragment());
@@ -23,17 +21,17 @@ namespace YololEmulator.Tests
         }
 
 
-        [NotNull] public static MachineState Execute([NotNull] params string[] lines)
+        public static MachineState Execute(params string[] lines)
         {
             return Execute(new ConstantNetwork(), lines);
         }
 
-        [NotNull] public static MachineState Execute([NotNull] Program p)
+        public static MachineState Execute(Program p)
         {
             return Execute(new ConstantNetwork(), p);
         }
 
-        [NotNull] public static MachineState Execute([NotNull] IDeviceNetwork network, [NotNull] params string[] lines)
+        public static MachineState Execute(IDeviceNetwork network, params string[] lines)
         {
             var state = new MachineState(network);
 
@@ -56,7 +54,7 @@ namespace YololEmulator.Tests
             return state;
         }
 
-        [NotNull] public static MachineState Execute([NotNull] IDeviceNetwork network, [NotNull] Program p)
+        public static MachineState Execute(IDeviceNetwork network, Program p)
         {
             var state = new MachineState(network);
 
@@ -74,12 +72,12 @@ namespace YololEmulator.Tests
         }
 
 
-        [NotNull] public static MachineState Execute2(int count, [NotNull] params string[] lines)
+        public static MachineState Execute2(int count, params string[] lines)
         {
             return Execute2(count, new ConstantNetwork(), lines);
         }
 
-        [NotNull] public static MachineState Execute2(int count, [NotNull] IDeviceNetwork network, [NotNull] params string[] lines)
+        public static MachineState Execute2(int count, IDeviceNetwork network, params string[] lines)
         {
             var state = new MachineState(network);
 
@@ -110,13 +108,12 @@ namespace YololEmulator.Tests
             return state;
         }
 
-        [NotNull] public static MachineState Execute2(int count, [NotNull] Program p)
+        public static MachineState Execute2(int count, Program p)
         {
             return Execute2(count, new ConstantNetwork(), p);
         }
 
-        [NotNull]
-        public static MachineState Execute2(int count, [NotNull] IDeviceNetwork network, [NotNull] Program p)
+        public static MachineState Execute2(int count, IDeviceNetwork network, Program p)
         {
             var state = new MachineState(network);
 
@@ -141,7 +138,7 @@ namespace YololEmulator.Tests
             return state;
         }
 
-        public static (MachineState, MachineState) Equivalence([NotNull] Func<Program, Program> transform, [NotNull] params string[] lines)
+        public static (MachineState, MachineState) Equivalence(Func<Program, Program> transform, params string[] lines)
         {
             var prog1 = Parse(lines);
             var m1 = Execute(prog1.Lines.Select(l => l.ToString()).ToArray());
