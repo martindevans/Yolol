@@ -1,0 +1,171 @@
+﻿@namespace Yolol.Grammar
+@classname YololParser
+@accessibility internal
+@using System.Globalization
+@using Yolol.Grammar.AST
+@using Yolol.Grammar.AST.Statements
+@using Yolol.Grammar.AST.Expressions
+@using Yolol.Grammar.AST.Expressions.Binary
+@using Yolol.Grammar.AST.Expressions.Unary
+@using Yolol.Execution;
+@start program
+@trace true
+
+program <Program>
+    = comment { new Program(Array.Empty<Line>()) }
+    / lines:line<0,, (comment / newline)> _ EOF { new Program(lines) }
+
+line <Line> -public
+    = stmts:statement<0,, _> { new Line(new StatementList(stmts)) }
+
+// ########################################
+// Statements
+
+statement <BaseStatement>
+    = goto
+    / modify
+    / if
+    / assign
+    / compound_assign
+
+goto <Goto>
+    = "goto" _ e:expression { new Goto(e) }
+
+modify <ExpressionWrapper>
+    = i:identifier "++" { new ExpressionWrapper(new PostIncrement(i)) }
+    / i:identifier "--" { new ExpressionWrapper(new PostDecrement(i)) }
+    / "++" i:identifier { new ExpressionWrapper(new PreIncrement(i)) }
+    / "--" i:identifier { new ExpressionWrapper(new PreDecrement(i)) }
+
+if <If>
+    = "if" _ c:expression _ "then" _ t:statement<0,, _> _ "else" _ f:statement<0,, _> _ "end"
+    { new If(c, new StatementList(t), new StatementList(f)) }
+    / "if" _ c:expression _ "then" _ t:statement<0,, _> _ "end"
+    { new If(c, new StatementList(t), new StatementList()) }
+
+assign <Assignment>
+    = i:identifier _ "=" _ e:expression { new Assignment(i, e) }
+
+compound_assign <CompoundAssignment>
+    = i:identifier _ c:compound_op _ e:expression { new CompoundAssignment(i, c, e) }
+
+compound_op <YololBinaryOp>
+    = "+=" { YololBinaryOp.Add }
+    / "-=" { YololBinaryOp.Subtract }
+    / "*=" { YololBinaryOp.Multiply }
+    / "/=" { YololBinaryOp.Divide }
+    / "%=" { YololBinaryOp.Modulo }
+    / "^=" { YololBinaryOp.Exponent }
+
+// ########################################
+// Expressions
+
+expression <BaseExpression>
+    = expr_and
+
+expr_and <BaseExpression> -memoize
+    = l:expr_and _ "and" _ r:expr_or { new And(l, r) }
+    / e:expr_or { e }
+
+expr_or <BaseExpression> -memoize
+    = l:expr_or _ "or" _ r:expr_equality { new Or(l, r) }
+    / e:expr_equality { e }
+
+expr_equality <BaseExpression> -memoize
+    = l:expr_equality _ "==" _ r:expr_order { new EqualTo(l, r) }
+    / l:expr_equality _ "!=" _ r:expr_order { new NotEqualTo(l, r) }
+    / e:expr_order { e }
+
+expr_order <BaseExpression> -memoize
+    = l:expr_order _ "<" _ r:expr_additive { new LessThan(l, r) }
+    / l:expr_order _ ">" _ r:expr_additive { new GreaterThan(l, r) }
+    / l:expr_order _ "<=" _ r:expr_additive { new LessThanEqualTo(l, r) }
+    / l:expr_order _ ">=" _ r:expr_additive { new GreaterThanEqualTo(l, r) }
+    / e:expr_additive { e }
+
+expr_additive <BaseExpression> -memoize
+    = l:expr_additive _ "+" _ r:expr_multiply { new Add(l, r) }
+    / l:expr_additive _ "-" _ r:expr_multiply { new Subtract(l, r) }
+    / e:expr_multiply { e }
+
+expr_multiply <BaseExpression> -memoize
+    = l:expr_multiply _ "*" _ r:expr_exponent { new Multiply(l, r) }
+    / l:expr_multiply _ "/" _ r:expr_exponent { new Divide(l, r) }
+    / l:expr_multiply _ "%" _ r:expr_exponent { new Modulo(l, r) }
+    / e:expr_exponent { e }
+
+expr_exponent <BaseExpression> -memoize
+    = l:expr_postfix _ "^" _ r:expr_exponent { new Exponent(l, r) }
+    / e:expr_postfix { e }
+
+expr_postfix <BaseExpression> -memoize
+    // = e:expr_postfix "!" { new Factorial(e) } todo: support factorial
+    = e:expr_keyword { e }
+
+expr_keyword <BaseExpression> -memoize
+    = "abs"i _ e:expr_keyword { new Abs(e) }
+    / "sqrt"i _ e:expr_keyword { new Sqrt(e) }
+    / "sin"i _ e:expr_keyword { new Sine(e) }
+    / "cos"i _ e:expr_keyword { new Cosine(e) }
+    / "tan"i _ e:expr_keyword { new Tangent(e) }
+    / "asin"i _ e:expr_keyword { new ArcSine(e) }
+    / "acos"i _ e:expr_keyword { new ArcCos(e) }
+    / "atan"i _ e:expr_keyword { new ArcTan(e) }
+    / "not"i _ e:expr_keyword { new Not(e) }
+    / e:expr_neg { e }
+
+expr_neg <BaseExpression> -memoize
+    = e:expr_ident { e }
+    / "-" _ e:expr_neg { new Negate(e) }
+
+expr_ident <BaseExpression> -memoize
+    = i:identifier "++" { new PostIncrement(i) }
+    / i:identifier "--" { new PostDecrement(i) }
+    / "++" i:identifier { new PreIncrement(i) }
+    / "--" i:identifier { new PreDecrement(i) }
+    / value;
+
+value <BaseExpression> -memoize
+    = s:string { new ConstantString(s) }
+    / n:number { new ConstantNumber(n) }
+    / i:identifier { new Yolol.Grammar.AST.Expressions.Variable(i) }
+    / "(" _ e:expression _ ")" { new Bracketed(e) }
+
+// ########################################
+// Others
+
+identifier <VariableName>
+    = s:([a-zA-Z_][a-zA-Z0-9_]<0,>) { new VariableName(s) }
+    / ":" s:([a-zA-Z0-9_]<1,>) { new VariableName(":" + string.Concat(s)) }
+
+newline
+    = "\r\n"
+    / "\n"
+
+comment
+    = "//" (!newline .)* newline
+
+_
+    = [ \t]*
+
+EOF
+    = !.
+    / unexpected:. #error{ "Unexpected character '" + unexpected + "'." }
+
+string <String>
+    = "\"" chars:unicode* ("\"" / #ERROR{ "Expected '\"'" }) { string.Concat(chars) }
+
+unicode
+    = c:. !{c == "\\" || c == "\"" || char.IsControl(c[0])} { c }
+    / "\\" c:(
+        e:["\/\\] { e } /
+        "b" { "\b" } /
+        "f" { "\f" } /
+        "n" { "\n" } /
+        "r" { "\r" } /
+        "t" { "\t" } /
+        "u" digits:("" [0-9A-F]i<4>) { ((char)Convert.ToInt32(digits, 16)).ToString() }
+    ) { c }
+
+number <Number>
+    = s:("-"? [0-9]+ ("." [0-9]+)?) { (Number)decimal.Parse(s) }

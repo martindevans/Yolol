@@ -65,7 +65,10 @@ namespace YololEmulator.Tests.Scripts
         [TestMethod]
         public void Azurethi()
         {
-            Azurethi(DateTime.UtcNow.Ticks);
+            var rng = new Random();
+            var input = rng.Next();
+            Console.WriteLine("Input:" + input);
+            Azurethi(input);
         }
     }
 }

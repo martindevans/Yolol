@@ -24,12 +24,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Grammar\YololParser.pegasus" />
     <None Remove="nuget-push.ps1" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="Superpower" Version="2.3.0" />
+    <PackageReference Include="Pegasus" Version="4.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PegGrammar Include="Grammar\YololParser.pegasus" />
   </ItemGroup>
 
 </Project>

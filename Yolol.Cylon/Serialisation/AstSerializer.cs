@@ -108,6 +108,7 @@ namespace Yolol.Cylon.Serialisation
                 LessThanEqualTo cmp => SerializeBinary(cmp, "less_than_or_equal_to"),
                 EqualTo cmp => SerializeBinary(cmp, "equal_to"),
                 NotEqualTo cmp => SerializeBinary(cmp, "not_equal_to"),
+                Sqrt sqrt => new JObject {["type"] = "expression::unary_op::sqrt", ["operand"] = SerializeExpression(sqrt.Parameter)},
                 _ => throw new NotSupportedException($"Cannot serialize expression type `{expr.GetType().Name}`")
             };
         }

@@ -7,7 +7,6 @@ using CommandLine;
 using Newtonsoft.Json;
 using Yolol.Analysis;
 using Yolol.Analysis.TreeVisitor.Reduction;
-using Yolol.Grammar;
 
 namespace Yololc
 {
@@ -100,23 +99,12 @@ namespace Yololc
         {
             Yolol.Grammar.AST.Program? TryParseAsYolol(ICollection<string> log)
             {
-                var tokens = Tokenizer.TryTokenize(input);
-                if (!tokens.HasValue)
-                {
-                    log.Add($"{tokens.FormatErrorMessageFragment()}");
-                    log.Add(tokens.ErrorPosition.ToString());
-                    return null;
-                }
+                var result = Yolol.Grammar.Parser.ParseProgram(input);
+                if (result.IsOk)
+                    return result.Ok;
 
-                var astResult = Yolol.Grammar.Parser.TryParseProgram(tokens.Value);
-                if (!astResult.HasValue)
-                {
-                    log.Add($"{astResult.FormatErrorMessageFragment()}");
-                    log.Add(astResult.ErrorPosition.ToString());
-                    return null;
-                }
-
-                return astResult.Value;
+                log.Add($"{result.Err.Message} @ {result.Err.Cursor}");
+                return null;
             }
 
             Yolol.Grammar.AST.Program? TryParseAsAst(ICollection<string> log)

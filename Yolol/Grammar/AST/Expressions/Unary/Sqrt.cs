@@ -33,7 +33,7 @@ namespace Yolol.Grammar.AST.Expressions.Unary
 
         public override string ToString()
         {
-            return $"SQRT({Parameter})";
+            return $"SQRT {Parameter}";
         }
     }
 }

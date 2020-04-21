@@ -10,8 +10,6 @@ namespace Yolol.Grammar.AST.Expressions.Unary
 
         public override bool IsBoolean => false;
 
-        public override bool IsConstant => Parameter.IsConstant;
-
         public Abs(BaseExpression parameter)
             : base(parameter)
         {
@@ -33,7 +31,7 @@ namespace Yolol.Grammar.AST.Expressions.Unary
 
         public override string ToString()
         {
-            return $"ABS({Parameter})";
+            return $"ABS {Parameter}";
         }
     }
 }

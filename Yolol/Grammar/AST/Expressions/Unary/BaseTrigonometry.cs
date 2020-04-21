@@ -16,7 +16,7 @@
 
         public override string ToString()
         {
-            return $"{_name}({Parameter})";
+            return $"{_name} {Parameter}";
         }
     }
 }

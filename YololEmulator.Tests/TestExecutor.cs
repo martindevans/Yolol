@@ -11,13 +11,11 @@ namespace YololEmulator.Tests
     {
         public static Program Parse(params string[] lines)
         {
-            var tokens = Tokenizer.TryTokenize(string.Join("\n", lines));
-            Assert.IsTrue(tokens.HasValue, tokens.FormatErrorMessageFragment());
+            var result = Parser.ParseProgram(string.Join("\n", lines) + "\n");
+            if (!result.IsOk)
+                Assert.Fail(result.Err.ToString());
 
-            var parsed = Parser.TryParseProgram(tokens.Value);
-            Assert.IsTrue(parsed.HasValue, parsed.FormatErrorMessageFragment());
-
-            return parsed.Value;
+            return result.Ok;
         }
 
 
@@ -33,6 +31,10 @@ namespace YololEmulator.Tests
 
         public static MachineState Execute(IDeviceNetwork network, params string[] lines)
         {
+            var result = Parser.ParseProgram(string.Join("\n", lines) + "\n");
+            if (!result.IsOk)
+                Assert.Fail(result.Err.ToString());
+
             var state = new MachineState(network);
 
             var pc = 0;
@@ -41,14 +43,8 @@ namespace YololEmulator.Tests
                 if (pc >= lines.Length)
                     break;
 
-                var line = lines[pc];
-                var tokens = Tokenizer.TryTokenize(line);
-                Assert.IsTrue(tokens.HasValue, tokens.FormatErrorMessageFragment());
-
-                var parsed = Parser.TryParseLine(tokens.Value);
-                Assert.IsTrue(parsed.HasValue, parsed.FormatErrorMessageFragment());
-
-                pc = parsed.Value.Evaluate(pc, state);
+                var line = result.Ok.Lines[pc];
+                pc = line.Evaluate(pc, state);
             }
 
             return state;
@@ -79,6 +75,10 @@ namespace YololEmulator.Tests
 
         public static MachineState Execute2(int count, IDeviceNetwork network, params string[] lines)
         {
+            var result = Parser.ParseProgram(string.Join("\n", lines));
+            if (!result.IsOk)
+                Assert.Fail(result.Err.ToString());
+
             var state = new MachineState(network);
 
             var pc = 0;
@@ -87,16 +87,10 @@ namespace YololEmulator.Tests
                 if (pc >= lines.Length || count-- <= 0)
                     break;
 
-                var line = lines[pc];
-                var tokens = Tokenizer.TryTokenize(line);
-                Assert.IsTrue(tokens.HasValue, tokens.FormatErrorMessageFragment());
-
-                var parsed = Parser.TryParseLine(tokens.Value);
-                Assert.IsTrue(parsed.HasValue, parsed.FormatErrorMessageFragment());
-
+                var line = result.Ok.Lines[pc];
                 try
                 {
-                    pc = parsed.Value.Evaluate(pc, state);
+                    pc = line.Evaluate(pc, state);
                 }
                 catch (ExecutionException)
                 {

@@ -14,7 +14,7 @@ namespace YololEmulator.Tests.Analysis.Reduction
         private static readonly ReducerTestHelper Helper = new ReducerTestHelper(ast => new FlattenStatementLists().Visit(ast));
 
         [TestMethod]
-        public void Flatten() => Helper.Run("a=sin(b)", new Program(new Line[] {
+        public void Flatten() => Helper.Run("a=sin b", new Program(new Line[] {
             new Line(new StatementList(new Assignment(new VariableName("a"), new Sine(new Variable(new VariableName("b"))))))
         }));
     }

@@ -8,12 +8,11 @@ namespace YololEmulator.Tests.AST
     {
         private static void Roundtrip(string line)
         {
-            var tok = Tokenizer.TryTokenize(line);
-            Assert.IsTrue(tok.HasValue);
-            var par = Parser.TryParseLine(tok.Value);
-            Assert.IsTrue(par.HasValue, par.FormatErrorMessageFragment());
+            var result = Parser.ParseProgram(line + "\n");
 
-            Assert.AreEqual(line, par.Value.ToString());
+            if (!result.IsOk)
+                Assert.Fail(result.Err.ToString());
+            Assert.AreEqual(line, result.Ok.ToString());
         }
 
         [TestMethod]
@@ -217,13 +216,13 @@ namespace YololEmulator.Tests.AST
         [TestMethod]
         public void Sqrt()
         {
-            Roundtrip("a=SQRT(1<=a)");
+            Roundtrip("a=SQRT 1<=a");
         }
 
         [TestMethod]
         public void Abs()
         {
-            Roundtrip("a=ABS(3)");
+            Roundtrip("a=ABS 3");
         }
     }
 }
