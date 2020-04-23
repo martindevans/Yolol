@@ -79,6 +79,19 @@ namespace Yolol.Execution
             return HashCode.Combine(Value);
         }
 
+        public static Number Parse(string s)
+        {
+            // First check if the number is so colossal that a decimal can't hold it
+            var d = double.Parse(s);
+            if (d >= (double)MaxValue.Value)
+                return MaxValue;
+            else if (d <= (double)MinValue.Value)
+                return MinValue;
+
+            // It's within the safe range, parse as decimal
+            return SafeNew(decimal.Parse(s));
+        }
+
         public static implicit operator Number(int i)
         {
             return new Number(i);

@@ -7,7 +7,7 @@ namespace YololEmulator.Tests.Expressions.Num
     public class Exponent
     {
         [TestMethod]
-        public void DivNumConstantConstant()
+        public void ExpNumConstantConstant()
         {
             var result = TestExecutor.Execute("a = 6 ^ 2");
 
@@ -17,7 +17,7 @@ namespace YololEmulator.Tests.Expressions.Num
         }
 
         [TestMethod]
-        public void DivNumVariableConstant()
+        public void ExpNumVariableConstant()
         {
             var result = TestExecutor.Execute("a = 5", "b = a ^ 2");
 
@@ -29,7 +29,7 @@ namespace YololEmulator.Tests.Expressions.Num
         }
 
         [TestMethod]
-        public void DivNumConstantVariable()
+        public void ExpNumConstantVariable()
         {
             var result = TestExecutor.Execute("a = 2", "b = 6 ^ a");
 
@@ -54,6 +54,14 @@ namespace YololEmulator.Tests.Expressions.Num
             Assert.AreEqual(0.006m, Calc("a = 5.2 ^ -3.1"));
 
             Assert.AreEqual(Number.MinValue, Calc("a = -1 ^ -0.5"));
+        }
+
+        [TestMethod]
+        public void HugeExponent()
+        {
+            var a = TestExecutor.Execute("a = 1000000000000000000000000000000").GetVariable("a").Value;
+
+            Assert.AreEqual(Number.MaxValue, a);
         }
     }
 }

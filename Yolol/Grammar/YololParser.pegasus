@@ -16,7 +16,7 @@ program <Program>
     / lines:line<0,, (comment / newline)> _ EOF { new Program(lines) }
 
 line <Line> -public
-    = stmts:statement<0,, _> { new Line(new StatementList(stmts)) }
+    = _ stmts:statement<0,, _> _ { new Line(new StatementList(stmts)) }
 
 // ########################################
 // Statements
@@ -168,4 +168,4 @@ unicode
     ) { c }
 
 number <Number>
-    = s:("-"? [0-9]+ ("." [0-9]+)?) { (Number)decimal.Parse(s) }
+    = s:("-"? [0-9]+ ("." [0-9]+)?) { Number.Parse(s) }

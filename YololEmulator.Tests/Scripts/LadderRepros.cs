@@ -16,5 +16,17 @@ namespace YololEmulator.Tests.Scripts
         {
             TestExecutor.Parse(":d=:b+:c+:a goto++:done");
         }
+
+        [TestMethod]
+        public void AraliciaPreChallenge2()
+        {
+            TestExecutor.Parse(" a = 1");
+        }
+
+        [TestMethod]
+        public void AraliciaPostChallenge2()
+        {
+            TestExecutor.Parse("a = 1 ");
+        }
     }
 }

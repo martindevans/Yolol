@@ -32,7 +32,7 @@ namespace YololEmulator.Tests.Expressions.Num
 
             var a = result.GetVariable("a");
 
-            Assert.AreEqual(1.1111m, a.Value.Number);
+            Assert.AreEqual(1.111m, a.Value.Number);
         }
 
         [TestMethod]
