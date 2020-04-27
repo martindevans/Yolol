@@ -74,15 +74,15 @@ namespace YololEmulator.Tests.Scripts
         [TestMethod]
         public void Classifying()
         {
-            var code = "c=\"{0}\" i+=c>1 i+=c>3 i+=c>5 i+=c>7 i*=2 i+=c>i x=c-i";
+            var code = "c=\"{0}\" i=1*(c>-1) i-=1*(i>c) i+=8*(i<c)";
 
             var state = TestExecutor.Execute(string.Format(code, "."));
-            Console.WriteLine($"{state.GetVariable("c")} => {state.GetVariable("x")}");
+            Console.WriteLine($"{state.GetVariable("c")} => {state.GetVariable("i")}");
 
             for (var i = 0; i < 10; i++)
             {
                 var statei = TestExecutor.Execute(string.Format(code, i));
-                Console.WriteLine($"{statei.GetVariable("c")} => {statei.GetVariable("x")}");
+                Console.WriteLine($"{statei.GetVariable("c")} => {statei.GetVariable("i")}");
             }
 
             

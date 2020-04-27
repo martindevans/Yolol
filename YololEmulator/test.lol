@@ -1,24 +1,11 @@
-﻿c=:i---:i i=c>1i+=c>3i+=c>5i+=c>7i*=2i+=c>i x/=c>=0o+=i*10^p++goto1
-:o=o:done=c>0o*=(c<0)/10^pp=0goto1
+﻿y=:a*100 x=:b*100 pi=3.141
+if x > 0 then d=atan(y / x) goto 10 end
+if x < 0 and y >= 0 then d=atan(y / x) + 180 goto 10 end
+if x < 0 and y < 0 then d=atan(y / x) - 180 goto 10 end
+if x == 0 and y > 0 then :o=pi/2 :done=1 goto1 end
+if x == 0 and y < 0 then :o=-pi/2 :done=1 goto1 end
+:o=9223372036854775.807 :done=1 goto 1
 
 
-c=:i---:i
-i+=c>1 i+=c>3 i+=c>5 i+=c>7 i*=2 i+=c>i
-x/=c>=0
-o+=i*10^p++
-goto1
-
-
-
-
-
-:o=o
-:done=c>0
-o*=(c<0)/10^p
-p=0
-goto1
-
-
-
-
-
+o=(d*pi*2)/36 s=o+"" s=s---s o/=10
+:done=1 goto 1I've got
