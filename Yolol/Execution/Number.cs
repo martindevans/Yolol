@@ -56,7 +56,7 @@ namespace Yolol.Execution
 
         public string ToString(CultureInfo culture)
         {
-            return Value.ToString("#.###", culture);
+            return Value.ToString("0.###", culture);
         }
 
         public override string ToString()

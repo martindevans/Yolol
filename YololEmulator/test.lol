@@ -8,4 +8,4 @@ if x == 0 and y < 0 then :o=-pi/2 :done=1 goto1 end
 
 
 o=(d*pi*2)/36 s=o+"" s=s---s o/=10
-:done=1 goto 1I've got
+:done=1 goto 1I've go
