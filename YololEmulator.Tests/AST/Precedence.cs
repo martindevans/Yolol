@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Yolol.Execution;
 using Yolol.Grammar;
 using Yolol.Grammar.AST;
 using Yolol.Grammar.AST.Expressions;
@@ -68,6 +69,20 @@ namespace YololEmulator.Tests.AST
         {
             var state = TestExecutor.Execute("a = 2 ^ 3 % 5");
             Assert.AreEqual(3, state.GetVariable("a").Value.Number);
+        }
+
+        [TestMethod]
+        public void MultiplyDiv()
+        {
+            var state = TestExecutor.Execute("a = 8 / 4 * 2");
+            Assert.AreEqual(4, state.GetVariable("a").Value.Number);
+        }
+
+        [TestMethod]
+        public void MultiplyDiv2()
+        {
+            var state = TestExecutor.Execute("a = 10000 * 12.345 / 10000");
+            Assert.AreEqual(10m, state.GetVariable("a").Value.Number);
         }
 
         [TestMethod]

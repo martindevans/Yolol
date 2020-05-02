@@ -79,7 +79,7 @@ namespace YololEmulator.Tests.Scripts
             var state = TestExecutor.Execute(string.Format(code, "."));
             Console.WriteLine($"{state.GetVariable("c")} => {state.GetVariable("i")}");
 
-            for (var i = 0; i < 10; i++)
+            for (var i = 0; i < 16; i++)
             {
                 var statei = TestExecutor.Execute(string.Format(code, i));
                 Console.WriteLine($"{statei.GetVariable("c")} => {statei.GetVariable("i")}");
@@ -89,54 +89,12 @@ namespace YololEmulator.Tests.Scripts
         }
 
         [TestMethod]
-        public void MethodName()
+        public void MyParser()
         {
             var state = TestExecutor.Execute("n=1030178 d=4 f=(10^(3+d)) a=1000*(n/f) b=(n-(a*10^d)) / 1000 o=a+b");
             Console.WriteLine(state.GetVariable("a"));
             Console.WriteLine(state.GetVariable("b"));
             Console.WriteLine(state.GetVariable("o"));
-        }
-
-        [TestMethod]
-        public void BinarySearch()
-        {
-            var code = "c=\"1849\" i=c>{0} j=c<{0}";
-
-            (bool, bool) Try(int i)
-            {
-                var state = TestExecutor.Execute($"c=\"1849\" i=c>{i} j=c<{i}");
-
-                var gt = state.GetVariable("i").Value;
-                var lt = state.GetVariable("j").Value;
-
-                Console.WriteLine($"{state.GetVariable("c")} > {i} == {lt}");
-                Console.WriteLine($"{state.GetVariable("c")} < {i} == {gt}");
-
-                return (lt.ToBool(), gt.ToBool());
-            }
-
-            var min = 0;
-            var next = 1000;
-            var max = 2000;
-
-            int count = 0;
-            while (true)
-            {
-                count++;
-
-                var (gt, lt) = Try(next);
-                if (!lt && !gt)
-                {
-                    Console.WriteLine($"Number is {next} ({count} iters)");
-                    break;
-                }
-
-                if (lt)
-                    min = next;
-                if (gt)
-                    max = next;
-                next = max / 2 + min / 2;
-            }
         }
     }
 }

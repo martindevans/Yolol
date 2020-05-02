@@ -58,5 +58,45 @@ namespace YololEmulator.Tests.Expressions.Str
             Assert.AreEqual("b", a.Value.String);
             Assert.AreEqual("ac", b.Value.String);
         }
+
+        [TestMethod]
+        public void RemoveLastCharacter()
+        {
+            var result = TestExecutor.Execute("a = \"abc\" - \"c\"");
+
+            var a = result.GetVariable("a");
+
+            Assert.AreEqual("ab", a.Value.String);
+        }
+
+        [TestMethod]
+        public void RemoveLastCharacters()
+        {
+            var result = TestExecutor.Execute("a = \"abcsdfsdf\" - \"sdfsdf\"");
+
+            var a = result.GetVariable("a");
+
+            Assert.AreEqual("abc", a.Value.String);
+        }
+
+        [TestMethod]
+        public void RemoveFirstCharacter()
+        {
+            var result = TestExecutor.Execute("a = \"abc\" - \"a\"");
+
+            var a = result.GetVariable("a");
+
+            Assert.AreEqual("bc", a.Value.String);
+        }
+
+        [TestMethod]
+        public void RemoveMidCharacter()
+        {
+            var result = TestExecutor.Execute("a = \"abc\" - \"b\"");
+
+            var a = result.GetVariable("a");
+
+            Assert.AreEqual("ac", a.Value.String);
+        }
     }
 }

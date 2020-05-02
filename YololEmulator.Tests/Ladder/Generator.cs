@@ -36,7 +36,7 @@ namespace YololEmulator.Tests.Ladder
             }
         }
 
-        public static void YololLadderGenerator(List<Dictionary<string, Value>> input, List<Dictionary<string, Value>> output)
+        public static void YololLadderGenerator(List<Dictionary<string, Value>> input, List<Dictionary<string, Value>> output, bool shuffle = true)
         {
             var d = new Data() {
                 In = input.ToArray(),

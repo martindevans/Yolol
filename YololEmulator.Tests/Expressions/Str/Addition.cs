@@ -8,11 +8,11 @@ namespace YololEmulator.Tests.Expressions.Str
         [TestMethod]
         public void ConstantConstant()
         {
-            var result = TestExecutor.Execute("a = \"a\" + \"b\"");
+            var result = TestExecutor.Execute("a = \"ad\" + \"bc\"");
 
             var a = result.GetVariable("a");
 
-            Assert.AreEqual("ab", a.Value.String);
+            Assert.AreEqual("adbc", a.Value.String);
         }
 
         [TestMethod]

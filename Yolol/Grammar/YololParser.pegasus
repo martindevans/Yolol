@@ -89,9 +89,12 @@ expr_additive <BaseExpression> -memoize
     / e:expr_multiply { e }
 
 expr_multiply <BaseExpression> -memoize
-    = l:expr_multiply _ "*" _ r:expr_exponent { new Multiply(l, r) }
-    / l:expr_multiply _ "/" _ r:expr_exponent { new Divide(l, r) }
-    / l:expr_multiply _ "%" _ r:expr_exponent { new Modulo(l, r) }
+    = l:expr_multiply _ "*" _ r:expr_divisor { new Multiply(l, r) }
+    / e:expr_divisor { e }
+
+expr_divisor <BaseExpression> -memoize
+    = l:expr_divisor _ "/" _ r:expr_exponent { new Divide(l, r) }
+    / l:expr_divisor _ "%" _ r:expr_exponent { new Modulo(l, r) }
     / e:expr_exponent { e }
 
 expr_exponent <BaseExpression> -memoize

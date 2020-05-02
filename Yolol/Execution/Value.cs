@@ -4,7 +4,7 @@ using Yolol.Grammar.AST.Expressions;
 
 namespace Yolol.Execution
 {
-    public struct Value
+    public readonly struct Value
         : IEquatable<Value>
     {
         public Type Type { get; }
@@ -20,27 +20,34 @@ namespace Yolol.Execution
             }
         }
 
-        private readonly string _string;
+        private readonly ReadOnlyMemory<char> _string;
         public string String
         {
             get
             {
                 if (Type != Type.String)
                     throw new InvalidCastException($"Attempted to access value of type {Type} as a String");
-                return _string;
+                return _string.ToString();
             }
         }
 
-        public Value(string str)
+        public Value(ReadOnlyMemory<char> str)
         {
             _string = str;
             _number = Number.Zero;
             Type = Type.String;
         }
 
+        public Value(string str)
+        {
+            _string = str.AsMemory();
+            _number = Number.Zero;
+            Type = Type.String;
+        }
+
         public Value(Number num)
         {
-            _string = "";
+            _string = new Memory<char>(Array.Empty<char>());
             _number = num;
             Type = Type.Number;
         }
@@ -69,8 +76,16 @@ namespace Yolol.Execution
         {
             if (Type == Type.Number)
                 return Number.ToString(CultureInfo.InvariantCulture);
+            else
+                return String;
+        }
 
-            return String;
+        private ReadOnlyMemory<char> ToStringSpan()
+        {
+            if (Type == Type.Number)
+                return Number.ToString(CultureInfo.InvariantCulture).AsMemory();
+            else
+                return _string;
         }
 
         public bool ToBool()
@@ -92,8 +107,8 @@ namespace Yolol.Execution
         public bool Equals(Value other)
         {
             return (Type, other.Type) switch {
-                (Type.Number, Type.Number) => (Number == other.Number),
-                (Type.String, Type.String) => String.Equals(other.String, StringComparison.OrdinalIgnoreCase),
+                (Type.Number, Type.Number) => Number == other.Number,
+                (Type.String, Type.String) => CompareStringSpans(in this, in other) == 0,
                 _ => false
             };
         }
@@ -110,9 +125,15 @@ namespace Yolol.Execution
                 var hashCode = (int)Type * 397;
 
                 if (Type == Type.String)
-                    hashCode += _string?.GetHashCode() ?? 1;
+                {
+                    foreach (var c in _string.Span)
+                    {
+                        hashCode += c;
+                        hashCode *= 17;
+                    }
+                }
                 else
-                    hashCode += _number.GetHashCode();
+                    hashCode *= _number.GetHashCode();
 
                 return hashCode;
             }
@@ -120,62 +141,39 @@ namespace Yolol.Execution
 
         public static Value operator <(Value left, Value right)
         {
-            switch (left.Type, right.Type)
-            {
-                case (Type.Number, Type.Number):
-                    return new Value(left.Number < right.Number ? Number.One : Number.Zero);
+            if (left.Type == Type.Number && right.Type == Type.Number)
+                return new Value(left.Number < right.Number);
 
-                default:
-                    var l = left.ToString();
-                    var r = right.ToString();
-                    var comparison = StringComparer.OrdinalIgnoreCase.Compare(l, r);
-                    return new Value(comparison < 0 ? Number.One : Number.Zero);
-            }
+            return new Value(CompareStringSpans(in left, in right) < 0);
         }
 
         public static Value operator <=(Value left, Value right)
         {
-            switch (left.Type, right.Type)
-            {
-                case (Type.Number, Type.Number):
-                    return new Value(left.Number <= right.Number ? Number.One : Number.Zero);
+            if (left.Type == Type.Number && right.Type == Type.Number)
+                return new Value(left.Number <= right.Number);
 
-                default:
-                    var l = left.ToString();
-                    var r = right.ToString();
-                    var comparison = StringComparer.OrdinalIgnoreCase.Compare(l, r);
-                    return new Value(comparison <= 0 ? Number.One : Number.Zero);
-            }
+            return new Value(CompareStringSpans(in left, in right) <= 0);
         }
 
         public static Value operator >(Value left, Value right)
         {
-            switch (left.Type, right.Type)
-            {
-                case (Type.Number, Type.Number):
-                    return new Value(left.Number > right.Number ? Number.One : Number.Zero);
+            if (left.Type == Type.Number && right.Type == Type.Number)
+                return new Value(left.Number > right.Number);
 
-                default:
-                    var l = left.ToString();
-                    var r = right.ToString();
-                    var comparison = StringComparer.OrdinalIgnoreCase.Compare(l, r);
-                    return new Value(comparison > 0 ? Number.One : Number.Zero);
-            }
+            return new Value(CompareStringSpans(in left, in right) > 0);
         }
 
         public static Value operator >=(Value left, Value right)
         {
-            switch (left.Type, right.Type)
-            {
-                case (Type.Number, Type.Number):
-                    return new Value(left.Number >= right.Number ? Number.One : Number.Zero);
+            if (left.Type == Type.Number && right.Type == Type.Number)
+                return new Value(left.Number >= right.Number);
 
-                default:
-                    var l = left.ToString();
-                    var r = right.ToString();
-                    var comparison = StringComparer.OrdinalIgnoreCase.Compare(l, r);
-                    return new Value(comparison >= 0 ? Number.One : Number.Zero);
-            }
+            return new Value(CompareStringSpans(in left, in right) >= 0);
+        }
+
+        private static int CompareStringSpans(in Value left, in Value right)
+        {
+            return left.ToStringSpan().Span.CompareTo(right.ToStringSpan().Span, StringComparison.Ordinal);
         }
 
         public static Value operator ==(Value left, Value right)
@@ -190,30 +188,35 @@ namespace Yolol.Execution
 
         public static Value operator -(Value left, Value right)
         {
-            switch (left.Type, right.Type)
-            {
-                case (Type.Number, Type.Number):
-                    return new Value(left.Number - right.Number);
+            if (left.Type == Type.Number && right.Type == Type.Number)
+                return left.Number - right.Number;
 
-                default:
-                    var l = left.ToString();
-                    var r = right.ToString();
+            var l = left.ToStringSpan();
+            var r = right.ToStringSpan();
+            var index = l.Span.LastIndexOf(r.Span);
 
-                    var index = l.LastIndexOf(r, StringComparison.Ordinal);
-
-                    if (index == -1)
-                        return new Value(l);
-                    else
-                        return new Value(l.Remove(index, r.Length));
-            }
+            // Handle special cases by taking slices of the string if possible
+            if (index == -1)
+                return new Value(l);
+            else if (index == 0)
+                return new Value(l[r.Length..]);
+            else if (index + r.Length == l.Length)
+                return new Value(l[..^r.Length]);
+            else
+                return new Value(l.ToString().Remove(index, r.Length).AsMemory());
         }
 
         public static Value operator +(Value left, Value right)
         {
-            return (left.Type, right.Type) switch {
-                (Type.Number, Type.Number) => new Value(left.Number + right.Number),
-                _ => (left.ToString() + right.ToString())
-            };
+            if (left.Type == Type.Number && right.Type == Type.Number)
+                return left.Number + right.Number;
+
+            var l = left.ToStringSpan();
+            var r = right.ToStringSpan();
+            var result = new Memory<char>(new char[l.Length + r.Length]);
+            l.CopyTo(result[..l.Length]);
+            r.CopyTo(result[l.Length..]);
+            return new Value(result);
         }
 
         public static Value operator *(Value left, Value right)
@@ -236,21 +239,12 @@ namespace Yolol.Execution
 
         public static Value operator &(Value left, Value right)
         {
-            return (left.Type, right.Type) switch {
-                (Type.Number, Type.Number) => new Value(left.Number != 0 && right.Number != 0),
-                (Type.String, Type.String) => new Value(true),
-                (Type.String, Type.Number) => new Value(right.Number != 0),
-                (Type.Number, Type.String) => new Value(left.Number != 0),
-                _ => new Value(left.Number != 0)
-            };
+            return new Value(left.ToBool() && right.ToBool());
         }
 
         public static Value operator |(Value left, Value right)
         {
-            return (left.Type, right.Type) switch {
-                (Type.Number, Type.Number) => new Value(left.Number != 0 || right.Number != 0),
-                _ => new Value(true)
-            };
+            return new Value(left.ToBool() || right.ToBool());
         }
 
         public static Value operator %(Value left, Value right)
@@ -275,7 +269,10 @@ namespace Yolol.Execution
             if (value.Type == Type.Number)
                 return new Value(value.Number + 1);
 
-            return new Value(value.String + " ");
+            var mem = new char[value._string.Length + 1];
+            value._string.CopyTo(mem);
+            mem[^1] = ' ';
+            return new Value(mem.AsMemory());
         }
 
         public static Value operator --(Value value)
@@ -283,10 +280,10 @@ namespace Yolol.Execution
             if (value.Type == Type.Number)
                 return new Value(value.Number - Number.One);
 
-            if (value.String == "")
+            if (value._string.Length == 0)
                 throw new ExecutionException("Attempted to decrement empty string");
 
-            return new Value(value.String[..^1]);
+            return new Value(value._string[..^1]);
         }
 
         public static Value Exponent(Value left, Value right)
@@ -319,40 +316,32 @@ namespace Yolol.Execution
 
         public static Value operator -(Value value)
         {
-            if (value.Type == Type.Number)
-                return new Value(-value.Number);
-            else
+            if (value.Type == Type.String)
                 throw new ExecutionException("Attempted to negate a String value");
+
+            return new Value(-value.Number);
         }
 
         public static Value Abs(Value value)
         {
-            if (value.Type == Type.Number)
-            {
-                if (value.Number < 0)
-                    return -value;
-                else
-                    return value;
-            }
-            else
-            {
+            if (value.Type == Type.String)
                 throw new ExecutionException("Attempted to Abs a string value");
-            }
+
+            if (value.Number < 0)
+                return -value;
+            else
+                return value;
         }
 
         public static Value Sqrt(Value value)
         {
-            if (value.Type == Type.Number)
-            {
-                if (value.Number < 0)
-                    throw new ExecutionException("Attempted to Sqrt a negative value");
-
-                return (Number)(decimal)Math.Sqrt((double)value.Number.Value);
-            }
-            else
-            {
+            if (value.Type == Type.String)
                 throw new ExecutionException("Attempted to Sqrt a string value");
-            }
+
+            if (value.Number < 0)
+                throw new ExecutionException("Attempted to Sqrt a negative value");
+
+            return (Number)(decimal)Math.Sqrt((double)value.Number.Value);
         }
 
         private static decimal ToDegrees(double radians)
