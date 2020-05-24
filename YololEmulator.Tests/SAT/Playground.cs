@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Z3;
 
@@ -130,6 +131,101 @@ namespace YololEmulator.Tests.SAT
 
                 Console.WriteLine(solver.Check());
             }
+        }
+
+        enum Op
+        {
+            And, Or, Xor
+        }
+
+        [TestMethod]
+        public void Superoptimise_Attempt()
+        {
+            // 		0 1 2
+            // and  0 0 1   o<x
+            // or   0 1 1   o==x
+            // xor  0 1 0   o>x
+
+            using var ctx = new Context();
+            using var solver = ctx.MkSolver();
+            solver.Set("timeout", 1000);
+
+            //:o=(c+OFFSET+is_and*P1+is_xor*P2+c*is_xor_or*P3+is_or_and*P4)%P5>P6
+
+            // Setup params we want to know
+            var offset = (IntExpr)ctx.MkConst("OFFSET", ctx.IntSort);
+            var p1 = (IntExpr)ctx.MkConst("P1", ctx.IntSort);
+            var p2 = (IntExpr)ctx.MkConst("P2", ctx.IntSort);
+            var p3 = (IntExpr)ctx.MkConst("P3", ctx.IntSort);
+            var p4 = (IntExpr)ctx.MkConst("P4", ctx.IntSort);
+            var p5 = (IntExpr)ctx.MkConst("P5", ctx.IntSort);
+            var p6 = (IntExpr)ctx.MkConst("P6", ctx.IntSort);
+
+            solver.Assert(offset > -10 & offset < 10);
+            solver.Assert(p1 > 0 & p1 < 10);
+            solver.Assert(p2 > 0 & p2 < 10);
+            solver.Assert(p3 > 0 & p3 < 10);
+            solver.Assert(p4 > -5 & p4 < 10);
+            solver.Assert(p5 > 0 & p5 < 10);
+            solver.Assert(p6 > -10 & p6 < 10);
+
+            // Setup cases
+            BoolExpr Equation(Op op, int sum)
+            {
+                var c = (IntExpr)ctx.MkInt(sum);
+
+                var is_or_and = (IntExpr)ctx.MkInt(op != Op.Xor ? 1 : 0);
+                var is_and = (IntExpr)ctx.MkInt(op == Op.And ? 1 : 0);
+                var is_or_xor = (IntExpr)ctx.MkInt(op != Op.And ? 1 : 0);
+                var is_xor = (IntExpr)ctx.MkInt(op == Op.Xor ? 1 : 0);
+
+                var a = (IntExpr)(c + offset + c * is_and * p1 + is_xor * p2 + is_or_xor * p3 + is_or_and * p4);
+                var b = ctx.MkMod(a, p5);
+
+                return b > p6;
+            }
+
+            solver.Assert(ctx.MkEq(ctx.MkFalse(), Equation(Op.And, 0)));
+            solver.Assert(ctx.MkEq(ctx.MkFalse(), Equation(Op.And, 1)));
+            solver.Assert(ctx.MkEq(ctx.MkTrue(), Equation(Op.And, 2)));
+
+            solver.Assert(ctx.MkEq(ctx.MkFalse(), Equation(Op.Or, 0)));
+            solver.Assert(ctx.MkEq(ctx.MkTrue(), Equation(Op.Or, 1)));
+            solver.Assert(ctx.MkEq(ctx.MkTrue(), Equation(Op.Or, 2)));
+
+            solver.Assert(ctx.MkEq(ctx.MkFalse(), Equation(Op.Xor, 0)));
+            solver.Assert(ctx.MkEq(ctx.MkTrue(), Equation(Op.Xor, 1)));
+            solver.Assert(ctx.MkEq(ctx.MkFalse(), Equation(Op.Xor, 2)));
+
+            if (solver.Check() == Status.SATISFIABLE)
+            {
+                var offsetv = (IntNum)solver.Model.Eval(offset);
+                var p1v = (IntNum)solver.Model.Eval(p1);
+                var p2v = (IntNum)solver.Model.Eval(p2);
+                var p3v = (IntNum)solver.Model.Eval(p3);
+                var p4v = (IntNum)solver.Model.Eval(p4);
+                var p5v = (IntNum)solver.Model.Eval(p5);
+                var p6v = (IntNum)solver.Model.Eval(p6);
+
+                Console.WriteLine($":o=(:a+:b+{offsetv}+is_and*{p1v}+is_xor*{p2v}+is_x_or*{p3v}+is_or_and*{p4v})%{p5v}>{p6v}");
+
+                //var code = $"o=(:a+:b+{offsetv}+({0}==\"and\")*{p1v}+({0}==\"xor\")*{p2v}+({0}!=\"and\")*{p3v})%{p4v}>{p5v}";
+
+                //foreach (var op in new[] { "and", "or", "xor" })
+                //{
+                //    var results = Enumerable.Range(0, 3).Select(i => {
+                //        var c = string.Format(code, op, i);
+                //        var r = TestExecutor.Execute(c);
+                //        return r.GetVariable("o").Value.Number;
+                //    });
+
+                //    Console.WriteLine(op + string.Join("", Enumerable.Repeat(" ", 5 - op.Length)) + string.Join(" ", results));
+                //}
+
+                //solver.Assert(ctx.MkNot(ctx.MkEq(c, cv)));
+            }
+
+            Console.WriteLine(solver.Check());
         }
     }
 }
