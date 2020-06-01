@@ -97,6 +97,11 @@ namespace Yolol.Execution
             return new Number(i);
         }
 
+        public static explicit operator Number(double i)
+        {
+            return SafeNew((decimal)i);
+        }
+
         public static implicit operator Number(decimal d)
         {
             return SafeNew(d);

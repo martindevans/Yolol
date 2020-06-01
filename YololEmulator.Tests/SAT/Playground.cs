@@ -133,6 +133,89 @@ namespace YololEmulator.Tests.SAT
             }
         }
 
+        [TestMethod]
+        public void Superoptimise_Attempt2()
+        {
+            using var ctx = new Context();
+            using var solver = ctx.MkSolver();
+            solver.Set("timeout", 100);
+
+            // :o = (i%a * i%b * i%c * i%d * i%e * i%f)>g
+
+            // Setup params we want to know
+            var a = (IntExpr)ctx.MkConst("a", ctx.IntSort);
+            var b = (IntExpr)ctx.MkConst("b", ctx.IntSort);
+            var c = (IntExpr)ctx.MkConst("c", ctx.IntSort);
+            var d = (IntExpr)ctx.MkConst("d", ctx.IntSort);
+            var e = (IntExpr)ctx.MkConst("e", ctx.IntSort);
+            var f = (IntExpr)ctx.MkConst("f", ctx.IntSort);
+            var g = (IntExpr)ctx.MkConst("g", ctx.IntSort);
+
+            solver.Assert(a > 0 & a < 20);
+            solver.Assert(b > 0 & b < 20);
+            solver.Assert(c > 0 & c < 20);
+            solver.Assert(d > 0 & d < 20);
+            solver.Assert(e > 0 & e < 20);
+            solver.Assert(f > 0 & f < 20);
+            solver.Assert(g >= 0 & g < 1);
+
+            //solver.Assert(ctx.MkEq(a, ctx.MkInt(2)));
+            //solver.Assert(ctx.MkEq(b, ctx.MkInt(3)));
+            solver.Assert(ctx.MkEq(c, ctx.MkInt(5)));
+            solver.Assert(ctx.MkEq(d, ctx.MkInt(7)));
+            solver.Assert(ctx.MkEq(e, ctx.MkInt(11)));
+            solver.Assert(ctx.MkEq(f, ctx.MkInt(13)));
+            solver.Assert(ctx.MkEq(g, ctx.MkInt(0)));
+
+            // Setup cases
+            BoolExpr Equation(int i)
+            {
+                var ii = ctx.MkInt(i);
+                var aa = ctx.MkRem(ii, a);
+                var bb = ctx.MkRem(ii, b);
+                var cc = ctx.MkRem(ii, c);
+                var dd = ctx.MkRem(ii, d);
+                var ee = ctx.MkRem(ii, e);
+                var ff = ctx.MkRem(ii, f);
+
+                var expr = (aa * bb * cc * dd * ee * ff);
+                return expr > g;
+            }
+
+            for (var i = 14; i < 201; i++)
+                solver.Assert(ctx.MkEq(ctx.MkBool(IsPrime(i)), Equation(i)));
+
+            static bool IsPrime(int number)
+            {
+                if (number <= 1) return false;
+                if (number == 2) return true;
+                if (number % 2 == 0) return false;
+
+                var boundary = (int)Math.Floor(Math.Sqrt(number));
+
+                for (int i = 3; i <= boundary; i+=2)
+                    if (number % i == 0)
+                        return false;
+
+                return true;        
+            }
+
+            if (solver.Check() == Status.SATISFIABLE)
+            {
+                var av = (IntNum)solver.Model.Eval(a);
+                var bv = (IntNum)solver.Model.Eval(b);
+                var cv = (IntNum)solver.Model.Eval(c);
+                var dv = (IntNum)solver.Model.Eval(d);
+                var ev = (IntNum)solver.Model.Eval(e);
+                var fv = (IntNum)solver.Model.Eval(f);
+                var gv = (IntNum)solver.Model.Eval(g);
+
+                Console.WriteLine($":o = (i%{av}+i%{bv}+i%{cv}+i%{dv}+i%{ev}+i%{fv})>{gv}");
+            }
+
+            Console.WriteLine(solver.Check());
+        }
+
         enum Op
         {
             And, Or, Xor

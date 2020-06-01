@@ -11,6 +11,12 @@ namespace YololEmulator.Tests.Ladder
     {
         private class Data
         {
+            [JsonProperty("shuffle")]
+            public bool Shuffle { get; set; }
+
+            [JsonProperty("mode")]
+            public ScoreMode Mode { get; set; }
+
             [JsonProperty("in")]
             public Dictionary<string, Value>[] In { get; set; }
 
@@ -35,11 +41,21 @@ namespace YololEmulator.Tests.Ladder
             }
         }
 
-        public static void YololLadderGenerator(List<Dictionary<string, Value>> input, List<Dictionary<string, Value>> output, bool shuffle = true)
+        public enum ScoreMode
+        {
+            Unknown = 0,
+
+            BasicScoring = 1,
+            Approximate = 2,
+        }
+
+        public static void YololLadderGenerator(List<Dictionary<string, Value>> input, List<Dictionary<string, Value>> output, bool shuffle = true, ScoreMode mode = ScoreMode.BasicScoring)
         {
             var d = new Data() {
                 In = input.ToArray(),
-                Out = output.ToArray()
+                Out = output.ToArray(),
+                Shuffle = shuffle,
+                Mode = mode
             };
 
             Console.WriteLine(JsonConvert.SerializeObject(d, new YololValueConverter()));

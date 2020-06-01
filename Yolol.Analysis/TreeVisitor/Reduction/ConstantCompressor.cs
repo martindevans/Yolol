@@ -3,6 +3,7 @@ using Yolol.Execution;
 using Yolol.Execution.Extensions;
 using Yolol.Grammar.AST.Expressions;
 using Yolol.Grammar.AST.Expressions.Binary;
+using Yolol.Grammar.AST.Expressions.Unary;
 
 namespace Yolol.Analysis.TreeVisitor.Reduction
 {
@@ -16,7 +17,8 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
 
             var replacements = new[] {
                 SmallestExponents(con.Value),
-                BestFraction(con.Value)
+                BestFraction(con.Value),
+                AtanOffset(con.Value),
             };
 
             var shortestLength = int.MaxValue;
@@ -155,6 +157,18 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
                 return replacement;
             else
                 return new ConstantNumber(number);
+        }
+
+        private static BaseExpression? AtanOffset(Number number)
+        {
+            var atan = new ArcTan(new ConstantNumber(number)).TryStaticEvaluate();
+            if (!atan.HasValue)
+                return null;
+            var atanFloor = (long)atan.Value.Number.Value;
+
+            var offset = number - atan.Value;
+
+            return new Add(new ConstantNumber(offset.Number), new Tangent(new ConstantNumber(atanFloor)));
         }
     }
 }
