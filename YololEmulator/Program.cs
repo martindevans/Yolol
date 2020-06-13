@@ -82,7 +82,13 @@ namespace YololEmulator
                     Console.Title = $"Elapsed Game Time: {TimeSpan.FromMilliseconds(200 * lines).TotalSeconds.ToString(CultureInfo.CurrentCulture)}s";
                     Console.WriteLine("State:");
                     foreach (var (key, value) in st)
-                        Console.WriteLine($" | {key} = {value}");
+                    {
+                        if (value.Value.Type == Yolol.Execution.Type.String)
+                            Console.WriteLine($" | {key} = \"{value}\"");
+                        else
+                            Console.WriteLine($" | {key} = {value}");
+                    }
+
                     Console.WriteLine();
 
                     if (options.Auto)
