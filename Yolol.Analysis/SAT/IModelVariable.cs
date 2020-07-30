@@ -45,7 +45,7 @@ namespace Yolol.Analysis.SAT
             switch (value.Type)
             {
                 case Type.Number:
-                    _model.Solver.Assert(ctx.MkEq(_numValue, _model.Context.MkInt((value.Number.Value * Number.Scale).ToString(CultureInfo.InvariantCulture))));
+                    _model.Solver.Assert(ctx.MkEq(_numValue, _model.Context.MkInt(((long)value.Number * Number.Scale).ToString(CultureInfo.InvariantCulture))));
                     return;
 
                 case Type.String:
@@ -493,7 +493,7 @@ namespace Yolol.Analysis.SAT
             if (sub is ConstantNumber num)
             {
                 var n = _model.GetOrCreateVariable(new VariableName(Guid.NewGuid().ToString()));
-                n.AssertEq(num.Value.Value);
+                n.AssertEq(num.Value);
                 return n;
             }
 
@@ -536,7 +536,7 @@ namespace Yolol.Analysis.SAT
                 return _model.Solver.IsSatisfiable(
                     ctx.MkAnd(
                         ctx.MkEq(_type, _model.NumType),
-                        ctx.MkEq(_numValue, _model.Context.MkInt((v.Number.Value * Number.Scale).ToString()))
+                        ctx.MkEq(_numValue, _model.Context.MkInt(((long)v.Number * Number.Scale).ToString()))
                     )
                 );
             }
@@ -554,7 +554,7 @@ namespace Yolol.Analysis.SAT
                 return !_model.Solver.IsSatisfiable(ctx.MkNot(ctx.MkEq(_strValue, _model.Context.MkString(v.String))));
 
             if (v.Type == Type.Number)
-                return !_model.Solver.IsSatisfiable(ctx.MkNot(ctx.MkEq(_numValue, _model.Context.MkInt((v.Number.Value * Number.Scale).ToString()))));
+                return !_model.Solver.IsSatisfiable(ctx.MkNot(ctx.MkEq(_numValue, _model.Context.MkInt(((long)v.Number * Number.Scale).ToString()))));
 
             throw new NotSupportedException($"unknown value type {v.Type}");
         }

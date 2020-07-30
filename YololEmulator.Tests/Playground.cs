@@ -4,9 +4,8 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Yolol.Analysis;
 using Yolol.Analysis.TreeVisitor;
-using Yolol.Analysis.TreeVisitor.Reduction;
+using Yolol.Execution;
 using Yolol.Grammar;
-using Yolol.Grammar.AST.Expressions;
 using Yolol.Grammar.AST.Statements;
 
 namespace YololEmulator.Tests

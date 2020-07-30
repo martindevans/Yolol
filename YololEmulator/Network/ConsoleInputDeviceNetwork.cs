@@ -57,10 +57,16 @@ namespace YololEmulator.Network
                                 continue;
 
                             if (value.StartsWith('"') && value.EndsWith('"'))
-                                return new Value(value[1..^1]);
+                            {
+                                _savedValue = new Value(value[1..^1]);
+                                return _savedValue.Value;
+                            }
 
                             if (decimal.TryParse(value, out var result))
-                                return new Value(result);
+                            {
+                                _savedValue = new Value(result);
+                                return _savedValue.Value;
+                            }
 
                             Console.WriteLine(" -> Could not parse as a string or a number!");
                         }

@@ -507,7 +507,7 @@ namespace Yolol.Analysis.DataFlowGraph
             protected override IDataFlowGraphExpressionNode Visit(ConstantNumber con)
             {
 
-                var op = new InputConst(Guid.NewGuid(), con.Value.Value);
+                var op = new InputConst(Guid.NewGuid(), new Value(con.Value));
                 _dataFlowGraph._inputs.Add(op);
                 return op;
             }

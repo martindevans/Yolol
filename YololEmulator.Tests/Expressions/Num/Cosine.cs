@@ -18,7 +18,7 @@ namespace YololEmulator.Tests.Expressions.Num
         {
             var result = TestExecutor.Execute("a = cos(45)");
             var a = result.GetVariable("a");
-            Assert.AreEqual(0.707m, a.Value.Number.Value);
+            Assert.AreEqual(0.707m, a.Value.Number);
         }
 
         [TestMethod]

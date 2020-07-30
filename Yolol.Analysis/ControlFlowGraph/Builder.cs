@@ -143,7 +143,7 @@ namespace Yolol.Analysis.ControlFlowGraph
                 if (dest.Type == Execution.Type.Number)
                 {
                     // We know exactly where this is going, jump to that line
-                    var line = Math.Clamp((int)dest.Number.Value, 1, _maxLines);
+                    var line = Math.Clamp((int)dest.Number, 1, _maxLines);
                     var destBlock = GetLineEntryBlock(cfg, line);
                     cfg.CreateEdge(block, destBlock, EdgeType.GotoConstNum);
                 }

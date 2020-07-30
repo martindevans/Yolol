@@ -27,7 +27,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
         {
             BaseExpression? HandleSingleSideNumber(Number number, BaseExpression other)
             {
-                return number.Value switch {
+                return (long)number switch {
                     -1 => base.Visit(new Negate(new Bracketed(other))),
                     0 => new ConstantNumber(0),
                     1 => base.Visit(other),
@@ -86,7 +86,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
             if (!rv.HasValue)
                 return base.Visit(div);
 
-            return rv.Value.Value switch {
+            return (long)rv.Value switch {
                 -1 => base.Visit(new Negate(new Bracketed(base.Visit(div.Left)))),
                 0 => new ErrorExpression(),
                 1 => base.Visit(new Bracketed(base.Visit(div.Left))),
@@ -98,7 +98,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
         {
             BaseExpression? HandleSingleSideNumber(Number number, BaseExpression other)
             {
-                return number.Value switch
+                return (long)number switch
                 {
                     0 => base.Visit(new Bracketed(other)),
                     _ => null,
@@ -149,7 +149,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
             if (!rv.HasValue)
                 return base.Visit(exp);
 
-            return rv.Value.Value switch {
+            return (long)rv.Value switch {
                 0 => base.Visit(new ConstantNumber(1)),
                 1 => base.Visit(new Bracketed(base.Visit(exp.Left))),
                 -1 => base.Visit(new Divide(new ConstantNumber(1), new Bracketed(exp.Left))),

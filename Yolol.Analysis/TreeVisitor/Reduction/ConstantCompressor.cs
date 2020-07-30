@@ -65,7 +65,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
                 var b = idx / 10m;
                 try
                 {
-                    var log = Math.Log((double)value.Value, (double)b);
+                    var log = Math.Log((double)(decimal)value, (double)b);
                     if (double.IsNaN(log))
                         continue;
 
@@ -146,10 +146,10 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
                 }
             }
 
-            if (number.Value >= 1)
+            if (number >= 1)
                 return new ConstantNumber(number);
 
-            var (fn, fd) = RealToFraction((double)number.Value, 0.001f);
+            var (fn, fd) = RealToFraction((double)number, 0.001f);
 
             var replacement = new Divide(new ConstantNumber((decimal)fn), new ConstantNumber((decimal)fd));
 
@@ -164,7 +164,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
             var atan = new ArcTan(new ConstantNumber(number)).TryStaticEvaluate();
             if (!atan.HasValue)
                 return null;
-            var atanFloor = (long)atan.Value.Number.Value;
+            var atanFloor = (long)(decimal)atan.Value.Number;
 
             var offset = number - atan.Value;
 

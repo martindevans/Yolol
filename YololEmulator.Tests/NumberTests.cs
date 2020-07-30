@@ -4,15 +4,59 @@ using Yolol.Execution;
 namespace YololEmulator.Tests
 {
     [TestClass]
-    public class NumberTests
+    public class Number6464Tests
     {
+        [TestMethod]
+        public void IntToNumber()
+        {
+            var n = (Number)1000;
+            Assert.AreEqual(1000, n);
+        }
+
+        [TestMethod]
+        public void DoubleToNumber()
+        {
+            var n = (Number)(double)1000;
+            Assert.AreEqual(1000, n);
+        }
+
+        [TestMethod]
+        public void DecimalToNumber()
+        {
+            var n = (Number)1000m;
+            Assert.AreEqual(1000, n);
+        }
+
         [TestMethod]
         public void TruncateOnConstruction()
         {
             var n = (Number)1.234567m;
 
-            Assert.AreEqual(1.234m, n.Value);
+            Assert.AreEqual(1.234m, n);
             Assert.AreEqual("1.234", n.ToString());
+        }
+
+        [TestMethod]
+        public void ToStringRemovesDecimalZeros()
+        {
+            var n = (Number)0.000m;
+            Assert.AreEqual("0", n.ToString());
+        }
+
+        [TestMethod]
+        public void ToStringRemovesDecimalZerosAfterLastDecimal()
+        {
+            var n = (Number)0.010m;
+
+            Assert.AreEqual(0.010m, n);
+            Assert.AreEqual("0.01", n.ToString());
+        }
+
+        [TestMethod]
+        public void ToStringNegative()
+        {
+            var n = (Number)(-1.020m);
+            Assert.AreEqual("-1.02", n.ToString());
         }
 
         [TestMethod]
@@ -53,10 +97,80 @@ namespace YololEmulator.Tests
         }
 
         [TestMethod]
-        public void BigNegativeParsing()
+        public void Subtract()
         {
-            var r = TestExecutor.Execute("a = -9223372036854775.808");
-            Assert.AreEqual(-9223372036854775.808m, r.GetVariable("a").Value.Number);
+            var a = (Number)1.010m;
+            var b = (Number)19.077m;
+
+            var c = b - a;
+
+            Assert.AreEqual((Number)18.067, c);
+        }
+
+        [TestMethod]
+        public void Add()
+        {
+            var a = (Number)1083m;
+            var b = (Number)12.77m;
+
+            var c = b + a;
+
+            Assert.AreEqual((Number)1095.77, c);
+        }
+
+        [TestMethod]
+        public void Multiply()
+        {
+            var a = (Number)17;
+            var b = (Number)9;
+
+            var c = a * b;
+
+            Assert.AreEqual((Number)153, c);
+        }
+
+        [TestMethod]
+        public void Divide()
+        {
+            var a = (Number)153;
+            var b = (Number)9;
+
+            var c = a / b;
+
+            Assert.AreEqual((Number)17, c);
+        }
+
+        [TestMethod]
+        public void ModBasic()
+        {
+            var a = (Number)7;
+            var b = (Number)3;
+
+            var c = a % b;
+
+            Assert.AreEqual((Number)1, c);
+        }
+
+        [TestMethod]
+        public void ModDecimal()
+        {
+            var a = (Number)7;
+            var b = (Number)3.2;
+
+            var c = a % b;
+
+            Assert.AreEqual((Number)0.6, c);
+        }
+
+        [TestMethod]
+        public void ModNegative()
+        {
+            var a = (Number)(-7);
+            var b = (Number)3;
+
+            var c = a % b;
+
+            Assert.AreEqual((Number)(-1), c);
         }
     }
 }
