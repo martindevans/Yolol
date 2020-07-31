@@ -15,6 +15,9 @@ namespace Yolol.Execution.Extensions
 
         public static Value? TryStaticEvaluate(this BaseExpression expression)
         {
+            if (!expression.IsConstant)
+                return null;
+
             try
             {
                 return expression.Evaluate(new MachineState(new ThrowDeviceNetwork()));
