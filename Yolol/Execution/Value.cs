@@ -291,15 +291,7 @@ namespace Yolol.Execution
             switch (left.Type, right.Type)
             {
                 case (Type.Number, Type.Number):
-                    var v = Math.Pow((float)left.Number, (float)right.Number);
-
-                    if (double.IsPositiveInfinity(v))
-                        return new Value(Number.MaxValue);
-
-                    if (double.IsNegativeInfinity(v) || double.IsNaN(v))
-                        return new Value(Number.MinValue);
-
-                    return new Value((decimal)v);
+                    return left.Number.Exponent(right.Number);
 
                 case (Type.String, Type.String):
                     throw new ExecutionException("Attempted to exponent strings");

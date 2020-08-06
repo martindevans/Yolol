@@ -229,5 +229,18 @@ namespace Yolol.Execution
         {
             return (Number)ToDegrees((float)Math.Acos((float)this));
         }
+
+        internal Number Exponent(Number number)
+        {
+            var v = Math.Pow((float)this, (float)number);
+
+            if (double.IsPositiveInfinity(v))
+                return MaxValue;
+
+            if (double.IsNegativeInfinity(v) || double.IsNaN(v))
+                return MinValue;
+
+            return (Number)v;
+        }
     }
 }
