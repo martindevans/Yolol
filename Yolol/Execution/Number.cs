@@ -162,5 +162,72 @@ namespace Yolol.Execution
         {
             return l.Value != r.Value;
         }
+
+        public Number Abs()
+        {
+            return new Number(Math.Abs(Value));
+        }
+
+        public Number Sqrt()
+        {
+            if (this < 0)
+                throw new ExecutionException("Attempted to Sqrt a negative value");
+
+            return (Number)(double)Math.Sqrt((float)this);
+        }
+
+        private static float ToDegrees(float radians)
+        {
+            const float rad2Deg = 360f / ((float)Math.PI * 2);
+            return radians * rad2Deg;
+        }
+
+        private static float ToRadians(float degrees)
+        {
+            const float deg2Rad = (float)Math.PI * 2 / 360f;
+            return degrees * deg2Rad;
+        }
+
+        public Number Sin()
+        {
+            var r = ToRadians((float)this);
+            var s = Math.Round(Math.Sin(r), 3);
+
+            return (Number)s;
+        }
+
+        public Number Cos()
+        {
+            var r = ToRadians((float)this);
+            var s = Math.Round(Math.Cos(r), 3);
+
+            return (Number)s;
+        }
+
+        public Number Tan()
+        {
+            if (this == 90)
+                return MaxValue;
+
+            var r = ToRadians((float)this);
+            var s = Math.Round(Math.Tan(r), 3);
+
+            return (Number)s;
+        }
+
+        public Number ArcTan()
+        {
+            return (Number)ToDegrees((float)Math.Atan((float)this));
+        }
+
+        public Number ArcSin()
+        {
+            return (Number)ToDegrees((float)Math.Asin((float)this));
+        }
+
+        public Number ArcCos()
+        {
+            return (Number)ToDegrees((float)Math.Acos((float)this));
+        }
     }
 }

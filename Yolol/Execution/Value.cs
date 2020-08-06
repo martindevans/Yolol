@@ -47,7 +47,7 @@ namespace Yolol.Execution
 
         public Value(Number num)
         {
-            _string = new Memory<char>(Array.Empty<char>());
+            _string = default;
             _number = num;
             Type = Type.Number;
         }
@@ -327,10 +327,7 @@ namespace Yolol.Execution
             if (value.Type == Type.String)
                 throw new ExecutionException("Attempted to Abs a string value");
 
-            if (value.Number < 0)
-                return -value;
-            else
-                return value;
+            return value.Number.Abs();
         }
 
         public static Value Sqrt(Value value)
@@ -338,22 +335,7 @@ namespace Yolol.Execution
             if (value.Type == Type.String)
                 throw new ExecutionException("Attempted to Sqrt a string value");
 
-            if (value.Number < 0)
-                throw new ExecutionException("Attempted to Sqrt a negative value");
-
-            return (Number)(decimal)Math.Sqrt((float)value.Number);
-        }
-
-        private static float ToDegrees(float radians)
-        {
-            const float rad2Deg = 360f / ((float)Math.PI * 2);
-            return radians * rad2Deg;
-        }
-
-        private static float ToRadians(float degrees)
-        {
-            const float deg2Rad = (float)Math.PI * 2 / 360f;
-            return degrees * deg2Rad;
+            return value.Number.Sqrt();
         }
 
         public static Value Sin(Value value)
@@ -361,10 +343,7 @@ namespace Yolol.Execution
             if (value.Type == Type.String)
                 throw new ExecutionException($"Attempted to `Sin` a string value");
 
-            var r = ToRadians((float)value.Number);
-            var s = Math.Round(Math.Sin(r), 3);
-
-            return new Value((Number)s);
+            return value.Number.Sin();
         }
 
         public static Value Cos(Value value)
@@ -372,10 +351,7 @@ namespace Yolol.Execution
             if (value.Type == Type.String)
                 throw new ExecutionException($"Attempted to `Cos` a string value");
 
-            var r = ToRadians((float)value.Number);
-            var s = Math.Round(Math.Cos(r), 3);
-
-            return new Value((Number)s);
+            return value.Number.Cos();
         }
 
         public static Value Tan(Value value)
@@ -385,10 +361,7 @@ namespace Yolol.Execution
             if (value.Number == 90)
                 return Number.MaxValue;
 
-            var r = ToRadians((float)value.Number);
-            var s = Math.Round(Math.Tan(r), 3);
-
-            return new Value((Number)s);
+            return value.Number.Tan();
         }
 
         public static Value ArcTan(Value value)
@@ -396,7 +369,7 @@ namespace Yolol.Execution
             if (value.Type == Type.String)
                 throw new ExecutionException($"Attempted to `ATan` a string value");
 
-            return new Value((Number)ToDegrees((float)Math.Atan((float)value.Number)));
+            return value.Number.ArcTan();
         }
 
         public static Value ArcSin(Value value)
@@ -404,7 +377,7 @@ namespace Yolol.Execution
             if (value.Type == Type.String)
                 throw new ExecutionException($"Attempted to `ASin` a string value");
 
-            return new Value((Number)ToDegrees((float)Math.Asin((float)value.Number)));
+            return value.Number.ArcSin();
         }
 
         public static Value ArcCos(Value value)
@@ -412,7 +385,7 @@ namespace Yolol.Execution
             if (value.Type == Type.String)
                 throw new ExecutionException($"Attempted to `ACos` a string value");
 
-            return new Value((Number)ToDegrees((float)Math.Acos((float)value.Number)));
+            return value.Number.ArcCos();
         }
 
         public BaseExpression ToConstant()
