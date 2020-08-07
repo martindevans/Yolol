@@ -6,7 +6,7 @@ namespace Yolol.Grammar.AST.Expressions
     public class ConstantString
         : BaseExpression, IEquatable<ConstantString>
     {
-        public string Value { get; }
+        public YString Value { get; }
 
         public override bool CanRuntimeError => false;
 
@@ -15,6 +15,11 @@ namespace Yolol.Grammar.AST.Expressions
         public override bool IsConstant => true;
 
         public ConstantString(string value)
+        {
+            Value = new YString(value);
+        }
+
+        public ConstantString(YString value)
         {
             Value = value;
         }

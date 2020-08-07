@@ -20,27 +20,34 @@ namespace Yolol.Execution
             }
         }
 
-        private readonly ReadOnlyMemory<char> _string;
-        public string String
+        private readonly YString _string;
+        public YString String
         {
             get
             {
                 if (Type != Type.String)
                     throw new InvalidCastException($"Attempted to access value of type {Type} as a String");
-                return _string.ToString();
+                return _string;
             }
         }
 
         public Value(ReadOnlyMemory<char> str)
         {
-            _string = str;
+            _string = new YString(str);
             _number = Number.Zero;
             Type = Type.String;
         }
 
         public Value(string str)
         {
-            _string = str.AsMemory();
+            _string = new YString(str);
+            _number = Number.Zero;
+            Type = Type.String;
+        }
+
+        public Value(YString str)
+        {
+            _string = str;
             _number = Number.Zero;
             Type = Type.String;
         }
@@ -77,13 +84,13 @@ namespace Yolol.Execution
             if (Type == Type.Number)
                 return Number.ToString(CultureInfo.InvariantCulture);
             else
-                return String;
+                return String.ToString();
         }
 
-        private ReadOnlyMemory<char> ToStringSpan()
+        private YString ToYString()
         {
             if (Type == Type.Number)
-                return Number.ToString(CultureInfo.InvariantCulture).AsMemory();
+                return new YString(Number.ToString(CultureInfo.InvariantCulture));
             else
                 return _string;
         }
@@ -101,16 +108,17 @@ namespace Yolol.Execution
             if (Type == Type.Number)
                 return (decimal)Number;
             else
-                return String;
+                return String.ToString();
         }
 
         public bool Equals(Value other)
         {
-            return (Type, other.Type) switch {
-                (Type.Number, Type.Number) => Number == other.Number,
-                (Type.String, Type.String) => CompareStringSpans(in this, in other) == 0,
-                _ => false
-            };
+            if (Type == Type.Number && other.Type == Type.Number)
+                return _number == other._number;
+            else if (Type == Type.String && other.Type == Type.String)
+                return _string == other._string;
+            else
+                return false;
         }
 
         public override bool Equals(object obj)
@@ -125,13 +133,7 @@ namespace Yolol.Execution
                 var hashCode = (int)Type * 397;
 
                 if (Type == Type.String)
-                {
-                    foreach (var c in _string.Span)
-                    {
-                        hashCode += c;
-                        hashCode *= 17;
-                    }
-                }
+                    hashCode *= _string.GetHashCode();
                 else
                     hashCode *= _number.GetHashCode();
 
@@ -139,129 +141,104 @@ namespace Yolol.Execution
             }
         }
 
-        public static Value operator <(Value left, Value right)
+        public static bool operator <(Value left, Value right)
         {
             if (left.Type == Type.Number && right.Type == Type.Number)
-                return new Value(left.Number < right.Number);
+                return left.Number < right.Number;
 
-            return new Value(CompareStringSpans(in left, in right) < 0);
+            var l = left.ToYString();
+            var r = right.ToYString();
+            return l < r;
         }
 
-        public static Value operator <=(Value left, Value right)
+        public static bool operator <=(Value left, Value right)
         {
             if (left.Type == Type.Number && right.Type == Type.Number)
-                return new Value(left.Number <= right.Number);
+                return left.Number <= right.Number;
 
-            return new Value(CompareStringSpans(in left, in right) <= 0);
+            var l = left.ToYString();
+            var r = right.ToYString();
+            return l <= r;
         }
 
-        public static Value operator >(Value left, Value right)
+        public static bool operator >(Value left, Value right)
         {
             if (left.Type == Type.Number && right.Type == Type.Number)
-                return new Value(left.Number > right.Number);
+                return left.Number > right.Number;
 
-            return new Value(CompareStringSpans(in left, in right) > 0);
+            var l = left.ToYString();
+            var r = right.ToYString();
+            return l > r;
         }
 
-        public static Value operator >=(Value left, Value right)
+        public static bool operator >=(Value left, Value right)
         {
             if (left.Type == Type.Number && right.Type == Type.Number)
-                return new Value(left.Number >= right.Number);
+                return left.Number >= right.Number;
 
-            return new Value(CompareStringSpans(in left, in right) >= 0);
+            var l = left.ToYString();
+            var r = right.ToYString();
+            return l >= r;
         }
 
-        private static int CompareStringSpans(in Value left, in Value right)
+        public static bool operator ==(Value left, Value right)
         {
-            return left.ToStringSpan().Span.CompareTo(right.ToStringSpan().Span, StringComparison.Ordinal);
+            return left.Equals(right);
         }
 
-        public static Value operator ==(Value left, Value right)
+        public static bool operator !=(Value left, Value right)
         {
-            return left.Equals(right) ? Number.One : Number.Zero;
-        }
-
-        public static Value operator !=(Value left, Value right)
-        {
-            return !left.Equals(right) ? Number.One : Number.Zero;
+            return !left.Equals(right);
         }
 
         public static Value operator -(Value left, Value right)
         {
             if (left.Type == Type.Number && right.Type == Type.Number)
                 return left.Number - right.Number;
-
-            var l = left.ToStringSpan();
-            var r = right.ToStringSpan();
-            var index = l.Span.LastIndexOf(r.Span);
-
-            // Handle special cases by taking slices of the string if possible
-            if (index == -1)
-                return new Value(l);
-            else if (index == 0)
-                return new Value(l[r.Length..]);
-            else if (index + r.Length == l.Length)
-                return new Value(l[..^r.Length]);
             else
-                return new Value(l.ToString().Remove(index, r.Length).AsMemory());
+                return new Value(left.ToYString() - right.ToYString());
         }
 
         public static Value operator +(Value left, Value right)
         {
             if (left.Type == Type.Number && right.Type == Type.Number)
-                return left.Number + right.Number;
-
-            var l = left.ToStringSpan();
-            var r = right.ToStringSpan();
-            var result = new Memory<char>(new char[l.Length + r.Length]);
-            l.CopyTo(result[..l.Length]);
-            r.CopyTo(result[l.Length..]);
-            return new Value(result);
+                return left._number + right._number;
+            else
+                return new Value(left.ToYString() + right.ToYString());
         }
 
-        public static Value operator *(Value left, Value right)
+        public static Number operator *(Value left, Value right)
         {
-            return (left.Type, right.Type) switch {
-                (Type.Number, Type.Number) => new Value(left.Number * right.Number),
-                (Type.String, Type.String) => throw new ExecutionException("Attempted to multiply strings"),
-                _ => throw new ExecutionException("Attempted to multiply mixed types")
-            };
+            if (left.Type == Type.Number && right.Type == Type.Number)
+                return left._number * right._number;
+            else
+                throw new ExecutionException("Attempted to multiply a string");
         }
 
-        public static Value operator /(Value left, Value right)
+        public static Number operator /(Value left, Value right)
         {
-            return (left.Type, right.Type) switch {
-                (Type.Number, Type.Number) => new Value(left.Number / right.Number),
-                (Type.String, Type.String) => throw new ExecutionException("Attempted to divide strings"),
-                _ => throw new ExecutionException("Attempted to divide mixed types")
-            };
+            if (left.Type == Type.Number && right.Type == Type.Number)
+                return left._number / right._number;
+            else
+                throw new ExecutionException("Attempted to divide a string");
         }
 
-        public static Value operator &(Value left, Value right)
+        public static bool operator &(Value left, Value right)
         {
-            return new Value(left.ToBool() && right.ToBool());
+            return left.ToBool() & right.ToBool();
         }
 
-        public static Value operator |(Value left, Value right)
+        public static bool operator |(Value left, Value right)
         {
-            return new Value(left.ToBool() || right.ToBool());
+            return left.ToBool() | right.ToBool();
         }
 
-        public static Value operator %(Value left, Value right)
+        public static Number operator %(Value left, Value right)
         {
-            switch (left.Type, right.Type)
-            {
-                case (Type.Number, Type.Number):
-                    if (right.Number == 0)
-                        throw new ExecutionException("Divide by zero");
-                    return new Value(left.Number % right.Number);
-
-                case (Type.String, Type.String):
-                    throw new ExecutionException("Attempted to modulo strings");
-
-                default:
-                    throw new ExecutionException("Attempted to modulo mixed types");
-            }
+            if (left.Type == Type.Number && right.Type == Type.Number)
+                return left._number % right._number;
+            else
+                throw new ExecutionException("Attempted to modulo a string");
         }
 
         public static Value operator ++(Value value)
@@ -269,10 +246,9 @@ namespace Yolol.Execution
             if (value.Type == Type.Number)
                 return new Value(value.Number + 1);
 
-            var mem = new char[value._string.Length + 1];
-            value._string.CopyTo(mem);
-            mem[^1] = ' ';
-            return new Value(mem.AsMemory());
+            var a = value._string;
+            a++;
+            return new Value(a);
         }
 
         public static Value operator --(Value value)
@@ -280,41 +256,33 @@ namespace Yolol.Execution
             if (value.Type == Type.Number)
                 return new Value(value.Number - Number.One);
 
-            if (value._string.Length == 0)
-                throw new ExecutionException("Attempted to decrement empty string");
-
-            return new Value(value._string[..^1]);
+            var a = value._string;
+            a--;
+            return new Value(a);
         }
 
-        public static Value Exponent(Value left, Value right)
+        public static Number Exponent(Value left, Value right)
         {
-            switch (left.Type, right.Type)
-            {
-                case (Type.Number, Type.Number):
-                    return left.Number.Exponent(right.Number);
-
-                case (Type.String, Type.String):
-                    throw new ExecutionException("Attempted to exponent strings");
-
-                default:
-                    throw new ExecutionException("Attempted to exponent mixed types");
-            }
+            if (left.Type == Type.Number && right.Type == Type.Number)
+                return left._number.Exponent(right._number);
+            else
+                throw new ExecutionException("Attempted to exponent a string");
         }
 
-        public static Value operator !(Value value)
+        public static bool operator !(Value value)
         {
             return value == Number.Zero;
         }
 
-        public static Value operator -(Value value)
+        public static Number operator -(Value value)
         {
             if (value.Type == Type.String)
                 throw new ExecutionException("Attempted to negate a String value");
 
-            return new Value(-value.Number);
+            return -value.Number;
         }
 
-        public static Value Abs(Value value)
+        public static Number Abs(Value value)
         {
             if (value.Type == Type.String)
                 throw new ExecutionException("Attempted to Abs a string value");
@@ -322,7 +290,7 @@ namespace Yolol.Execution
             return value.Number.Abs();
         }
 
-        public static Value Sqrt(Value value)
+        public static Number Sqrt(Value value)
         {
             if (value.Type == Type.String)
                 throw new ExecutionException("Attempted to Sqrt a string value");
@@ -330,7 +298,7 @@ namespace Yolol.Execution
             return value.Number.Sqrt();
         }
 
-        public static Value Sin(Value value)
+        public static Number Sin(Value value)
         {
             if (value.Type == Type.String)
                 throw new ExecutionException($"Attempted to `Sin` a string value");
@@ -338,7 +306,7 @@ namespace Yolol.Execution
             return value.Number.Sin();
         }
 
-        public static Value Cos(Value value)
+        public static Number Cos(Value value)
         {
             if (value.Type == Type.String)
                 throw new ExecutionException($"Attempted to `Cos` a string value");
@@ -346,7 +314,7 @@ namespace Yolol.Execution
             return value.Number.Cos();
         }
 
-        public static Value Tan(Value value)
+        public static Number Tan(Value value)
         {
             if (value.Type == Type.String)
                 throw new ExecutionException($"Attempted to `Tan` a string value");
@@ -356,7 +324,7 @@ namespace Yolol.Execution
             return value.Number.Tan();
         }
 
-        public static Value ArcTan(Value value)
+        public static Number ArcTan(Value value)
         {
             if (value.Type == Type.String)
                 throw new ExecutionException($"Attempted to `ATan` a string value");
@@ -364,7 +332,7 @@ namespace Yolol.Execution
             return value.Number.ArcTan();
         }
 
-        public static Value ArcSin(Value value)
+        public static Number ArcSin(Value value)
         {
             if (value.Type == Type.String)
                 throw new ExecutionException($"Attempted to `ASin` a string value");
@@ -372,7 +340,7 @@ namespace Yolol.Execution
             return value.Number.ArcSin();
         }
 
-        public static Value ArcCos(Value value)
+        public static Number ArcCos(Value value)
         {
             if (value.Type == Type.String)
                 throw new ExecutionException($"Attempted to `ACos` a string value");

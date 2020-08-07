@@ -17,7 +17,7 @@ namespace Yolol.Grammar.AST.Expressions.Binary
 
         protected override Value Evaluate(Value l, Value r)
         {
-            return l == r;
+            return new Value(l == r);
         }
 
         public bool Equals(EqualTo? other)

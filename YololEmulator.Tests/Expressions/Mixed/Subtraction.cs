@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Yolol.Execution;
 
 namespace YololEmulator.Tests.Expressions.Mixed
 {
@@ -12,7 +13,7 @@ namespace YololEmulator.Tests.Expressions.Mixed
 
             var a = result.GetVariable("a");
 
-            Assert.AreEqual("2", a.Value.String);
+            Assert.AreEqual(new YString("2"), a.Value.String);
         }
 
         [TestMethod]
@@ -22,7 +23,7 @@ namespace YololEmulator.Tests.Expressions.Mixed
 
             var a = result.GetVariable("a");
 
-            Assert.AreEqual("22", a.Value.String);
+            Assert.AreEqual(new YString("22"), a.Value.String);
         }
 
         [TestMethod]
@@ -32,7 +33,7 @@ namespace YololEmulator.Tests.Expressions.Mixed
 
             var a = result.GetVariable("a");
 
-            Assert.AreEqual("2", a.Value.String);
+            Assert.AreEqual(new YString("2"), a.Value.String);
         }
 
         [TestMethod]
@@ -42,7 +43,7 @@ namespace YololEmulator.Tests.Expressions.Mixed
 
             var a = result.GetVariable("a");
 
-            Assert.AreEqual("22", a.Value.String);
+            Assert.AreEqual(new YString("22"), a.Value.String);
         }
     }
 }

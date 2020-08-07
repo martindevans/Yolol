@@ -67,7 +67,7 @@ namespace YololEmulator
                 var pc = 0;
                 while (pc <= options.MaxLineNumber)
                 {
-                    if ((st.GetVariable("PROGRAM_ENDED").Value == 1).ToBool())
+                    if ((st.GetVariable("PROGRAM_ENDED").Value == 1))
                         break;
 
                     // Read the next line to execute from the file

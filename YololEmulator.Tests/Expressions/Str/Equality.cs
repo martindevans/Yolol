@@ -23,7 +23,7 @@ namespace YololEmulator.Tests.Expressions.Str
             var a = result.GetVariable("a");
             var b = result.GetVariable("b");
 
-            Assert.AreEqual("2", a.Value.String);
+            Assert.AreEqual("2", a.Value.String.ToString());
             Assert.AreEqual(1, b.Value.Number);
         }
 
@@ -36,8 +36,8 @@ namespace YololEmulator.Tests.Expressions.Str
             var b = result.GetVariable("b");
             var c = result.GetVariable("c");
 
-            Assert.AreEqual("2", a.Value.String);
-            Assert.AreEqual("2", b.Value.String);
+            Assert.AreEqual("2", a.Value.String.ToString());
+            Assert.AreEqual("2", b.Value.String.ToString());
             Assert.AreEqual(1, c.Value.Number);
         }
     }

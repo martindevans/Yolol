@@ -102,6 +102,9 @@ namespace Yolol.Execution
 
         public static Number operator %(Number l, Number r)
         {
+            if (r == 0)
+                throw new ExecutionException("Modulus by zero");
+
             return new Number(l.Value % r.Value);
         }
 
@@ -230,7 +233,7 @@ namespace Yolol.Execution
             return (Number)ToDegrees((float)Math.Acos((float)this));
         }
 
-        internal Number Exponent(Number number)
+        public Number Exponent(Number number)
         {
             var v = Math.Pow((float)this, (float)number);
 

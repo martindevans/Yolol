@@ -87,7 +87,7 @@ namespace Yolol.Cylon.Serialisation
         {
             return expr switch {
                 ConstantNumber num => new JObject {["type"] = "expression::number", ["num"] = num.Value.ToString()},
-                ConstantString str => new JObject {["type"] = "expression::string", ["str"] = str.Value},
+                ConstantString str => new JObject {["type"] = "expression::string", ["str"] = str.Value.ToString()},
                 Variable var => SerializeIdentifier(var.Name),
                 Bracketed brk => new JObject {["type"] = "expression::unary_op::parentheses", ["operand"] = SerializeExpression(brk.Parameter)},
                 PostDecrement postdec => new JObject {["type"] = "expression::modify_op::post_decrement", ["operand"] = SerializeIdentifier(postdec.Name)},

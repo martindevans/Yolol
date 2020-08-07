@@ -13,7 +13,7 @@ namespace YololEmulator.Tests.Expressions.Mixed
 
             var a = result.GetVariable("a");
 
-            Assert.AreEqual("12", a.Value.String);
+            Assert.AreEqual(new YString("12"), a.Value.String);
         }
 
         [TestMethod]
@@ -23,7 +23,7 @@ namespace YololEmulator.Tests.Expressions.Mixed
 
             var a = result.GetVariable("a");
 
-            Assert.AreEqual("12", a.Value.String);
+            Assert.AreEqual(new YString("12"), a.Value.String);
         }
     }
 }

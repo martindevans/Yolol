@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Yolol.Execution;
 
 namespace YololEmulator.Tests.Expressions.Str
 {
@@ -12,7 +13,7 @@ namespace YololEmulator.Tests.Expressions.Str
 
             var a = result.GetVariable("a");
 
-            Assert.AreEqual("adbc", a.Value.String);
+            Assert.AreEqual(new YString("adbc"), a.Value.String);
         }
 
         [TestMethod]
@@ -23,8 +24,8 @@ namespace YololEmulator.Tests.Expressions.Str
             var a = result.GetVariable("a");
             var b = result.GetVariable("b");
 
-            Assert.AreEqual("a", a.Value.String);
-            Assert.AreEqual("ab", b.Value.String);
+            Assert.AreEqual(new YString("a"), a.Value.String);
+            Assert.AreEqual(new YString("ab"), b.Value.String);
         }
 
         [TestMethod]
@@ -35,8 +36,8 @@ namespace YololEmulator.Tests.Expressions.Str
             var a = result.GetVariable("a");
             var b = result.GetVariable("b");
 
-            Assert.AreEqual("a", a.Value.String);
-            Assert.AreEqual("ba", b.Value.String);
+            Assert.AreEqual(new YString("a"), a.Value.String);
+            Assert.AreEqual(new YString("ba"), b.Value.String);
         }
     }
 }

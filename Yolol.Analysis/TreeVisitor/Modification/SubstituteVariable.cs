@@ -1,11 +1,13 @@
 ﻿using System;
 using Yolol.Analysis.ControlFlowGraph.AST;
+using Yolol.Execution;
 using Yolol.Execution.Extensions;
 using Yolol.Grammar;
 using Yolol.Grammar.AST.Expressions;
 using Yolol.Grammar.AST.Expressions.Binary;
 using Yolol.Grammar.AST.Expressions.Unary;
 using Yolol.Grammar.AST.Statements;
+using Variable = Yolol.Grammar.AST.Expressions.Variable;
 
 namespace Yolol.Analysis.TreeVisitor.Modification
 {
@@ -52,7 +54,10 @@ namespace Yolol.Analysis.TreeVisitor.Modification
 
                     case ConstantString s:
                         if (s.Value.Length > 0)
-                            return new ConstantString(s.Value[0..^1]);
+                        {
+                            var str = s.Value.ToString();
+                            return new ConstantString(new YString(str.Substring(0, str.Length - 1)));
+                        }
                         else
                             return new ErrorExpression();
 

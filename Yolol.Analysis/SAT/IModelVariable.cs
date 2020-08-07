@@ -49,7 +49,7 @@ namespace Yolol.Analysis.SAT
                     return;
 
                 case Type.String:
-                    _model.Solver.Assert(ctx.MkEq(_strValue, _model.Context.MkString(value.String)));
+                    _model.Solver.Assert(ctx.MkEq(_strValue, _model.Context.MkString(value.String.ToString())));
                     return;
 
                 case Type.Unassigned:
@@ -500,7 +500,7 @@ namespace Yolol.Analysis.SAT
             if (sub is ConstantString str)
             {
                 var n = _model.GetOrCreateVariable(new VariableName(Guid.NewGuid().ToString()));
-                n.AssertEq(str.Value);
+                n.AssertEq(str.Value.ToString());
                 return n;
             }
 
@@ -526,7 +526,7 @@ namespace Yolol.Analysis.SAT
                 return _model.Solver.IsSatisfiable(
                     ctx.MkAnd(
                         ctx.MkEq(_type, _model.StrType),
-                        ctx.MkEq(_strValue, _model.Context.MkString(v.String))
+                        ctx.MkEq(_strValue, _model.Context.MkString(v.String.ToString()))
                     )
                 );
             }
@@ -551,7 +551,7 @@ namespace Yolol.Analysis.SAT
             // Make a model that asserts it is _not_ the given value, and then check the model is _not_ satisfiable
 
             if (v.Type == Type.String)
-                return !_model.Solver.IsSatisfiable(ctx.MkNot(ctx.MkEq(_strValue, _model.Context.MkString(v.String))));
+                return !_model.Solver.IsSatisfiable(ctx.MkNot(ctx.MkEq(_strValue, _model.Context.MkString(v.String.ToString()))));
 
             if (v.Type == Type.Number)
                 return !_model.Solver.IsSatisfiable(ctx.MkNot(ctx.MkEq(_numValue, _model.Context.MkInt(((long)v.Number * Number.Scale).ToString()))));

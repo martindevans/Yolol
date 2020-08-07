@@ -11,7 +11,7 @@ namespace Yolol.Cylon.JSON
         public override void WriteJson(JsonWriter writer, Value value, JsonSerializer serializer)
         {
             if (value.Type == Execution.Type.String)
-                writer.WriteValue(value.String);
+                writer.WriteValue(value.String.ToString());
             else
                 writer.WriteValue((decimal)value.Number);
         }

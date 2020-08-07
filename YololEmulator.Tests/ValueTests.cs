@@ -23,7 +23,7 @@ namespace YololEmulator.Tests
         private static void AssertString(Value v, string s)
         {
             Assert.AreEqual(Type.String, v.Type);
-            Assert.AreEqual(s, v.String);
+            Assert.AreEqual(new YString(s), v.String);
             Assert.AreEqual(s, v.ToString());
 
             Assert.ThrowsException<InvalidCastException>(() => {

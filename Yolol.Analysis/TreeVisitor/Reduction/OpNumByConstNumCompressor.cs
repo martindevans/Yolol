@@ -270,13 +270,13 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
         private static string? DiscoverStringValue(BaseExpression expr)
         {
             if (expr is ConstantString con)
-                return con.Value;
+                return con.Value.ToString();
 
             if (expr.IsConstant)
             {
                 var s = expr.StaticEvaluate();
                 if (s.Type == Type.String)
-                    return s.String;
+                    return s.String.ToString();
             }
 
             return null;
