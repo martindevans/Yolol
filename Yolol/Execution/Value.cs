@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using Yolol.Grammar.AST.Expressions;
 
 namespace Yolol.Execution
@@ -82,7 +81,7 @@ namespace Yolol.Execution
         public override string ToString()
         {
             if (Type == Type.Number)
-                return Number.ToString(CultureInfo.InvariantCulture);
+                return Number.ToString();
             else
                 return String.ToString();
         }
@@ -90,7 +89,7 @@ namespace Yolol.Execution
         private YString ToYString()
         {
             if (Type == Type.Number)
-                return new YString(Number.ToString(CultureInfo.InvariantCulture));
+                return new YString(Number.ToString());
             else
                 return _string;
         }

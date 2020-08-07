@@ -21,14 +21,9 @@ namespace Yolol.Execution
             Value = num;
         }
 
-        public string ToString(CultureInfo culture)
-        {
-            return ((decimal)Value / Scale).ToString(culture);
-        }
-
         public override string ToString()
         {
-            return ToString(CultureInfo.InvariantCulture);
+            return ((decimal)Value / Scale).ToString(CultureInfo.InvariantCulture);
         }
 
         public bool Equals(Number other)
