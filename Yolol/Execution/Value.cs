@@ -81,15 +81,15 @@ namespace Yolol.Execution
         public override string ToString()
         {
             if (Type == Type.Number)
-                return Number.ToString();
+                return _number.ToString();
             else
-                return String.ToString();
+                return _string.ToString();
         }
 
         private YString ToYString()
         {
             if (Type == Type.Number)
-                return new YString(Number.ToString());
+                return new YString(_number.ToString());
             else
                 return _string;
         }
@@ -99,13 +99,13 @@ namespace Yolol.Execution
             if (Type == Type.String)
                 return true;
             else
-                return Number != 0;
+                return _number != 0;
         }
 
         public object ToObject()
         {
             if (Type == Type.Number)
-                return (decimal)Number;
+                return (decimal)_number;
             else
                 return String.ToString();
         }
@@ -143,7 +143,7 @@ namespace Yolol.Execution
         public static bool operator <(Value left, Value right)
         {
             if (left.Type == Type.Number && right.Type == Type.Number)
-                return left.Number < right.Number;
+                return left._number < right._number;
 
             var l = left.ToYString();
             var r = right.ToYString();
@@ -153,7 +153,7 @@ namespace Yolol.Execution
         public static bool operator <=(Value left, Value right)
         {
             if (left.Type == Type.Number && right.Type == Type.Number)
-                return left.Number <= right.Number;
+                return left._number <= right._number;
 
             var l = left.ToYString();
             var r = right.ToYString();
@@ -163,7 +163,7 @@ namespace Yolol.Execution
         public static bool operator >(Value left, Value right)
         {
             if (left.Type == Type.Number && right.Type == Type.Number)
-                return left.Number > right.Number;
+                return left._number > right._number;
 
             var l = left.ToYString();
             var r = right.ToYString();
@@ -173,7 +173,7 @@ namespace Yolol.Execution
         public static bool operator >=(Value left, Value right)
         {
             if (left.Type == Type.Number && right.Type == Type.Number)
-                return left.Number >= right.Number;
+                return left._number >= right._number;
 
             var l = left.ToYString();
             var r = right.ToYString();
@@ -193,7 +193,7 @@ namespace Yolol.Execution
         public static Value operator -(Value left, Value right)
         {
             if (left.Type == Type.Number && right.Type == Type.Number)
-                return left.Number - right.Number;
+                return left._number - right._number;
             else
                 return new Value(left.ToYString() - right.ToYString());
         }
@@ -243,7 +243,7 @@ namespace Yolol.Execution
         public static Value operator ++(Value value)
         {
             if (value.Type == Type.Number)
-                return new Value(value.Number + 1);
+                return new Value(value._number + 1);
 
             var a = value._string;
             a++;
@@ -253,7 +253,7 @@ namespace Yolol.Execution
         public static Value operator --(Value value)
         {
             if (value.Type == Type.Number)
-                return new Value(value.Number - Number.One);
+                return new Value(value._number - Number.One);
 
             var a = value._string;
             a--;
@@ -278,7 +278,7 @@ namespace Yolol.Execution
             if (value.Type == Type.String)
                 throw new ExecutionException("Attempted to negate a String value");
 
-            return -value.Number;
+            return -value._number;
         }
 
         public static Number Abs(Value value)
@@ -286,7 +286,7 @@ namespace Yolol.Execution
             if (value.Type == Type.String)
                 throw new ExecutionException("Attempted to Abs a string value");
 
-            return value.Number.Abs();
+            return value._number.Abs();
         }
 
         public static Number Sqrt(Value value)
@@ -294,7 +294,7 @@ namespace Yolol.Execution
             if (value.Type == Type.String)
                 throw new ExecutionException("Attempted to Sqrt a string value");
 
-            return value.Number.Sqrt();
+            return value._number.Sqrt();
         }
 
         public static Number Sin(Value value)
@@ -302,7 +302,7 @@ namespace Yolol.Execution
             if (value.Type == Type.String)
                 throw new ExecutionException($"Attempted to `Sin` a string value");
 
-            return value.Number.Sin();
+            return value._number.Sin();
         }
 
         public static Number Cos(Value value)
@@ -310,17 +310,14 @@ namespace Yolol.Execution
             if (value.Type == Type.String)
                 throw new ExecutionException($"Attempted to `Cos` a string value");
 
-            return value.Number.Cos();
+            return value._number.Cos();
         }
 
         public static Number Tan(Value value)
         {
             if (value.Type == Type.String)
                 throw new ExecutionException($"Attempted to `Tan` a string value");
-            if (value.Number == 90)
-                return Number.MaxValue;
-
-            return value.Number.Tan();
+            return value._number.Tan();
         }
 
         public static Number ArcTan(Value value)
@@ -328,7 +325,7 @@ namespace Yolol.Execution
             if (value.Type == Type.String)
                 throw new ExecutionException($"Attempted to `ATan` a string value");
 
-            return value.Number.ArcTan();
+            return value._number.ArcTan();
         }
 
         public static Number ArcSin(Value value)
@@ -336,7 +333,7 @@ namespace Yolol.Execution
             if (value.Type == Type.String)
                 throw new ExecutionException($"Attempted to `ASin` a string value");
 
-            return value.Number.ArcSin();
+            return value._number.ArcSin();
         }
 
         public static Number ArcCos(Value value)
@@ -344,13 +341,13 @@ namespace Yolol.Execution
             if (value.Type == Type.String)
                 throw new ExecutionException($"Attempted to `ACos` a string value");
 
-            return value.Number.ArcCos();
+            return value._number.ArcCos();
         }
 
         public BaseExpression ToConstant()
         {
             if (Type == Type.Number)
-                return new ConstantNumber(Number);
+                return new ConstantNumber(_number);
             else
                 return new ConstantString(String);
         }

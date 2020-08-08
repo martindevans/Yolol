@@ -14,21 +14,21 @@ namespace Yolol.Execution
         public static readonly Number One = new Number(1000);
         public static readonly Number Zero = new Number(0);
 
-        private long Value { get; }
+        private readonly long _value;
 
         private Number(long num)
         {
-            Value = num;
+            _value = num;
         }
 
         public override string ToString()
         {
-            return ((decimal)Value / Scale).ToString(CultureInfo.InvariantCulture);
+            return ((decimal)_value / Scale).ToString(CultureInfo.InvariantCulture);
         }
 
         public bool Equals(Number other)
         {
-            return Value == other.Value;
+            return _value == other._value;
         }
 
         public override bool Equals(object obj)
@@ -38,16 +38,16 @@ namespace Yolol.Execution
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Value);
+            return HashCode.Combine(_value);
         }
 
         public static Number Parse(string s)
         {
             // First check if the number is out of the valid range
             var d = double.Parse(s);
-            if (d >= MaxValue.Value)
+            if (d >= MaxValue._value)
                 return MaxValue;
-            else if (d <= MinValue.Value)
+            else if (d <= MinValue._value)
                 return MinValue;
 
             return decimal.Parse(s);
@@ -61,9 +61,9 @@ namespace Yolol.Execution
         public static explicit operator Number(double i)
         {
             var n = i * Scale;
-            if (n > MaxValue.Value)
+            if (n > MaxValue._value)
                 return MaxValue;
-            if (n < MinValue.Value)
+            if (n < MinValue._value)
                 return MinValue;
 
             return new Number((long)n);
@@ -72,9 +72,9 @@ namespace Yolol.Execution
         public static implicit operator Number(decimal d)
         {
             var n = d * Scale;
-            if (n > MaxValue.Value)
+            if (n > MaxValue._value)
                 return MaxValue;
-            if (n < MinValue.Value)
+            if (n < MinValue._value)
                 return MinValue;
 
             return new Number((long)(d * Scale));
@@ -82,17 +82,17 @@ namespace Yolol.Execution
 
         public static explicit operator decimal(Number n)
         {
-            return ((decimal)n.Value) / Scale;
+            return ((decimal)n._value) / Scale;
         }
 
         public static explicit operator int(Number n)
         {
-            return (int)(n.Value / Scale);
+            return (int)(n._value / Scale);
         }
 
         public static explicit operator float(Number n)
         {
-            return ((float)n.Value) / Scale;
+            return ((float)n._value) / Scale;
         }
 
         public static Number operator %(Number l, Number r)
@@ -100,12 +100,12 @@ namespace Yolol.Execution
             if (r == 0)
                 throw new ExecutionException("Modulus by zero");
 
-            return new Number(l.Value % r.Value);
+            return new Number(l._value % r._value);
         }
 
         public static Number operator *(Number l, Number r)
         {
-            return new Number((l.Value * r.Value) / Scale);
+            return new Number((l._value * r._value) / Scale);
         }
 
         public static Number operator /(Number l, Number r)
@@ -113,57 +113,57 @@ namespace Yolol.Execution
             if (r == Zero)
                 throw new ExecutionException("Divide by zero");
 
-            return new Number((l.Value * Scale) / r.Value);
+            return new Number((l._value * Scale) / r._value);
         }
 
         public static Number operator +(Number l, Number r)
         {
-            return new Number(l.Value + r.Value);
+            return new Number(l._value + r._value);
         }
 
         public static Number operator -(Number l, Number r)
         {
-            return new Number(l.Value - r.Value);
+            return new Number(l._value - r._value);
         }
 
         public static Number operator -(Number n)
         {
-            return new Number(-n.Value);
+            return new Number(-n._value);
         }
 
         public static bool operator >(Number l, Number r)
         {
-            return l.Value > r.Value;
+            return l._value > r._value;
         }
 
         public static bool operator <(Number l, Number r)
         {
-            return l.Value < r.Value;
+            return l._value < r._value;
         }
 
         public static bool operator >=(Number l, Number r)
         {
-            return l.Value >= r.Value;
+            return l._value >= r._value;
         }
 
         public static bool operator <=(Number l, Number r)
         {
-            return l.Value <= r.Value;
+            return l._value <= r._value;
         }
 
         public static bool operator ==(Number l, Number r)
         {
-            return l.Value == r.Value;
+            return l._value == r._value;
         }
 
         public static bool operator !=(Number l, Number r)
         {
-            return l.Value != r.Value;
+            return l._value != r._value;
         }
 
         public Number Abs()
         {
-            return new Number(Math.Abs(Value));
+            return new Number(Math.Abs(_value));
         }
 
         public Number Sqrt()
