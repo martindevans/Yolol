@@ -96,31 +96,38 @@ namespace Yolol.Execution
             return left._span.Span.CompareTo(right._span.Span, StringComparison.Ordinal);
         }
 
-        public static YString operator +(YString left, YString right)
+
+        public static YString operator +(YString l, YString r)
         {
-            var result = new Memory<char>(new char[left.Length + right.Length]);
-            left._span.CopyTo(result[..left.Length]);
-            right._span.CopyTo(result[left.Length..]);
+            var result = new Memory<char>(new char[l.Length + r.Length]);
+            l._span.CopyTo(result[..l.Length]);
+            r._span.CopyTo(result[l.Length..]);
             return new YString(result);
         }
 
-        public static YString operator +(YString left, Number right)
+        public static YString operator +(YString l, Number r)
         {
-            return left + new YString(right.ToString());
+            return l + new YString(r.ToString());
         }
 
-        public static YString operator +(Number left, YString right)
+        public static YString operator +(YString l, Value r)
         {
-            return new YString(left.ToString()) + right;
+            return l + new YString(r.ToString());
         }
 
-        public static YString operator +(YString left, char right)
+        public static YString operator +(YString l, char r)
         {
-            var result = new Memory<char>(new char[left.Length + 1]);
-            left._span.CopyTo(result[..left.Length]);
-            result.Span[^1] = right;
+            var result = new Memory<char>(new char[l.Length + 1]);
+            l._span.CopyTo(result[..l.Length]);
+            result.Span[^1] = r;
             return new YString(result);
         }
+
+        public static YString operator +(YString l, bool r)
+        {
+            return l + (r ? '1' : '0');
+        }
+
 
         public static YString operator -(YString left, YString right)
         {
@@ -143,10 +150,58 @@ namespace Yolol.Execution
             return left - new YString(right.ToString());
         }
 
-        public static YString operator -(Number left, YString right)
+        public static YString operator -(YString left, Value right)
         {
-            return new YString(left.ToString()) - right;
+            return left - new YString(right.ToString());
         }
+
+        public static YString operator -(YString l, bool r)
+        {
+            return l - (r ? '1' : '0');
+        }
+
+
+        public static StaticError operator *(YString l, YString r)
+        {
+            throw new ExecutionException("Attempted to multiply a string");
+        }
+
+        public static StaticError operator *(YString l, Number r)
+        {
+            throw new ExecutionException("Attempted to multiply a string");
+        }
+
+        public static StaticError operator *(YString l, Value r)
+        {
+            throw new ExecutionException("Attempted to multiply a string");
+        }
+
+        public static StaticError operator *(YString l, bool r)
+        {
+            throw new ExecutionException("Attempted to multiply a string");
+        }
+
+
+        public static StaticError operator /(YString l, YString r)
+        {
+            throw new ExecutionException("Attempted to divide a string");
+        }
+
+        public static StaticError operator /(YString l, Number r)
+        {
+            throw new ExecutionException("Attempted to divide a string");
+        }
+
+        public static StaticError operator /(YString l, Value r)
+        {
+            throw new ExecutionException("Attempted to divide a string");
+        }
+
+        public static StaticError operator /(YString l, bool r)
+        {
+            throw new ExecutionException("Attempted to divide a string");
+        }
+
 
         public static YString operator --(YString value)
         {

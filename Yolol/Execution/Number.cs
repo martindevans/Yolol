@@ -53,6 +53,11 @@ namespace Yolol.Execution
             return decimal.Parse(s);
         }
 
+        public static implicit operator Number(bool b)
+        {
+            return b ? One : Zero;
+        }
+
         public static implicit operator Number(int i)
         {
             return new Number(i * (long)Scale);
@@ -116,20 +121,54 @@ namespace Yolol.Execution
             return new Number((l._value * Scale) / r._value);
         }
 
+
         public static Number operator +(Number l, Number r)
         {
             return new Number(l._value + r._value);
         }
+
+        public static YString operator +(Number l, YString r)
+        {
+            return new YString(l.ToString()) + r;
+        }
+
+        public static Value operator +(Number l, Value r)
+        {
+            return (Value)l + r;
+        }
+
+        public static Number operator +(Number l, bool r)
+        {
+            return l + (r ? One : Zero);
+        }
+
 
         public static Number operator -(Number l, Number r)
         {
             return new Number(l._value - r._value);
         }
 
+        public static YString operator -(Number l, YString r)
+        {
+            return new YString(l.ToString()) - r;
+        }
+
+        public static Value operator -(Number l, Value r)
+        {
+            return (Value)l - r;
+        }
+
+        public static Number operator -(Number l, bool r)
+        {
+            return l - (r ? One : Zero);
+        }
+
+
         public static Number operator -(Number n)
         {
             return new Number(-n._value);
         }
+
 
         public static bool operator >(Number l, Number r)
         {

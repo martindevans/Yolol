@@ -140,6 +140,7 @@ namespace Yolol.Execution
             }
         }
 
+
         public static bool operator <(Value left, Value right)
         {
             if (left.Type == Type.Number && right.Type == Type.Number)
@@ -190,6 +191,7 @@ namespace Yolol.Execution
             return !left.Equals(right);
         }
 
+
         public static Value operator -(Value left, Value right)
         {
             if (left.Type == Type.Number && right.Type == Type.Number)
@@ -198,15 +200,21 @@ namespace Yolol.Execution
                 return new Value(left.ToYString() - right.ToYString());
         }
 
-        public static YString operator -(YString left, Value right)
-        {
-            return left - right.ToYString();
-        }
-
         public static YString operator -(Value left, YString right)
         {
             return left.ToYString() - right;
         }
+
+        public static Value operator -(Value l, Number r)
+        {
+            return l - (Value)r;
+        }
+
+        public static Value operator -(Value l, bool r)
+        {
+            return l - (r ? Number.One : Number.Zero);
+        }
+
 
         public static Value operator +(Value left, Value right)
         {
@@ -216,15 +224,21 @@ namespace Yolol.Execution
                 return new Value(left.ToYString() + right.ToYString());
         }
 
-        public static YString operator +(YString left, Value right)
-        {
-            return left + right.ToYString();
-        }
-
         public static YString operator +(Value left, YString right)
         {
             return left.ToYString() + right;
         }
+
+        public static Value operator +(Value l, Number r)
+        {
+            return l + (Value)r;
+        }
+
+        public static Value operator +(Value l, bool r)
+        {
+            return l + (r ? Number.One : Number.Zero);
+        }
+
 
         public static Number operator *(Value left, Value right)
         {
@@ -234,6 +248,28 @@ namespace Yolol.Execution
                 throw new ExecutionException("Attempted to multiply a string");
         }
 
+        public static StaticError operator *(Value left, YString right)
+        {
+            throw new ExecutionException("Attempted to multiply a string");
+        }
+
+        public static Value operator *(Value left, Number right)
+        {
+            if (left.Type == Type.Number)
+                return left._number * right;
+            else
+                throw new ExecutionException("Attempted to multiply a string");
+        }
+
+        public static Value operator *(Value left, bool right)
+        {
+            if (left.Type == Type.Number)
+                return left._number * right;
+            else
+                throw new ExecutionException("Attempted to multiply a string");
+        }
+
+
         public static Number operator /(Value left, Value right)
         {
             if (left.Type == Type.Number && right.Type == Type.Number)
@@ -241,6 +277,28 @@ namespace Yolol.Execution
             else
                 throw new ExecutionException("Attempted to divide a string");
         }
+
+        public static StaticError operator /(Value left, YString right)
+        {
+            throw new ExecutionException("Attempted to divide a string");
+        }
+
+        public static Value operator /(Value left, Number right)
+        {
+            if (left.Type == Type.Number)
+                return left._number / right;
+            else
+                throw new ExecutionException("Attempted to divide a string");
+        }
+
+        public static Value operator /(Value left, bool right)
+        {
+            if (left.Type == Type.Number)
+                return left._number / right;
+            else
+                throw new ExecutionException("Attempted to divide a string");
+        }
+
 
         public static bool operator &(Value left, Value right)
         {
