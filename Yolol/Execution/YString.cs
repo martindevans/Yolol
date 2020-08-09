@@ -104,6 +104,16 @@ namespace Yolol.Execution
             return new YString(result);
         }
 
+        public static YString operator +(YString left, Number right)
+        {
+            return left + new YString(right.ToString());
+        }
+
+        public static YString operator +(Number left, YString right)
+        {
+            return new YString(left.ToString()) + right;
+        }
+
         public static YString operator +(YString left, char right)
         {
             var result = new Memory<char>(new char[left.Length + 1]);
@@ -126,6 +136,16 @@ namespace Yolol.Execution
             if (index + r.Length == l.Length)
                 return new YString(l[..^r.Length]);
             return new YString(l.ToString().Remove(index, r.Length).AsMemory());
+        }
+
+        public static YString operator -(YString left, Number right)
+        {
+            return left - new YString(right.ToString());
+        }
+
+        public static YString operator -(Number left, YString right)
+        {
+            return new YString(left.ToString()) - right;
         }
 
         public static YString operator --(YString value)

@@ -198,12 +198,32 @@ namespace Yolol.Execution
                 return new Value(left.ToYString() - right.ToYString());
         }
 
+        public static YString operator -(YString left, Value right)
+        {
+            return left - right.ToYString();
+        }
+
+        public static YString operator -(Value left, YString right)
+        {
+            return left.ToYString() - right;
+        }
+
         public static Value operator +(Value left, Value right)
         {
             if (left.Type == Type.Number && right.Type == Type.Number)
                 return left._number + right._number;
             else
                 return new Value(left.ToYString() + right.ToYString());
+        }
+
+        public static YString operator +(YString left, Value right)
+        {
+            return left + right.ToYString();
+        }
+
+        public static YString operator +(Value left, YString right)
+        {
+            return left.ToYString() + right;
         }
 
         public static Number operator *(Value left, Value right)
