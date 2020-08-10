@@ -60,35 +60,138 @@ namespace Yolol.Execution
             return obj is YString other && Equals(other);
         }
 
+
         public static bool operator <(YString left, YString right)
         {
             return CompareStringSpans(left, right) < 0;
         }
+
+        public static bool operator <(YString left, Number right)
+        {
+            return left < new YString(right.ToString());
+        }
+
+        public static bool operator <(YString left, Value right)
+        {
+            return left < new YString(right.ToString());
+        }
+
+        public static bool operator <(YString left, bool right)
+        {
+            return left > (Number)right;
+        }
+
 
         public static bool operator <=(YString left, YString right)
         {
             return CompareStringSpans(left, right) <= 0;
         }
 
+        public static bool operator <=(YString left, Number right)
+        {
+            return left <= new YString(right.ToString());
+        }
+
+        public static bool operator <=(YString left, Value right)
+        {
+            return left <= new YString(right.ToString());
+        }
+
+        public static bool operator <=(YString left, bool right)
+        {
+            return left <= (Number)right;
+        }
+
+
         public static bool operator >(YString left, YString right)
         {
             return CompareStringSpans(left, right) > 0;
         }
+
+        public static bool operator >(YString left, Number right)
+        {
+            return left > new YString(right.ToString());
+        }
+
+        public static bool operator >(YString left, Value right)
+        {
+            return left > new YString(right.ToString());
+        }
+
+        public static bool operator >(YString left, bool right)
+        {
+            return left > (Number)right;
+        }
+
 
         public static bool operator >=(YString left, YString right)
         {
             return CompareStringSpans(left, right) >= 0;
         }
 
+        public static bool operator >=(YString left, Number right)
+        {
+            return left >= new YString(right.ToString());
+        }
+
+        public static bool operator >=(YString left, Value right)
+        {
+            return left >= new YString(right.ToString());
+        }
+
+        public static bool operator >=(YString left, bool right)
+        {
+            return left >= (Number)right;
+        }
+
+
         public static bool operator ==(YString left, YString right)
         {
             return CompareStringSpans(left, right) == 0;
         }
 
+        public static bool operator ==(YString left, Number right)
+        {
+            return false;
+        }
+
+        public static bool operator ==(YString left, Value right)
+        {
+            if (right.Type == Type.Number)
+                return false;
+
+            return CompareStringSpans(left, right.String) != 0;
+        }
+
+        public static bool operator ==(YString left, bool right)
+        {
+            return false;
+        }
+
+
         public static bool operator !=(YString left, YString right)
         {
             return CompareStringSpans(left, right) != 0;
         }
+
+        public static bool operator !=(YString left, Number right)
+        {
+            return true;
+        }
+
+        public static bool operator !=(YString left, Value right)
+        {
+            if (right.Type == Type.Number)
+                return true;
+
+            return CompareStringSpans(left, right.String) != 0;
+        }
+
+        public static bool operator !=(YString left, bool right)
+        {
+            return true;
+        }
+
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int CompareStringSpans(in YString left, in YString right)

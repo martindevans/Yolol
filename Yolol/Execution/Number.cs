@@ -100,6 +100,7 @@ namespace Yolol.Execution
             return ((float)n._value) / Scale;
         }
 
+
         public static Number operator %(Number l, Number r)
         {
             if (r == 0)
@@ -108,10 +109,48 @@ namespace Yolol.Execution
             return new Number(l._value % r._value);
         }
 
+        public static StaticError operator %(Number l, YString r)
+        {
+            return new StaticError("Attempted to modulus by a string");
+        }
+
+        public static Value operator %(Number l, Value r)
+        {
+            if (r.Type == Type.String)
+                return new StaticError("Attempted to modulus by a string");
+            else
+                return l % r.Number;
+        }
+
+        public static Number operator %(Number l, bool r)
+        {
+            return l % (Number)r;
+        }
+
+
         public static Number operator *(Number l, Number r)
         {
             return new Number((l._value * r._value) / Scale);
         }
+
+        public static StaticError operator *(Number l, YString r)
+        {
+            return new StaticError("Attempted to multiply by a string");
+        }
+
+        public static Value operator *(Number l, Value r)
+        {
+            if (r.Type == Type.String)
+                return new StaticError("Attempted to multiply by a string");
+            else
+                return l * r.Number;
+        }
+
+        public static Number operator *(Number l, bool r)
+        {
+            return l * (Number)r;
+        }
+
 
         public static Number operator /(Number l, Number r)
         {
@@ -119,6 +158,24 @@ namespace Yolol.Execution
                 throw new ExecutionException("Divide by zero");
 
             return new Number((l._value * Scale) / r._value);
+        }
+
+        public static StaticError operator /(Number l, YString r)
+        {
+            return new StaticError("Attempted to divide by a string");
+        }
+
+        public static Value operator /(Number l, Value r)
+        {
+            if (r.Type == Type.String)
+                return new StaticError("Attempted to divide by a string");
+            else
+                return l / r.Number;
+        }
+
+        public static Number operator /(Number l, bool r)
+        {
+            return l / (Number)r;
         }
 
 
@@ -175,30 +232,144 @@ namespace Yolol.Execution
             return l._value > r._value;
         }
 
+        public static bool operator >(Number l, YString r)
+        {
+            return new YString(l.ToString()) > r;
+        }
+
+        public static bool operator >(Number l, Value r)
+        {
+            if (r.Type == Type.Number)
+                return l > r.Number;
+            else
+                return new YString(l.ToString()) > r.String;
+        }
+
+        public static bool operator >(Number l, bool r)
+        {
+            return l > (Number)r;
+        }
+
+
         public static bool operator <(Number l, Number r)
         {
             return l._value < r._value;
         }
+
+        public static bool operator <(Number l, YString r)
+        {
+            return new YString(l.ToString()) < r;
+        }
+
+        public static bool operator <(Number l, Value r)
+        {
+            if (r.Type == Type.Number)
+                return l < r.Number;
+            else
+                return new YString(l.ToString()) < r.String;
+        }
+
+        public static bool operator <(Number l, bool r)
+        {
+            return l < (Number)r;
+        }
+
 
         public static bool operator >=(Number l, Number r)
         {
             return l._value >= r._value;
         }
 
+        public static bool operator >=(Number l, YString r)
+        {
+            return new YString(l.ToString()) >= r;
+        }
+
+        public static bool operator >=(Number l, Value r)
+        {
+            if (r.Type == Type.Number)
+                return l >= r.Number;
+            else
+                return new YString(l.ToString()) >= r.String;
+        }
+
+        public static bool operator >=(Number l, bool r)
+        {
+            return l >= (Number)r;
+        }
+
+
         public static bool operator <=(Number l, Number r)
         {
             return l._value <= r._value;
         }
+
+        public static bool operator <=(Number l, YString r)
+        {
+            return new YString(l.ToString()) <= r;
+        }
+
+        public static bool operator <=(Number l, Value r)
+        {
+            if (r.Type == Type.Number)
+                return l <= r.Number;
+            else
+                return new YString(l.ToString()) <= r.String;
+        }
+
+        public static bool operator <=(Number l, bool r)
+        {
+            return l <= (Number)r;
+        }
+
 
         public static bool operator ==(Number l, Number r)
         {
             return l._value == r._value;
         }
 
+        public static bool operator ==(Number _, YString __)
+        {
+            return false;
+        }
+
+        public static bool operator ==(Number l, Value r)
+        {
+            if (r.Type == Type.Number)
+                return l == r.Number;
+            else
+                return false;
+        }
+
+        public static bool operator ==(Number l, bool r)
+        {
+            return l == (Number)r;
+        }
+
+
         public static bool operator !=(Number l, Number r)
         {
             return l._value != r._value;
         }
+
+        public static bool operator !=(Number _, YString __)
+        {
+            return true;
+        }
+
+        public static bool operator !=(Number l, Value r)
+        {
+            if (r.Type == Type.Number)
+                return l != r.Number;
+            else
+                return true;
+        }
+
+        public static bool operator !=(Number l, bool r)
+        {
+            return l != (Number)r;
+        }
+
 
         public Number Abs()
         {
@@ -265,6 +436,19 @@ namespace Yolol.Execution
         public Number ArcCos()
         {
             return (Number)ToDegrees((float)Math.Acos((float)this));
+        }
+
+        public Number Exponent(Value right)
+        {
+            if (right.Type == Type.Number)
+                return Exponent(right.Number);
+            else
+                throw new ExecutionException("Attempted to exponent a string");
+        }
+
+        public StaticError Exponent(YString _)
+        {
+            return new StaticError("Attempted to exponent a string");
         }
 
         public Number Exponent(Number number)

@@ -143,52 +143,193 @@ namespace Yolol.Execution
 
         public static bool operator <(Value left, Value right)
         {
-            if (left.Type == Type.Number && right.Type == Type.Number)
-                return left._number < right._number;
-
-            var l = left.ToYString();
-            var r = right.ToYString();
-            return l < r;
+            if (left.Type == Type.Number)
+                return left._number < right;
+            else
+                return left._string < right;
         }
+
+        public static bool operator <(Value left, YString right)
+        {
+            if (left.Type == Type.Number)
+                return left._number < right;
+            else
+                return left._string < right;
+        }
+
+        public static bool operator <(Value left, Number right)
+        {
+            if (left.Type == Type.Number)
+                return left._number < right;
+            else
+                return left._string < right;
+        }
+
+        public static bool operator <(Value left, bool right)
+        {
+            if (left.Type == Type.Number)
+                return left._number < right;
+            else
+                return left._string < right;
+        }
+
 
         public static bool operator <=(Value left, Value right)
         {
-            if (left.Type == Type.Number && right.Type == Type.Number)
-                return left._number <= right._number;
-
-            var l = left.ToYString();
-            var r = right.ToYString();
-            return l <= r;
+            if (left.Type == Type.Number)
+                return left._number <= right;
+            else
+                return left._string <= right;
         }
+
+        public static bool operator <=(Value left, YString right)
+        {
+            if (left.Type == Type.Number)
+                return left._number <= right;
+            else
+                return left._string <= right;
+        }
+
+        public static bool operator <=(Value left, Number right)
+        {
+            if (left.Type == Type.Number)
+                return left._number <= right;
+            else
+                return left._string <= right;
+        }
+
+        public static bool operator <=(Value left, bool right)
+        {
+            if (left.Type == Type.Number)
+                return left._number <= right;
+            else
+                return left._string <= right;
+        }
+
 
         public static bool operator >(Value left, Value right)
         {
-            if (left.Type == Type.Number && right.Type == Type.Number)
-                return left._number > right._number;
-
-            var l = left.ToYString();
-            var r = right.ToYString();
-            return l > r;
+            if (left.Type == Type.Number)
+                return left._number > right;
+            else
+                return left._string > right;
         }
+
+        public static bool operator >(Value left, YString right)
+        {
+            if (left.Type == Type.Number)
+                return left._number > right;
+            else
+                return left._string > right;
+        }
+
+        public static bool operator >(Value left, Number right)
+        {
+            if (left.Type == Type.Number)
+                return left._number > right;
+            else
+                return left._string > right;
+        }
+
+        public static bool operator >(Value left, bool right)
+        {
+            if (left.Type == Type.Number)
+                return left._number > right;
+            else
+                return left._string > right;
+        }
+
 
         public static bool operator >=(Value left, Value right)
         {
-            if (left.Type == Type.Number && right.Type == Type.Number)
-                return left._number >= right._number;
-
-            var l = left.ToYString();
-            var r = right.ToYString();
-            return l >= r;
+            if (left.Type == Type.Number)
+                return left._number >= right;
+            else
+                return left._string >= right;
         }
+
+        public static bool operator >=(Value left, YString right)
+        {
+            if (left.Type == Type.Number)
+                return left._number >= right;
+            else
+                return left._string >= right;
+        }
+
+        public static bool operator >=(Value left, Number right)
+        {
+            if (left.Type == Type.Number)
+                return left._number >= right;
+            else
+                return left._string >= right;
+        }
+
+        public static bool operator >=(Value left, bool right)
+        {
+            if (left.Type == Type.Number)
+                return left._number >= right;
+            else
+                return left._string >= right;
+        }
+
 
         public static bool operator ==(Value left, Value right)
         {
             return left.Equals(right);
         }
 
+        public static bool operator ==(Value left, YString right)
+        {
+            if (left.Type != Type.String)
+                return false;
+            else
+                return left._string == right;
+        }
+
+        public static bool operator ==(Value left, Number right)
+        {
+            if (left.Type != Type.Number)
+                return false;
+            else
+                return left._number == right;
+        }
+
+        public static bool operator ==(Value left, bool right)
+        {
+            if (left.Type != Type.Number)
+                return false;
+            else
+                return left._number == right;
+        }
+
+
         public static bool operator !=(Value left, Value right)
         {
             return !left.Equals(right);
+        }
+
+        public static bool operator !=(Value left, YString right)
+        {
+            if (left.Type != Type.String)
+                return true;
+            else
+                return left._string != right;
+        }
+
+        public static bool operator !=(Value left, Number right)
+        {
+            if (left.Type != Type.Number)
+                return true;
+            else
+                return left._number != right;
+        }
+
+        public static bool operator !=(Value left, bool right)
+        {
+            if (left.Type != Type.Number)
+                return true;
+            else
+                return left._number != right;
         }
 
 
@@ -207,12 +348,15 @@ namespace Yolol.Execution
 
         public static Value operator -(Value l, Number r)
         {
-            return l - (Value)r;
+            if (l.Type == Type.Number)
+                return l._number - r;
+            else
+                return new Value(l._string - r);
         }
 
         public static Value operator -(Value l, bool r)
         {
-            return l - (r ? Number.One : Number.Zero);
+            return l - (Number)r;
         }
 
 
@@ -338,6 +482,7 @@ namespace Yolol.Execution
             return new Value(a);
         }
 
+
         public static Number Exponent(Value left, Value right)
         {
             if (left.Type == Type.Number && right.Type == Type.Number)
@@ -345,6 +490,28 @@ namespace Yolol.Execution
             else
                 throw new ExecutionException("Attempted to exponent a string");
         }
+
+        public static Number Exponent(Value _, YString __)
+        {
+            throw new ExecutionException("Attempted to exponent a string");
+        }
+
+        public static Number Exponent(Value left, Number right)
+        {
+            if (left.Type == Type.Number)
+                return left._number.Exponent(right);
+            else
+                throw new ExecutionException("Attempted to exponent a string");
+        }
+
+        public static Number Exponent(Value left, bool right)
+        {
+            if (left.Type == Type.Number)
+                return left._number.Exponent(right ? Number.One : Number.Zero);
+            else
+                throw new ExecutionException("Attempted to exponent a string");
+        }
+
 
         public static bool operator !(Value value)
         {
