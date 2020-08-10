@@ -339,5 +339,26 @@ namespace Yolol.Execution
         {
             return value + ' ';
         }
+
+
+        public StaticError Exponent(Value _)
+        {
+            throw new ExecutionException("Attempted to exponent a string");
+        }
+
+        public StaticError Exponent(YString _)
+        {
+            throw new ExecutionException("Attempted to exponent a string");
+        }
+
+        public StaticError Exponent(Number _)
+        {
+            throw new ExecutionException("Attempted to exponent a string");
+        }
+
+        public StaticError Exponent(bool _)
+        {
+            throw new ExecutionException("Attempted to exponent a string");
+        }
     }
 }

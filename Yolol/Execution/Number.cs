@@ -438,6 +438,7 @@ namespace Yolol.Execution
             return (Number)ToDegrees((float)Math.Acos((float)this));
         }
 
+
         public Number Exponent(Value right)
         {
             if (right.Type == Type.Number)
@@ -462,6 +463,11 @@ namespace Yolol.Execution
                 return MinValue;
 
             return (Number)v;
+        }
+
+        public Number Exponent(bool right)
+        {
+            return Exponent((Number)right);
         }
     }
 }
