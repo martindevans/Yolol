@@ -203,6 +203,27 @@ namespace Yolol.Execution
         }
 
 
+        public static StaticError operator %(YString l, YString r)
+        {
+            throw new ExecutionException("Attempted to mod a string");
+        }
+
+        public static StaticError operator %(YString l, Number r)
+        {
+            throw new ExecutionException("Attempted to mod a string");
+        }
+
+        public static StaticError operator %(YString l, Value r)
+        {
+            throw new ExecutionException("Attempted to mod a string");
+        }
+
+        public static StaticError operator %(YString l, bool r)
+        {
+            throw new ExecutionException("Attempted to mod a string");
+        }
+
+
         public static YString operator --(YString value)
         {
             if (value.Length == 0)
