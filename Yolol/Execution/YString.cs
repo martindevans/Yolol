@@ -78,7 +78,7 @@ namespace Yolol.Execution
 
         public static bool operator <(YString left, bool right)
         {
-            return left > (Number)right;
+            return left < (Number)right;
         }
 
 
@@ -359,6 +359,12 @@ namespace Yolol.Execution
         public StaticError Exponent(bool _)
         {
             throw new ExecutionException("Attempted to exponent a string");
+        }
+
+
+        public StaticError Sqrt()
+        {
+            throw new ExecutionException("Attempted to sqrt a string");
         }
     }
 }
