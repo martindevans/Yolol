@@ -422,7 +422,7 @@ namespace Yolol.Execution
                 throw new ExecutionException("Attempted to divide a string");
         }
 
-        public static StaticError operator /(Value left, YString right)
+        public static StaticError operator /(Value _, YString __)
         {
             throw new ExecutionException("Attempted to divide a string");
         }
@@ -454,6 +454,7 @@ namespace Yolol.Execution
             return left.ToBool() | right.ToBool();
         }
 
+
         public static Number operator %(Value left, Value right)
         {
             if (left.Type == Type.Number && right.Type == Type.Number)
@@ -461,6 +462,28 @@ namespace Yolol.Execution
             else
                 throw new ExecutionException("Attempted to modulo a string");
         }
+
+        public static Number operator %(Value _, YString __)
+        {
+            throw new ExecutionException("Attempted to modulo a string");
+        }
+
+        public static Number operator %(Value left, Number right)
+        {
+            if (left.Type == Type.Number)
+                return left._number % right;
+            else
+                throw new ExecutionException("Attempted to modulo a string");
+        }
+
+        public static Number operator %(Value left, bool right)
+        {
+            if (left.Type == Type.Number)
+                return left._number % (Number)right;
+            else
+                throw new ExecutionException("Attempted to modulo a string");
+        }
+
 
         public static Value operator ++(Value value)
         {
