@@ -1,70 +1,44 @@
-﻿a=:a e=3.934*a^0.228-a^0.319e+=(a<50)*(2.3*a^0.2-e)
-b=e-0.5c=e+0.5b*=b>0i=0j=0.001t=(b+c)/2q=2^t>a c+=q--*(t-c)b-=q*(t-b)
-t=(b+c)/2q=2^t>a c+=q--*(t-c)b-=q*(t-b)goto3+(i++>9)
-w=2^b x=2^(b+j)y=abs(a-w)z=abs(a-x):o=(y<=z)*b+(y>z)*(b+j)goto:done++
-
-
-
-e=3.934*a^0.228-a^0.319e+=(a<50)*(2.3*a^0.2-a)
-
-
-
-2.3*:a^0.2	// Worst case 0.5 when :a<50
-
-
-// Worst:0.949 Total:46
-:o=3.934*:a^0.228-:a^0.319     // Worst case 0.1 when :a>50
-
-// Worst:1.077 Total:214
-:o=3.201*:a^0.177+sqrt(:a)*-0.029
-
-// Worst:1.305 Total:315
-:o=3.598*:a^0.143
+﻿f=",o00,an01,an10,an00,xo11,xo00,no01,no10,no11,nan11,e01,e10,ne00"
+f+=",ne11,xno10,xno01,fals00,fals01,fals10,fals11"
+s=","+(--:op)+:a+:b :o=f==(f-s) :done++ goto3
 
 /--------//--------//--------//--------//--------//--------//--------/
 
-a=:a e=3.934*a^0.228-a^0.319 b=e-1c=e+1b*=b>0i=0j=0.001
-t=(b+c)/2q=2^t>a c+=q--*(t-c)b-=q*(t-b)goto2+(i++>9)
-w=2^b x=2^(b+j)y=abs(a-w)z=abs(a-x):o=(y<=z)*b+(y>z)*(b+j)goto:done++
+t=",o01,o10,o11,an11,xo10,xo01,no00,nan00,nan01,nan10,e11,e00,ne01,"
+t+="ne10,xno00,xno11,tru00,tru01,tru10,tru11"
+s=","+(--:op)+:a+:b :o=t!=(t-s) :done++ goto3
 
 /--------//--------//--------//--------//--------//--------//--------/
 
-a=:a e=3.598*:a^0.143b=e-2c=e+2b*=b>0i=0j=0.001
-t=(b+c)/2q=2^t>a c+=q--*(t-c)b-=q*(t-b)goto2+(i++>10)
-w=2^b x=2^(b+j)y=abs(a-w)z=abs(a-x):o=(y<=z)*b+(y>z)*(b+j)goto:done++
+a=:a b=:b op=:op
+if op=="or" then :o=(a or b) goto:done++ end
+if op=="and" then :o=(a and b) goto:done++ end
+if op=="xor" then :o=a or b and not(a and b) goto:done++ end
+if op=="nor" then :o=not(a or b) goto:done++ end
+if op=="nand" then :o=not(a and b) goto:done++ end
+if op=="eq" then :o=a==b goto:done++ end
+if op=="neq" then :o=a!=b goto:done++ end
+if op=="xnor" then :o=not(a or b and not(a and b)) goto:done++ end
+if op=="true" then :o=1 goto:done++ end
+if op=="false" then :o=0 goto:done++ end
+:o="unknown op " + op :done=1 goto12
 
 /--------//--------//--------//--------//--------//--------//--------/
 
+a b nor
+0 0 1
+0 1 0
+1 0 0
+1 1 0
 
-a=:a b=0 c=14 i=0 j=0.001 t=(b+c)/2 q=2^t if q>a then c=t else b=t end
-t=(b+c)/2 q=2^t if q>a then c=t else b=t end goto2+(i++>11)
-w=2^b x=2^(b+j)y=abs(a-w)z=abs(a-x):o=(y<=z)*b+(y>z)*(b+j)goto:done++
+a b nand
+0 0 1
+0 1 1
+1 0 1
+1 1 0
 
-
-/--------//--------//--------//--------//--------//--------//--------/
-
-a=:a e=3.598*:a^0.143 b=e-2 c=e+2 b*=b>0i=0
-t=(b+c)/2q=2^t>a c+=q--*(t-c)b-=q*(t-b) goto2+(i++>10)
-:o=b goto:done++
-
-
-
-t=(b+c)/2q=2^t if q>a then c=t else b=t end
-t=(b+c)/2q=2^t>a c+=q*(t-c)b+=(1-q)*(t-b)
-t=(b+c)/2q=2^t>a c+=q--*(t-c)b-=q*(t-b)
-
-b+=(1-q)*(t-b)
-b+=t-b-q*(t-b)
-b-=(q-1)*(t-b)
-
-/--------//--------//--------//--------//--------//--------//--------/
-
-:o=3.598*:a^0.143 goto:done++
-
-// Total error: 315.896.
-
-/--------//--------//--------//--------//--------//--------//--------/
-
-a=:a b=0 c=14 i=0
-t=(b+c)/2 q=2^t if q>a then c=t else b=t end goto2+(i++>12)
-:o=b goto:done++
+a b xnor
+0 0 1
+1 0 0
+0 1 0
+1 1 1
