@@ -383,7 +383,7 @@ namespace Yolol.Execution
 
         public static Value operator +(Value l, bool r)
         {
-            return l + (r ? Number.One : Number.Zero);
+            return l + (Number)r;
         }
 
 
@@ -533,7 +533,7 @@ namespace Yolol.Execution
         public static Number Exponent(Value left, bool right)
         {
             if (left.Type == Type.Number)
-                return left._number.Exponent(right ? Number.One : Number.Zero);
+                return left._number.Exponent(right);
             else
                 throw new ExecutionException("Attempted to exponent a string");
         }

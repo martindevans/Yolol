@@ -196,7 +196,7 @@ namespace Yolol.Execution
 
         public static Number operator +(Number l, bool r)
         {
-            return l + (r ? One : Zero);
+            return l + (Number)r;
         }
 
 
@@ -217,7 +217,7 @@ namespace Yolol.Execution
 
         public static Number operator -(Number l, bool r)
         {
-            return l - (r ? One : Zero);
+            return l - (Number)r;
         }
 
 
