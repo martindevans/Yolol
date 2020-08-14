@@ -103,7 +103,7 @@ namespace Yolol.Execution
 
         public static Number operator %(Number l, Number r)
         {
-            if (r == 0)
+            if (r._value == 0)
                 throw new ExecutionException("Modulus by zero");
 
             return new Number(l._value % r._value);
@@ -154,7 +154,7 @@ namespace Yolol.Execution
 
         public static Number operator /(Number l, Number r)
         {
-            if (r == Zero)
+            if (r._value == 0)
                 throw new ExecutionException("Divide by zero");
 
             return new Number((l._value * Scale) / r._value);

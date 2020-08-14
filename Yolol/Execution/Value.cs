@@ -375,7 +375,10 @@ namespace Yolol.Execution
 
         public static Value operator +(Value l, Number r)
         {
-            return l + (Value)r;
+            if (l.Type == Type.Number)
+                return l._number + r;
+            else
+                return new Value(l._string + r);
         }
 
         public static Value operator +(Value l, bool r)
