@@ -400,7 +400,7 @@ namespace Yolol.Execution
             throw new ExecutionException("Attempted to multiply a string");
         }
 
-        public static Value operator *(Value left, Number right)
+        public static Number operator *(Value left, Number right)
         {
             if (left.Type == Type.Number)
                 return left._number * right;
@@ -408,7 +408,7 @@ namespace Yolol.Execution
                 throw new ExecutionException("Attempted to multiply a string");
         }
 
-        public static Value operator *(Value left, bool right)
+        public static Number operator *(Value left, bool right)
         {
             if (left.Type == Type.Number)
                 return left._number * right;
@@ -430,7 +430,7 @@ namespace Yolol.Execution
             throw new ExecutionException("Attempted to divide a string");
         }
 
-        public static Value operator /(Value left, Number right)
+        public static Number operator /(Value left, Number right)
         {
             if (left.Type == Type.Number)
                 return left._number / right;
@@ -438,7 +438,7 @@ namespace Yolol.Execution
                 throw new ExecutionException("Attempted to divide a string");
         }
 
-        public static Value operator /(Value left, bool right)
+        public static Number operator /(Value left, bool right)
         {
             if (left.Type == Type.Number)
                 return left._number / right;
