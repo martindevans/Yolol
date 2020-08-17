@@ -260,7 +260,7 @@ namespace Yolol.Execution
 
         public static YString operator -(YString l, bool r)
         {
-            return l - (r ? '1' : '0');
+            return l - new YString(r ? "1" : "0");
         }
 
 

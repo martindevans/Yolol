@@ -84,7 +84,10 @@ namespace YololEmulator.Network
                     try
                     {
                         Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine($" -> Set `:{_name}` to {value}");
+                        if (value.Type == Yolol.Execution.Type.String)
+                            Console.WriteLine($" -> Set `:{_name}` to \"{value}\"");
+                        else
+                            Console.WriteLine($" -> Set `:{_name}` to {value}");
                     }
                     finally
                     {
