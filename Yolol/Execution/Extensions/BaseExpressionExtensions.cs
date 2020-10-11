@@ -15,21 +15,32 @@ namespace Yolol.Execution.Extensions
 
         public static Value? TryStaticEvaluate(this BaseExpression expression)
         {
+            return expression.TryStaticEvaluate(out _);
+        }
+
+        public static Value? TryStaticEvaluate(this BaseExpression expression, out bool runtimeError)
+        {
             if (!expression.IsConstant)
+            {
+                runtimeError = false;
                 return null;
+            }
 
             try
             {
+                runtimeError = false;
                 return expression.Evaluate(new MachineState(new ThrowDeviceNetwork()));
             }
             catch (ThrowDeviceNetwork.NullDeviceNetworkAccessException)
             {
                 // Attempted to access an external field, we can't statically evaluate that
+                runtimeError = false;
                 return null;
             }
             catch (ExecutionException)
             {
                 // Some other execution exception happened
+                runtimeError = true;
                 return null;
             }
         }
