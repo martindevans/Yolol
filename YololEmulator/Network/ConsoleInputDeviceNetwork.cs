@@ -8,16 +8,20 @@ namespace YololEmulator.Network
         : IDeviceNetwork
     {
         private readonly bool _save;
+        private readonly string _endProgramVar;
         private readonly Dictionary<string, IVariable> _saved = new Dictionary<string, IVariable>();
 
-        public ConsoleInputDeviceNetwork(bool save)
+        public ConsoleInputDeviceNetwork(bool save, string endProgramVar)
         {
             _save = save;
+            _endProgramVar = endProgramVar;
+
+            _saved[endProgramVar] = new ConsoleInputVariable(endProgramVar, 0);
         }
 
         public IVariable Get(string name)
         {
-            if (_save)
+            if (_save || name.Equals(_endProgramVar))
             {
                 if (!_saved.TryGetValue(name, out var v))
                 {
@@ -96,9 +100,10 @@ namespace YololEmulator.Network
                 }
             }
 
-            public ConsoleInputVariable(string name)
+            public ConsoleInputVariable(string name, Value? start = null)
             {
                 _name = name;
+                _savedValue = start;
             }
         }
     }

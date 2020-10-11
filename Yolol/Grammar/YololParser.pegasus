@@ -23,8 +23,8 @@ line <Line> -public
 
 statement <BaseStatement>
     = goto
-    / modify
     / if
+    / modify
     / assign
     / compound_assign
 

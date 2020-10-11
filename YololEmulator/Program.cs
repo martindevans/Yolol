@@ -38,6 +38,9 @@ namespace YololEmulator
 
             [Option('s', "save", HelpText = "Values written to externals will be saved and automatically returned as the value next time", Required = false, Default = false)]
             public bool SaveOutputs { get; set; }
+
+            [Option('e', "end_program", HelpText = "Set the name of the variable which ends the program", Required = false, Default = "done")]
+            public string EndProgramVar { get; set; } = "done";
         }
         // ReSharper restore UnusedAutoPropertyAccessor.Local
 
@@ -50,24 +53,25 @@ namespace YololEmulator
         {
             try
             {
-                if (options.InputFile == null || !File.Exists(options.InputFile))
+                if (string.IsNullOrWhiteSpace(options.InputFile) || !File.Exists(options.InputFile))
                 {
                     Console.Error.WriteLine($"Input file `{options.InputFile}` does not exist");
                     return;
                 }
 
-                IDeviceNetwork network = new ConsoleInputDeviceNetwork(options.SaveOutputs);
+                IDeviceNetwork network = new ConsoleInputDeviceNetwork(options.SaveOutputs, options.EndProgramVar);
                 if (options.Client != null)
                     network = new HttpClientDeviceNetwork(options.Client);
                 if (options.HostPort != null)
                     network = new HttpHostDeviceNetwork(options.HostPort.Value);
 
+                var endvar = network.Get(options.EndProgramVar);
                 var lines = 0;
                 var st = new MachineState(network, options.MaxLineNumber);
                 var pc = 0;
                 while (pc <= options.MaxLineNumber)
                 {
-                    if ((st.GetVariable("PROGRAM_ENDED").Value == 1))
+                    if (endvar.Value.ToBool())
                         break;
 
                     // Read the next line to execute from the file

@@ -150,7 +150,7 @@ namespace Yolol.Execution
             return CompareStringSpans(left, right) == 0;
         }
 
-        public static bool operator ==(YString left, Number right)
+        public static bool operator ==(YString _, Number __)
         {
             return false;
         }
@@ -159,11 +159,11 @@ namespace Yolol.Execution
         {
             if (right.Type == Type.Number)
                 return false;
-
-            return CompareStringSpans(left, right.String) != 0;
+            else
+                return left == right.String;
         }
 
-        public static bool operator ==(YString left, bool right)
+        public static bool operator ==(YString _, bool __)
         {
             return false;
         }
@@ -174,7 +174,7 @@ namespace Yolol.Execution
             return CompareStringSpans(left, right) != 0;
         }
 
-        public static bool operator !=(YString left, Number right)
+        public static bool operator !=(YString _, Number __)
         {
             return true;
         }
@@ -183,11 +183,11 @@ namespace Yolol.Execution
         {
             if (right.Type == Type.Number)
                 return true;
-
-            return CompareStringSpans(left, right.String) != 0;
+            else
+                return left != right.String;
         }
 
-        public static bool operator !=(YString left, bool right)
+        public static bool operator !=(YString _, bool __)
         {
             return true;
         }
