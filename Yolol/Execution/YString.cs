@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using Yolol.Execution.Attributes;
 
 namespace Yolol.Execution
 {
@@ -264,69 +265,75 @@ namespace Yolol.Execution
         }
 
 
-        public static StaticError operator *(YString l, YString r)
+        public static StaticError operator *(YString _, YString __)
         {
             throw new ExecutionException("Attempted to multiply a string");
         }
 
-        public static StaticError operator *(YString l, Number r)
+        public static StaticError operator *(YString _, Number __)
         {
             throw new ExecutionException("Attempted to multiply a string");
         }
 
-        public static StaticError operator *(YString l, Value r)
+        public static StaticError operator *(YString _, Value __)
         {
             throw new ExecutionException("Attempted to multiply a string");
         }
 
-        public static StaticError operator *(YString l, bool r)
+        public static StaticError operator *(YString _, bool __)
         {
             throw new ExecutionException("Attempted to multiply a string");
         }
 
 
-        public static StaticError operator /(YString l, YString r)
+        public static StaticError operator /(YString _, YString __)
         {
             throw new ExecutionException("Attempted to divide a string");
         }
 
-        public static StaticError operator /(YString l, Number r)
+        public static StaticError operator /(YString _, Number __)
         {
             throw new ExecutionException("Attempted to divide a string");
         }
 
-        public static StaticError operator /(YString l, Value r)
+        public static StaticError operator /(YString _, Value __)
         {
             throw new ExecutionException("Attempted to divide a string");
         }
 
-        public static StaticError operator /(YString l, bool r)
+        public static StaticError operator /(YString _, bool __)
         {
             throw new ExecutionException("Attempted to divide a string");
         }
 
 
-        public static StaticError operator %(YString l, YString r)
+        public static StaticError operator %(YString _, YString __)
         {
             throw new ExecutionException("Attempted to mod a string");
         }
 
-        public static StaticError operator %(YString l, Number r)
+        public static StaticError operator %(YString _, Number __)
         {
             throw new ExecutionException("Attempted to mod a string");
         }
 
-        public static StaticError operator %(YString l, Value r)
+        public static StaticError operator %(YString _, Value __)
         {
             throw new ExecutionException("Attempted to mod a string");
         }
 
-        public static StaticError operator %(YString l, bool r)
+        public static StaticError operator %(YString _, bool __)
         {
             throw new ExecutionException("Attempted to mod a string");
         }
 
 
+        internal static bool WillDecThrow(YString str)
+        {
+            return str.Length == 0;
+        }
+
+        [ErrorMetadata(nameof(WillDecThrow))]
         public static YString operator --(YString value)
         {
             if (value.Length == 0)

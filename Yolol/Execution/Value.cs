@@ -1,4 +1,5 @@
 ﻿using System;
+using Yolol.Execution.Attributes;
 using Yolol.Grammar.AST.Expressions;
 
 namespace Yolol.Execution
@@ -417,6 +418,31 @@ namespace Yolol.Execution
         }
 
 
+        internal static bool WillDivThrow(Value l, Value r)
+        {
+            if (l.Type == Type.Number && r.Type == Type.Number)
+                return Number.WillDivThrow(l.Number, r.Number);
+            else
+                return true;
+        }
+
+        internal static bool WillDivThrow(Value l, Number r)
+        {
+            if (l.Type == Type.Number)
+                return Number.WillDivThrow(l.Number, r);
+            else
+                return true;
+        }
+
+        internal static bool WillDivThrow(Value l, bool r)
+        {
+            if (l.Type == Type.Number)
+                return Number.WillDivThrow(l.Number, (Number)r);
+            else
+                return true;
+        }
+
+        [ErrorMetadata(nameof(WillDivThrow))]
         public static Number operator /(Value left, Value right)
         {
             if (left.Type == Type.Number && right.Type == Type.Number)
@@ -430,6 +456,7 @@ namespace Yolol.Execution
             throw new ExecutionException("Attempted to divide a string");
         }
 
+        [ErrorMetadata(nameof(WillDivThrow))]
         public static Number operator /(Value left, Number right)
         {
             if (left.Type == Type.Number)
@@ -438,6 +465,7 @@ namespace Yolol.Execution
                 throw new ExecutionException("Attempted to divide a string");
         }
 
+        [ErrorMetadata(nameof(WillDivThrow))]
         public static Number operator /(Value left, bool right)
         {
             if (left.Type == Type.Number)

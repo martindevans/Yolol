@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using Yolol.Execution.Attributes;
 
 namespace Yolol.Execution
 {
@@ -186,6 +187,24 @@ namespace Yolol.Execution
         }
 
 
+        internal static bool WillDivThrow(Number _, Value r)
+        {
+            if (r.Type == Type.String)
+                return true;
+            return r.Number == 0;
+        }
+
+        internal static bool WillDivThrow(Number _, Number r)
+        {
+            return r == 0;
+        }
+
+        internal static bool WillDivThrow(Number _, bool r)
+        {
+            return !r;
+        }
+
+        [ErrorMetadata(nameof(WillDivThrow))]
         public static Number operator /(Number l, Number r)
         {
             if (r._value == 0)
@@ -194,11 +213,12 @@ namespace Yolol.Execution
             return new Number((l._value * Scale) / r._value);
         }
 
-        public static StaticError operator /(Number l, YString r)
+        public static StaticError operator /(Number _, YString __)
         {
             return new StaticError("Attempted to divide by a string");
         }
 
+        [ErrorMetadata(nameof(WillDivThrow))]
         public static Value operator /(Number l, Value r)
         {
             if (r.Type == Type.String)
@@ -207,6 +227,7 @@ namespace Yolol.Execution
                 return l / r.Number;
         }
 
+        [ErrorMetadata(nameof(WillDivThrow))]
         public static Number operator /(Number l, bool r)
         {
             return l / (Number)r;

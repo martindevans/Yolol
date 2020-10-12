@@ -85,7 +85,7 @@ namespace YololEmulator
                     // Print machine state
                     Console.Title = $"Elapsed Game Time: {TimeSpan.FromMilliseconds(200 * lines).TotalSeconds.ToString(CultureInfo.CurrentCulture)}s";
                     Console.WriteLine("State:");
-                    foreach (var (key, value) in st)
+                    foreach (var (key, value) in st.OrderBy(a => a.Key))
                     {
                         if (value.Value.Type == Yolol.Execution.Type.String)
                             Console.WriteLine($" | {key} = \"{value}\"");
