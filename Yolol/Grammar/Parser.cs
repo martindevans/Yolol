@@ -76,7 +76,10 @@ namespace Yolol.Grammar
 
             public override string ToString()
             {
-                return $"{Message} (Ln{Cursor.Line}, Ch{Cursor.Column})";
+                var spaces = new string(' ', Math.Max(0, Cursor.Column - 2));
+
+                return $"{Cursor.Subject}\n"
+                     + $"{spaces}^ {Message} (Ln{Cursor.Line}, Col{Cursor.Column - 1})\n";
             }
         }
     }
