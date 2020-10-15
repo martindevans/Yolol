@@ -1,7 +1,4 @@
-﻿a=3 goto:(2+3)
-
-
-b=""c=""v="21 "i=:i:o=""a=--i+b x/=i>0a+=--i x/=i>0a+=--i x/=i>0a+=--i
+﻿b=""c=""v="21 "i=:i:o=""a=--i+b x/=i>0a+=--i x/=i>0a+=--i x/=i>0a+=--i
 r="32 "x/=i>0a+=--i x/=i>0a+=--i x/=i>0a+=--i x/=i>0a+=--i goto2
 s="31 "u=2^:i-1 if:i%2==0then x=13y=10z=17goto17end x=10y=17z=13goto13
 :o--goto:done++

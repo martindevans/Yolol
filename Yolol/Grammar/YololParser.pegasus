@@ -62,6 +62,7 @@ compound_op <YololBinaryOp>
 
 expression <BaseExpression>
     = expr_and
+    / unexpected:. #error{ "Unexpected character '" + unexpected + "'." }
 
 expr_and <BaseExpression> -memoize
     = l:expr_and _ "and" _ r:expr_or { new And(l, r) }
