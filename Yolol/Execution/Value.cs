@@ -141,7 +141,7 @@ namespace Yolol.Execution
             }
         }
 
-
+        #region op <
         public static bool operator <(Value left, Value right)
         {
             if (left.Type == Type.Number)
@@ -173,8 +173,9 @@ namespace Yolol.Execution
             else
                 return left._string < right;
         }
+        #endregion
 
-
+        #region op <=
         public static bool operator <=(Value left, Value right)
         {
             if (left.Type == Type.Number)
@@ -206,8 +207,9 @@ namespace Yolol.Execution
             else
                 return left._string <= right;
         }
+        #endregion
 
-
+        #region op >
         public static bool operator >(Value left, Value right)
         {
             if (left.Type == Type.Number)
@@ -239,8 +241,9 @@ namespace Yolol.Execution
             else
                 return left._string > right;
         }
+        #endregion
 
-
+        #region op >=
         public static bool operator >=(Value left, Value right)
         {
             if (left.Type == Type.Number)
@@ -272,8 +275,9 @@ namespace Yolol.Execution
             else
                 return left._string >= right;
         }
+        #endregion
 
-
+        #region op ==
         public static bool operator ==(Value left, Value right)
         {
             return left.Equals(right);
@@ -302,8 +306,9 @@ namespace Yolol.Execution
             else
                 return left._number == right;
         }
+        #endregion
 
-
+        #region op !=
         public static bool operator !=(Value left, Value right)
         {
             return !left.Equals(right);
@@ -332,8 +337,9 @@ namespace Yolol.Execution
             else
                 return left._number != right;
         }
+        #endregion
 
-
+        #region op -
         public static Value operator -(Value left, Value right)
         {
             if (left.Type == Type.Number && right.Type == Type.Number)
@@ -359,8 +365,9 @@ namespace Yolol.Execution
         {
             return l - (Number)r;
         }
+        #endregion
 
-
+        #region op +
         public static Value operator +(Value left, Value right)
         {
             if (left.Type == Type.Number && right.Type == Type.Number)
@@ -386,8 +393,25 @@ namespace Yolol.Execution
         {
             return l + (Number)r;
         }
+        #endregion
 
+        #region op *
+        internal static bool WillMulThrow(Value l, Value r)
+        {
+            return l.Type == Type.String || r.Type == Type.String;
+        }
 
+        internal static bool WillMulThrow(Value l, Number _)
+        {
+            return l.Type == Type.String;
+        }
+
+        internal static bool WillMulThrow(Value l, bool _)
+        {
+            return l.Type == Type.String;
+        }
+
+        [ErrorMetadata(nameof(WillMulThrow))]
         public static Number operator *(Value left, Value right)
         {
             if (left.Type == Type.Number && right.Type == Type.Number)
@@ -396,11 +420,12 @@ namespace Yolol.Execution
                 throw new ExecutionException("Attempted to multiply a string");
         }
 
-        public static StaticError operator *(Value left, YString right)
+        public static StaticError operator *(Value _, YString __)
         {
             throw new ExecutionException("Attempted to multiply a string");
         }
 
+        [ErrorMetadata(nameof(WillMulThrow))]
         public static Number operator *(Value left, Number right)
         {
             if (left.Type == Type.Number)
@@ -409,6 +434,7 @@ namespace Yolol.Execution
                 throw new ExecutionException("Attempted to multiply a string");
         }
 
+        [ErrorMetadata(nameof(WillMulThrow))]
         public static Number operator *(Value left, bool right)
         {
             if (left.Type == Type.Number)
@@ -416,8 +442,9 @@ namespace Yolol.Execution
             else
                 throw new ExecutionException("Attempted to multiply a string");
         }
+        #endregion
 
-
+        #region op /
         internal static bool WillDivThrow(Value l, Value r)
         {
             if (l.Type == Type.Number && r.Type == Type.Number)
@@ -473,19 +500,48 @@ namespace Yolol.Execution
             else
                 throw new ExecutionException("Attempted to divide a string");
         }
+        #endregion
 
-
+        #region op &
         public static bool operator &(Value left, Value right)
         {
             return left.ToBool() & right.ToBool();
         }
+        #endregion
 
+        #region op |
         public static bool operator |(Value left, Value right)
         {
             return left.ToBool() | right.ToBool();
         }
+        #endregion
 
+        #region op %
+        internal static bool WillModThrow(Value l, Value r)
+        {
+            if (l.Type == Type.Number && r.Type == Type.Number)
+                return Number.WillModThrow(l.Number, r.Number);
+            else
+                return true;
+        }
 
+        internal static bool WillModThrow(Value l, Number r)
+        {
+            if (l.Type == Type.Number)
+                return Number.WillModThrow(l.Number, r);
+            else
+                return true;
+        }
+
+        internal static bool WillModThrow(Value l, bool r)
+        {
+            if (l.Type == Type.Number)
+                return Number.WillModThrow(l.Number, r);
+            else
+                return true;
+        }
+
+        [ErrorMetadata(nameof(WillModThrow))]
         public static Number operator %(Value left, Value right)
         {
             if (left.Type == Type.Number && right.Type == Type.Number)
@@ -494,11 +550,12 @@ namespace Yolol.Execution
                 throw new ExecutionException("Attempted to modulo a string");
         }
 
-        public static Number operator %(Value _, YString __)
+        public static StaticError operator %(Value _, YString __)
         {
-            throw new ExecutionException("Attempted to modulo a string");
+            return new StaticError("Attempted to modulo a string");
         }
 
+        [ErrorMetadata(nameof(WillModThrow))]
         public static Number operator %(Value left, Number right)
         {
             if (left.Type == Type.Number)
@@ -507,6 +564,7 @@ namespace Yolol.Execution
                 throw new ExecutionException("Attempted to modulo a string");
         }
 
+        [ErrorMetadata(nameof(WillModThrow))]
         public static Number operator %(Value left, bool right)
         {
             if (left.Type == Type.Number)
@@ -514,8 +572,9 @@ namespace Yolol.Execution
             else
                 throw new ExecutionException("Attempted to modulo a string");
         }
+        #endregion
 
-
+        #region op ++
         public static Value operator ++(Value value)
         {
             if (value.Type == Type.Number)
@@ -525,7 +584,9 @@ namespace Yolol.Execution
             a++;
             return new Value(a);
         }
+        #endregion
 
+        #region op --
         internal static bool WillDecThrow(Value value)
         {
             return value.Type == Type.String
@@ -542,6 +603,7 @@ namespace Yolol.Execution
             a--;
             return new Value(a);
         }
+        #endregion
 
 
         public static Number Exponent(Value left, Value right)
@@ -552,9 +614,9 @@ namespace Yolol.Execution
                 throw new ExecutionException("Attempted to exponent a string");
         }
 
-        public static Number Exponent(Value _, YString __)
+        public static StaticError Exponent(Value _, YString __)
         {
-            throw new ExecutionException("Attempted to exponent a string");
+            return new StaticError("Attempted to exponent a string");
         }
 
         public static Number Exponent(Value left, Number right)

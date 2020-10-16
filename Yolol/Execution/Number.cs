@@ -135,6 +135,22 @@ namespace Yolol.Execution
         }
 
 
+        internal static bool WillModThrow(Number l, Number r)
+        {
+            return r._value == 0;
+        }
+
+        internal static bool WillModThrow(Number _, Value r)
+        {
+            return r.Type == Type.String || r.Number == 0;
+        }
+
+        internal static bool WillModThrow(Number _, bool r)
+        {
+            return !r;
+        }
+
+        [ErrorMetadata(nameof(WillModThrow))]
         public static Number operator %(Number l, Number r)
         {
             if (r._value == 0)
@@ -143,11 +159,12 @@ namespace Yolol.Execution
             return new Number(l._value % r._value);
         }
 
-        public static StaticError operator %(Number l, YString r)
+        public static StaticError operator %(Number _, YString __)
         {
             return new StaticError("Attempted to modulus by a string");
         }
 
+        [ErrorMetadata(nameof(WillModThrow))]
         public static Value operator %(Number l, Value r)
         {
             if (r.Type == Type.String)
@@ -156,6 +173,7 @@ namespace Yolol.Execution
                 return l % r.Number;
         }
 
+        [ErrorMetadata(nameof(WillModThrow))]
         public static Number operator %(Number l, bool r)
         {
             return l % (Number)r;
