@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using Yolol.Execution.Attributes;
 
 namespace Yolol.Execution
@@ -423,6 +422,17 @@ namespace Yolol.Execution
         public static bool operator !=(Number l, bool r)
         {
             return l != (Number)r;
+        }
+
+
+        public static Number operator ++(Number value)
+        {
+            return new Number(value._value + 1000);
+        }
+
+        public static Number operator --(Number value)
+        {
+            return new Number(value._value - 1000);
         }
 
 

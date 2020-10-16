@@ -526,6 +526,13 @@ namespace Yolol.Execution
             return new Value(a);
         }
 
+        internal static bool WillDecThrow(Value value)
+        {
+            return value.Type == Type.String
+                && value._string.Length == 0;
+        }
+
+        [ErrorMetadata(nameof(WillDecThrow))]
         public static Value operator --(Value value)
         {
             if (value.Type == Type.Number)
