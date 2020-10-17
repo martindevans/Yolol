@@ -1,4 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using System.Globalization;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Yolol.Execution;
 
 namespace YololEmulator.Tests
@@ -57,6 +59,22 @@ namespace YololEmulator.Tests
         {
             var n = (Number)(-1.020m);
             Assert.AreEqual("-1.02", n.ToString());
+        }
+
+        [TestMethod]
+        public void ToStringFuzz()
+        {
+            var rng = new Random(345897);
+
+            for (var i = 0; i < 50000; i++)
+            {
+                var d = ((decimal)rng.Next() / 1000) * (rng.NextDouble() < 0.5 ? 1 : -1);
+                var n = (Number)d;
+
+                var ns = n.ToString();
+
+                Assert.AreEqual(d.ToString(CultureInfo.InvariantCulture), ns);
+            }
         }
 
         [TestMethod]

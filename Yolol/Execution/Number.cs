@@ -21,42 +21,53 @@ namespace Yolol.Execution
             _value = num;
         }
 
-        public override string ToString()
+        internal Span<char> ToString(Span<char> buffer)
         {
             var big = _value / Scale;
             var little = Math.Abs(_value - big * Scale);
 
             if (little == 0)
-                return big.ToString();
+            {
+                if (!big.TryFormat(buffer, out var written))
+                    throw new InvalidOperationException($"Attempted to format a number with more than {buffer.Length} digits");
+                return buffer.Slice(0, written);
+            }
 
+            var bufferSize = buffer.Length;
+
+            // Write out the "big" numbers
+            if (!big.TryFormat(buffer, out var bigWritten))
+                throw new InvalidOperationException($"Attempted to format a number with more than {bufferSize} digits");
+
+            // Write out a `.` character
+            buffer[bigWritten] = '.';
+
+            // Write out the "little" numbers
+            if (!little.TryFormat(buffer.Slice(bigWritten + 1, bufferSize - bigWritten - 1), out var littleWritten, "D3"))
+                throw new InvalidOperationException($"Attempted to format a number with more than {bufferSize} digits");
+
+            // There may be trailing zeros after the "little" number, find them and shorten the `littleWritten` to match
+            for (var i = bigWritten + 1 + littleWritten - 1; i >= 0; i--)
+            {
+                if (buffer[i] == '0')
+                    littleWritten--;
+                else
+                    break;
+            }
+
+            return buffer.Slice(0, bigWritten + 1 + littleWritten);
+        }
+
+        public override string ToString()
+        {
             unsafe
             {
                 const int bufferSize = 128;
                 var buffer = stackalloc char[bufferSize];
-                var span = new Span<char>(buffer, bufferSize);
-
-                // Write out the "big" numbers
-                if (!big.TryFormat(span, out var bigWritten))
-                    throw new InvalidOperationException($"Attempted to format a number with more than {bufferSize} digits");
-
-                // Write out a `.` character
-                buffer[bigWritten] = '.';
-
-                // Write out the "little" numbers
-                if (!little.TryFormat(span.Slice(bigWritten + 1, bufferSize - bigWritten - 1), out var littleWritten, "D3"))
-                    throw new InvalidOperationException($"Attempted to format a number with more than {bufferSize} digits");
-
-                // There may be trailing zeros after the "little" number, find them and shorten the `littleWritten` to match
-                for (var i = bigWritten + 1 + littleWritten - 1; i >= 0; i--)
-                {
-                    if (buffer[i] == '0')
-                        littleWritten--;
-                    else
-                        break;
-                }
+                var span = ToString(new Span<char>(buffer, bufferSize));
 
                 // Copy the characters out of the stack buffer into a heap allocated string
-                return new string(buffer, 0, bigWritten + 1 + littleWritten);
+                return new string(buffer, 0, span.Length);
             }
         }
 

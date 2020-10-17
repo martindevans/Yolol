@@ -31,13 +31,6 @@ namespace Yolol.Execution
             }
         }
 
-        public Value(ReadOnlyMemory<char> str)
-        {
-            _string = new YString(str);
-            _number = Number.Zero;
-            Type = Type.String;
-        }
-
         public Value(string str)
         {
             _string = new YString(str);

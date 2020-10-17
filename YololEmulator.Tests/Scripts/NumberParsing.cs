@@ -65,10 +65,7 @@ namespace YololEmulator.Tests.Scripts
         [TestMethod]
         public void Azurethi()
         {
-            var rng = new Random();
-            var input = rng.Next();
-            Console.WriteLine("Input:" + input);
-            Azurethi(input);
+            Azurethi(1698615886);
         }
 
         [TestMethod]

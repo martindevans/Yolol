@@ -7,18 +7,18 @@ namespace Yolol.Execution
     public readonly struct YString
         : IEquatable<YString>, IEquatable<string>
     {
-        private readonly ReadOnlyMemory<char> _span;
+        private readonly RopeSlice _span;
 
         public int Length => _span.Length;
 
-        public YString(ReadOnlyMemory<char> span)
+        private YString(RopeSlice span)
         {
             _span = span;
         }
 
         public YString(string str)
         {
-            _span = str.AsMemory();
+            _span = new RopeSlice(str);
         }
 
         public override string ToString()
@@ -28,13 +28,7 @@ namespace Yolol.Execution
 
         public override int GetHashCode()
         {
-            var hashCode = 19;
-
-            var span = _span.Span;
-            for (var i = 0; i < span.Length; i++)
-                hashCode = HashCode.Combine(hashCode, span[i]);
-
-            return hashCode;
+            return _span.GetHashCode();
         }
 
         public bool Equals(YString other)
@@ -44,16 +38,7 @@ namespace Yolol.Execution
 
         public bool Equals(string other)
         {
-            if (other.Length != Length)
-                return false;
-
-            var span = _span.Span;
-            var i = 0;
-            foreach (var c in other)
-                if (c != span[i++])
-                    return false;
-
-            return true;
+            return _span.Equals(other);
         }
 
         public override bool Equals(object? obj)
@@ -197,16 +182,13 @@ namespace Yolol.Execution
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int CompareStringSpans(in YString left, in YString right)
         {
-            return left._span.Span.CompareTo(right._span.Span, StringComparison.Ordinal);
+            return left._span.CompareTo(right._span);
         }
 
 
         public static YString operator +(YString l, YString r)
         {
-            var result = new Memory<char>(new char[l.Length + r.Length]);
-            l._span.CopyTo(result[..l.Length]);
-            r._span.CopyTo(result[l.Length..]);
-            return new YString(result);
+            return new YString(RopeSlice.Concat(l._span, r._span));
         }
 
         public static YString operator +(YString l, Number r)
@@ -216,52 +198,51 @@ namespace Yolol.Execution
 
         public static YString operator +(YString l, Value r)
         {
-            return l + new YString(r.ToString());
+            if (r.Type == Type.Number)
+                return l + r.Number;
+            else
+                return l + r.String;
         }
 
         public static YString operator +(YString l, char r)
         {
-            var result = new Memory<char>(new char[l.Length + 1]);
-            l._span.CopyTo(result[..l.Length]);
-            result.Span[^1] = r;
-            return new YString(result);
+            return new YString(RopeSlice.Concat(l._span, r));
         }
 
         public static YString operator +(YString l, bool r)
         {
-            return l + (r ? '1' : '0');
+            return new YString(RopeSlice.Concat(l._span, r ? '1' : '0'));
         }
 
 
-        public static YString operator -(YString left, YString right)
+        public static YString operator -(YString l, YString r)
         {
-            var l = left._span;
-            var r = right._span;
-            var index = l.Span.LastIndexOf(r.Span);
-
-            // Handle special cases by taking slices of the string if possible
-            if (index == -1)
-                return new YString(l);
-            if (index == 0)
-                return new YString(l[r.Length..]);
-            if (index + r.Length == l.Length)
-                return new YString(l[..^r.Length]);
-            return new YString(l.ToString().Remove(index, r.Length).AsMemory());
+            return new YString(RopeSlice.Remove(l._span, r._span));
         }
 
-        public static YString operator -(YString left, Number right)
+        public static YString operator -(YString l, Number r)
         {
-            return left - new YString(right.ToString());
+            unsafe
+            {
+                const int bufferSize = 128;
+                var buffer = stackalloc char[bufferSize];
+                var rightSpan = r.ToString(new Span<char>(buffer, bufferSize));
+
+                return new YString(RopeSlice.Remove(l._span, rightSpan));
+            }
         }
 
-        public static YString operator -(YString left, Value right)
+        public static YString operator -(YString l, Value r)
         {
-            return left - new YString(right.ToString());
+            if (r.Type == Type.Number)
+                return l - r.Number;
+            else
+                return l - r.String;
         }
 
         public static YString operator -(YString l, bool r)
         {
-            return l - new YString(r ? "1" : "0");
+            return new YString(RopeSlice.Remove(l._span, r ? '1' : '0'));
         }
 
 
@@ -339,7 +320,7 @@ namespace Yolol.Execution
             if (value.Length == 0)
                 throw new ExecutionException("Attempted to decrement empty string");
 
-            return new YString(value._span[..^1]);
+            return new YString(value._span.Decrement());
         }
 
         public static YString operator ++(YString value)
