@@ -193,7 +193,14 @@ namespace Yolol.Execution
 
         public static YString operator +(YString l, Number r)
         {
-            return l + new YString(r.ToString());
+            unsafe
+            {
+                const int bufferSize = 128;
+                var buffer = stackalloc char[bufferSize];
+                var rightSpan = r.ToString(new Span<char>(buffer, bufferSize));
+
+                return new YString(RopeSlice.Concat(l._span, rightSpan));
+            }
         }
 
         public static YString operator +(YString l, Value r)

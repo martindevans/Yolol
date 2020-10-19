@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Yolol.Execution
@@ -29,22 +30,20 @@ namespace Yolol.Execution
             _builder.Append(other._builder, sliceStart, sliceLength);
         }
 
-        public char this[int index]
+        public void Append(ReadOnlySpan<char> other)
         {
-            get
-            {
-                if (index < 0)
-                    throw new IndexOutOfRangeException("Index is less than zero");
-                if (index >= Length)
-                    throw new IndexOutOfRangeException("Index is greater than or equal to length");
-
-                return _builder[index];
-            }
+            _builder.Append(other);
         }
 
-        public Rope CloneSlice(int start, int length)
+        public char this[int index]
         {
-            var r = new Rope(length);
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => _builder[index];
+        }
+
+        public Rope CloneSlice(int start, int length, int capacity)
+        {
+            var r = new Rope(capacity);
             r._builder.Append(_builder, start, length);
             return r;
         }
@@ -68,6 +67,32 @@ namespace Yolol.Execution
 
             _builder.CopyTo(sourceIndex, destination, sourceCount);
             return destination.Slice(sourceCount);
+        }
+
+        public bool SliceEquals(string other, int start, int count)
+        {
+            if (other.Length != count)
+                return false;
+
+            var i = 0;
+            foreach (var c in other)
+                if (c != _builder[start + i++])
+                    return false;
+
+            return true;
+        }
+
+        public int LastIndexOf(in char needle, in int start, in int length)
+        {
+            // if this is shorter than needle then this can't possibly contain needle
+            if (length < 1)
+                return -1;
+
+            for (var i = length - 1; i >= 0; i--)
+                if (_builder[start + i] == needle)
+                    return i;
+
+            return -1;
         }
     }
 
@@ -113,15 +138,7 @@ namespace Yolol.Execution
 
         public bool Equals(string other)
         {
-            if (other.Length != Length)
-                return false;
-
-            var i = 0;
-            foreach (var c in other)
-                if (c != _rope[_start + i++])
-                    return false;
-
-            return true;
+            return _rope.SliceEquals(other, _start, Length);
         }
 
         public override int GetHashCode()
@@ -139,19 +156,20 @@ namespace Yolol.Execution
             if (Length == 0 || other.Length == 0)
                 return Length - other.Length;
 
-            // We don't really need to copy into stack buffers here, instead we could directly compare the StringBuilders character by character.
-            unsafe
+            if (_rope == other._rope && _start == other._start && Length == other.Length)
+                return 0;
+
+            var l = Math.Min(Length, other.Length);
+            for (var i = 0; i < l; i++)
             {
-                var haystackBuffer = stackalloc char[Length];
-                var haystackSpan = new Span<char>(haystackBuffer, Length);
-                _rope.CopyTo(haystackSpan, _start, Length);
+                var a = _rope[_start + i];
+                var b = other._rope[other._start + i];
 
-                var needleBuffer = stackalloc char[other.Length];
-                var needleSpan = new Span<char>(needleBuffer, other.Length);
-                other._rope.CopyTo(needleSpan, other._start, other.Length);
-
-                return MemoryExtensions.CompareTo(haystackSpan, needleSpan, StringComparison.Ordinal);
+                if (a != b)
+                    return a - b;
             }
+
+            return Length - other.Length;
         }
 
         public static RopeSlice Concat(in RopeSlice left, in RopeSlice right)
@@ -165,8 +183,24 @@ namespace Yolol.Execution
             }
 
             // Create a copy of the rope to extend
-            var rope = left._rope.CloneSlice(left._start, left.Length);
+            var rope = left._rope.CloneSlice(left._start, left.Length, left.Length + right.Length);
             rope.Append(right._rope, right._start, right.Length);
+            return new RopeSlice(rope, 0, rope.Length);
+        }
+
+        public static RopeSlice Concat(in RopeSlice left, in ReadOnlySpan<char> right)
+        {
+            // If the end of the left span points to the end of the underlying rope then
+            // the rope can be extended in place.
+            if (left._start + left.Length == left._rope.Length)
+            {
+                left._rope.Append(right);
+                return new RopeSlice(left._rope, left._start, left.Length + right.Length);
+            }
+
+            // Create a copy of the rope to extend
+            var rope = left._rope.CloneSlice(left._start, left.Length, left.Length + right.Length);
+            rope.Append(right);
             return new RopeSlice(rope, 0, rope.Length);
         }
 
@@ -180,78 +214,70 @@ namespace Yolol.Execution
             }
 
             // Clone the slice and extend it
-            var rope = left._rope.CloneSlice(left._start, left.Length);
+            var rope = left._rope.CloneSlice(left._start, left.Length, left.Length + 1);
             rope.Append(right);
             return new RopeSlice(rope, left._start, left.Length + 1);
         }
 
-        public static RopeSlice Remove(in RopeSlice left, in RopeSlice right)
+        public static RopeSlice Remove(in RopeSlice haystack, in RopeSlice needle)
         {
-            if (right.Length == 0)
-                return left;
+            if (needle.Length == 0)
+                return haystack;
 
             // If the left slice ends with the right slice then we can just return a shortened slice
-            if (left.EndsWith(right))
-                return new RopeSlice(left._rope, left._start, left.Length - right.Length);
+            if (haystack.EndsWith(needle))
+                return new RopeSlice(haystack._rope, haystack._start, haystack.Length - needle.Length);
 
             // Find the right slice within the left slice
-            var index = left.LastIndexOf(right);
+            var index = haystack.LastIndexOf(needle);
             if (index < 0)
-                return left;
+                return haystack;
 
-            // If left slice _starts_ with the right string we can just offset the start of the slice
-            if (index == 0)
-                return new RopeSlice(left._rope, left._start + right.Length, left.Length - right.Length);
-
-            // We'll have to make a new rope and remove it
-            var rope = left._rope.CloneSlice(left._start, left.Length);
-            rope.RemoveRange(index, right.Length);
-            return new RopeSlice(rope, left._start, left.Length - right.Length);
+            return Remove(in haystack, index, needle.Length);
         }
 
-        public static RopeSlice Remove(in RopeSlice left, in ReadOnlySpan<char> right)
+        public static RopeSlice Remove(in RopeSlice haystack, in ReadOnlySpan<char> needle)
         {
-            if (right.Length == 0)
-                return left;
+            if (needle.Length == 0)
+                return haystack;
 
-            // If the left slice ends with the right slice then we can just return a shortened slice
-            if (left.EndsWith(right))
-                return new RopeSlice(left._rope, left._start, left.Length - right.Length);
+            // If the haystack slice ends with the needle then we can just return a shortened slice
+            if (haystack.EndsWith(needle))
+                return new RopeSlice(haystack._rope, haystack._start, haystack.Length - needle.Length);
 
-            // Find the right slice within the left slice
-            var index = left.LastIndexOf(right);
+            // Find the needle slice within the haystack
+            var index = haystack.LastIndexOf(needle);
             if (index < 0)
-                return left;
+                return haystack;
 
-            // If left slice _starts_ with the right string we can just offset the start of the slice
-            if (index == 0)
-                return new RopeSlice(left._rope, left._start + right.Length, left.Length - right.Length);
-
-            // We'll have to make a new rope and remove it
-            var rope = left._rope.CloneSlice(left._start, left.Length);
-            rope.RemoveRange(index, right.Length);
-            return new RopeSlice(rope, left._start, left.Length - right.Length);
+            return Remove(in haystack, index, needle.Length);
         }
 
-        public static RopeSlice Remove(in RopeSlice left, char right)
+        public static RopeSlice Remove(in RopeSlice haystack, char right)
         {
-            // If the left slice ends with the right slice then we can just return a shortened slice
-            if (left.EndsWith(right))
-                return new RopeSlice(left._rope, left._start, left.Length - 1);
+            unsafe
+            {
+                var r = right;
+                return Remove(haystack, new Span<char>(&r, 1));
+            }
+        }
 
-            // Find the right slice within the left slice
-            var index = left.LastIndexOf(right);
-            if (index < 0)
-                return left;
-
+        private static RopeSlice Remove(in RopeSlice haystack, int startIndex, int needleLength)
+        {
             // If left slice _starts_ with the right string we can just offset the start of the slice
-            if (index == 0)
-                return new RopeSlice(left._rope, left._start + 1, left.Length - 1);
+            if (startIndex == 0)
+                return new RopeSlice(haystack._rope, haystack._start + needleLength, haystack.Length - needleLength);
 
             // We'll have to make a new rope and remove it
-            var rope = left._rope.CloneSlice(left._start, left.Length);
-            rope.RemoveRange(index, 1);
-            return new RopeSlice(rope, left._start, left.Length - 1);
+            var rope = new Rope(haystack.Length);
+
+            // Copy bit of haystack to the left of the needle into new rope
+            rope.Append(haystack._rope, haystack._start, haystack._start + startIndex);
+
+            // Copy bit of haystack to the right of the needle into new rope
+            rope.Append(haystack._rope, haystack._start + startIndex + needleLength, haystack.Length - (haystack._start + startIndex + needleLength));
+
+            return new RopeSlice(rope, haystack._start, rope.Length);
         }
 
         private int LastIndexOf(in RopeSlice needle)
@@ -263,6 +289,7 @@ namespace Yolol.Execution
             if (Length < needle.Length)
                 return -1;
 
+            // todo: use better substring search
             // Copy the strings to two stack buffers and search in those buffers. This could be improved by running string search (e.g. aho-corasic directly
             // on the string builders, instead of incurring this extra copy. But C# doesn't have a convenient `LastIndexOf` method for StringBuilder and I
             // can't be bothered to build it right now!
@@ -285,6 +312,7 @@ namespace Yolol.Execution
             if (Length < needle.Length)
                 return -1;
 
+            // todo: use better substring search
             // Copy the strings to two stack buffers and search in those buffers. This could be improved by running string search (e.g. aho-corasic directly
             // on the string builders, instead of incurring this extra copy. But C# doesn't have a convenient `LastIndexOf` method for StringBuilder and I
             // can't be bothered to build it right now!
@@ -296,19 +324,6 @@ namespace Yolol.Execution
 
                 return haystackSpan.LastIndexOf(needle);
             }
-        }
-
-        private int LastIndexOf(in char needle)
-        {
-            // if this is shorter than needle then this can't possibly contain needle
-            if (Length < 1)
-                return -1;
-
-            for (var i = Length - 1; i >= 0; i--)
-                if (this[i] == needle)
-                    return i;
-
-            return -1;
         }
 
         private bool EndsWith(in RopeSlice right)
@@ -343,14 +358,6 @@ namespace Yolol.Execution
             }
 
             return true;
-        }
-
-        private bool EndsWith(in char right)
-        {
-            if (Length < 1)
-                return false;
-
-            return this[^1] == right;
         }
 
         public RopeSlice Decrement()

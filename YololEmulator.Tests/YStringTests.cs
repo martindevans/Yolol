@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Yolol.Execution;
 
 namespace YololEmulator.Tests
@@ -81,6 +82,48 @@ namespace YololEmulator.Tests
         }
 
         [TestMethod]
+        public void AddStrings()
+        {
+            var a = new YString("abc");
+            var b = new YString("d");
+            var c = a + b;
+
+            Assert.AreEqual("abcd", c.ToString());
+        }
+
+        [TestMethod]
+        public void AddNumber()
+        {
+            var a = new YString("abc");
+            var b = 7;
+            var c = a + b;
+
+            Assert.AreEqual("abc7", c.ToString());
+        }
+
+        [TestMethod]
+        public void AddNumberToShortenedString()
+        {
+            var a = new YString("abc");
+            a--;
+            var b = 7;
+            var c = a + b;
+
+            Assert.AreEqual("ab7", c.ToString());
+        }
+
+        [TestMethod]
+        public void AddStringToShortenedStrings()
+        {
+            var a = new YString("abc");
+            a--;
+            var b = new YString("d");
+            var c = a + b;
+
+            Assert.AreEqual("abd", c.ToString());
+        }
+
+        [TestMethod]
         public void SubtractFromEnd()
         {
             var a = new YString("abc");
@@ -103,11 +146,10 @@ namespace YololEmulator.Tests
         [TestMethod]
         public void SubtractFromStart()
         {
-            var a = new YString("abc");
-            var b = new YString("a");
-            var c = a - b;
+            var a = new YString("1abc");
+            var c = a - true;
 
-            Assert.AreEqual("bc", c.ToString());
+            Assert.AreEqual("abc", c.ToString());
         }
 
         [TestMethod]
@@ -141,7 +183,7 @@ namespace YololEmulator.Tests
         }
 
         [TestMethod]
-        public void SubtractLongFromMiddleWithpartialMatch()
+        public void SubtractLongFromMiddleWithPartialMatch()
         {
             var a = new YString("abcdefghijklmnopqrstuvhijksdfjhklmnm");
             var b = new YString("hijklm");
@@ -217,6 +259,106 @@ namespace YololEmulator.Tests
             var c = a - true;
 
             Assert.AreEqual("58dsfg35y", c.ToString());
+        }
+
+        [TestMethod]
+        public void StringOrderSameLength()
+        {
+            var a = new YString("abc");
+            var b = new YString("bcd");
+
+            Assert.IsTrue(a < b);
+            Assert.IsTrue(a <= b);
+            Assert.IsTrue(a != b);
+            Assert.IsFalse(a == b);
+            Assert.IsFalse(b == a);
+            Assert.IsTrue(b != a);
+            Assert.IsTrue(b >= a);
+            Assert.IsTrue(b > a);
+        }
+
+        [TestMethod]
+        public void StringOrderIdentical()
+        {
+            var a = new YString("abc");
+            var b = new YString("abc");
+
+            Assert.IsFalse(a < b);
+            Assert.IsTrue(a <= b);
+            Assert.IsFalse(a != b);
+            Assert.IsTrue(a == b);
+            Assert.IsTrue(b == a);
+            Assert.IsFalse(b != a);
+            Assert.IsTrue(b >= a);
+            Assert.IsFalse(b > a);
+        }
+
+        [TestMethod]
+        public void StringOrderLonger()
+        {
+            var a = new YString("abc");
+            var b = new YString("abcd");
+
+            Assert.IsTrue(a < b);
+            Assert.IsTrue(a <= b);
+            Assert.IsTrue(a != b);
+            Assert.IsFalse(a == b);
+            Assert.IsFalse(b == a);
+            Assert.IsTrue(b != a);
+            Assert.IsTrue(b >= a);
+            Assert.IsTrue(b > a);
+        }
+
+        [TestMethod]
+        public void StringOrderNumbers()
+        {
+            var a = new YString("111");
+            var b = new YString("12");
+
+            Assert.IsTrue(a < b);
+            Assert.IsTrue(a <= b);
+            Assert.IsTrue(a != b);
+            Assert.IsFalse(a == b);
+            Assert.IsFalse(b == a);
+            Assert.IsTrue(b != a);
+            Assert.IsTrue(b >= a);
+            Assert.IsTrue(b > a);
+        }
+
+        [TestMethod]
+        public void StringOrderFuzz()
+        {
+            var rng = new Random(3463245);
+
+            string RandomString()
+            {
+                var bytes = new byte[rng.Next(1, 25)];
+                rng.NextBytes(bytes);
+                var chars = new char[bytes.Length];
+                bytes.CopyTo(chars, 0);
+
+                return new string(chars);
+            }
+
+            for (var i = 0; i < 1000; i++)
+            {
+                var a = RandomString();
+                var b = RandomString();
+
+                var ay = new YString(a);
+                var by = new YString(b);
+
+                var order = StringComparer.Ordinal.Compare(a, b);
+
+                Assert.AreEqual(order < 0, ay < by);
+                Assert.AreEqual(order <= 0, ay <= by);
+                Assert.AreEqual(order != 0, ay != by);
+                Assert.AreEqual(order == 0, ay == by);
+                Assert.AreEqual(order == 0, by == ay);
+                Assert.AreEqual(order != 0, by != ay);
+                Assert.AreEqual(order >= 0, ay >= by);
+                Assert.AreEqual(order > 0, ay > by);
+            }
         }
     }
 }
