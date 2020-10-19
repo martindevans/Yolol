@@ -122,6 +122,17 @@ namespace Yolol.Execution
             _rope = rope;
             _start = start;
             Length = length;
+
+#if DEBUG
+            if (start < 0)
+                throw new ArgumentOutOfRangeException(nameof(start), "start < 0");
+            if (start >= rope.Length)
+                throw new ArgumentOutOfRangeException(nameof(start), "start >= rope.Length");
+            if (length < 0)
+                throw new ArgumentOutOfRangeException(nameof(length), "length < 0");
+            if (start + length > rope.Length)
+                throw new ArgumentOutOfRangeException(nameof(length), "start + length >= rope.Length");
+#endif
         }
 
         public RopeSlice(string str)
@@ -206,17 +217,11 @@ namespace Yolol.Execution
 
         public static RopeSlice Concat(in RopeSlice left, in char right)
         {
-            // If the left slice reaches to the end of the rope then we can extend the rope in place
-            if (left._start + left.Length == left._rope.Length)
+            unsafe
             {
-                left._rope.Append(right);
-                return new RopeSlice(left._rope, left._start, left.Length + 1);
+                var r = right;
+                return Concat(left, new Span<char>(&r, 1));
             }
-
-            // Clone the slice and extend it
-            var rope = left._rope.CloneSlice(left._start, left.Length, left.Length + 1);
-            rope.Append(right);
-            return new RopeSlice(rope, left._start, left.Length + 1);
         }
 
         public static RopeSlice Remove(in RopeSlice haystack, in RopeSlice needle)
@@ -272,12 +277,12 @@ namespace Yolol.Execution
             var rope = new Rope(haystack.Length);
 
             // Copy bit of haystack to the left of the needle into new rope
-            rope.Append(haystack._rope, haystack._start, haystack._start + startIndex);
+            rope.Append(haystack._rope, haystack._start, startIndex);
 
             // Copy bit of haystack to the right of the needle into new rope
-            rope.Append(haystack._rope, haystack._start + startIndex + needleLength, haystack.Length - (haystack._start + startIndex + needleLength));
+            rope.Append(haystack._rope, haystack._start + startIndex + needleLength, haystack.Length - (startIndex + needleLength));
 
-            return new RopeSlice(rope, haystack._start, rope.Length);
+            return new RopeSlice(rope, 0, rope.Length);
         }
 
         private int LastIndexOf(in RopeSlice needle)
@@ -328,19 +333,28 @@ namespace Yolol.Execution
 
         private bool EndsWith(in RopeSlice right)
         {
-            if (Length < right.Length)
-                return false;
-
-            for (var i = 1; i <= right.Length; i++)
+            try
             {
-                var c = right[^i];
-                var d = this[^i];
-
-                if (c != d)
+                if (Length < right.Length)
                     return false;
-            }
 
-            return true;
+                for (var i = 0; i < right.Length; i++)
+                {
+                    var c = right[right.Length - 1 - i];
+                    var d = this[Length - 1 - i];
+
+                    if (c != d)
+                        return false;
+                }
+
+                return true;
+            }
+            catch
+            {
+                Console.WriteLine(this);
+                Console.WriteLine(right);
+                throw;
+            }
         }
 
         private bool EndsWith(in ReadOnlySpan<char> right)

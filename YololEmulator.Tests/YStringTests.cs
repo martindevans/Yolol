@@ -124,6 +124,37 @@ namespace YololEmulator.Tests
         }
 
         [TestMethod]
+        public void AddStringToShortenedStartStrings()
+        {
+            var a = new YString("abc");
+            a -= "a";
+            var c = a + true;
+
+            Assert.AreEqual("bc1", c.ToString());
+        }
+
+        [TestMethod]
+        public void AddStringToShortenedEndStrings()
+        {
+            var a = new YString("abc");
+            a -= "c";
+            var c = a + true;
+
+            Assert.AreEqual("ab1", c.ToString());
+        }
+
+        [TestMethod]
+        public void AddStringToShortenedBothStrings()
+        {
+            var a = new YString("abc");
+            a -= "c";
+            a -= "a";
+            var c = a + true;
+
+            Assert.AreEqual("b1", c.ToString());
+        }
+
+        [TestMethod]
         public void SubtractFromEnd()
         {
             var a = new YString("abc");
