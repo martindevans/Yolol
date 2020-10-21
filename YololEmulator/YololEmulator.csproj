@@ -83,6 +83,9 @@
     <None Update="hanoi.lol">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="number_formatting.lol">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="test.lol">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

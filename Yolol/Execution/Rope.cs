@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -48,16 +49,6 @@ namespace Yolol.Execution
             return r;
         }
 
-        public void RemoveRange(int index, int length)
-        {
-            _builder.Remove(index, length);
-        }
-
-        public void Append(char right)
-        {
-            _builder.Append(right);
-        }
-
         public Span<char> CopyTo(Span<char> destination, int sourceIndex, int sourceCount)
         {
             if (destination.Length < sourceCount)
@@ -81,25 +72,12 @@ namespace Yolol.Execution
 
             return true;
         }
-
-        public int LastIndexOf(in char needle, in int start, in int length)
-        {
-            // if this is shorter than needle then this can't possibly contain needle
-            if (length < 1)
-                return -1;
-
-            for (var i = length - 1; i >= 0; i--)
-                if (_builder[start + i] == needle)
-                    return i;
-
-            return -1;
-        }
     }
 
     internal readonly struct RopeSlice
         : IEquatable<string>
     {
-        private readonly Rope _rope;
+        private readonly Rope? _rope;
         private readonly int _start;
 
         public int Length { get; }
@@ -112,6 +90,9 @@ namespace Yolol.Execution
                     throw new IndexOutOfRangeException("Index is less than zero");
                 if (index >= Length)
                     throw new IndexOutOfRangeException("Index is greater than or equal to length");
+
+                // `_rope` can only be null if `Length == 0`. We've already checked against the length, so rope cannot be null.
+                Debug.Assert(_rope != null);
 
                 return _rope[_start + index];
             }
@@ -137,18 +118,30 @@ namespace Yolol.Execution
 
         public RopeSlice(string str)
         {
-            _rope = new Rope(str);
-            _start = 0;
-            Length = str.Length;
+            if (string.IsNullOrEmpty(str))
+            {
+                _rope = null;
+                _start = 0;
+                Length = 0;
+            }
+            else
+            {
+                _rope = new Rope(str);
+                _start = 0;
+                Length = str.Length;
+            }
         }
 
         public override string ToString()
         {
-            return _rope.ToString(_start, Length);
+            return _rope == null ? string.Empty : _rope.ToString(_start, Length);
         }
 
         public bool Equals(string other)
         {
+            if (_rope == null)
+                return string.Empty.Equals(other);
+
             return _rope.SliceEquals(other, _start, Length);
         }
 
@@ -166,6 +159,10 @@ namespace Yolol.Execution
         {
             if (Length == 0 || other.Length == 0)
                 return Length - other.Length;
+
+            // `_rope` can only be null if `Length == 0`. That was checked above for both ropes.
+            Debug.Assert(_rope != null);
+            Debug.Assert(other._rope != null);
 
             if (_rope == other._rope && _start == other._start && Length == other.Length)
                 return 0;
@@ -185,6 +182,12 @@ namespace Yolol.Execution
 
         public static RopeSlice Concat(in RopeSlice left, in RopeSlice right)
         {
+            // If either part of the concat is an empty string (represented by a null rope) return the other half.
+            if (left._rope == null)
+                return right;
+            if (right._rope == null)
+                return left;
+
             // If the end of the left span points to the end of the underlying rope then
             // the rope can be extended in place.
             if (left._start + left.Length == left._rope.Length)
@@ -201,6 +204,16 @@ namespace Yolol.Execution
 
         public static RopeSlice Concat(in RopeSlice left, in ReadOnlySpan<char> right)
         {
+            // If either part of the concat is an empty string return the other half.
+            if (right.Length == 0)
+                return left;
+            if (left._rope == null)
+            {
+                var r = new Rope(right.Length);
+                r.Append(right);
+                return new RopeSlice(r, 0, r.Length);
+            }
+
             // If the end of the left span points to the end of the underlying rope then
             // the rope can be extended in place.
             if (left._start + left.Length == left._rope.Length)
@@ -226,8 +239,13 @@ namespace Yolol.Execution
 
         public static RopeSlice Remove(in RopeSlice haystack, in RopeSlice needle)
         {
-            if (needle.Length == 0)
+            // if the needle or haystack is an empty string early exit
+            if (needle.Length == 0 || haystack.Length == 0)
                 return haystack;
+
+            // We just checked the length of both things is not zero. Which means the rope cannot be null either.
+            Debug.Assert(haystack._rope != null);
+            Debug.Assert(needle._rope != null);
 
             // If the left slice ends with the right slice then we can just return a shortened slice
             if (haystack.EndsWith(needle))
@@ -243,8 +261,11 @@ namespace Yolol.Execution
 
         public static RopeSlice Remove(in RopeSlice haystack, in ReadOnlySpan<char> needle)
         {
-            if (needle.Length == 0)
+            if (needle.Length == 0 || haystack.Length == 0)
                 return haystack;
+
+            // We just checked the length of both things is not zero. Which means the rope cannot be null either.
+            Debug.Assert(haystack._rope != null);
 
             // If the haystack slice ends with the needle then we can just return a shortened slice
             if (haystack.EndsWith(needle))
@@ -269,6 +290,8 @@ namespace Yolol.Execution
 
         private static RopeSlice Remove(in RopeSlice haystack, int startIndex, int needleLength)
         {
+            Debug.Assert(haystack._rope != null);
+
             // If left slice _starts_ with the right string we can just offset the start of the slice
             if (startIndex == 0)
                 return new RopeSlice(haystack._rope, haystack._start + needleLength, haystack.Length - needleLength);
@@ -289,6 +312,7 @@ namespace Yolol.Execution
         {
             if (needle.Length == 0)
                 throw new ArgumentOutOfRangeException(nameof(needle), "Length of needle must be > 0");
+            Debug.Assert(needle._rope != null);
 
             // if this is shorter than needle then this can't possibly contain needle
             if (Length < needle.Length)
@@ -310,12 +334,16 @@ namespace Yolol.Execution
 
         private int LastIndexOf(in ReadOnlySpan<char> needle)
         {
-            if (needle.Length == 0)
+            if (needle.Length <= 0)
                 throw new ArgumentOutOfRangeException(nameof(needle), "Length of needle must be > 0");
 
             // if this is shorter than needle then this can't possibly contain needle
             if (Length < needle.Length)
                 return -1;
+
+            // We've asserted that the needle length is not zero, and that the length of this is not shorter than it. Hence the Length must be > 0 and the 
+            // rope cannot be null.
+            Debug.Assert(_rope != null);
 
             // todo: use better substring search
             // Copy the strings to two stack buffers and search in those buffers. This could be improved by running string search (e.g. aho-corasic directly
@@ -378,6 +406,7 @@ namespace Yolol.Execution
         {
             if (Length == 0)
                 throw new InvalidOperationException("Cannot decrement empty slice");
+            Debug.Assert(_rope != null);
 
             return new RopeSlice(_rope, _start, Length - 1);
         }

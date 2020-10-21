@@ -39,5 +39,30 @@ namespace YololEmulator.Tests.Scripts
             Assert.AreEqual(10m, result.GetVariable("a").Value);
             Assert.AreEqual(10m, result.GetVariable("b").Value);
         }
+
+        [TestMethod]
+        public void ZijkhalStrings()
+        {
+            //for (var i = 0; i < 4010; i++)
+            var i = 3600;
+            {
+                try
+                {
+                    var ms = TestExecutor.Execute($":a={i} a=\" seconds1 \"b=\" minutes1\"e=\" hours1\"f=\" days1\"g=\" years1\"q=\",1\"",
+                        "t=\" \"n=\"s1\"k=0+e-n+t l=\"0 day \"p=\" and1\"r=0+g-n+t",
+                        "y=:a s=y%60y-=s y/=60m=y%60y-=m y/=60h=y%24y-=h y/=24d=y%365y-=d",
+                        "o=a-(s>1)-n c=s>0v=m>0o=b-(m>1)-n+p-c*v-p+t+s+o y/=365c+=v",
+                        "v=h>0o=e-(h>1)-n+q-v*(c>1)-q+p-c*v-p+t+m+o c+=v v=d>0u=f-(d>1)-n",
+                        "u+=q-v*(c>1)-q+p-c*v-p+t+h+o c+=v v=y>0o=g-(y>1)-n+q-(y>0)*(c>1)-q",
+                        ":o=y+o+(p-c*(y>0)-p)+t+d+u-r-l-k-(0+b-n+t)-(0+a-n)-t:done=1goto50"
+                    );
+                }
+                catch
+                {
+                    Console.WriteLine("Index: " + i);
+                    throw;
+                }
+            }
+        }
     }
 }

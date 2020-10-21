@@ -82,6 +82,36 @@ namespace YololEmulator.Tests
         }
 
         [TestMethod]
+        public void AddToEmptyString()
+        {
+            var a = new YString("");
+            var b = new YString("abcd");
+            var c = a + b;
+
+            Assert.AreEqual("abcd", c.ToString());
+        }
+
+        [TestMethod]
+        public void AddNumberToEmptyString()
+        {
+            var a = new YString("");
+            var b = (Number)7;
+            var c = a + b;
+
+            Assert.AreEqual("7", c.ToString());
+        }
+
+        [TestMethod]
+        public void AddEmptyString()
+        {
+            var a = new YString("abcd");
+            var b = new YString("");
+            var c = a + b;
+
+            Assert.AreEqual("abcd", c.ToString());
+        }
+
+        [TestMethod]
         public void AddStrings()
         {
             var a = new YString("abc");
@@ -293,6 +323,42 @@ namespace YololEmulator.Tests
         }
 
         [TestMethod]
+        public void SubtractNoMatch()
+        {
+            var a = new YString("58dsfg135y");
+            var c = a - "nothing";
+
+            Assert.AreEqual("58dsfg135y", c.ToString());
+        }
+
+        [TestMethod]
+        public void SubtractNoMatchNumber()
+        {
+            var a = new YString("58dsfg135y");
+            var c = a - (Number)7;
+
+            Assert.AreEqual("58dsfg135y", c.ToString());
+        }
+
+        [TestMethod]
+        public void SubtractNumberFromEnd()
+        {
+            var a = new YString("58dsfg135y7");
+            var c = a - (Number)7;
+
+            Assert.AreEqual("58dsfg135y", c.ToString());
+        }
+
+        [TestMethod]
+        public void SubtractNumberFromEmpty()
+        {
+            var a = new YString("");
+            var c = a - (Number)7;
+
+            Assert.AreEqual("", c.ToString());
+        }
+
+        [TestMethod]
         public void StringOrderSameLength()
         {
             var a = new YString("abc");
@@ -390,6 +456,20 @@ namespace YololEmulator.Tests
                 Assert.AreEqual(order >= 0, ay >= by);
                 Assert.AreEqual(order > 0, ay > by);
             }
+        }
+
+        [TestMethod]
+        public void StringEquals()
+        {
+            var a = new YString("1234");
+            Assert.IsTrue(a.Equals("1234"));
+        }
+
+        [TestMethod]
+        public void EmptyStringEquals()
+        {
+            var a = new YString("");
+            Assert.IsTrue(a.Equals(""));
         }
     }
 }
