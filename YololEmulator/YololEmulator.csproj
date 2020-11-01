@@ -50,94 +50,97 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="LogidDance2.lol">
+    <None Update="Scripts\LogidDance2.lol">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="OctalAndBinaryConversion.lol">
+    <None Update="Scripts\OctalAndBinaryConversion.lol">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="SqrtApprox.lol">
+    <None Update="Scripts\SqrtApprox.lol">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="OpenSesame.lol">
+    <None Update="Scripts\OpenSesame.lol">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DriftingSpaceship.lol">
+    <None Update="Scripts\DriftingSpaceship.lol">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="collatz.lol">
+    <None Update="Scripts\collatz.lol">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="binary_to_unary.lol">
+    <None Update="Scripts\binary_to_unary.lol">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="coprimes.lol">
+    <None Update="Scripts\coprimes.lol">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="HappyNumbers.lol">
+    <None Update="Scripts\HappyNumbers.lol">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="CubeRoot.lol">
+    <None Update="Scripts\CubeRoot.lol">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="hanoi.lol">
+    <None Update="Scripts\hanoi.lol">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="number_formatting.lol">
+    <None Update="Scripts\find_and_replace.lol">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="test.lol">
+    <None Update="Scripts\time_formatting.lol">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="min10.lol">
+    <None Update="Scripts\test.lol">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="atan2 take2.lol">
+    <None Update="Scripts\min10.lol">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="FlipFlops.lol">
+    <None Update="Scripts\atan2 take2.lol">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="LogApprox.lol">
+    <None Update="Scripts\FlipFlops.lol">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="XOR16.lol">
+    <None Update="Scripts\LogApprox.lol">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="warehouse_management.lol">
+    <None Update="Scripts\XOR16.lol">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="binary_search_number_parser.lol">
+    <None Update="Scripts\warehouse_management.lol">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="jump_table_number_parser.lol">
+    <None Update="Scripts\binary_search_number_parser.lol">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="bf.lol">
+    <None Update="Scripts\jump_table_number_parser.lol">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="intersection.lol">
+    <None Update="Scripts\bf.lol">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="atanimpossible.lol">
+    <None Update="Scripts\intersection.lol">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="AzurethiPrimes.lol">
+    <None Update="Scripts\atanimpossible.lol">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="sorting1.lol">
+    <None Update="Scripts\AzurethiPrimes.lol">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="NyefariSort.lol">
+    <None Update="Scripts\sorting1.lol">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="union.lol">
+    <None Update="Scripts\NyefariSort.lol">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="LogicDance1.lol">
+    <None Update="Scripts\union.lol">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="tape.lol">
+    <None Update="Scripts\LogicDance1.lol">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Scripts\tape.lol">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

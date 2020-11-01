@@ -29,7 +29,7 @@ namespace Yololc
         public bool DisableAstTransformPasses { get; set; }
 
         [Option("disable_cfgpasses", HelpText = "Disable all passes based on CFG analysis", Required = false, Default = false)]
-        public bool DisableSimpleAstPasses { get; set; }
+        public bool DisableCfgPasses { get; set; }
 
 
 
@@ -79,7 +79,7 @@ namespace Yololc
             {
                 // Read from stdin
                 var result = new StringBuilder();
-                string line;
+                string? line;
                 while ((line = Console.ReadLine()) != null)
                     result.AppendLine(line);
 

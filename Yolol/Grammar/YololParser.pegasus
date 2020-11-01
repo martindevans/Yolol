@@ -12,8 +12,7 @@
 @trace true
 
 program <Program>
-    = comment { new Program(Array.Empty<Line>()) }
-    / lines:line<0,, (comment / newline)> _ EOF { new Program(lines) }
+    = lines:line<0,,newline> _ EOF { new Program(lines) }
 
 line <Line> -public
     = _ stmts:statement<0,, _> _ { new Line(new StatementList(stmts)) }
@@ -27,6 +26,7 @@ statement <BaseStatement>
     / modify
     / assign
     / compound_assign
+    / comment
 
 goto <Goto>
     = "goto" _ e:expression { new Goto(e) }
@@ -56,6 +56,9 @@ compound_op <YololBinaryOp>
     / "/=" { YololBinaryOp.Divide }
     / "%=" { YololBinaryOp.Modulo }
     / "^=" { YololBinaryOp.Exponent }
+
+comment <EmptyStatement>
+    = "//" (!newline .)* { new EmptyStatement() }
 
 // ########################################
 // Expressions
@@ -145,9 +148,6 @@ identifier <VariableName>
 newline
     = "\r\n"
     / "\n"
-
-comment
-    = "//" (!newline .)* newline
 
 _
     = [ \t]*
