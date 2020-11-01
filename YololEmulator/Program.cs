@@ -5,7 +5,6 @@ using System.Linq;
 using CommandLine;
 using Yolol.Execution;
 using YololEmulator.Network;
-using YololEmulator.Network.Http;
 using Parser = Yolol.Grammar.Parser;
 
 namespace YololEmulator
@@ -20,12 +19,6 @@ namespace YololEmulator
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
             public string InputFile { get; set; }
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
-
-            [Option('h', "host", HelpText = "Port to host a network on", Required = false)]
-            public ushort? HostPort { get; set; }
-
-            [Option('c', "client", HelpText = "IP/Port to connect on", Required = false)]
-            public string? Client { get; set; }
 
             [Option('m', "max_line", HelpText = "Set the max line number", Required = false, Default = (ushort)20)]
             public ushort MaxLineNumber { get; set; }
@@ -60,10 +53,6 @@ namespace YololEmulator
                 }
 
                 IDeviceNetwork network = new ConsoleInputDeviceNetwork(options.SaveOutputs, options.EndProgramVar);
-                if (options.Client != null)
-                    network = new HttpClientDeviceNetwork(options.Client);
-                if (options.HostPort != null)
-                    network = new HttpHostDeviceNetwork(options.HostPort.Value);
 
                 var endvar = network.Get(options.EndProgramVar);
                 var lines = 0;
