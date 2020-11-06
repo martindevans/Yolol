@@ -1,0 +1,50 @@
+﻿#define input        a
+#define next_char	 c
+#define char1    	 d
+#define char2    	 e
+#define delimiter    f
+#define run_acc      g
+#define tmp		     h
+#define output       :o
+
+#import lib.lol
+
+#define try_next_run_char() {
+	char2=pop_char(input);
+	continue_if(char1==char2);
+	run_acc++
+}
+
+@setup:
+	input=:a
+	output=""
+	delimiter="."
+	char1=pop_char(input);
+	run_acc=1
+	ifinput<0then
+		output=char1+output;
+		goto:done++
+	end
+
+@find_run_end:
+	try_next_run_char()
+	ifinput>0then
+		try_next_run_char()
+	end
+	gotofind_run_end+(input<0)*(run_ended_no_chars-find_run_end)
+
+@run_ended_dif_char:
+	output=((delimiter+run_acc+delimiter)-".1.")
+          +char1+output-delimiter-delimiter;
+	char1=char2;
+	run_acc=1
+	continue_if(input>0)
+	gotofind_run_end
+
+@finish:
+	output=char2+output;
+	goto:done++
+
+@run_ended_no_chars:
+	output=run_acc+char1+output;
+	goto:done++

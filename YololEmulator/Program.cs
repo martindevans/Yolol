@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using CommandLine;
@@ -16,9 +15,9 @@ namespace YololEmulator
         private class Options
         {
             [Option('i', "input", HelpText = "File to read YOLOL code from", Required = true)]
-#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+            #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
             public string InputFile { get; set; }
-#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+            #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
             [Option('m', "max_line", HelpText = "Set the max line number", Required = false, Default = (ushort)20)]
             public ushort MaxLineNumber { get; set; }
@@ -55,7 +54,6 @@ namespace YololEmulator
                 IDeviceNetwork network = new ConsoleInputDeviceNetwork(options.SaveOutputs, options.EndProgramVar);
 
                 var endvar = network.Get(options.EndProgramVar);
-                var lines = 0;
                 var st = new MachineState(network, options.MaxLineNumber);
                 var pc = 0;
                 while (pc <= options.MaxLineNumber)
@@ -69,19 +67,9 @@ namespace YololEmulator
 
                     // Evaluate this line
                     pc = EvaluateLine(line, pc, st);
-                    lines++;
 
                     // Print machine state
-                    Console.Title = $"Elapsed Game Time: {TimeSpan.FromMilliseconds(200 * lines).TotalSeconds.ToString(CultureInfo.CurrentCulture)}s";
-                    Console.WriteLine("State:");
-                    foreach (var (key, value) in st.OrderBy(a => a.Key))
-                    {
-                        if (value.Value.Type == Yolol.Execution.Type.String)
-                            Console.WriteLine($" | {key} = \"{value}\"");
-                        else
-                            Console.WriteLine($" | {key} = {value}");
-                    }
-
+                    DisplayState(st);
                     Console.WriteLine();
 
                     if (options.Auto)
@@ -95,23 +83,33 @@ namespace YololEmulator
                     }
                     else
                     {
-                        // Pause until made to continue
+                        // Pause until user presses F5
                         Console.Write("Press F5 to continue");
                         while (Console.ReadKey(true).Key != ConsoleKey.F5) { }
+                        Console.CursorLeft = 0;
+                        Console.WriteLine(new string(' ', Console.WindowWidth));
                     }
-                    Console.CursorLeft = 0;
-                    Console.WriteLine(string.Join("", Enumerable.Repeat('=', Console.WindowWidth)));
-                }
 
-                Console.WriteLine($"{TimeSpan.FromMilliseconds(200 * lines).TotalSeconds.ToString(CultureInfo.CurrentCulture)}s");
+                    Console.WriteLine();
+                }
             }
             catch (Exception e)
             {
-                Error(() => {
-                    Console.WriteLine();
-                    Console.WriteLine("Fatal Exception:");
-                    Console.Error.WriteLine(e);
-                });
+                Console.WriteLine();
+                DrawLine("Fatal Exception:", ConsoleColor.Red);
+                DrawLine(e.ToString(), ConsoleColor.Red);
+            }
+        }
+
+        private static void DisplayState(MachineState state)
+        {
+            Console.WriteLine("State:");
+            foreach (var (key, value) in state.OrderBy(a => a.Key))
+            {
+                if (value.Value.Type == Yolol.Execution.Type.String)
+                    Console.WriteLine($" | {key} = \"{value}\"");
+                else
+                    Console.WriteLine($" | {key} = {value}");
             }
         }
 
@@ -129,8 +127,9 @@ namespace YololEmulator
             if (!result.IsOk)
             {
                 Console.WriteLine();
-                Console.Error.Write(result.Err.ToString());
 
+                DrawLine(result.Err.ToString(), ConsoleColor.Red);
+                Console.WriteLine();
                 Console.WriteLine("Press any key to try this line again");
                 Console.ReadKey(true);
                 return pc;
@@ -142,19 +141,16 @@ namespace YololEmulator
             }
             catch (ExecutionException ee)
             {
-                var c = Console.ForegroundColor;
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"Runtime Error: {ee.Message}");
-                Console.ForegroundColor = c;
+                DrawLine($"Runtime Error: {ee.Message}", ConsoleColor.DarkYellow);
                 return pc + 1;
             }
         }
 
-        private static void Error(Action act)
+        private static void DrawLine(string message, ConsoleColor color)
         {
             var fg = Console.ForegroundColor;
-            Console.ForegroundColor = ConsoleColor.Red;
-            act();
+            Console.ForegroundColor = color;
+            Console.WriteLine(message);
             Console.ForegroundColor = fg;
         }
     }

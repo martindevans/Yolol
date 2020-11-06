@@ -1,4 +1,7 @@
-﻿namespace Yolol.Execution
+﻿using System.Collections.Generic;
+using Yolol.Grammar;
+
+namespace Yolol.Execution
 {
     public interface IDeviceNetwork
     {

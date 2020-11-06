@@ -21,7 +21,7 @@ namespace Yolol.Grammar.AST
 
         public override int GetHashCode()
         {
-            return (Lines != null ? Lines.Select(l => l.GetHashCode()).Aggregate(0, (a, b) => unchecked(a + b)) : 0);
+            return (Lines.Select(l => l.GetHashCode()).Aggregate(0, (a, b) => unchecked(a + b)));
         }
 
         public static bool operator ==(Program? left, Program? right)

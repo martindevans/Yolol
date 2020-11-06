@@ -8,7 +8,6 @@ namespace Yolol.Execution
         public ExecutionException(string message)
             : base(message)
         {
-            
         }
     }
 }

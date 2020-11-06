@@ -1,0 +1,7 @@
+a=:a:o=""f="."d=a---a g=1ifa<0then:o=d+:o goto:done++end
+e=a---a _/=d==e g++ifa>0thene=a---a _/=d==e g++endgoto2+(a<0)*(5-2)
+:o=((f+g+f)-".1.")+d+:o-f-f d=e g=1_/=a>0goto2
+:o=e+:o goto:done++
+:o=g+d+:o goto:done++
+
+// <-------------- this line is 70 characters long ------------------>

@@ -1,0 +1,65 @@
+﻿@classname YololAssemblerParser
+@accessibility internal
+@using YololAssembler.Grammar.AST
+@using System.Globalization
+@start program
+@trace true
+
+program <Program>
+    = lines:statement<0,,newline> _ EOF { new Program(lines) }
+
+// ########################################
+// Statements
+
+statement <BaseStatement>
+    = line_label
+    / define
+    / import
+    / other
+
+line_label <LineLabel>
+    = "@" i:identifier ":" { new LineLabel(i) }
+
+//comment <Comment>
+//    = "#" c:(!newline .)* { new Comment(string.Concat(c)) }
+
+import <Import>
+    = "#import" _ p:(!newline .)* { new Import(string.Concat(p)) }
+
+define <BaseDefine>
+    = function_define
+    / substitute_define
+
+function_define <FunctionDefine>
+    = "#define" _ i:identifier a:func_args _ b:define_body { new FunctionDefine(i, a, b) }
+
+func_args <IReadOnlyList<string>>
+    = "(" _ ")" { new List<string>() }
+    / "(" i:identifier<0,,","> ")" { (IReadOnlyList<string>)i }
+
+substitute_define <FindAndReplace>
+    = "#define" _ i:identifier _ b:define_body { new FindAndReplace(i, b) }
+
+define_body <string>
+    = "{" c:(!"}" .)* "}" { string.Concat(c) }
+    / c:(!newline .)* { string.Concat(c) }
+
+other <Other>
+    = c:(!newline .)* { new Other(string.Concat(c)) }
+
+// ########################################
+// Others
+
+identifier <string>
+    = s:([a-zA-Z_][a-zA-Z0-9_]<0,>) { s }
+
+newline
+    = "\r\n"
+    / "\n"
+
+_
+    = [ \t]*
+
+EOF
+    = !.
+    / unexpected:. #error{ "Unexpected character '" + unexpected + "'." }

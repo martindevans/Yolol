@@ -21,10 +21,7 @@ namespace Yolol.Analysis.TreeVisitor
 
         public virtual Line Visit(Line line)
         {
-            var r = Visit(line.Statements);
-            if (r is StatementList sl)
-                return new Line(sl);
-            return new Line(new StatementList(r));
+            return new Line(Visit(line.Statements));
         }
 
         protected virtual VariableName Visit(VariableName var)
