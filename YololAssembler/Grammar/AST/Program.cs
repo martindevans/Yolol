@@ -25,6 +25,9 @@ namespace YololAssembler.Grammar.AST
             // Replace line labels
             lines = Apply(Labels().ToArray(), lines.ToArray()).ToArray();
 
+            // Replace implicit line labels
+            lines = ApplyImplicitLabels(lines).ToArray();
+
             // Early out if compression should not be applied
             var yolol = string.Join("\n", lines);
             if (!compress)
@@ -37,6 +40,16 @@ namespace YololAssembler.Grammar.AST
 
             // remove unnecessary spaces from the program
             return new Result(Compress(parsedYolol.Ok));
+        }
+
+        private IEnumerable<string> ApplyImplicitLabels(IEnumerable<string> lines)
+        {
+            var lineNum = 1;
+            foreach (var line in lines)
+            {
+                yield return line.Replace("@", lineNum.ToString());
+                lineNum++;
+            }
         }
 
         private static string Compress(Yolol.Grammar.AST.Program yolol)

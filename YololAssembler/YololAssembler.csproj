@@ -4,6 +4,9 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <Nullable>enable</Nullable>
+    <StartupObject>YololAssembler.Program</StartupObject>
+    <Authors>Martin Evans</Authors>
+    <Company>Cylon</Company>
   </PropertyGroup>
 
   <ItemGroup>
