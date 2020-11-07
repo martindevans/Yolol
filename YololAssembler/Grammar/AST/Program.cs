@@ -28,6 +28,9 @@ namespace YololAssembler.Grammar.AST
             // Replace implicit line labels
             lines = ApplyImplicitLabels(lines).ToArray();
 
+            // Run all `eval` replacements
+            lines = Apply(new[] { new EvalReplacement() }, lines).ToArray();
+
             // Early out if compression should not be applied
             var yolol = string.Join("\n", lines);
             if (!compress)
@@ -42,7 +45,7 @@ namespace YololAssembler.Grammar.AST
             return new Result(Compress(parsedYolol.Ok));
         }
 
-        private IEnumerable<string> ApplyImplicitLabels(IEnumerable<string> lines)
+        private static IEnumerable<string> ApplyImplicitLabels(IEnumerable<string> lines)
         {
             var lineNum = 1;
             foreach (var line in lines)

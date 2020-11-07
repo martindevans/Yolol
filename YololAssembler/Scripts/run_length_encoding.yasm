@@ -7,7 +7,7 @@
 #define tmp		     h
 #define output       :o
 
-#import lib.lol
+#import lib.yasm
 
 #define try_next_run_char() {
 	char2=pop_char(input);
@@ -31,7 +31,7 @@
 	ifinput>0then
 		try_next_run_char()
 	end
-	gotofind_run_end+(input<0)*(run_ended_no_chars-find_run_end)
+	gotofind_run_end+(input<0)*eval(run_ended_no_chars-find_run_end)
 
 @run_ended_dif_char:
 	output=((delimiter+run_acc+delimiter)-".1.")

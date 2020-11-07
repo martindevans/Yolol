@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace YololAssembler.Grammar.AST
+﻿namespace YololAssembler.Grammar.AST
 {
     internal class FindAndReplace
         : BaseDefine
@@ -14,10 +12,11 @@ namespace YololAssembler.Grammar.AST
             Replacement = replacement;
         }
 
-        public override string Apply(string input)
+        protected override string FindRegex => $"(?<body>{Identifier})";
+
+        protected override string Replace(string part)
         {
-            var replacement = Other.Trim(Replacement);
-            return input.Replace($"{Identifier}", replacement);
+            return Replacement;
         }
     }
 }

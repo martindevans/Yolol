@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace YololAssembler.Grammar.AST
 {
@@ -19,13 +18,11 @@ namespace YololAssembler.Grammar.AST
             Arguments = arguments;
         }
 
-        public override string Apply(string input)
-        {
-            var match = Regex.Match(input, $"{Identifier}\\((.*?)\\)");
-            if (!match.Success)
-                return input;
+        protected override string FindRegex => $"{Identifier}\\((?<body>.*?)\\)";
 
-            var parameters = match.Groups[1].Value.Split(",").Where(a => !string.IsNullOrEmpty(a)).ToArray();
+        protected override string Replace(string part)
+        {
+            var parameters = part.Split(",").Where(a => !string.IsNullOrEmpty(a)).ToArray();
 
             if (parameters.Length != Arguments.Count)
                 throw new InvalidOperationException($"Incorrect number of arguments passed to function `{Identifier}` (expected {Arguments.Count}, got {parameters.Length})");
@@ -41,12 +38,9 @@ namespace YololAssembler.Grammar.AST
             }
 
             var replacement = Other.Trim(Replacement);
-            var replaced = BaseDefine.Apply(replacement, defines);
+            var replaced = Apply(replacement, defines);
 
-            var v = input.Substring(0, match.Index)
-                 + replaced
-                 + input.Substring(0 + match.Index + match.Length);
-            return v;
+            return replaced;
         }
     }
 }

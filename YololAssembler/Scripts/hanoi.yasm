@@ -18,7 +18,7 @@
 #define l_pin_char   d
 #define r_pin_char   e
 
-#import lib.lol
+#import lib.yasm
 
 @line1:
     b=""
