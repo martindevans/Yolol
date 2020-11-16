@@ -3,7 +3,6 @@ using Yolol.Execution;
 using Yolol.Execution.Extensions;
 using Yolol.Grammar.AST.Expressions;
 using Yolol.Grammar.AST.Expressions.Binary;
-using Yolol.Grammar.AST.Expressions.Unary;
 
 namespace Yolol.Analysis.TreeVisitor.Reduction
 {
@@ -18,7 +17,6 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
             var replacements = new[] {
                 SmallestExponents(con.Value),
                 BestFraction(con.Value),
-                AtanOffset(con.Value),
             };
 
             var shortestLength = int.MaxValue;
@@ -69,10 +67,10 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
                     if (double.IsNaN(log))
                         continue;
 
-                    var exp = new Exponent(new ConstantNumber(b), new ConstantNumber((decimal)log));
+                    var exp = new Exponent(new ConstantNumber((Number)b), new ConstantNumber((Number)(decimal)log));
                     Submit(exp);
 
-                    var integral = new Exponent(new ConstantNumber(b), new ConstantNumber((int)Math.Round(log)));
+                    var integral = new Exponent(new ConstantNumber((Number)b), new ConstantNumber((Number)(int)Math.Round(log)));
                     var integralV = integral.StaticEvaluate().Number;
                     var integralE = value - integralV;
                     Submit(new Add(integral, new ConstantNumber(integralE)));
@@ -151,24 +149,12 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
 
             var (fn, fd) = RealToFraction((double)number, 0.001f);
 
-            var replacement = new Divide(new ConstantNumber((decimal)fn), new ConstantNumber((decimal)fd));
+            var replacement = new Divide(new ConstantNumber((Number)(decimal)fn), new ConstantNumber((Number)(decimal)fd));
 
             if (replacement.StaticEvaluate().Number == number)
                 return replacement;
             else
                 return new ConstantNumber(number);
-        }
-
-        private static BaseExpression? AtanOffset(Number number)
-        {
-            var atan = new ArcTan(new ConstantNumber(number)).TryStaticEvaluate();
-            if (!atan.HasValue)
-                return null;
-            var atanFloor = (long)(decimal)atan.Value.Number;
-
-            var offset = number - atan.Value;
-
-            return new Add(new ConstantNumber(offset.Number), new Tangent(new ConstantNumber(atanFloor)));
         }
     }
 }

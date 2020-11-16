@@ -10,7 +10,7 @@ namespace YololEmulator.Tests.AST
         {
             var r = TestExecutor.Execute("a = 1 a *= 2");
 
-            Assert.AreEqual(2, r.GetVariable("a").Value.Number);
+            Assert.AreEqual(2, (int)r.GetVariable("a").Value.Number);
         }
 
         [TestMethod]

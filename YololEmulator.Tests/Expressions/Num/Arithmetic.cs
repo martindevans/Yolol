@@ -20,9 +20,9 @@ namespace YololEmulator.Tests.Expressions.Num
 
             const decimal expected = 1 + 2 * 4 / 8m;
 
-            Assert.AreEqual(expected, a.Value.Number);
-            Assert.AreEqual(expected, b.Value.Number);
-            Assert.AreEqual(expected, c.Value.Number);
+            Assert.AreEqual(expected, (decimal)a.Value.Number);
+            Assert.AreEqual(expected, (decimal)b.Value.Number);
+            Assert.AreEqual(expected, (decimal)c.Value.Number);
         }
 
         [TestMethod]
@@ -36,7 +36,7 @@ namespace YololEmulator.Tests.Expressions.Num
 
             const decimal expected = (2 + 2) * 4 / 8m;
 
-            Assert.AreEqual(expected, a.Value.Number);
+            Assert.AreEqual(expected, (decimal)a.Value.Number);
         }
 
         [TestMethod]
@@ -52,8 +52,8 @@ namespace YololEmulator.Tests.Expressions.Num
             var a = result.GetVariable("a");
             var b = result.GetVariable("b");
 
-            Assert.AreEqual(14, a.Value.Number);
-            Assert.AreEqual(10, b.Value.Number);
+            Assert.AreEqual(14, (int)a.Value.Number);
+            Assert.AreEqual(10, (int)b.Value.Number);
         }
     }
 }

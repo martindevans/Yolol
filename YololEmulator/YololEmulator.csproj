@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <StartupObject>YololEmulator.Program</StartupObject>
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>

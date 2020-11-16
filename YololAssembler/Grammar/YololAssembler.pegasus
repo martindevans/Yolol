@@ -31,11 +31,10 @@ define <BaseDefine>
     / substitute_define
 
 function_define <FunctionDefine>
-    = "#define" _ i:identifier a:func_args _ b:define_body { new FunctionDefine(i, a, b) }
+    = "#define" _ i:identifier _ "(" a:func_args ")" _ b:define_body { new FunctionDefine(i, a, b) }
 
 func_args <IReadOnlyList<string>>
-    = "(" _ ")" { new List<string>() }
-    / "(" i:identifier<0,,","> ")" { (IReadOnlyList<string>)i }
+    = i:identifier<0,,","_> { (IReadOnlyList<string>)i }
 
 substitute_define <FindAndReplace>
     = "#define" _ i:identifier _ b:define_body { new FindAndReplace(i, b) }

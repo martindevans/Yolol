@@ -12,7 +12,7 @@ namespace YololEmulator.Tests
         private static void AssertNumber(Value v, decimal d)
         {
             Assert.AreEqual(Type.Number, v.Type);
-            Assert.AreEqual(d, v.Number);
+            Assert.AreEqual((Number)d, v.Number);
             Assert.AreEqual(d.ToString(CultureInfo.InvariantCulture), v.ToString());
 
             Assert.ThrowsException<InvalidCastException>(() => {
@@ -42,7 +42,7 @@ namespace YololEmulator.Tests
         [TestMethod]
         public void Number()
         {
-            var n = new Value(1);
+            var n = new Value((Number)1);
 
             AssertNumber(n, 1);
         }
@@ -63,9 +63,9 @@ namespace YololEmulator.Tests
         [TestMethod]
         public void NumNumEquality()
         {
-            var a1 = new Value(1);
-            var a2 = new Value(1);
-            var b = new Value(2);
+            var a1 = new Value((Number)1);
+            var a2 = new Value((Number)1);
+            var b = new Value((Number)2);
 
             Assert.AreEqual(a1.ToObject(), a2.ToObject());
             Assert.AreEqual(a1, a2);
@@ -76,8 +76,8 @@ namespace YololEmulator.Tests
         [TestMethod]
         public void StringNumEquality()
         {
-            var a1 = new Value(1);
-            var a2 = new Value(1);
+            var a1 = new Value((Number)1);
+            var a2 = new Value((Number)1);
             var b = new Value("2");
 
             Assert.AreEqual(a1.ToObject(), a2.ToObject());

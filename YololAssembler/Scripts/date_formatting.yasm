@@ -1,0 +1,128 @@
+﻿#define day        a
+#define month      b
+#define n10        c
+#define suffix     d
+#define sfx_rd	   e
+
+#define offset_jan f
+#define offset_feb g
+#define offset_mar h
+#define offset_apr i
+#define offset_may j
+#define offset_jun k
+#define offset_jul l
+#define offset_aug m
+#define offset_sep n
+#define offset_oct o
+#define offset_nov p
+#define offset_dec q
+
+#define sfx_th	   r
+#define special	   s
+#define sfx_nd	   t
+
+#import lib.yasm
+
+#define handle_offset(Offset, Name) {
+	day-=Offset
+	month=Name
+	gotosubmit
+}
+
+@init_constants:
+	offset_jan=30
+	offset_feb=58
+	offset_mar=89
+	offset_apr=119
+	offset_may=150
+	offset_jun=180
+	offset_jul=211
+	offset_aug=242
+	offset_sep=272
+	offset_oct=303
+	offset_nov=333
+	sfx_rd="rd"
+	sfx_th="th"
+	sfx_nd="nd"
+
+@start:
+	day=:a;
+	goto
+		label_jan
+		+(day>offset_jan)
+		+(day>offset_feb)
+		+(day>offset_mar)
+		+(day>offset_apr)
+		+(day>offset_may)
+		+(day>offset_jun)
+		+(day>offset_jul)
+		+(day>offset_aug)
+		+(day>offset_sep)
+		+(day>offset_oct)
+
+@submit:
+	n10=day%10
+	special=(n10<2)+"st"
+		+(n10==2)+sfx_nd
+		+(n10==3)+sfx_rd
+		+(n10>3)+sfx_th
+		-"0st"
+		-(0+sfx_nd)
+		-(0+sfx_rd)
+		-(0+r)
+		-1
+	
+@final:
+	suffix=special;
+	if n10<1or(day>9andday<14)then
+		suffix=r;
+	end
+
+	:o=day+suffix+" "+month
+	:done=1
+	gotostart
+
+@label_jan:
+	day=day+1
+	month="Jan"
+	gotosubmit
+
+@label_feb:
+	handle_offset(30, "Feb")
+
+@label_mar:
+	handle_offset(58, "Mar")
+
+@label_apr:
+	handle_offset(89, "Apr")
+
+@label_may:
+	handle_offset(119, "May")
+
+@label_jun:
+	handle_offset(150, "Jun")
+
+@label_jul:
+	handle_offset(180, "Jul")
+
+@label_aug:
+	handle_offset(211, "Aug")
+
+@label_sept:
+	handle_offset(242, "Sep")
+
+@label_oct:
+	handle_offset(272, "Oct")
+
+@label_nov:
+	ifday>333then
+		day-=333
+		month="Dec"
+	else;
+		day-=303
+		month="Nov"
+	end
+	gotosubmit
+	
+
+

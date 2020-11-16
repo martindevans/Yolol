@@ -411,8 +411,8 @@ namespace YololEmulator.Tests.Ladder
                     var b = (ushort)rng.Next(0, ushort.MaxValue);
                     var c = (ushort)(a ^ b);
 
-                    input.Add(new Dictionary<string, Value> {{ "a", new Value(a) }, { "b", new Value(b) }});
-                    output.Add(new Dictionary<string, Value> {{"o", new Value(c) }});
+                    input.Add(new Dictionary<string, Value> {{ "a", new Value((Number)a) }, { "b", new Value((Number)b) }});
+                    output.Add(new Dictionary<string, Value> {{"o", new Value((Number)c) }});
                 }
             }
 

@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Linq;
 using Yolol.Analysis.Types;
+using Yolol.Execution;
 using Yolol.Grammar.AST.Expressions;
 using Yolol.Grammar.AST.Expressions.Binary;
 using Yolol.Grammar.AST.Expressions.Unary;
 using Yolol.Grammar.AST.Statements;
+using Variable = Yolol.Grammar.AST.Expressions.Variable;
 
 namespace Yolol.Analysis.TreeVisitor.Reduction
 {
@@ -38,7 +40,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
             // If the `condition` is not in this form already then replace it with `condition != 0`
             var condition = @if.Condition.IsBoolean
                 ? new Bracketed(@if.Condition)
-                : new Bracketed(new NotEqualTo(new Bracketed(@if.Condition), new ConstantNumber(0)));
+                : new Bracketed(new NotEqualTo(new Bracketed(@if.Condition), new ConstantNumber((Number)0)));
 
             if (@if.FalseBranch.Statements.Count == 0)
             {

@@ -29,7 +29,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
             {
                 return (long)number switch {
                     -1 => base.Visit(new Negate(new Bracketed(other))),
-                    0 => new ConstantNumber(0),
+                    0 => new ConstantNumber((Number)0),
                     1 => base.Visit(other),
                     _ => null
                 };
@@ -80,7 +80,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
 
             // `0/anything` is zero
             if (lv.HasValue && lv.Value == 0)
-                return new ConstantNumber(0);
+                return new ConstantNumber((Number)0);
 
             // if bottom side doesn't have a value we can't optimise
             if (!rv.HasValue)
@@ -150,9 +150,9 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
                 return base.Visit(exp);
 
             return (long)rv.Value switch {
-                0 => base.Visit(new ConstantNumber(1)),
+                0 => base.Visit(new ConstantNumber((Number)1)),
                 1 => base.Visit(new Bracketed(base.Visit(exp.Left))),
-                -1 => base.Visit(new Divide(new ConstantNumber(1), new Bracketed(exp.Left))),
+                -1 => base.Visit(new Divide(new ConstantNumber((Number)1), new Bracketed(exp.Left))),
                 _ => base.Visit(exp)
             };
         }
@@ -180,11 +180,11 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
                 return new ConstantNumber(sub.StaticEvaluate().Number);
 
             // If this is `0 - exp` then return `-exp`
-            if (lv.HasValue && lv == 0)
+            if (lv.HasValue && lv == (Number)0)
                 return base.Visit(new Negate(sub.Right));
 
             // if this is `exp - 0` then return `exp`
-            if (rv.HasValue && rv == 0)
+            if (rv.HasValue && rv == (Number)0)
                 return base.Visit(sub.Left);
 
             return base.Visit(sub);
@@ -197,11 +197,11 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
 
             // Check if either value is true
             if ((l.HasValue && l.Value) && (r.HasValue && r.Value))
-                return new ConstantNumber(1);
+                return new ConstantNumber((Number)1);
 
             // Check if all values are false
             if (l.HasValue && r.HasValue)
-                return new ConstantNumber(0);
+                return new ConstantNumber((Number)0);
 
             return base.Visit(and);
         }
@@ -213,11 +213,11 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
 
             // Check if all values are false
             if (l.HasValue && !l.Value && r.HasValue && !r.Value)
-                return new ConstantNumber(0);
+                return new ConstantNumber((Number)0);
 
             // Check if either value is true
             if ((l.HasValue && l.Value) || (r.HasValue && r.Value))
-                return new ConstantNumber(1);
+                return new ConstantNumber((Number)1);
 
             return base.Visit(or);
         }
@@ -243,7 +243,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
 
             var n = DiscoverNumberValue(expr);
             if (n.HasValue)
-                return n != 0;
+                return n != (Number)0;
 
             var s = DiscoverStringValue(expr);
             if (s != null)

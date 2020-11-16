@@ -64,7 +64,7 @@ namespace Yolol.Execution
 
         public static implicit operator Value(decimal d)
         {
-            return new Value(d);
+            return new Value((Number)d);
         }
 
         public static implicit operator Value(string s)
@@ -571,7 +571,7 @@ namespace Yolol.Execution
         public static Value operator ++(Value value)
         {
             if (value.Type == Type.Number)
-                return new Value(value._number + 1);
+                return new Value(value._number + Number.One);
 
             var a = value._string;
             a++;

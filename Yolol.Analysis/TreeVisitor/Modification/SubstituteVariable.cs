@@ -29,7 +29,7 @@ namespace Yolol.Analysis.TreeVisitor.Modification
             {
                 return right switch {
                     Variable v => new Increment(v.Name),
-                    ConstantNumber n => new ConstantNumber(new Add(n, new ConstantNumber(1)).StaticEvaluate().Number),
+                    ConstantNumber n => new ConstantNumber(new Add(n, new ConstantNumber((Number)1)).StaticEvaluate().Number),
                     ConstantString s => new ConstantString(s.Value + " "),
                     Bracketed b => HandleExpression(b.Parameter),
                     _ => throw new InvalidOperationException(right.GetType().Name)
@@ -50,7 +50,7 @@ namespace Yolol.Analysis.TreeVisitor.Modification
                         return new Decrement(v.Name);
 
                     case ConstantNumber n:
-                        return new ConstantNumber(new Subtract(n, new ConstantNumber(1)).StaticEvaluate().Number);
+                        return new ConstantNumber(new Subtract(n, new ConstantNumber((Number)1)).StaticEvaluate().Number);
 
                     case ConstantString s:
                         if (s.Value.Length > 0)

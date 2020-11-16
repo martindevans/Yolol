@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using Yolol.Execution;
 using Yolol.Grammar;
 using Yolol.Grammar.AST.Expressions;
+using Variable = Yolol.Grammar.AST.Expressions.Variable;
 
 namespace Yolol.Analysis.TreeVisitor.Reduction
 {
@@ -25,7 +27,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
             if (_assigned.Contains(var.Name))
                 return var;
 
-            return new ConstantNumber(0);
+            return new ConstantNumber((Number)0);
         }
     }
 }

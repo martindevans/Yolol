@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Yolol.Execution;
 using Yolol.Grammar;
 using Yolol.Grammar.AST.Expressions;
 using Yolol.Grammar.AST.Statements;
@@ -21,7 +22,7 @@ namespace YololEmulator.Tests.AST
         public void Inequality()
         {
             var a = new EmptyStatement();
-            var b = new Assignment(new VariableName("a"), new ConstantNumber(3));
+            var b = new Assignment(new VariableName("a"), new ConstantNumber((Number)3));
 
             Assert.IsFalse(a.Equals((BaseStatement)b));
         }

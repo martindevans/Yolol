@@ -12,7 +12,7 @@ namespace YololEmulator.Tests.Expressions.Num
 
             var a = result.GetVariable("a");
 
-            Assert.AreEqual(1, a.Value.Number);
+            Assert.AreEqual(1, (int)a.Value.Number);
         }
 
         [TestMethod]
@@ -22,7 +22,7 @@ namespace YololEmulator.Tests.Expressions.Num
 
             var a = result.GetVariable("a");
 
-            Assert.AreEqual(-1, a.Value.Number);
+            Assert.AreEqual(-1, (int)a.Value.Number);
         }
 
         [TestMethod]
@@ -32,7 +32,7 @@ namespace YololEmulator.Tests.Expressions.Num
 
             var a = result.GetVariable("a");
 
-            Assert.AreEqual(1.111m, a.Value.Number);
+            Assert.AreEqual(1.111m, (decimal)a.Value.Number);
         }
 
         [TestMethod]
@@ -42,7 +42,7 @@ namespace YololEmulator.Tests.Expressions.Num
 
             var c = result.GetVariable("c");
 
-            Assert.AreEqual(1, c.Value.Number);
+            Assert.AreEqual(1, (int)c.Value.Number);
         }
 
         [TestMethod]
@@ -52,7 +52,7 @@ namespace YololEmulator.Tests.Expressions.Num
 
             var c = result.GetVariable("c");
 
-            Assert.AreEqual(1, c.Value.Number);
+            Assert.AreEqual(1, (int)c.Value.Number);
         }
     }
 }

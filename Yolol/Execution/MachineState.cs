@@ -31,7 +31,7 @@ namespace Yolol.Execution
             else
             {
                 if (!_variables.TryGetValue(name, out var v))
-                    _variables.Add(name, v = new Variable { Value = new Value(0) });
+                    _variables.Add(name, v = new Variable { Value = new Value((Number)0) });
                 return v;
             }
         }

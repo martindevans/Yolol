@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Yolol.Execution;
 using Yolol.Execution.Extensions;
 using Yolol.Grammar.AST;
 using Yolol.Grammar.AST.Expressions;
@@ -45,9 +46,9 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
 
             var condition = @if.Condition.IsBoolean
                 ? Invert(@if.Condition)
-                : new Bracketed(new EqualTo(new Bracketed(@if.Condition), new ConstantNumber(0)));
+                : new Bracketed(new EqualTo(new Bracketed(@if.Condition), new ConstantNumber((Number)0)));
 
-            BaseExpression diff = new Bracketed(new Subtract(new ConstantNumber(_lineNumber + 1), @goto.Destination));
+            BaseExpression diff = new Bracketed(new Subtract(new ConstantNumber((Number)_lineNumber + (Number)1), @goto.Destination));
             if (diff.IsConstant)
                 diff = new ConstantNumber(diff.StaticEvaluate().Number);
 
@@ -65,7 +66,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
                 LessThan a => new GreaterThanEqualTo(a.Left, a.Right),
                 LessThanEqualTo a => new GreaterThan(a.Left, a.Right),
                 NotEqualTo a => new EqualTo(a.Left, a.Right),
-                _ => new EqualTo(new ConstantNumber(0), new Bracketed(expression))
+                _ => new EqualTo(new ConstantNumber((Number)0), new Bracketed(expression))
             };
         }
     }

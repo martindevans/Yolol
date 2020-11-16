@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using YololAssembler.Grammar.Errors;
 
 namespace YololAssembler.Grammar.AST
 {
@@ -25,7 +26,7 @@ namespace YololAssembler.Grammar.AST
             var parameters = part.Split(",").Where(a => !string.IsNullOrEmpty(a)).ToArray();
 
             if (parameters.Length != Arguments.Count)
-                throw new InvalidOperationException($"Incorrect number of arguments passed to function `{Identifier}` (expected {Arguments.Count}, got {parameters.Length})");
+                throw new IncorrectFunctionDefineArgsCount(Identifier, Arguments.Count, parameters.Length);
 
             // Convert args into individual find/replace defines
             var defines = new List<FindAndReplace>();

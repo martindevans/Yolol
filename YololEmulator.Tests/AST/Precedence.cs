@@ -47,105 +47,117 @@ namespace YololEmulator.Tests.AST
         public void ExponentAssociativity()
         {
             var state = TestExecutor.Execute("a = 2 ^ 2 ^ 3");
-            Assert.AreEqual(256, state.GetVariable("a").Value.Number);
+            Assert.AreEqual(256, (int)state.GetVariable("a").Value.Number);
         }
 
         [TestMethod]
         public void ExponentMul()
         {
             var state = TestExecutor.Execute("a = 2 ^ 3 * 4");
-            Assert.AreEqual(32, state.GetVariable("a").Value.Number);
+            Assert.AreEqual(32, (int)state.GetVariable("a").Value.Number);
         }
 
         [TestMethod]
         public void ExponentDiv()
         {
             var state = TestExecutor.Execute("a = 2 ^ 3 / 4");
-            Assert.AreEqual(2, state.GetVariable("a").Value.Number);
+            Assert.AreEqual(2, (int)state.GetVariable("a").Value.Number);
         }
 
         [TestMethod]
         public void ExponentMod()
         {
             var state = TestExecutor.Execute("a = 2 ^ 3 % 5");
-            Assert.AreEqual(3, state.GetVariable("a").Value.Number);
+            Assert.AreEqual(3, (int)state.GetVariable("a").Value.Number);
         }
 
         [TestMethod]
         public void MultiplyDiv()
         {
             var state = TestExecutor.Execute("a = 8 / 4 * 2");
-            Assert.AreEqual(4, state.GetVariable("a").Value.Number);
+            Assert.AreEqual(4, (int)state.GetVariable("a").Value.Number);
         }
 
         [TestMethod]
         public void MultiplyDiv2()
         {
             var state = TestExecutor.Execute("a = 10000 * 12.345 / 10000");
-            Assert.AreEqual(10m, state.GetVariable("a").Value.Number);
+            Assert.AreEqual(10, (int)state.GetVariable("a").Value.Number);
         }
 
         [TestMethod]
         public void MultiplyAdd()
         {
             var state = TestExecutor.Execute("a = 2 * 3 + 4");
-            Assert.AreEqual(10, state.GetVariable("a").Value.Number);
+            Assert.AreEqual(10, (int)state.GetVariable("a").Value.Number);
         }
 
         [TestMethod]
         public void MultiplySub()
         {
             var state = TestExecutor.Execute("a = 2 * 3 - 4");
-            Assert.AreEqual(2, state.GetVariable("a").Value.Number);
+            Assert.AreEqual(2, (int)state.GetVariable("a").Value.Number);
         }
 
         [TestMethod]
         public void AddLt()
         {
             var state = TestExecutor.Execute("a = 2 + 3 < 4");
-            Assert.AreEqual(0, state.GetVariable("a").Value.Number);
+            Assert.AreEqual(Number.Zero, state.GetVariable("a").Value.Number);
         }
 
         [TestMethod]
         public void AddGt()
         {
             var state = TestExecutor.Execute("a = 2 + 3 > 4");
-            Assert.AreEqual(1, state.GetVariable("a").Value.Number);
+            Assert.AreEqual(Number.One, state.GetVariable("a").Value.Number);
         }
 
         [TestMethod]
         public void AddLtEq()
         {
             var state = TestExecutor.Execute("a = 2 + 3 <= 4");
-            Assert.AreEqual(0, state.GetVariable("a").Value.Number);
+            Assert.AreEqual(Number.Zero, state.GetVariable("a").Value.Number);
         }
 
         [TestMethod]
         public void AddGtEq()
         {
             var state = TestExecutor.Execute("a = 2 + 3 >= 4");
-            Assert.AreEqual(1, state.GetVariable("a").Value.Number);
+            Assert.AreEqual(Number.One, state.GetVariable("a").Value.Number);
         }
 
         [TestMethod]
         public void GtEq()
         {
             var state = TestExecutor.Execute("a = 2 > 4 == 4");
-            Assert.AreEqual(0, state.GetVariable("a").Value.Number);
+            Assert.AreEqual(Number.Zero, state.GetVariable("a").Value.Number);
         }
 
         [TestMethod]
         public void EqOr()
         {
             var state = TestExecutor.Execute("a = 4 == 4 or 0");
-            Assert.AreEqual(1, state.GetVariable("a").Value.Number);
+            Assert.AreEqual(Number.One, state.GetVariable("a").Value.Number);
         }
 
         [TestMethod]
         public void AndOr()
         {
             var actual = TestExecutor.Parse("a = 1 and 2 or 3");
-            var expect = new Line(new StatementList(new Assignment(new VariableName("a"), new And(new ConstantNumber(1), new Or(new ConstantNumber(2), new ConstantNumber(3))))));
+            var expect = new Line(
+                new StatementList(
+                    new Assignment(
+                        new VariableName("a"),
+                        new And(
+                            new ConstantNumber((Number)1),
+                            new Or(
+                                new ConstantNumber((Number)2), new ConstantNumber((Number)3)
+                            )
+                        )
+                    )
+                )
+            );
 
             Assert.IsTrue(expect.Equals(actual.Lines[0]));
         }

@@ -8,11 +8,13 @@ using Yolol.Analysis.TreeVisitor.Inspection;
 using Yolol.Analysis.TreeVisitor.Modification;
 using Yolol.Analysis.TreeVisitor.Reduction;
 using Yolol.Analysis.Types;
+using Yolol.Execution;
 using Yolol.Grammar;
 using Yolol.Grammar.AST.Expressions;
 using Yolol.Grammar.AST.Expressions.Binary;
 using Yolol.Grammar.AST.Expressions.Unary;
 using Yolol.Grammar.AST.Statements;
+using Variable = Yolol.Grammar.AST.Expressions.Variable;
 
 namespace Yolol.Analysis.ControlFlowGraph.Extensions
 {
@@ -107,7 +109,7 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
                 if (t != Execution.Type.Number)
                     return base.Visit(dec);
                 else 
-                    return new Subtract(new Variable(dec.Name), new ConstantNumber(1));
+                    return new Subtract(new Variable(dec.Name), new ConstantNumber((Number)1));
             }
 
             protected override BaseExpression Visit(Increment inc)
@@ -117,7 +119,7 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
                 if (t != Execution.Type.Number)
                     return base.Visit(inc);
                 else 
-                    return new Add(new Variable(inc.Name), new ConstantNumber(1));
+                    return new Add(new Variable(inc.Name), new ConstantNumber((Number)1));
             }
         }
 

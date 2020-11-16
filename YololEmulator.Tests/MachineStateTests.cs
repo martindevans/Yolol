@@ -29,10 +29,10 @@ namespace YololEmulator.Tests
         public void ExternalVariable()
         {
             var n = new ConstantNetwork();
-            n.Get("name").Value = new Value(13);
+            n.Get("name").Value = new Value((Number)13);
             var s = new MachineState(n);
 
-            Assert.AreEqual(13, s.GetVariable(":name").Value.Number);
+            Assert.AreEqual((Number)13, s.GetVariable(":name").Value.Number);
         }
     }
 }

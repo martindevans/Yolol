@@ -10,7 +10,7 @@ namespace YololEmulator.Tests
         public void ToStringEqualsValue()
         {
             var v = new Variable {
-                Value = new Value(3)
+                Value = new Value((Number)3)
             };
             Assert.AreEqual(v.ToString(), v.Value.ToString());
         }

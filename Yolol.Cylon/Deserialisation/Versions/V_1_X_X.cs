@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Newtonsoft.Json.Linq;
+using Yolol.Execution;
 using Yolol.Grammar;
 using Yolol.Grammar.AST;
 using Yolol.Grammar.AST.Expressions;
@@ -8,6 +9,7 @@ using Yolol.Grammar.AST.Expressions.Binary;
 using Yolol.Grammar.AST.Expressions.Unary;
 using Yolol.Grammar.AST.Statements;
 using Type = Yolol.Execution.Type;
+using Variable = Yolol.Grammar.AST.Expressions.Variable;
 
 namespace Yolol.Cylon.Deserialisation.Versions
 {
@@ -190,7 +192,7 @@ namespace Yolol.Cylon.Deserialisation.Versions
                     return ParseModify(type[2]);
 
                 case "number":
-                    return new ConstantNumber(decimal.Parse(jtok.Value<string>("num")));
+                    return new ConstantNumber((Number)decimal.Parse(jtok.Value<string>("num")));
 
                 case "string":
                     return new ConstantString(jtok.Value<string>("str"));

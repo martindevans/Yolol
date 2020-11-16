@@ -13,7 +13,7 @@ namespace YololEmulator.Tests.Expressions.Num
 
             var a = result.GetVariable("a");
 
-            Assert.AreEqual(36, a.Value.Number);
+            Assert.AreEqual(36, (int)a.Value.Number);
         }
 
         [TestMethod]
@@ -24,8 +24,8 @@ namespace YololEmulator.Tests.Expressions.Num
             var a = result.GetVariable("a");
             var b = result.GetVariable("b");
 
-            Assert.AreEqual(5, a.Value.Number);
-            Assert.AreEqual(25, b.Value.Number);
+            Assert.AreEqual(5, (int)a.Value.Number);
+            Assert.AreEqual(25, (int)b.Value.Number);
         }
 
         [TestMethod]
@@ -36,8 +36,8 @@ namespace YololEmulator.Tests.Expressions.Num
             var a = result.GetVariable("a");
             var b = result.GetVariable("b");
 
-            Assert.AreEqual(2, a.Value.Number);
-            Assert.AreEqual(36, b.Value.Number);
+            Assert.AreEqual(2, (int)a.Value.Number);
+            Assert.AreEqual(36, (int)b.Value.Number);
         }
 
         [TestMethod]
@@ -46,14 +46,14 @@ namespace YololEmulator.Tests.Expressions.Num
             // Results from the actual game, provided by Artturi
             // https://discordapp.com/channels/590281942184755239/593510152406171707/619082319487172608
 
-            Number Calc(string code) => TestExecutor.Execute(code).GetVariable("a").Value.Number;
+            decimal Calc(string code) => (decimal)TestExecutor.Execute(code).GetVariable("a").Value.Number;
 
             Assert.AreEqual(0.008m, Calc("a = 5 ^ -3"));
             Assert.AreEqual(-0.008m, Calc("a = -5 ^ -3"));
             Assert.AreEqual(165.809m, Calc("a = 5.2 ^ 3.1"));
             Assert.AreEqual(0.006m, Calc("a = 5.2 ^ -3.1"));
 
-            Assert.AreEqual(Number.MinValue, Calc("a = -1 ^ -0.5"));
+            Assert.AreEqual((decimal)Number.MinValue, Calc("a = -1 ^ -0.5"));
         }
 
         [TestMethod]

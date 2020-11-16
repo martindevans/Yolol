@@ -14,9 +14,9 @@ namespace YololEmulator.Tests.Scripts
 
             var result = TestExecutor.Execute(lines);
 
-            Assert.AreEqual(1, result.GetVariable("a").Value.Number);
-            Assert.AreEqual(-1, result.GetVariable("b").Value.Number);
-            Assert.AreEqual(-1, result.GetVariable("c").Value.Number);
+            Assert.AreEqual(1, (int)result.GetVariable("a").Value.Number);
+            Assert.AreEqual(-1, (int)result.GetVariable("b").Value.Number);
+            Assert.AreEqual(-1, (int)result.GetVariable("c").Value.Number);
         }
     }
 }

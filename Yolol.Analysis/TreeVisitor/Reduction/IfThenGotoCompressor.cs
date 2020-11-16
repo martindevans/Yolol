@@ -1,9 +1,11 @@
 ﻿using System.Linq;
+using Yolol.Execution;
 using Yolol.Grammar;
 using Yolol.Grammar.AST.Expressions;
 using Yolol.Grammar.AST.Expressions.Binary;
 using Yolol.Grammar.AST.Expressions.Unary;
 using Yolol.Grammar.AST.Statements;
+using Variable = Yolol.Grammar.AST.Expressions.Variable;
 
 namespace Yolol.Analysis.TreeVisitor.Reduction
 {
@@ -41,7 +43,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
                 return @if;
 
             // if A then goto B else goto C end
-            var a = new Bracketed(new Or(@if.Condition, new ConstantNumber(0)));
+            var a = new Bracketed(new Or(@if.Condition, new ConstantNumber((Number)0)));
             var b = new Bracketed(gotoTrue.Destination);
             var c = new Bracketed(gotoFalse.Destination);
 

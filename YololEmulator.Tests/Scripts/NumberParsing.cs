@@ -23,7 +23,7 @@ namespace YololEmulator.Tests.Scripts
 
             var output = result.GetVariable("output");
 
-            Assert.AreEqual(84726, output.Value.Number);
+            Assert.AreEqual(84726, (int)output.Value.Number);
         }
 
         [TestMethod]
@@ -42,7 +42,7 @@ namespace YololEmulator.Tests.Scripts
 
             var output = result.GetVariable("output");
 
-            Assert.AreEqual(8473426, output.Value.Number);
+            Assert.AreEqual(8473426, (int)output.Value.Number);
         }
 
         public Number Azurethi(Number value)
@@ -65,7 +65,7 @@ namespace YololEmulator.Tests.Scripts
         [TestMethod]
         public void Azurethi()
         {
-            Azurethi(1698615886);
+            Azurethi((Number)1698615886);
         }
 
         [TestMethod]

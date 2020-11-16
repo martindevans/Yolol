@@ -108,8 +108,8 @@ namespace Yolol.Analysis.Fuzzer
                     var rng = new Random(unchecked(name.GetHashCode() + Iterations + _seed));
 
                     // Generate 4 possible values: number, integer, alphanumeric string and boolean
-                    var a = new Value((decimal)rng.NextDouble());
-                    var b = new Value(rng.Next(int.MinValue, int.MaxValue));
+                    var a = new Value((Number)(decimal)rng.NextDouble());
+                    var b = new Value((Number)rng.Next(int.MinValue, int.MaxValue));
                     var c = new string(Enumerable.Repeat(chars, rng.Next(5, 100)).Select(s => s[rng.Next(s.Length)]).ToArray());
                     var d = rng.Next(0, 2);
 

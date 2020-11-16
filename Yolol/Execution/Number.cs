@@ -95,15 +95,15 @@ namespace Yolol.Execution
             else if (d <= MinValue._value)
                 return MinValue;
 
-            return decimal.Parse(s);
+            return (Number)decimal.Parse(s);
         }
 
-        public static implicit operator Number(bool b)
+        public static explicit operator Number(bool b)
         {
             return b ? One : Zero;
         }
 
-        public static implicit operator Number(int i)
+        public static explicit operator Number(int i)
         {
             return new Number(i * (long)Scale);
         }
@@ -119,7 +119,7 @@ namespace Yolol.Execution
             return new Number((long)n);
         }
 
-        public static implicit operator Number(decimal d)
+        public static explicit operator Number(decimal d)
         {
             var n = d * Scale;
             if (n > MaxValue._value)

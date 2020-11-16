@@ -11,3 +11,7 @@
 
 #define set_add_char(set, c)    set+=c
 #define set_find_char(set, c)   set-c!=set
+
+#define goto_if(expr, true_branch, false_branch) {
+    true_branch+(expr)*eval(false_branch-true_branch)
+}

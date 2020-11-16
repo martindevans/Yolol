@@ -68,7 +68,7 @@ namespace YololEmulator.Network
 
                             if (decimal.TryParse(value, out var result))
                             {
-                                _savedValue = new Value(result);
+                                _savedValue = new Value((Number)result);
                                 return _savedValue.Value;
                             }
 

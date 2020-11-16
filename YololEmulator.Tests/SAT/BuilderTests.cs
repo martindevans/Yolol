@@ -75,8 +75,8 @@ namespace YololEmulator.Tests.SAT
             // The expected value can't possible equal all these values, so we can check if it's _not_ these values
             var aString = new Value("abc");
             var bString = new Value("cba");
-            var aNum = new Value(19);
-            var bNum = new Value(20);
+            var aNum = new Value((Number)19);
+            var bNum = new Value((Number)20);
 
             if (!v.Equals(aString)) Assert.IsFalse(a.CanBeValue(aString), "Can be string it should not be");
             if (!v.Equals(bString)) Assert.IsFalse(a.CanBeValue(bString), "Can be string it should not be");

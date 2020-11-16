@@ -10,7 +10,7 @@ namespace YololEmulator.Tests.Expressions.Num
         {
             var result = TestExecutor.Execute("a = sin(0)");
             var a = result.GetVariable("a");
-            Assert.AreEqual(0, a.Value.Number);
+            Assert.AreEqual(0, (int)a.Value.Number);
         }
 
         [TestMethod]
@@ -18,7 +18,7 @@ namespace YololEmulator.Tests.Expressions.Num
         {
             var result = TestExecutor.Execute("a = sin(45)");
             var a = result.GetVariable("a");
-            Assert.AreEqual(0.707m, a.Value.Number);
+            Assert.AreEqual(0.707m, (decimal)a.Value.Number);
         }
 
         [TestMethod]
@@ -26,7 +26,7 @@ namespace YololEmulator.Tests.Expressions.Num
         {
             var result = TestExecutor.Execute("a = sin(90)");
             var a = result.GetVariable("a");
-            Assert.AreEqual(1, a.Value.Number);
+            Assert.AreEqual(1, (int)a.Value.Number);
         }
     }
 }

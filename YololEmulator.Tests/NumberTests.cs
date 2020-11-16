@@ -12,21 +12,21 @@ namespace YololEmulator.Tests
         public void IntToNumber()
         {
             var n = (Number)1000;
-            Assert.AreEqual(1000, n);
+            Assert.AreEqual((Number)1000, n);
         }
 
         [TestMethod]
         public void DoubleToNumber()
         {
             var n = (Number)(double)1000;
-            Assert.AreEqual(1000, n);
+            Assert.AreEqual(1000, (int)n);
         }
 
         [TestMethod]
         public void DecimalToNumber()
         {
             var n = (Number)1000m;
-            Assert.AreEqual(1000, n);
+            Assert.AreEqual((Number)1000, n);
         }
 
         [TestMethod]
@@ -34,7 +34,7 @@ namespace YololEmulator.Tests
         {
             var n = (Number)1.234567m;
 
-            Assert.AreEqual(1.234m, n);
+            Assert.AreEqual((Number)1.234m, n);
             Assert.AreEqual("1.234", n.ToString());
         }
 
@@ -50,7 +50,7 @@ namespace YololEmulator.Tests
         {
             var n = (Number)0.010m;
 
-            Assert.AreEqual(0.010m, n);
+            Assert.AreEqual(0.010m, (decimal)n);
             Assert.AreEqual("0.01", n.ToString());
         }
 
@@ -132,8 +132,15 @@ namespace YololEmulator.Tests
             var b = (Number)12.77m;
 
             var c = b + a;
+            var e = (Number)1095.770d;
 
-            Assert.AreEqual((Number)1095.77, c);
+            Assert.AreEqual(e, c);
+        }
+
+        [TestMethod]
+        public void MethodName()
+        {
+            var e = (Number)1095.770d;
         }
 
         [TestMethod]

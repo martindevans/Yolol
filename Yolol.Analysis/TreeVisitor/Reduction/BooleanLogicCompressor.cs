@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using Yolol.Execution;
 using Yolol.Grammar;
 using Yolol.Grammar.AST.Expressions;
 using Yolol.Grammar.AST.Expressions.Binary;
 using Yolol.Grammar.AST.Expressions.Unary;
+using Variable = Yolol.Grammar.AST.Expressions.Variable;
 
 namespace Yolol.Analysis.TreeVisitor.Reduction
 {
@@ -57,7 +59,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
                 return base.Visit(not);
 
             // Replace `not a` with `(1 - a)`
-            return new Bracketed(new Subtract(new ConstantNumber(1), not.Parameter));
+            return new Bracketed(new Subtract(new ConstantNumber((Number)1), not.Parameter));
         }
     }
 }

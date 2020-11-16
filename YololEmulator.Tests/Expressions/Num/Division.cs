@@ -12,7 +12,7 @@ namespace YololEmulator.Tests.Expressions.Num
 
             var a = result.GetVariable("a");
 
-            Assert.AreEqual(3, a.Value.Number);
+            Assert.AreEqual(3, (int)a.Value.Number);
         }
 
         [TestMethod]
@@ -23,8 +23,8 @@ namespace YololEmulator.Tests.Expressions.Num
             var a = result.GetVariable("a");
             var b = result.GetVariable("b");
 
-            Assert.AreEqual(6, a.Value.Number);
-            Assert.AreEqual(2, b.Value.Number);
+            Assert.AreEqual(6, (int)a.Value.Number);
+            Assert.AreEqual(2, (int)b.Value.Number);
         }
 
         [TestMethod]
@@ -35,14 +35,14 @@ namespace YololEmulator.Tests.Expressions.Num
             var a = result.GetVariable("a");
             var b = result.GetVariable("b");
 
-            Assert.AreEqual(2, a.Value.Number);
-            Assert.AreEqual(3, b.Value.Number);
+            Assert.AreEqual(2, (int)a.Value.Number);
+            Assert.AreEqual(3, (int)b.Value.Number);
         }
 
         [TestMethod]
         public void Truncation()
         {
-            Assert.AreEqual(1.666m, TestExecutor.Execute("a = 5 / 3").GetVariable("a").Value.Number);
+            Assert.AreEqual(1.666m, (decimal)TestExecutor.Execute("a = 5 / 3").GetVariable("a").Value.Number);
         }
     }
 }
