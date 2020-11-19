@@ -36,8 +36,26 @@ namespace Yolol.Execution
             var bufferSize = buffer.Length;
 
             // Write out the "big" numbers
-            if (!big.TryFormat(buffer, out var bigWritten))
-                throw new InvalidOperationException($"Attempted to format a number with more than {bufferSize} digits");
+            int bigWritten;
+            if (big == 0)
+            {
+                if (_value < 0)
+                {
+                    buffer[0] = '-';
+                    buffer[1] = '0';
+                    bigWritten = 2;
+                }
+                else
+                {
+                    buffer[0] = '0';
+                    bigWritten = 1;
+                }
+            }
+            else
+            {
+                if (!big.TryFormat(buffer, out bigWritten))
+                    throw new InvalidOperationException($"Attempted to format a number with more than {bufferSize} digits");
+            }
 
             // Write out a `.` character
             buffer[bigWritten] = '.';

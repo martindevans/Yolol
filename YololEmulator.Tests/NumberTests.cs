@@ -62,13 +62,20 @@ namespace YololEmulator.Tests
         }
 
         [TestMethod]
+        public void ToStringSmall()
+        {
+            var n = (Number)(-0.5m);
+            Assert.AreEqual("-0.5", n.ToString());
+        }
+
+        [TestMethod]
         public void ToStringFuzz()
         {
-            var rng = new Random(345897);
+            var rng = new Random(345397);
 
-            for (var i = 0; i < 50000; i++)
+            for (var i = 0; i < 750000; i++)
             {
-                var d = ((decimal)rng.Next() / 1000) * (rng.NextDouble() < 0.5 ? 1 : -1);
+                var d = ((decimal)rng.Next(10000000) / 1000) * (rng.NextDouble() < 0.5 ? 1 : -1);
                 var n = (Number)d;
 
                 var ns = n.ToString();
@@ -135,12 +142,6 @@ namespace YololEmulator.Tests
             var e = (Number)1095.770d;
 
             Assert.AreEqual(e, c);
-        }
-
-        [TestMethod]
-        public void MethodName()
-        {
-            var e = (Number)1095.770d;
         }
 
         [TestMethod]
