@@ -39,6 +39,7 @@ namespace Yolol.Analysis.TreeVisitor
                 Or a => Visit(a),
                 And a => Visit(a),
                 Not a => Visit(a),
+                Factorial a => Visit(a),
                 Variable a => Visit(a),
                 ConstantNumber a => Visit(a),
                 ConstantString a => Visit(a),

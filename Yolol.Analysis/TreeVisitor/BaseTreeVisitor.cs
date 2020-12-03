@@ -60,6 +60,7 @@ namespace Yolol.Analysis.TreeVisitor
                 Or a => Visit(a),
                 And a => Visit(a),
                 Not a => Visit(a),
+                Factorial a => Visit(a),
                 Variable a => Visit(a),
                 ConstantNumber a => Visit(a),
                 ConstantString a => Visit(a),
@@ -69,7 +70,6 @@ namespace Yolol.Analysis.TreeVisitor
                 GreaterThanEqualTo a => Visit(a),
                 LessThan a => Visit(a),
                 LessThanEqualTo a => Visit(a),
-                Factorial a => Visit(a),
                 _ => VisitUnknown(expression)
             };
         }
