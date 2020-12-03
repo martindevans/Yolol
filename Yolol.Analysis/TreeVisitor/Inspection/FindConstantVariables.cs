@@ -144,6 +144,8 @@ namespace Yolol.Analysis.TreeVisitor.Inspection
 
         protected override bool Visit(Negate neg) => Visit(neg.Parameter);
 
+        protected override bool Visit(Factorial fac) => Visit(fac.Parameter);
+
         protected override bool Visit(ConstantNumber con) => true;
 
         protected override bool Visit(ConstantString con) => true;

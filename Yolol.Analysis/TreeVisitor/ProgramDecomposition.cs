@@ -194,6 +194,8 @@ namespace Yolol.Analysis.TreeVisitor
             throw new NotSupportedException();
         }
 
+        protected override IEnumerable<BaseStatement> Visit(Factorial fac) => Unary(fac, a => new Factorial(a));
+
         protected override IEnumerable<BaseStatement> Visit(LessThanEqualTo eq) => Binary(eq, (a, b) => new LessThanEqualTo(a, b));
 
         protected override IEnumerable<BaseStatement> Visit(LessThan eq) => Binary(eq, (a, b) => new LessThan(a, b));

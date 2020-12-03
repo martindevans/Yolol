@@ -76,7 +76,7 @@ namespace Yolol.Analysis.TreeVisitor
 
         protected virtual BaseExpression VisitUnknown(BaseExpression expression)
         {
-            throw new InvalidOperationException($"`Visit` not invalid for expression type `{expression.GetType().FullName}`");
+            throw new InvalidOperationException($"`Visit` not valid for expression type `{expression.GetType().FullName}`");
         }
 
         protected virtual BaseExpression Visit(Or or)

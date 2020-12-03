@@ -504,6 +504,11 @@ namespace Yolol.Analysis.DataFlowGraph
                 return VisitUnary(new UnaryOp(Guid.NewGuid(), "negate", Visit(neg.Parameter), a => new Negate(a)));
             }
 
+            protected override IDataFlowGraphExpressionNode Visit(Factorial fac)
+            {
+                return VisitUnary(new UnaryOp(Guid.NewGuid(), "factorial", Visit(fac.Parameter), a => new Factorial(a)));
+            }
+
             protected override IDataFlowGraphExpressionNode Visit(ConstantNumber con)
             {
 

@@ -226,6 +226,8 @@ namespace Yolol.Analysis.Types
 
         protected override Type Visit(Negate neg) => UnaryNumeric(neg, neg.Parameter, false, false);
 
+        protected override Type Visit(Factorial fac) => UnaryNumeric(fac, fac.Parameter, false, false);
+
         protected override Type Visit(ConstantNumber con) => Type.Number;
 
         protected override Type Visit(ConstantString con) => Type.String;

@@ -104,6 +104,8 @@ namespace Yolol.Analysis.TreeVisitor.Inspection
 
             protected override bool Visit(Not not) => true;
 
+            protected override bool Visit(Factorial fac) => false;
+
             protected override bool Visit(ErrorExpression err) => false;
 
             protected override bool Visit(Increment inc) => false;

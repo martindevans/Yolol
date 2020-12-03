@@ -54,7 +54,7 @@ namespace Yolol.Analysis.TreeVisitor
 
         protected virtual TResult VisitUnknown(BaseExpression expression)
         {
-            throw new InvalidOperationException($"`Visit` not invalid for expression type `{expression.GetType().FullName}`");
+            throw new InvalidOperationException($"`Visit` not valid for expression type `{expression.GetType().FullName}`");
         }
 
         protected abstract TResult Visit(Or or);
@@ -62,6 +62,8 @@ namespace Yolol.Analysis.TreeVisitor
         protected abstract TResult Visit(And and);
 
         protected abstract TResult Visit(Not not);
+
+        protected abstract TResult Visit(Factorial fac);
 
         protected abstract TResult Visit(ErrorExpression err);
 
