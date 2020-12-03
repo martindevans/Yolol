@@ -39,8 +39,21 @@ namespace Yolol.Grammar.AST.Expressions.Unary
         {
             if (value.Type == Execution.Type.String)
                 throw new ExecutionException("Attempted to apply factorial to a string");
-            else
-                throw new NotImplementedException();
+            
+            if (value.Type != Execution.Type.Number)
+                throw new ExecutionException($"Attempted to apply factorial to a `{value.Type}` object");
+
+            var i = 0;
+            var result = 1;
+            while (value > 0)
+            {
+                i++;
+                value--;
+
+                result *= i;
+            }
+
+            return (Number)result;
         }
     }
 }

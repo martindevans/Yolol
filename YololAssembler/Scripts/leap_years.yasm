@@ -1,0 +1,90 @@
+﻿#import lib.yasm
+
+#define year    :i
+
+@wip:
+	:o=year%(select_num_p(year%25<1, 16, 4))<1
+	goto:done++
+
+@l35:
+	:o=year%(select_num_p(year%25<1, 16, 4))<1
+	goto:done++
+
+@l36:
+	:o=year%(select_num_s(year%25>0, 4, 16))<1
+	goto:done++
+
+@l38:
+	:o=0^(year%(16-(year%25>0)*12))
+	goto:done++
+
+@l40:
+	:o=year%4<1
+	:o*=year%100
+        or
+        year%400<1
+	goto:done++
+
+@l41:
+	:o=(year%4<1)*(
+		year%100
+		or
+		year%400<1
+	)
+	goto:done++
+
+@l43:
+	:o=year%4<1
+	:o*=year%100+(year%400<1)>0
+	goto:done++
+
+@l47:
+	:o=not(year%4)and(
+		year%100
+		+
+		not(year%400)
+	)
+	goto:done++
+
+@l47:
+	:o=0^(year%4)*(
+		(year%100)
+		+
+		(year%400<1)
+	)>0
+	goto:done++
+
+@l48:
+	:o=not(year%4)and(
+		year%100
+		or
+		not(year%400)
+	)
+	goto:done++
+
+@l64:
+	x=(year%4or0)*4
+       +(year%100or0)*2
+       +(year%400or0)
+	:o=x<4*(x!=1)
+	goto:done++
+
+@comments:
+
+!(y%(y%25?4:16))
+
+year%4*(year%100+0^(year%400))
+
+(not a) and (b or (not c))
+a b c | o | d
+0 0 0 | 1 | 0
+0 0 1 | 0 | 1
+0 1 0 | 1 | 2
+0 1 1 | 1 | 3
+1 0 0 | 0 | 4
+1 0 1 | 0 | 5
+1 1 0 | 0 | 6
+1 1 1 | 0 | 7
+
+
+

@@ -1,0 +1,68 @@
+﻿#import lib.yasm
+
+#define input_unit    a
+#define cm_value      b
+
+#define const_foot	  c
+#define const_inch	  d
+#define const_km	  e
+#define const_m	  	  f
+#define const_nm	  g
+
+#define output_unit   h
+
+#define const_to_foot i
+#define const_to_inch j
+#define const_to_km   k
+#define const_to_m    l
+#define const_to_nm   m
+
+#define round         n
+
+#define test_done() {
+	:done=1;
+	:o=cm_value;
+	gotostart;
+}
+
+@initialise:
+	const_to_foot=29.48
+	const_to_inch=1.54
+	const_to_km=99999
+	const_to_m=99
+	const_to_nm=185199
+	const_foot="ft"
+	const_inch="in"
+	const_km="km"
+	const_m="m"
+	const_nm="nm"
+
+@start:
+	input_unit=:a;
+	output_unit=:b;
+	continue_if(input_unit==:b)
+	:o=:v
+	:done=1
+	goto2
+
+@encode_to_cm:
+	cm_value=:v*10
+		*(((input_unit==const_foot)*const_to_foot)+1)
+		*(((input_unit==const_inch)*const_to_inch)+1)
+		*(((input_unit==const_km)*const_to_km)+1)
+		*(((input_unit==const_m)*const_to_m)+1)
+	
+@encode_then_decode:
+	cm_value*=((input_unit==const_nm)*const_to_nm)+1
+	cm_value/=((output_unit==const_foot)*const_to_foot)+1
+	cm_value/=((output_unit==const_inch)*const_to_inch)+1
+	cm_value/=((output_unit==const_km)*const_to_km)+1
+
+@decode_cont:
+	cm_value/=((output_unit==const_m)*const_to_m)+1
+	cm_value/=((output_unit==const_nm)*const_to_nm)+1
+	cm_value+=(cm_value%0.01>0.004)/100
+	:o=cm_value/10
+	:done=1
+	goto2
+	

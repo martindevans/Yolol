@@ -106,8 +106,8 @@ expr_exponent <BaseExpression> -memoize
     / e:expr_postfix { e }
 
 expr_postfix <BaseExpression> -memoize
-    // = e:expr_postfix "!" { new Factorial(e) } todo: support factorial
-    = e:expr_keyword { e }
+    = e:expr_postfix "!" !("="!"=") { new Factorial(e) }
+    / e:expr_keyword { e }
 
 expr_keyword <BaseExpression> -memoize
     = "abs"i _ e:expr_keyword { new Abs(e) }

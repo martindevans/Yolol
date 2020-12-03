@@ -15,3 +15,11 @@
 #define goto_if(expr, true_branch, false_branch) {
     true_branch+(expr)*eval(false_branch-true_branch)
 }
+
+#define select_num_p(expr, tval, fval) {
+    fval+(expr)*eval(tval-fval)
+}
+
+#define select_num_s(expr, tval, fval) {
+    fval-(expr)*eval(fval-tval)
+}

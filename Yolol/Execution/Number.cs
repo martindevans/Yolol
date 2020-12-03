@@ -566,7 +566,7 @@ namespace Yolol.Execution
 
         public Number Exponent(Number number)
         {
-            var v = Math.Pow((float)this, (float)number);
+            var v = Math.Pow((double)this, (double)number);
 
             if (double.IsPositiveInfinity(v))
                 return MaxValue;
