@@ -69,6 +69,7 @@ namespace Yolol.Analysis.TreeVisitor
                 GreaterThanEqualTo a => Visit(a),
                 LessThan a => Visit(a),
                 LessThanEqualTo a => Visit(a),
+                Factorial a => Visit(a),
                 _ => VisitUnknown(expression)
             };
         }
@@ -117,6 +118,11 @@ namespace Yolol.Analysis.TreeVisitor
         protected virtual BaseExpression Visit(Phi phi)
         {
             return new Phi(phi.SSA, phi.AssignedNames.Select(Visit).ToArray());
+        }
+
+        protected virtual BaseExpression Visit(Factorial fac)
+        {
+            return new Factorial(Visit(fac.Parameter));
         }
 
         protected virtual BaseExpression Visit(LessThanEqualTo eq)
