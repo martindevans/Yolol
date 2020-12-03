@@ -581,5 +581,21 @@ namespace Yolol.Execution
         {
             return Exponent((Number)right);
         }
+
+        public Number Factorial()
+        {
+            var v = this;
+            var i = 0;
+            var result = 1;
+            while (v > 0)
+            {
+                i++;
+                v--;
+
+                result *= i;
+            }
+
+            return (Number)result;
+        }
     }
 }

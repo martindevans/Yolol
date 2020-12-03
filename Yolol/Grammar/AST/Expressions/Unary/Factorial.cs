@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Yolol.Execution;
+﻿using Yolol.Execution;
 
 namespace Yolol.Grammar.AST.Expressions.Unary
 {
@@ -37,23 +34,7 @@ namespace Yolol.Grammar.AST.Expressions.Unary
 
         protected override Value Evaluate(Value value)
         {
-            if (value.Type == Execution.Type.String)
-                throw new ExecutionException("Attempted to apply factorial to a string");
-            
-            if (value.Type != Execution.Type.Number)
-                throw new ExecutionException($"Attempted to apply factorial to a `{value.Type}` object");
-
-            var i = 0;
-            var result = 1;
-            while (value > 0)
-            {
-                i++;
-                value--;
-
-                result *= i;
-            }
-
-            return (Number)result;
+            return value.Factorial();
         }
     }
 }

@@ -712,5 +712,16 @@ namespace Yolol.Execution
             else
                 return new ConstantString(String);
         }
+
+        public Value Factorial()
+        {
+            if (Type == Type.String)
+                throw new ExecutionException("Attempted to apply factorial to a string");
+            
+            if (Type != Type.Number)
+                throw new ExecutionException($"Attempted to apply factorial to a `{Type}` object");
+
+            return Number.Factorial();
+        }
     }
 }
