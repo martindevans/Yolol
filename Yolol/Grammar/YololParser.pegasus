@@ -102,11 +102,7 @@ expr_divisor <BaseExpression> -memoize
     / e:expr_exponent { e }
 
 expr_exponent <BaseExpression> -memoize
-    = l:expr_postfix _ "^" _ r:expr_exponent { new Exponent(l, r) }
-    / e:expr_postfix { e }
-
-expr_postfix <BaseExpression> -memoize
-    = e:expr_postfix "!" !("="!"=") { new Factorial(e) }
+    = l:expr_keyword _ "^" _ r:expr_exponent { new Exponent(l, r) }
     / e:expr_keyword { e }
 
 expr_keyword <BaseExpression> -memoize
@@ -119,6 +115,10 @@ expr_keyword <BaseExpression> -memoize
     / "acos"i _ e:expr_keyword { new ArcCos(e) }
     / "atan"i _ e:expr_keyword { new ArcTan(e) }
     / "not"i _ e:expr_keyword { new Not(e) }
+    / e:expr_postfix { e }
+
+expr_postfix <BaseExpression> -memoize
+    = e:expr_neg "!" !("="!"=") { new Factorial(e) }
     / e:expr_neg { e }
 
 expr_neg <BaseExpression> -memoize

@@ -1,10 +1,24 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Yolol.Execution;
 
 namespace YololEmulator.Tests.Expressions.Num
 {
     [TestClass]
     public class Factorial
     {
+        [TestMethod]
+        public void KeywordPrecedence()
+        {
+            // sqrt(3)! => 2
+            // sqrt(3!) => 2.449
+
+            var result = TestExecutor.Execute("a = sqrt3!");
+
+            var a = result.GetVariable("a");
+
+            Assert.AreEqual((Number)2.449, a.Value.Number);
+        }
+
         [TestMethod]
         public void Positive0()
         {
