@@ -1,0 +1,32 @@
+#define len0  e
+#define len1  f
+
+#define lat0  g
+#define lat1  h
+#define lon0  i
+#define lon1  j
+
+#define dot   k
+#define angle l
+
+#define cartesian(lat_in, lon_in, xout, yout, zout) {
+    xout=cos(lat_in)*cos(lon_in)
+    yout=cos(lat_in)*sin(lon_in)
+    zout=sin(lat_in)
+}
+
+@setup:
+    lat0=:lat_0;
+    lat1=:lat_1;
+    lon0=:lon_0;
+    lon1=:lon_1;
+
+@cartesian_conv_0:
+    cartesian(lat0, lon0, x0, y0, z0)
+
+@cartesian_conv_1:
+    cartesian(lat1, lon1, x1, y1, z1)
+
+@dot_product:
+    :o=(acos(x0*x1+y0*y1+z0*z1)*eval(6371*3*6.282))/360
+    goto:done++

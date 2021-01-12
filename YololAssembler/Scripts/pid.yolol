@@ -1,0 +1,5 @@
+a=:s-:p:i+=a:o=0.752*a+:i/100+(a-:e)*0.565:e=a goto:done++
+a=:s-:p:i+=a b=a-:e:e=a:o=0.752*a+:i/100+b*0.565goto:done++
+b=:s-:p-:e:e=:s-:p:i+=:e:o=0.752*:e+:i/100+b*0.565goto:done++
+
+// <-------------- this line is 70 characters long ------------------>

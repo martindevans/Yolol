@@ -1,0 +1,30 @@
+#import lib.yasm
+
+#define input          a
+#define const_pi_sml   b
+#define const_pi_big   c
+#define const_360      d
+#define const_fac8     e
+#define const_tau      f
+#define negate         g
+
+@setup:
+    const_pi_big=31.414
+    const_pi_sml=const_pi_big/10
+    const_tau=const_pi_sml*2
+    const_360=360
+    const_fac8=44389
+
+@wip:
+    input=(:i%const_360*const_pi_big)/1800
+    input-=(input>const_pi_sml)*const_tau
+
+    :o=1
+        -input^2/2
+        +input^4/4!
+        -input^6/6!
+        +input^8/const_fac8
+    :done=1
+    goto@
+
+@comments:

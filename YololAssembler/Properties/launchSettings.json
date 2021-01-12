@@ -2,7 +2,7 @@
   "profiles": {
     "YololAssembler": {
       "commandName": "Project",
-      "commandLineArgs": "-i cosine.yasm -o cosine.yolol --watch",
+      "commandLineArgs": "-i atan.yasm -o atan.yolol --watch",
       "workingDirectory": "C:\\Users\\Martin\\Documents\\dotnet\\YololEmulator\\YololAssembler\\Scripts"
     }
   }

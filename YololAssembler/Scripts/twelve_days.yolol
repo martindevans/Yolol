@@ -1,0 +1,17 @@
+a++
+b="nth":o="On the "+number+" day of Christmas":done=1
+:o="My true love sent to me":done=1goto16-number
+:o="Twelve Drummers Drumming,":done=1
+:o="Eleven Pipers Piping,":done=1
+:o="Ten Lords-a-Leaping,":done=1
+:o="Nine Ladies Dancing,":done=1
+:o="Eight Maids-a-Milking,":done=1
+:o="Seven Swans-a-Swimming,":done=1
+:o="Six Geese-a-Laying,":done=1
+:o="Five Gold Rings,":done=1
+:o="Four Calling Birds,":done=1
+:o="Three French Hens,":done=1
+:o="Two Turtle Doves, and":done=1
+:o="A Partridge in a Pear Tree."goto:done++
+
+// <-------------- this line is 70 characters long ------------------>

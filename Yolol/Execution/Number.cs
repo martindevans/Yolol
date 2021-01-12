@@ -21,6 +21,16 @@ namespace Yolol.Execution
             _value = num;
         }
 
+        /// <summary>
+        /// Create a number from a raw value (fixedpoint value with 3dp)
+        /// </summary>
+        /// <param name="num"></param>
+        /// <returns></returns>
+        public static Number FromRaw(long num)
+        {
+            return new Number(num);
+        }
+
         internal Span<char> ToString(Span<char> buffer)
         {
             var big = _value / Scale;

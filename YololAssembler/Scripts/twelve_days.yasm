@@ -1,0 +1,55 @@
+#define current_day a
+#define ordinal b
+
+#import lib.yasm
+
+
+
+@start_verse:
+    current_day++
+
+@determine_ordinal:
+    ordinal="nth"
+    :o="On the "+number+" day of Christmas"
+    :done=1
+
+@true_love:
+    :o="My true love sent to me"
+    :done=1
+    gotoeval(day1_line+1)-number
+    
+@day12_line:
+    :o="Twelve Drummers Drumming,":done=1
+
+@day11_line:
+    :o="Eleven Pipers Piping,":done=1
+
+@day10_line:
+    :o="Ten Lords-a-Leaping,":done=1
+
+@day9_line:
+    :o="Nine Ladies Dancing,":done=1
+
+@day8_line:
+    :o="Eight Maids-a-Milking,":done=1
+
+@day7_line:
+    :o="Seven Swans-a-Swimming,":done=1
+
+@day6_line:
+    :o="Six Geese-a-Laying,":done=1
+
+@day5_line:
+    :o="Five Gold Rings,":done=1
+
+@day4_line:
+    :o="Four Calling Birds,":done=1
+
+@day3_line:
+    :o="Three French Hens,":done=1
+
+@day2_line:
+    :o="Two Turtle Doves, and":done=1
+
+@day1_line:
+    :o="A Partridge in a Pear Tree."goto:done++

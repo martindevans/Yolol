@@ -1,0 +1,39 @@
+﻿#import lib.yasm
+
+#define P 0.752
+#define I 0.01
+#define D 0.565
+
+#define err  a
+#define dedt b
+
+@score125542:
+    err=:s-:p
+	:i+=err
+
+	:o=P*err
+      +:i/100
+      +(err-:e)*D
+
+	:e=err;
+	goto:done++
+
+@score125541:
+    err=:s-:p
+	:i+=err;
+	dedt=err-:e
+	:e=err
+
+	:o=P*err
+      +:i/100
+      +dedt*D
+
+	goto:done++
+
+@score125539:
+	dedt=:s-:p-:e
+	:e=:s-:p
+	:i+=:e
+
+	:o=P*:e+:i/100+dedt*D
+	goto:done++

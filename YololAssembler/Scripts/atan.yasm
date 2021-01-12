@@ -1,0 +1,18 @@
+#import lib.yasm
+
+#define value    a
+#define lerp     b
+
+#define thousand   c
+#define thousandth d
+
+@run_case:
+    thousand=1000
+
+    value=:i/thousand;
+    lerp=(:i-value*thousand)*thousand
+    
+    :o=(thousand-lerp)*atan(value)+lerp*atan(value+1/thousand)
+
+    :done=1
+    gotorun_case

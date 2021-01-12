@@ -1,0 +1,3 @@
+c=1000a=:i/c b=(:i-a*c)*c:o=(c-b)*atan(a)+b*atan(a+1/c):done=1goto1
+
+// <-------------- this line is 70 characters long ------------------>
