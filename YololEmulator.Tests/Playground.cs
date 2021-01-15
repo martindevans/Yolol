@@ -108,7 +108,7 @@ namespace YololEmulator.Tests
             var ast = TestExecutor.Parse(
                 "a = b+c*-(d+z)%14+sin(3*2)+(y++)"
             );
-            var ass = (Assignment)ast.Lines.Single().Statements.Statements.Single();
+            var ass = (Assignment)ast.Lines[0].Statements.Statements.Single();
 
             Console.WriteLine(ast);
             Console.WriteLine("---");

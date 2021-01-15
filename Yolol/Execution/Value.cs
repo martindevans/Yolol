@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using Yolol.Execution.Attributes;
 using Yolol.Grammar.AST.Expressions;
 
@@ -7,15 +8,16 @@ namespace Yolol.Execution
     public readonly struct Value
         : IEquatable<Value>
     {
-        public Type Type { get; }
+        private readonly Type _type;
+        public Type Type => _type;
 
         private readonly Number _number;
         public Number Number
         {
             get
             {
-                if (Type != Type.Number)
-                    throw new InvalidCastException($"Attempted to access value of type {Type} as a Number");
+                if (_type != Type.Number)
+                    throw new InvalidCastException($"Attempted to access value of type {_type} as a Number");
                 return _number;
             }
         }
@@ -25,8 +27,8 @@ namespace Yolol.Execution
         {
             get
             {
-                if (Type != Type.String)
-                    throw new InvalidCastException($"Attempted to access value of type {Type} as a String");
+                if (_type != Type.String)
+                    throw new InvalidCastException($"Attempted to access value of type {_type} as a String");
                 return _string;
             }
         }
@@ -35,21 +37,21 @@ namespace Yolol.Execution
         {
             _string = new YString(str);
             _number = Number.Zero;
-            Type = Type.String;
+            _type = Type.String;
         }
 
         public Value(YString str)
         {
             _string = str;
             _number = Number.Zero;
-            Type = Type.String;
+            _type = Type.String;
         }
 
         public Value(Number num)
         {
             _string = default;
             _number = num;
-            Type = Type.Number;
+            _type = Type.Number;
         }
 
         public Value(bool @bool)
@@ -74,7 +76,7 @@ namespace Yolol.Execution
 
         public override string ToString()
         {
-            if (Type == Type.Number)
+            if (_type == Type.Number)
                 return _number.ToString();
             else
                 return _string.ToString();
@@ -82,7 +84,7 @@ namespace Yolol.Execution
 
         private YString ToYString()
         {
-            if (Type == Type.Number)
+            if (_type == Type.Number)
                 return new YString(_number.ToString());
             else
                 return _string;
@@ -90,7 +92,7 @@ namespace Yolol.Execution
 
         public bool ToBool()
         {
-            if (Type == Type.String)
+            if (_type == Type.String)
                 return true;
             else
                 return _number != 0;
@@ -98,7 +100,7 @@ namespace Yolol.Execution
 
         public object ToObject()
         {
-            if (Type == Type.Number)
+            if (_type == Type.Number)
                 return (decimal)_number;
             else
                 return String.ToString();
@@ -106,9 +108,9 @@ namespace Yolol.Execution
 
         public bool Equals(Value other)
         {
-            if (Type == Type.Number && other.Type == Type.Number)
+            if (_type == Type.Number && other._type == Type.Number)
                 return _number == other._number;
-            else if (Type == Type.String && other.Type == Type.String)
+            else if (_type == Type.String && other._type == Type.String)
                 return _string == other._string;
             else
                 return false;
@@ -123,9 +125,9 @@ namespace Yolol.Execution
         {
             unchecked
             {
-                var hashCode = (int)Type * 397;
+                var hashCode = (int)_type * 397;
 
-                if (Type == Type.String)
+                if (_type == Type.String)
                     hashCode *= _string.GetHashCode();
                 else
                     hashCode *= _number.GetHashCode();
@@ -137,7 +139,7 @@ namespace Yolol.Execution
         #region op <
         public static bool operator <(Value left, Value right)
         {
-            if (left.Type == Type.Number)
+            if (left._type == Type.Number)
                 return left._number < right;
             else
                 return left._string < right;
@@ -145,7 +147,7 @@ namespace Yolol.Execution
 
         public static bool operator <(Value left, YString right)
         {
-            if (left.Type == Type.Number)
+            if (left._type == Type.Number)
                 return left._number < right;
             else
                 return left._string < right;
@@ -153,7 +155,7 @@ namespace Yolol.Execution
 
         public static bool operator <(Value left, Number right)
         {
-            if (left.Type == Type.Number)
+            if (left._type == Type.Number)
                 return left._number < right;
             else
                 return left._string < right;
@@ -161,7 +163,7 @@ namespace Yolol.Execution
 
         public static bool operator <(Value left, bool right)
         {
-            if (left.Type == Type.Number)
+            if (left._type == Type.Number)
                 return left._number < right;
             else
                 return left._string < right;
@@ -171,7 +173,7 @@ namespace Yolol.Execution
         #region op <=
         public static bool operator <=(Value left, Value right)
         {
-            if (left.Type == Type.Number)
+            if (left._type == Type.Number)
                 return left._number <= right;
             else
                 return left._string <= right;
@@ -179,7 +181,7 @@ namespace Yolol.Execution
 
         public static bool operator <=(Value left, YString right)
         {
-            if (left.Type == Type.Number)
+            if (left._type == Type.Number)
                 return left._number <= right;
             else
                 return left._string <= right;
@@ -187,7 +189,7 @@ namespace Yolol.Execution
 
         public static bool operator <=(Value left, Number right)
         {
-            if (left.Type == Type.Number)
+            if (left._type == Type.Number)
                 return left._number <= right;
             else
                 return left._string <= right;
@@ -195,7 +197,7 @@ namespace Yolol.Execution
 
         public static bool operator <=(Value left, bool right)
         {
-            if (left.Type == Type.Number)
+            if (left._type == Type.Number)
                 return left._number <= right;
             else
                 return left._string <= right;
@@ -205,7 +207,7 @@ namespace Yolol.Execution
         #region op >
         public static bool operator >(Value left, Value right)
         {
-            if (left.Type == Type.Number)
+            if (left._type == Type.Number)
                 return left._number > right;
             else
                 return left._string > right;
@@ -213,7 +215,7 @@ namespace Yolol.Execution
 
         public static bool operator >(Value left, YString right)
         {
-            if (left.Type == Type.Number)
+            if (left._type == Type.Number)
                 return left._number > right;
             else
                 return left._string > right;
@@ -221,7 +223,7 @@ namespace Yolol.Execution
 
         public static bool operator >(Value left, Number right)
         {
-            if (left.Type == Type.Number)
+            if (left._type == Type.Number)
                 return left._number > right;
             else
                 return left._string > right;
@@ -229,7 +231,7 @@ namespace Yolol.Execution
 
         public static bool operator >(Value left, bool right)
         {
-            if (left.Type == Type.Number)
+            if (left._type == Type.Number)
                 return left._number > right;
             else
                 return left._string > right;
@@ -239,7 +241,7 @@ namespace Yolol.Execution
         #region op >=
         public static bool operator >=(Value left, Value right)
         {
-            if (left.Type == Type.Number)
+            if (left._type == Type.Number)
                 return left._number >= right;
             else
                 return left._string >= right;
@@ -247,7 +249,7 @@ namespace Yolol.Execution
 
         public static bool operator >=(Value left, YString right)
         {
-            if (left.Type == Type.Number)
+            if (left._type == Type.Number)
                 return left._number >= right;
             else
                 return left._string >= right;
@@ -255,7 +257,7 @@ namespace Yolol.Execution
 
         public static bool operator >=(Value left, Number right)
         {
-            if (left.Type == Type.Number)
+            if (left._type == Type.Number)
                 return left._number >= right;
             else
                 return left._string >= right;
@@ -263,7 +265,7 @@ namespace Yolol.Execution
 
         public static bool operator >=(Value left, bool right)
         {
-            if (left.Type == Type.Number)
+            if (left._type == Type.Number)
                 return left._number >= right;
             else
                 return left._string >= right;
@@ -278,7 +280,7 @@ namespace Yolol.Execution
 
         public static bool operator ==(Value left, YString right)
         {
-            if (left.Type != Type.String)
+            if (left._type != Type.String)
                 return false;
             else
                 return left._string == right;
@@ -286,7 +288,7 @@ namespace Yolol.Execution
 
         public static bool operator ==(Value left, Number right)
         {
-            if (left.Type != Type.Number)
+            if (left._type != Type.Number)
                 return false;
             else
                 return left._number == right;
@@ -294,7 +296,7 @@ namespace Yolol.Execution
 
         public static bool operator ==(Value left, bool right)
         {
-            if (left.Type != Type.Number)
+            if (left._type != Type.Number)
                 return false;
             else
                 return left._number == right;
@@ -309,7 +311,7 @@ namespace Yolol.Execution
 
         public static bool operator !=(Value left, YString right)
         {
-            if (left.Type != Type.String)
+            if (left._type != Type.String)
                 return true;
             else
                 return left._string != right;
@@ -317,7 +319,7 @@ namespace Yolol.Execution
 
         public static bool operator !=(Value left, Number right)
         {
-            if (left.Type != Type.Number)
+            if (left._type != Type.Number)
                 return true;
             else
                 return left._number != right;
@@ -325,7 +327,7 @@ namespace Yolol.Execution
 
         public static bool operator !=(Value left, bool right)
         {
-            if (left.Type != Type.Number)
+            if (left._type != Type.Number)
                 return true;
             else
                 return left._number != right;
@@ -335,7 +337,7 @@ namespace Yolol.Execution
         #region op -
         public static Value operator -(Value left, Value right)
         {
-            if (left.Type == Type.Number && right.Type == Type.Number)
+            if (left._type == Type.Number && right._type == Type.Number)
                 return left._number - right._number;
             else
                 return new Value(left.ToYString() - right.ToYString());
@@ -348,7 +350,7 @@ namespace Yolol.Execution
 
         public static Value operator -(Value l, Number r)
         {
-            if (l.Type == Type.Number)
+            if (l._type == Type.Number)
                 return l._number - r;
             else
                 return new Value(l._string - r);
@@ -363,7 +365,7 @@ namespace Yolol.Execution
         #region op +
         public static Value operator +(Value left, Value right)
         {
-            if (left.Type == Type.Number && right.Type == Type.Number)
+            if (left._type == Type.Number && right._type == Type.Number)
                 return left._number + right._number;
             else
                 return new Value(left.ToYString() + right.ToYString());
@@ -376,7 +378,7 @@ namespace Yolol.Execution
 
         public static Value operator +(Value l, Number r)
         {
-            if (l.Type == Type.Number)
+            if (l._type == Type.Number)
                 return l._number + r;
             else
                 return new Value(l._string + r);
@@ -391,23 +393,23 @@ namespace Yolol.Execution
         #region op *
         internal static bool WillMulThrow(Value l, Value r)
         {
-            return l.Type == Type.String || r.Type == Type.String;
+            return l._type == Type.String || r._type == Type.String;
         }
 
         internal static bool WillMulThrow(Value l, Number _)
         {
-            return l.Type == Type.String;
+            return l._type == Type.String;
         }
 
         internal static bool WillMulThrow(Value l, bool _)
         {
-            return l.Type == Type.String;
+            return l._type == Type.String;
         }
 
         [ErrorMetadata(nameof(WillMulThrow))]
         public static Number operator *(Value left, Value right)
         {
-            if (left.Type == Type.Number && right.Type == Type.Number)
+            if (left._type == Type.Number && right._type == Type.Number)
                 return left._number * right._number;
             else
                 throw new ExecutionException("Attempted to multiply a string");
@@ -421,7 +423,7 @@ namespace Yolol.Execution
         [ErrorMetadata(nameof(WillMulThrow))]
         public static Number operator *(Value left, Number right)
         {
-            if (left.Type == Type.Number)
+            if (left._type == Type.Number)
                 return left._number * right;
             else
                 throw new ExecutionException("Attempted to multiply a string");
@@ -430,7 +432,7 @@ namespace Yolol.Execution
         [ErrorMetadata(nameof(WillMulThrow))]
         public static Number operator *(Value left, bool right)
         {
-            if (left.Type == Type.Number)
+            if (left._type == Type.Number)
                 return left._number * right;
             else
                 throw new ExecutionException("Attempted to multiply a string");
@@ -440,7 +442,7 @@ namespace Yolol.Execution
         #region op /
         internal static bool WillDivThrow(Value l, Value r)
         {
-            if (l.Type == Type.Number && r.Type == Type.Number)
+            if (l._type == Type.Number && r._type == Type.Number)
                 return Number.WillDivThrow(l.Number, r.Number);
             else
                 return true;
@@ -448,7 +450,7 @@ namespace Yolol.Execution
 
         internal static bool WillDivThrow(Value l, Number r)
         {
-            if (l.Type == Type.Number)
+            if (l._type == Type.Number)
                 return Number.WillDivThrow(l.Number, r);
             else
                 return true;
@@ -456,7 +458,7 @@ namespace Yolol.Execution
 
         internal static bool WillDivThrow(Value l, bool r)
         {
-            if (l.Type == Type.Number)
+            if (l._type == Type.Number)
                 return Number.WillDivThrow(l.Number, (Number)r);
             else
                 return true;
@@ -465,7 +467,7 @@ namespace Yolol.Execution
         [ErrorMetadata(nameof(WillDivThrow))]
         public static Number operator /(Value left, Value right)
         {
-            if (left.Type == Type.Number && right.Type == Type.Number)
+            if (left._type == Type.Number && right._type == Type.Number)
                 return left._number / right._number;
             else
                 throw new ExecutionException("Attempted to divide a string");
@@ -479,7 +481,7 @@ namespace Yolol.Execution
         [ErrorMetadata(nameof(WillDivThrow))]
         public static Number operator /(Value left, Number right)
         {
-            if (left.Type == Type.Number)
+            if (left._type == Type.Number)
                 return left._number / right;
             else
                 throw new ExecutionException("Attempted to divide a string");
@@ -488,7 +490,7 @@ namespace Yolol.Execution
         [ErrorMetadata(nameof(WillDivThrow))]
         public static Number operator /(Value left, bool right)
         {
-            if (left.Type == Type.Number)
+            if (left._type == Type.Number)
                 return left._number / right;
             else
                 throw new ExecutionException("Attempted to divide a string");
@@ -512,7 +514,7 @@ namespace Yolol.Execution
         #region op %
         internal static bool WillModThrow(Value l, Value r)
         {
-            if (l.Type == Type.Number && r.Type == Type.Number)
+            if (l._type == Type.Number && r._type == Type.Number)
                 return Number.WillModThrow(l.Number, r.Number);
             else
                 return true;
@@ -520,7 +522,7 @@ namespace Yolol.Execution
 
         internal static bool WillModThrow(Value l, Number r)
         {
-            if (l.Type == Type.Number)
+            if (l._type == Type.Number)
                 return Number.WillModThrow(l.Number, r);
             else
                 return true;
@@ -528,7 +530,7 @@ namespace Yolol.Execution
 
         internal static bool WillModThrow(Value l, bool r)
         {
-            if (l.Type == Type.Number)
+            if (l._type == Type.Number)
                 return Number.WillModThrow(l.Number, r);
             else
                 return true;
@@ -537,7 +539,7 @@ namespace Yolol.Execution
         [ErrorMetadata(nameof(WillModThrow))]
         public static Number operator %(Value left, Value right)
         {
-            if (left.Type == Type.Number && right.Type == Type.Number)
+            if (left._type == Type.Number && right._type == Type.Number)
                 return left._number % right._number;
             else
                 throw new ExecutionException("Attempted to modulo a string");
@@ -551,7 +553,7 @@ namespace Yolol.Execution
         [ErrorMetadata(nameof(WillModThrow))]
         public static Number operator %(Value left, Number right)
         {
-            if (left.Type == Type.Number)
+            if (left._type == Type.Number)
                 return left._number % right;
             else
                 throw new ExecutionException("Attempted to modulo a string");
@@ -560,7 +562,7 @@ namespace Yolol.Execution
         [ErrorMetadata(nameof(WillModThrow))]
         public static Number operator %(Value left, bool right)
         {
-            if (left.Type == Type.Number)
+            if (left._type == Type.Number)
                 return left._number % (Number)right;
             else
                 throw new ExecutionException("Attempted to modulo a string");
@@ -570,38 +572,51 @@ namespace Yolol.Execution
         #region op ++
         public static Value operator ++(Value value)
         {
-            if (value.Type == Type.Number)
-                return new Value(value._number + Number.One);
-
-            var a = value._string;
-            a++;
-            return new Value(a);
+            if (value._type == Type.Number)
+            {
+                var a = value._number;
+                a++;
+                return new Value(a);
+            }
+            else
+            {
+                var a = value._string;
+                a++;
+                return new Value(a);
+            }
         }
         #endregion
 
         #region op --
         internal static bool WillDecThrow(Value value)
         {
-            return value.Type == Type.String
+            return value._type == Type.String
                 && value._string.Length == 0;
         }
 
         [ErrorMetadata(nameof(WillDecThrow))]
         public static Value operator --(Value value)
         {
-            if (value.Type == Type.Number)
-                return new Value(value._number - Number.One);
+            if (value._type == Type.Number)
+            {
+                var a = value._number;
+                a--;
+                return new Value(a);
+            }
+            else
+            {
 
-            var a = value._string;
-            a--;
-            return new Value(a);
+                var a = value._string;
+                a--;
+                return new Value(a);
+            }
         }
         #endregion
 
 
         public static Number Exponent(Value left, Value right)
         {
-            if (left.Type == Type.Number && right.Type == Type.Number)
+            if (left._type == Type.Number && right._type == Type.Number)
                 return left._number.Exponent(right._number);
             else
                 throw new ExecutionException("Attempted to exponent a string");
@@ -614,7 +629,7 @@ namespace Yolol.Execution
 
         public static Number Exponent(Value left, Number right)
         {
-            if (left.Type == Type.Number)
+            if (left._type == Type.Number)
                 return left._number.Exponent(right);
             else
                 throw new ExecutionException("Attempted to exponent a string");
@@ -622,7 +637,7 @@ namespace Yolol.Execution
 
         public static Number Exponent(Value left, bool right)
         {
-            if (left.Type == Type.Number)
+            if (left._type == Type.Number)
                 return left._number.Exponent(right);
             else
                 throw new ExecutionException("Attempted to exponent a string");
@@ -636,7 +651,7 @@ namespace Yolol.Execution
 
         public static Number operator -(Value value)
         {
-            if (value.Type == Type.String)
+            if (value._type == Type.String)
                 throw new ExecutionException("Attempted to negate a String value");
 
             return -value._number;
@@ -644,7 +659,7 @@ namespace Yolol.Execution
 
         public static Number Abs(Value value)
         {
-            if (value.Type == Type.String)
+            if (value._type == Type.String)
                 throw new ExecutionException("Attempted to Abs a string value");
 
             return value._number.Abs();
@@ -652,7 +667,7 @@ namespace Yolol.Execution
 
         public static Number Sqrt(Value value)
         {
-            if (value.Type == Type.String)
+            if (value._type == Type.String)
                 throw new ExecutionException("Attempted to Sqrt a string value");
 
             return value._number.Sqrt();
@@ -660,7 +675,7 @@ namespace Yolol.Execution
 
         public static Number Sin(Value value)
         {
-            if (value.Type == Type.String)
+            if (value._type == Type.String)
                 throw new ExecutionException($"Attempted to `Sin` a string value");
 
             return value._number.Sin();
@@ -668,7 +683,7 @@ namespace Yolol.Execution
 
         public static Number Cos(Value value)
         {
-            if (value.Type == Type.String)
+            if (value._type == Type.String)
                 throw new ExecutionException($"Attempted to `Cos` a string value");
 
             return value._number.Cos();
@@ -676,14 +691,14 @@ namespace Yolol.Execution
 
         public static Number Tan(Value value)
         {
-            if (value.Type == Type.String)
+            if (value._type == Type.String)
                 throw new ExecutionException($"Attempted to `Tan` a string value");
             return value._number.Tan();
         }
 
         public static Number ArcTan(Value value)
         {
-            if (value.Type == Type.String)
+            if (value._type == Type.String)
                 throw new ExecutionException($"Attempted to `ATan` a string value");
 
             return value._number.ArcTan();
@@ -691,7 +706,7 @@ namespace Yolol.Execution
 
         public static Number ArcSin(Value value)
         {
-            if (value.Type == Type.String)
+            if (value._type == Type.String)
                 throw new ExecutionException($"Attempted to `ASin` a string value");
 
             return value._number.ArcSin();
@@ -699,7 +714,7 @@ namespace Yolol.Execution
 
         public static Number ArcCos(Value value)
         {
-            if (value.Type == Type.String)
+            if (value._type == Type.String)
                 throw new ExecutionException($"Attempted to `ACos` a string value");
 
             return value._number.ArcCos();
@@ -707,7 +722,7 @@ namespace Yolol.Execution
 
         public BaseExpression ToConstant()
         {
-            if (Type == Type.Number)
+            if (_type == Type.Number)
                 return new ConstantNumber(_number);
             else
                 return new ConstantString(String);
@@ -715,11 +730,11 @@ namespace Yolol.Execution
 
         public Value Factorial()
         {
-            if (Type == Type.String)
+            if (_type == Type.String)
                 throw new ExecutionException("Attempted to apply factorial to a string");
             
-            if (Type != Type.Number)
-                throw new ExecutionException($"Attempted to apply factorial to a `{Type}` object");
+            if (_type != Type.Number)
+                throw new ExecutionException($"Attempted to apply factorial to a `{_type}` object");
 
             return Number.Factorial();
         }
