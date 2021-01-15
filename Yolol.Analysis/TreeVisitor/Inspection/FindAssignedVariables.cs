@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Yolol.Analysis.ControlFlowGraph.AST;
 using Yolol.Grammar;
 using Yolol.Grammar.AST.Expressions;
@@ -57,32 +56,28 @@ namespace Yolol.Analysis.TreeVisitor.Inspection
 
         protected override BaseExpression Visit(PostDecrement dec)
         {
-            //Add(dec.Name, dec);
-            throw new NotImplementedException();
+            Add(dec.Name, dec);
 
             return base.Visit(dec);
         }
 
         protected override BaseExpression Visit(PreDecrement dec)
         {
-            //Add(dec.Name);
-            throw new NotImplementedException();
+            Add(dec.Name, dec);
 
             return base.Visit(dec);
         }
 
         protected override BaseExpression Visit(PostIncrement inc)
         {
-            //Add(inc.Name);
-            throw new NotImplementedException();
+            Add(inc.Name, inc);
 
             return base.Visit(inc);
         }
 
         protected override BaseExpression Visit(PreIncrement inc)
         {
-            //Add(inc.Name);
-            throw new NotImplementedException();
+            Add(inc.Name, inc);
 
             return base.Visit(inc);
         }
