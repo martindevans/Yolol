@@ -19,27 +19,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Scripts\lib.yasm">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Scripts\hanoi.yasm">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Scripts\test.lol">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
     <PegGrammar Include="Grammar\YololAssembler.pegasus" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Yolol\Yolol.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Scripts\isan\" />
   </ItemGroup>
 
 </Project>

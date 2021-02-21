@@ -54,12 +54,15 @@ namespace Yolol.Execution
 
         public static bool operator <(YString left, Number right)
         {
-            return left < new YString(right.ToString());
+            return CompareStringToNumber(left, right) < 0;
         }
 
         public static bool operator <(YString left, Value right)
         {
-            return left < new YString(right.ToString());
+            if (right.Type == Type.Number)
+                return left < right.Number;
+            else
+                return left < right.String;
         }
 
         public static bool operator <(YString left, bool right)
@@ -75,12 +78,15 @@ namespace Yolol.Execution
 
         public static bool operator <=(YString left, Number right)
         {
-            return left <= new YString(right.ToString());
+            return CompareStringToNumber(left, right) <= 0;
         }
 
         public static bool operator <=(YString left, Value right)
         {
-            return left <= new YString(right.ToString());
+            if (right.Type == Type.Number)
+                return left <= right.Number;
+            else
+                return left <= right.String;
         }
 
         public static bool operator <=(YString left, bool right)
@@ -96,12 +102,15 @@ namespace Yolol.Execution
 
         public static bool operator >(YString left, Number right)
         {
-            return left > new YString(right.ToString());
+            return CompareStringToNumber(left, right) > 0;
         }
 
         public static bool operator >(YString left, Value right)
         {
-            return left > new YString(right.ToString());
+            if (right.Type == Type.Number)
+                return left > right.Number;
+            else
+                return left > right.String;
         }
 
         public static bool operator >(YString left, bool right)
@@ -117,12 +126,15 @@ namespace Yolol.Execution
 
         public static bool operator >=(YString left, Number right)
         {
-            return left >= new YString(right.ToString());
+            return CompareStringToNumber(left, right) >= 0;
         }
 
         public static bool operator >=(YString left, Value right)
         {
-            return left >= new YString(right.ToString());
+            if (right.Type == Type.Number)
+                return left >= right.Number;
+            else
+                return left >= right.String;
         }
 
         public static bool operator >=(YString left, bool right)
@@ -180,9 +192,28 @@ namespace Yolol.Execution
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static int CompareStringToNumber(in YString left, in Number right)
+        {
+            unsafe
+            {
+                const int bufferSize = 128;
+                var buffer = stackalloc char[bufferSize];
+                var span = right.ToString(new Span<char>(buffer, bufferSize));
+
+                return CompareStringSpans(left, span);
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int CompareStringSpans(in YString left, in YString right)
         {
             return left._span.CompareTo(right._span);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static int CompareStringSpans(in YString left, in Span<char> right)
+        {
+            return left._span.CompareTo(right);
         }
 
 
@@ -201,6 +232,11 @@ namespace Yolol.Execution
 
                 return new YString(RopeSlice.Concat(l._span, rightSpan));
             }
+        }
+
+        public static YString operator +(Span<char> l, YString r)
+        {
+            return new YString(RopeSlice.Concat(l, r._span));
         }
 
         public static YString operator +(YString l, Value r)

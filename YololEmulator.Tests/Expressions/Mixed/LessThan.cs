@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Yolol.Execution;
 
 namespace YololEmulator.Tests.Expressions.Mixed
 {
@@ -8,7 +9,7 @@ namespace YololEmulator.Tests.Expressions.Mixed
         [TestMethod]
         public void StringNumberFalse()
         {
-            var result = TestExecutor.Execute("a = 3 < \"2\"");
+            var result = TestExecutor.Execute("a = 3 < \"3\"");
 
             var a = result.GetVariable("a");
 
@@ -28,11 +29,11 @@ namespace YololEmulator.Tests.Expressions.Mixed
         [TestMethod]
         public void StringNumberTrue()
         {
-            var result = TestExecutor.Execute("a = \"a\" > 2");
+            var result = TestExecutor.Execute("a = \"a\" < 2");
 
             var a = result.GetVariable("a");
 
-            Assert.AreEqual(1, (int)a.Value.Number);
+            Assert.AreEqual(0, (int)a.Value.Number);
         }
 
         [TestMethod]
@@ -43,6 +44,16 @@ namespace YololEmulator.Tests.Expressions.Mixed
             var a = result.GetVariable("a");
 
             Assert.AreEqual(1, (int)a.Value.Number);
+        }
+
+        [TestMethod]
+        public void NumberStringFalse2()
+        {
+            var result = TestExecutor.Execute("a = 2 > \"2\"");
+
+            var a = result.GetVariable("a");
+
+            Assert.AreEqual(0, (int)a.Value.Number);
         }
     }
 }

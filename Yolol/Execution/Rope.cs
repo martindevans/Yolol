@@ -180,6 +180,27 @@ namespace Yolol.Execution
             return Length - other.Length;
         }
 
+        public int CompareTo(in Span<char> other)
+        {
+            if (Length == 0 || other.Length == 0)
+                return Length - other.Length;
+
+            // `_rope` can only be null if `Length == 0`. That was checked above.
+            Debug.Assert(_rope != null);
+
+            var l = Math.Min(Length, other.Length);
+            for (var i = 0; i < l; i++)
+            {
+                var a = _rope[_start + i];
+                var b = other[i];
+
+                if (a != b)
+                    return a - b;
+            }
+
+            return Length - other.Length;
+        }
+
         public static RopeSlice Concat(in RopeSlice left, in RopeSlice right)
         {
             // If either part of the concat is an empty string (represented by a null rope) return the other half.
@@ -225,6 +246,25 @@ namespace Yolol.Execution
             // Create a copy of the rope to extend
             var rope = left._rope.CloneSlice(left._start, left.Length, left.Length + right.Length);
             rope.Append(right);
+            return new RopeSlice(rope, 0, rope.Length);
+        }
+
+        public static RopeSlice Concat(in ReadOnlySpan<char> left, in RopeSlice right)
+        {
+            // If either part of the concat is an empty string return the other half.
+            if (left.Length == 0)
+                return right;
+            if (right._rope == null)
+            {
+                var r = new Rope(left.Length);
+                r.Append(left);
+                return new RopeSlice(r, 0, r.Length);
+            }
+
+            // Create a new rope containing the data
+            var rope = new Rope(left.Length + right.Length);
+            rope.Append(left);
+            rope.Append(right._rope, right._start, right.Length);
             return new RopeSlice(rope, 0, rope.Length);
         }
 

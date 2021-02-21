@@ -139,10 +139,13 @@ namespace Yolol.Execution
         #region op <
         public static bool operator <(Value left, Value right)
         {
-            if (left._type == Type.Number)
-                return left._number < right;
-            else
-                return left._string < right;
+            return (left._type, right._type) switch {
+                (Type.Number, Type.Number) => left._number < right._number,
+                (Type.Number, Type.String) => left._number < right._string,
+                (Type.String, Type.Number) => left._string < right._number,
+                (Type.String, Type.String) => left._string < right._string,
+                _ => throw new InvalidOperationException($"Cannot compare {left._type} < {right._type}")
+            };
         }
 
         public static bool operator <(Value left, YString right)
@@ -173,10 +176,13 @@ namespace Yolol.Execution
         #region op <=
         public static bool operator <=(Value left, Value right)
         {
-            if (left._type == Type.Number)
-                return left._number <= right;
-            else
-                return left._string <= right;
+            return (left._type, right._type) switch {
+                (Type.Number, Type.Number) => left._number <= right._number,
+                (Type.Number, Type.String) => left._number <= right._string,
+                (Type.String, Type.Number) => left._string <= right._number,
+                (Type.String, Type.String) => left._string <= right._string,
+                _ => throw new InvalidOperationException($"Cannot compare {left._type} <= {right._type}")
+            };
         }
 
         public static bool operator <=(Value left, YString right)
@@ -207,10 +213,13 @@ namespace Yolol.Execution
         #region op >
         public static bool operator >(Value left, Value right)
         {
-            if (left._type == Type.Number)
-                return left._number > right;
-            else
-                return left._string > right;
+            return (left._type, right._type) switch {
+                (Type.Number, Type.Number) => left._number > right._number,
+                (Type.Number, Type.String) => left._number > right._string,
+                (Type.String, Type.Number) => left._string > right._number,
+                (Type.String, Type.String) => left._string > right._string,
+                _ => throw new InvalidOperationException($"Cannot compare {left._type} > {right._type}")
+            };
         }
 
         public static bool operator >(Value left, YString right)
@@ -241,10 +250,13 @@ namespace Yolol.Execution
         #region op >=
         public static bool operator >=(Value left, Value right)
         {
-            if (left._type == Type.Number)
-                return left._number >= right;
-            else
-                return left._string >= right;
+            return (left._type, right._type) switch {
+                (Type.Number, Type.Number) => left._number >= right._number,
+                (Type.Number, Type.String) => left._number >= right._string,
+                (Type.String, Type.Number) => left._string >= right._number,
+                (Type.String, Type.String) => left._string >= right._string,
+                _ => throw new InvalidOperationException($"Cannot compare {left._type} >= {right._type}")
+            };
         }
 
         public static bool operator >=(Value left, YString right)
@@ -275,7 +287,13 @@ namespace Yolol.Execution
         #region op ==
         public static bool operator ==(Value left, Value right)
         {
-            return left.Equals(right);
+            return (left._type, right._type) switch {
+                (Type.Number, Type.Number) => left._number == right._number,
+                (Type.Number, Type.String) => left._number == right._string,
+                (Type.String, Type.Number) => left._string == right._number,
+                (Type.String, Type.String) => left._string == right._string,
+                _ => throw new InvalidOperationException($"Cannot compare {left._type} == {right._type}")
+            };
         }
 
         public static bool operator ==(Value left, YString right)
@@ -306,7 +324,7 @@ namespace Yolol.Execution
         #region op !=
         public static bool operator !=(Value left, Value right)
         {
-            return !left.Equals(right);
+            return !(left == right);
         }
 
         public static bool operator !=(Value left, YString right)
@@ -337,10 +355,13 @@ namespace Yolol.Execution
         #region op -
         public static Value operator -(Value left, Value right)
         {
-            if (left._type == Type.Number && right._type == Type.Number)
-                return left._number - right._number;
-            else
-                return new Value(left.ToYString() - right.ToYString());
+            return (left._type, right._type) switch {
+                (Type.Number, Type.Number) => left._number - right._number,
+                (Type.Number, Type.String) => new Value(left._number - right._string),
+                (Type.String, Type.Number) => new Value(left._string - right._number),
+                (Type.String, Type.String) => new Value(left._string - right._string),
+                _ => throw new InvalidOperationException($"Cannot execute {left._type} - {right._type}")
+            };
         }
 
         public static YString operator -(Value left, YString right)
@@ -365,10 +386,13 @@ namespace Yolol.Execution
         #region op +
         public static Value operator +(Value left, Value right)
         {
-            if (left._type == Type.Number && right._type == Type.Number)
-                return left._number + right._number;
-            else
-                return new Value(left.ToYString() + right.ToYString());
+            return (left._type, right._type) switch {
+                (Type.Number, Type.Number) => left._number + right._number,
+                (Type.Number, Type.String) => new Value(left._number + right._string),
+                (Type.String, Type.Number) => new Value(left._string + right._number),
+                (Type.String, Type.String) => new Value(left._string + right._string),
+                _ => throw new InvalidOperationException($"Cannot execute {left._type} + {right._type}")
+            };
         }
 
         public static YString operator +(Value left, YString right)

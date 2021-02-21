@@ -16,6 +16,11 @@ namespace Yolol.Execution
 
         private readonly long _value;
 
+        /// <summary>
+        /// Fetches the raw underlying value which represents this number. This Can be converted back into a `Number` by using `Number.FromRaw`
+        /// </summary>
+        public long RawValue => _value;
+
         private Number(long num)
         {
             _value = num;
@@ -297,7 +302,14 @@ namespace Yolol.Execution
 
         public static YString operator +(Number l, YString r)
         {
-            return new YString(l.ToString()) + r;
+            unsafe
+            {
+                const int bufferSize = 128;
+                var buffer = stackalloc char[bufferSize];
+                var leftSpan = l.ToString(new Span<char>(buffer, bufferSize));
+
+                return leftSpan + r;
+            }
         }
 
         public static Value operator +(Number l, Value r)
@@ -345,7 +357,7 @@ namespace Yolol.Execution
 
         public static bool operator >(Number l, YString r)
         {
-            return new YString(l.ToString()) > r;
+            return r < l;
         }
 
         public static bool operator >(Number l, Value r)
@@ -353,7 +365,7 @@ namespace Yolol.Execution
             if (r.Type == Type.Number)
                 return l > r.Number;
             else
-                return new YString(l.ToString()) > r.String;
+                return l > r.String;
         }
 
         public static bool operator >(Number l, bool r)
@@ -369,7 +381,7 @@ namespace Yolol.Execution
 
         public static bool operator <(Number l, YString r)
         {
-            return new YString(l.ToString()) < r;
+            return r > l;
         }
 
         public static bool operator <(Number l, Value r)
@@ -377,7 +389,7 @@ namespace Yolol.Execution
             if (r.Type == Type.Number)
                 return l < r.Number;
             else
-                return new YString(l.ToString()) < r.String;
+                return l < r.String;
         }
 
         public static bool operator <(Number l, bool r)
@@ -393,7 +405,7 @@ namespace Yolol.Execution
 
         public static bool operator >=(Number l, YString r)
         {
-            return new YString(l.ToString()) >= r;
+            return r <= l;
         }
 
         public static bool operator >=(Number l, Value r)
@@ -401,7 +413,7 @@ namespace Yolol.Execution
             if (r.Type == Type.Number)
                 return l >= r.Number;
             else
-                return new YString(l.ToString()) >= r.String;
+                return l >= r.String;
         }
 
         public static bool operator >=(Number l, bool r)
@@ -417,7 +429,7 @@ namespace Yolol.Execution
 
         public static bool operator <=(Number l, YString r)
         {
-            return new YString(l.ToString()) <= r;
+            return r >= l;
         }
 
         public static bool operator <=(Number l, Value r)
@@ -425,7 +437,7 @@ namespace Yolol.Execution
             if (r.Type == Type.Number)
                 return l <= r.Number;
             else
-                return new YString(l.ToString()) <= r.String;
+                return l <= r.String;
         }
 
         public static bool operator <=(Number l, bool r)

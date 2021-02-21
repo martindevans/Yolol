@@ -158,6 +158,16 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
             {
                 return base.Visit(new StatementList(statements)).Statements;
             }
+
+            protected override BaseExpression Visit(Decrement dec)
+            {
+                return base.Visit(dec);
+            }
+
+            protected override BaseExpression Visit(Increment inc)
+            {
+                return base.Visit(inc);
+            }
         }
 
         private class SingleStaticAssignmentTable

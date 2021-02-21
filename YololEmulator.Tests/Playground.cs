@@ -68,8 +68,8 @@ namespace YololEmulator.Tests
                 "flag=a==:a if not flag then goto 5 else goto 6 end b=0/0",
                 ":x = \"hello\" * 4 goto \"world\" x = 2",
                 "b*=2 flag=b>30 if flag then :b=a end if :a then b = 7 end",
-                "b=b-1 goto 4",
-                "b=b+1 goto 4"
+                "b-=1 goto 4",
+                "b+=1 goto 4"
             );
 
             //var ast = TestExecutor.Parse("d=r---r n=8-6*(d<5) n+=2*((d>n)-(d<n)) e+=(n+(d>n)-(d<n))*t^j++ goto 7");

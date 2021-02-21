@@ -10,6 +10,8 @@
     <Platforms>AnyCPU;x64</Platforms>
 
     <StartupObject></StartupObject>
+
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
