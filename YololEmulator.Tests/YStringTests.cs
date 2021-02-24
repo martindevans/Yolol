@@ -471,5 +471,12 @@ namespace YololEmulator.Tests
             var a = new YString("");
             Assert.IsTrue(a.Equals(""));
         }
+
+        [TestMethod]
+        public void PopLastCharacter()
+        {
+            var str = new YString("Hello");
+            Assert.AreEqual("o", str.LastCharacter().ToString());
+        }
     }
 }

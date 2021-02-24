@@ -112,7 +112,7 @@ namespace Yolol.Execution
             if (length < 0)
                 throw new ArgumentOutOfRangeException(nameof(length), "length < 0");
             if (start + length > rope.Length)
-                throw new ArgumentOutOfRangeException(nameof(length), "start + length >= rope.Length");
+                throw new ArgumentOutOfRangeException(nameof(length), "start + length > rope.Length");
 #endif
         }
 
@@ -199,6 +199,16 @@ namespace Yolol.Execution
             }
 
             return Length - other.Length;
+        }
+
+        public RopeSlice PopLast()
+        {
+            if (_rope == null)
+                throw new InvalidOperationException("Attempted to `PopLast` on null `RopeSlice`");
+            if (Length < 1)
+                throw new InvalidOperationException("Attempted to `PopLast` on empty `RopeSlice`");
+
+            return new RopeSlice(_rope, _start + Length - 1, 1);
         }
 
         public static RopeSlice Concat(in RopeSlice left, in RopeSlice right)
@@ -334,7 +344,13 @@ namespace Yolol.Execution
 
             // If left slice _starts_ with the right string we can just offset the start of the slice
             if (startIndex == 0)
-                return new RopeSlice(haystack._rope, haystack._start + needleLength, haystack.Length - needleLength);
+            {
+                var start = haystack._start + needleLength;
+                var length = haystack.Length - needleLength;
+                if (length == 0)
+                    start = 0;
+                return new RopeSlice(haystack._rope, start, length);
+            }
 
             // We'll have to make a new rope and remove it
             var rope = new Rope(haystack.Length);

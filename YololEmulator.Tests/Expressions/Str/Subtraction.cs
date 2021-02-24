@@ -98,5 +98,17 @@ namespace YololEmulator.Tests.Expressions.Str
 
             Assert.AreEqual("ac", a.Value.String.ToString());
         }
+
+        [TestMethod]
+        public void SubtractAll()
+        {
+            var result = TestExecutor.Execute("a = \"abcdefgh\"", "b = a-a");
+
+            var a = result.GetVariable("a");
+            var b = result.GetVariable("b");
+
+            Assert.AreEqual("abcdefgh", a.Value.String.ToString());
+            Assert.AreEqual("", b.Value.String.ToString());
+        }
     }
 }

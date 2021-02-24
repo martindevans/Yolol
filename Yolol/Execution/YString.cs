@@ -397,5 +397,15 @@ namespace Yolol.Execution
         {
             throw new ExecutionException("Attempted to sqrt a string");
         }
+
+
+        [ErrorMetadata(nameof(WillDecThrow))]
+        public YString LastCharacter()
+        {
+            if (Length == 0)
+                throw new ExecutionException("Attempted to decrement empty string");
+
+            return new YString(_span.PopLast());
+        }
     }
 }

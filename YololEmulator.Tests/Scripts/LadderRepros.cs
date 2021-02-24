@@ -63,5 +63,32 @@ namespace YololEmulator.Tests.Scripts
                 }
             }
         }
+
+        [TestMethod]
+        public void EvilStrings()
+        {
+            var ms = TestExecutor.Execute(
+                "a=\"abcdef\"",
+                "a -= \"a\"",
+                "b = a---a"
+            );
+
+            Assert.AreEqual("bcde", ms.GetVariable("a").Value.ToString());
+            Assert.AreEqual("f", ms.GetVariable("b").Value.ToString());
+        }
+
+        [TestMethod]
+        public void EvilStrings2()
+        {
+            var ms = TestExecutor.Execute(
+                "a=\"abcxabc\"",
+                "b=a b-- b-- b-- b--",
+                "c=a-b"
+            );
+
+            Assert.AreEqual("abcxabc", ms.GetVariable("a").Value.ToString());
+            Assert.AreEqual("abc", ms.GetVariable("b").Value.ToString());
+            Assert.AreEqual("abcx", ms.GetVariable("c").Value.ToString());
+        }
     }
 }
