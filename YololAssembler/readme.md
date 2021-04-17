@@ -20,7 +20,7 @@ This will immediately compile `example.yasm` into `example.yolol`. The `watch` p
 
 YASM is a macro language - the compiler simply substitutes blocks of text in place of other blocks of text. This simple approach ensures that YASM is always compatible with the game (the Yolol is never parsed or validated) and that the language is very simple to understand (because everything is based on simple substitution).
 
-There are example scripts [here](YololAssembler/Scripts). These scripts have been written as competition entries for the `Referee` Yolol code golf challenges where every space and every tick is important for scoring so they are written to be as compact as possible!
+There are example scripts [here](Scripts). These scripts have been written as competition entries for the `Referee` Yolol code golf challenges where every space and every tick is important for scoring so they are written to be as compact as possible!
 
 ## Line Labels
 
@@ -102,7 +102,7 @@ function-like macros can have a body containing multiple lines of code by enclos
 
 ## Imports
 
-A YASM program can import other YASM files, this allows libraries of re-usable code to be written and imported into multiple projects. There is a standard library of generic macros available [here](YololAssembler/Scripts/lib.yasm) (lib.yasm). When a file is imported everything defined in the file is available for use in the file it was imported into.
+A YASM program can import other YASM files, this allows libraries of re-usable code to be written and imported into multiple projects. There is a standard library of generic macros available [here](Scripts/lib.yasm) (lib.yasm). When a file is imported everything defined in the file is available for use in the file it was imported into.
 
 ```yasm
 #import lib.yasm        // Import lib.yasm
