@@ -12,6 +12,9 @@ namespace Yolol.Grammar.AST.Expressions.Unary
 
         protected override Value Evaluate(Value value)
         {
+            if (Value.WillDecThrow(value))
+                throw new ExecutionException($"Attempted to decrement empty string in field `{Name}`");
+
             return --value;
         }
     }

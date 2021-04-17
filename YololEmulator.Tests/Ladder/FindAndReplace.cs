@@ -28,7 +28,7 @@ namespace YololEmulator.Tests.Ladder
             var input = new List<Dictionary<string, Value>>();
             var output = new List<Dictionary<string, Value>>();
 
-            void Emit(string original, string find, string replace, string result = null)
+            void Emit(string original, string find, string replace, string? result = null)
             {
                 if (result == null)
                     result = original.Replace(find, replace);
@@ -76,19 +76,6 @@ namespace YololEmulator.Tests.Ladder
                 SingleCase();
 
             Generator.YololLadderGenerator(input, output, true, Generator.ScoreMode.BasicScoring);
-        }
-
-        private static string Output(string[] parts)
-        {
-            if (parts.Length == 1)
-                return parts[0];
-
-            return string.Join(", ", parts[0..^1]) + " and " + parts.Last();
-        }
-
-        private static string Pluralise(int amount, string unit)
-        {
-            return $"{amount} {unit}" + (amount > 1 ? "s" : "");
         }
     }
 }

@@ -2,7 +2,7 @@
   "profiles": {
     "YololAssembler": {
       "commandName": "Project",
-      "commandLineArgs": "-i InteractiveDocking.yasm -o InteractiveDocking.yolol --watch",
+      "commandLineArgs": "-i Positioning.yasm -o Positioning.yolol --watch",
       "workingDirectory": "C:\\Users\\Martin\\Documents\\dotnet\\YololEmulator\\YololAssembler\\Scripts"
     }
   }

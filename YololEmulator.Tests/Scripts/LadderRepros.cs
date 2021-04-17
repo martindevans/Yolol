@@ -1,11 +1,26 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Yolol.Execution;
 
 namespace YololEmulator.Tests.Scripts
 {
     [TestClass]
     public class LadderRepros
     {
+        [TestMethod]
+        public void ZijkhalExponents()
+        {
+            var a = 0.315;
+            var b = Math.Pow(a, 1);
+            Console.WriteLine(a);
+            Console.WriteLine(b);
+            Assert.AreEqual(a, b);
+
+            var ms = TestExecutor.Execute($"a=0.315 b=a^1");
+
+            Assert.AreEqual(0.315, (double)(Number)ms.GetVariable("b").Value.Number);
+        }
+
         [TestMethod]
         public void MartinChallenge1()
         {

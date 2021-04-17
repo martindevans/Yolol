@@ -20,7 +20,6 @@ namespace YololEmulator.Tests.Ladder
                     { "i", (Number)value },
                 });
 
-                var chars = value.ToString();
                 var result = "";
 
                 var current = ' ';

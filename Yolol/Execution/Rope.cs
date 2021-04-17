@@ -51,13 +51,15 @@ namespace Yolol.Execution
 
         public Span<char> CopyTo(Span<char> destination, int sourceIndex, int sourceCount)
         {
+            //ncrunch: no coverage start
             if (destination.Length < sourceCount)
                 throw new ArgumentOutOfRangeException(nameof(destination), "Input span is too short for entire string");
             if (sourceCount - sourceIndex > Length)
                 throw new ArgumentOutOfRangeException(nameof(sourceCount), "(sourceCount - sourceIndex) is longer than source");
+            //ncrunch: no coverage end
 
             _builder.CopyTo(sourceIndex, destination, sourceCount);
-            return destination.Slice(sourceCount);
+            return destination[sourceCount..];
         }
 
         public bool SliceEquals(string other, int start, int count)

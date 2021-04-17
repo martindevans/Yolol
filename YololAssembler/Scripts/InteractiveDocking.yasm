@@ -1,0 +1,25 @@
+#import lib.yasm
+
+#define wait_ticks a
+#define spd      b
+#define diff     c
+
+@accelerate:
+    spd=:speed;
+    wait_ticks=:dist/spd-spd+spd%1;
+    continue_if(wait_ticks>1)
+    :t=1
+    goto:done++
+
+@stop_fast:
+    spd=:speed;
+    continue_if(:spd>1)
+    :t=-1
+    :done=1
+    goto2-(:countdown==0)
+
+@stop_precise:
+    spd=:speed;
+    diff=:dist-spd
+    :t=diff
+    goto:done++

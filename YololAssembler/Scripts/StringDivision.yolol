@@ -1,0 +1,5 @@
+d=:d n=:n-d-d-d a=n-d!=n n-=d a+=n-d!=n n-=d goto(n-d==n)+2 
+a++n-=d a+=n-d!=n n-=d a+=n-d!=n n-=d a+=n-d!=n n-=d goto(n-d==n)+2 
+n=:n a+=n-d!=n n-=d a+=n-d!=n n-=d:o=a+(n-d!=n)-(d=="gf")goto:done++
+
+// <-------------- this line is 70 characters long ------------------>

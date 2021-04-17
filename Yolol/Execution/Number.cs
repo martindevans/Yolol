@@ -45,7 +45,7 @@ namespace Yolol.Execution
             {
                 if (!big.TryFormat(buffer, out var written))
                     throw new InvalidOperationException($"Attempted to format a number with more than {buffer.Length} digits");
-                return buffer.Slice(0, written);
+                return buffer[..written];
             }
 
             var bufferSize = buffer.Length;
@@ -88,7 +88,7 @@ namespace Yolol.Execution
                     break;
             }
 
-            return buffer.Slice(0, bigWritten + 1 + littleWritten);
+            return buffer[..(bigWritten + 1 + littleWritten)];
         }
 
         public override string ToString()
@@ -178,6 +178,10 @@ namespace Yolol.Execution
             return ((float)n._value) / Scale;
         }
 
+        public static explicit operator double(Number n)
+        {
+            return ((double)n._value) / Scale;
+        }
 
         internal static bool WillModThrow(Number l, Number r)
         {
@@ -244,7 +248,10 @@ namespace Yolol.Execution
 
         public static Number operator *(Number l, bool r)
         {
-            return l * (Number)r;
+            if (r)
+                return l;
+            else
+                return Zero;
         }
 
 
@@ -291,7 +298,10 @@ namespace Yolol.Execution
         [ErrorMetadata(nameof(WillDivThrow))]
         public static Number operator /(Number l, bool r)
         {
-            return l / (Number)r;
+            if (r)
+                return l;
+            else
+                throw new ExecutionException("Divide by zero");
         }
 
 
@@ -588,7 +598,9 @@ namespace Yolol.Execution
 
         public Number Exponent(Number number)
         {
-            var v = Math.Pow((double)this, (double)number);
+            var l = (double)this;
+            var r = (double)number;
+            var v = Math.Pow(l, r);
 
             if (double.IsPositiveInfinity(v))
                 return MaxValue;

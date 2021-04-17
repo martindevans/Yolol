@@ -1,0 +1,52 @@
+#import lib.yasm
+
+#define accumulator a
+#define last_item b
+
+#define test_op(haystack, needle, op, haystack2) {
+    accumulatorophaystack-needle!=haystack;
+    haystack2-=needle
+}
+
+#define test(haystack, needle) {
+    test_op(haystack, needle, +=, haystack)
+}
+
+#define test_final(haystack, needle) {
+    continue_if(haystack-needle!=haystack);
+    accumulator++
+    haystack-=needle
+}
+
+#define gotoifmore(haystack, needle) {
+    goto(n-d==n)+run_case
+}
+
+@startup:
+    d=:d;
+    n=:n-d-d-d;
+
+
+    test_op(n, d, =, n);
+    test(n, d);
+    
+    gotoifmore(n, d);
+
+@run_case:
+    accumulator++
+    n-=d;
+
+    test(n, d);
+    test(n, d);
+    test(n, d);
+    
+    gotoifmore(n, d);
+
+@submit:
+    n=:n;
+    
+    test(n, d);
+    test(n, d)
+
+    :o=accumulator+(n-d!=n)-(d=="gf")
+    goto:done++
