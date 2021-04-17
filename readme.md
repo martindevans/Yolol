@@ -5,11 +5,11 @@ This repository contains 4 projects:
 
 #### YololEmulator
 
-This is an emulator for Yolol. It allows you to input a file of Yolol code and execute it line by line. See detailed instructions [here](YololEmulator).
+This is an emulator for Yolol. It allows you to input a file of Yolol code and execute it line by line. See detailed documentation [here](YololEmulator).
 
 #### YololAssembler
 
-This is an assembler for a higher level language (yasm) which compiles into Yolol.
+This is an assembler for a higher level language (yasm) which compiles into Yolol. See detailed documentation [here](YololAssembler).
 
 #### Yolol
 
