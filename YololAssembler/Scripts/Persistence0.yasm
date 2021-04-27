@@ -1,0 +1,70 @@
+#import lib.yasm
+
+#define in_add a
+#define in_mul b
+#define add_accum c
+#define mul_accum d
+#define add_persist e
+#define mul_persist f
+
+#define const_addstr h
+#define const_mulstr i
+
+#define pop_add() {
+    add_accum+=in_add%10
+    in_add/=10
+    in_add-=in_add%1
+}
+
+#define pop_mul() {
+    mul_accum*=in_mul%10
+    in_mul/=10
+    in_mul-=in_mul%1
+
+    continue_if(in_mul>1)
+}
+
+@setup:
+    const_addstr="Additive"
+    const_mulstr="Multiplicative"
+    add_accum=0
+    mul_accum=1
+    add_persist=0
+    mul_persist=0
+    in_add=:i;
+    in_mul=in_add;
+
+@multiplicative:
+    pop_mul()
+    pop_mul()
+    
+    gotomultiplicative
+
+@multiplicative_outer:
+    mul_persist++;
+    in_mul=mul_accum;
+    mul_accum=1/(in_mul>=10)
+    gotomultiplicative
+
+@additive:
+    pop_add()
+    pop_add()
+    pop_add()
+
+    gotoadditive+(in_add<1)
+
+@additive_outer:
+    add_persist++;
+    in_add=add_accum;
+    add_accum=0/(in_add>=10)
+    gotoadditive
+
+@submit:
+    :o="Neither"
+    if add_persist<mul_persist then
+        :o=const_addstr;
+    end;
+    if mul_persist<add_persist then
+        :o=const_mulstr;
+    end;
+    goto:done++

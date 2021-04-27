@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using Yolol.Execution.Attributes;
 
 namespace Yolol.Execution
@@ -8,6 +9,7 @@ namespace Yolol.Execution
     {
         public const int Scale = 1000;
         public const int Decimals = 3;
+        private const float Pi = 3.14159265359f;
 
         public static readonly Number MinValue = new Number(long.MinValue);
         public static readonly Number MaxValue = new Number(long.MaxValue);
@@ -528,16 +530,17 @@ namespace Yolol.Execution
             return (Number)(double)Math.Sqrt((float)this);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static float ToDegrees(float radians)
         {
             const float rad2Deg = 360f / ((float)Math.PI * 2);
             return radians * rad2Deg;
         }
 
-        private static float ToRadians(float degrees)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static double ToRadians(float degrees)
         {
-            const float deg2Rad = (float)Math.PI * 2 / 360f;
-            return degrees * deg2Rad;
+            return Pi * (degrees / 180.0f);
         }
 
         public Number Sin()
@@ -558,13 +561,9 @@ namespace Yolol.Execution
 
         public Number Tan()
         {
-            if (this == 90)
-                return MaxValue;
-
-            var r = ToRadians((float)this);
-            var s = Math.Round(Math.Tan(r), 3);
-
-            return (Number)s;
+            var rads = ToRadians((float)this);
+            var i = (long)(Math.Tan(rads) * Scale);
+            return FromRaw(i);
         }
 
         public Number ArcTan()

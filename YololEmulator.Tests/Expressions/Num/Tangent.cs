@@ -27,7 +27,9 @@ namespace YololEmulator.Tests.Expressions.Num
         {
             var result = TestExecutor.Execute("a = tan(90)");
             var a = result.GetVariable("a");
-            Assert.AreEqual(Number.MaxValue, a.Value.Number);
+
+            // This is the value that the game produces
+            Assert.AreEqual("-22877332.428", a.Value.Number.ToString());
         }
     }
 }

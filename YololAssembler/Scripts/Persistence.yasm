@@ -1,0 +1,79 @@
+#import lib.yasm
+
+#define in_add a
+#define in_mul b
+#define add_accum c
+#define mul_accum d
+#define done_indicator g
+
+#define const_addstr h
+#define const_mulstr i
+
+#define pop_add() {
+    add_accum+=in_add%10
+    in_add/=10
+    in_add-=in_add%1
+}
+
+#define pop_mul_no_check() {
+    mul_accum*=in_mul%10
+    in_mul/=10
+    in_mul-=in_mul%1
+}
+
+#define pop_mul() {
+    pop_mul_no_check()
+    continue_if(in_mul>1)
+}
+
+@setup:
+    const_addstr="Additive"
+    const_mulstr="Multiplicative"
+
+    add_accum=:i%10
+    mul_accum=add_accum;
+
+    in_add=:i/10
+    in_add-=in_add%1
+    in_mul=in_add
+
+@multiplicative:
+    pop_mul()
+    pop_mul()
+    
+    gotomultiplicative
+
+@additive:
+    pop_add()
+    pop_add()
+
+    pop_add()/(in_add>=1)
+
+    gotoadditive
+
+@loop_end:
+    done_indicator=mul_accum<10
+    done_indicator+=add_accum<10
+
+    continue_if(done_indicator<1)
+
+    in_mul=mul_accum;
+    in_add=add_accum;
+    add_accum=0
+
+    mul_accum=in_mul%10
+    in_mul/=10
+    in_mul-=in_mul%1
+
+    gotomultiplicative
+
+@submit:
+    :o="Neither"
+    ifdone_indicator==1then
+        ifmul_accum<10then
+            :o=const_mulstr;
+        else
+            :o=const_addstr;
+        end
+    end
+    goto:done++
