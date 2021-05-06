@@ -7,7 +7,7 @@
         public Yolol.Grammar.Parser.ParseError ParseError { get; }
 
         public CannotParseEval(string expression, Yolol.Grammar.Parser.ParseError parseError)
-            : base($"Cannot parse expression pass to eval `{expression}`.")
+            : base($"Cannot parse expression as Yolol in `Eval({expression})`.\n\n{parseError}")
         {
             Expression = expression;
             ParseError = parseError;

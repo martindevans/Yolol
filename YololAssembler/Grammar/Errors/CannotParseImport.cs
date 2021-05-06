@@ -7,7 +7,7 @@
         public Yolol.Grammar.Parser.ParseError ParseError { get; }
 
         public CannotParseImport(string path, Yolol.Grammar.Parser.ParseError parseError)
-            : base($"Cannot parse file import from `{path}`.")
+            : base($"Cannot parse file import from `{path}` as YASM.")
         {
             Path = path;
             ParseError = parseError;

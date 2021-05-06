@@ -11,17 +11,30 @@ namespace YololAssembler.Grammar.AST
         public Other(string content)
         {
             Content = content;
+
+            // Find comments and trim them out
+            var idx = Content.IndexOf("##", StringComparison.OrdinalIgnoreCase);
+            if (idx != -1)
+            {
+                // Remove the comment
+                Content = Content.Substring(0, idx);
+
+                // If there was space trailing the line leading up to the comment, remove it
+                Content = Content.TrimEnd(' ');
+            }
         }
 
         internal static string Trim(string input)
         {
-            return string.Join("",
+            var trimmed = string.Join("",
                 input
                     .Split(new[] {"\r\n", "\r", "\n"}, StringSplitOptions.RemoveEmptyEntries)
                     .Select(l => l.TrimStart(' '))
                     .Select(l => l.TrimStart('\t'))
                     .Select(l => l.Replace(";", " "))
             );
+
+            return trimmed;
         }
     }
 }

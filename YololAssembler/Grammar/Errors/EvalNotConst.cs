@@ -6,7 +6,7 @@
         public Yolol.Grammar.AST.Expressions.BaseExpression Expression { get; }
 
         public EvalNotConst(Yolol.Grammar.AST.Expressions.BaseExpression expression)
-            : base($"Expression pass to eval is not constant `{expression}`.")
+            : base($"Attempted to evaluate a non-constant expression: `Eval({expression})`")
         {
             Expression = expression;
         }

@@ -12,7 +12,7 @@ namespace YololAssembler.Grammar.AST
         protected override string Replace(string part)
         {
             // Convert the floating expression into a statement assigning a variable;
-            const string name = "_95efe616";
+            const string name = "eval";
             var stmtCode = $"{name}={part}";
 
             // Try to parse this tiny little program

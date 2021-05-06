@@ -13,15 +13,20 @@ program <Program>
 
 statement <BaseStatement>
     = line_label
+    / line_nolabel
     / define
     / import
+    / comment
     / other
 
 line_label <LineLabel>
     = "@" i:identifier ":" { new LineLabel(i) }
 
-//comment <Comment>
-//    = "#" c:(!newline .)* { new Comment(string.Concat(c)) }
+line_nolabel <LineLabel>
+    = "@:" { new LineLabel(Guid.NewGuid().ToString()) }
+
+comment <Comment>
+    = _ "##" c:(!newline .)* { new Comment(string.Concat(c)) }
 
 import <Import>
     = "#import" _ p:(!newline .)* { new Import(string.Concat(p)) }

@@ -3,8 +3,8 @@
     public class CannotResolveImport
         : BaseCompileException
     {
-        public CannotResolveImport(string message)
-            : base($"Cannot interpret imported path `{message}` as a file path or a Uri")
+        public CannotResolveImport(string path)
+            : base($"Cannot interpret imported path `{path}` as a file path or a Uri")
         {
         }
     }

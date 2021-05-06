@@ -2,7 +2,7 @@
   "profiles": {
     "YololAssembler": {
       "commandName": "Project",
-      "commandLineArgs": "-i Persistence.yasm -o Persistence.yolol --watch",
+      "commandLineArgs": "-i IsanDemo/isan.yasm -o IsanDemo/isan.yolol --watch",
       "workingDirectory": "C:\\Users\\Martin\\Documents\\dotnet\\YololEmulator\\YololAssembler\\Scripts"
     }
   }

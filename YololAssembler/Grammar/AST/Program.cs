@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using YololAssembler.Grammar.Errors;
-using Result = Yolol.Grammar.Parser.Result<string, Yolol.Grammar.Parser.ParseError>;
 
 namespace YololAssembler.Grammar.AST
 {
@@ -17,32 +16,25 @@ namespace YololAssembler.Grammar.AST
             Statements = statements.ToArray();
         }
 
-        public Result Compile(bool compress = true)
+        public string Compile()
         {
             // Apply replacements to all blocks of `Other`
-            var lines = Apply(Defines().ToArray(), Others().ToArray()).ToArray();
+            var lines = Apply(Defines(), Others().ToArray()).ToArray();
 
             // Replace line labels
-            lines = Apply(Labels().ToArray(), lines.ToArray()).ToArray();
+            lines = Apply(Labels(), lines.ToArray()).ToArray();
 
             // Replace implicit line labels
             lines = ApplyImplicitLabels(lines).ToArray();
 
+            // Remove all of the {} characters now that substitutions are done
+            lines = lines.Select(l => l.Replace("{", "").Replace("}", "")).ToArray();
+
             // Run all `eval` replacements
             lines = Apply(new[] { new EvalReplacement() }, lines).ToArray();
 
-            // Early out if compression should not be applied
-            var yolol = string.Join("\n", lines);
-            if (!compress)
-                return new Result(yolol);
-
-            // Parse as yolol to apply compression
-            var parsedYolol = Yolol.Grammar.Parser.ParseProgram(yolol);
-            if (!parsedYolol.IsOk)
-                return new Result(parsedYolol.Err);
-
-            // remove unnecessary spaces from the program
-            return new Result(Compress(parsedYolol.Ok));
+            // Return compiled program
+            return string.Join("\n", lines);
         }
 
         private static IEnumerable<string> ApplyImplicitLabels(IEnumerable<string> lines)
@@ -55,27 +47,22 @@ namespace YololAssembler.Grammar.AST
             }
         }
 
-        private static string Compress(Yolol.Grammar.AST.Program yolol)
-        {
-            //todo: compress
-            return yolol.ToString();
-        }
-
         private static IEnumerable<string> Apply(IReadOnlyList<BaseDefine> defines, IReadOnlyList<string> blocks)
         {
             foreach (var block in blocks)
                 yield return BaseDefine.Apply(block, defines);
         }
 
-        private IEnumerable<BaseDefine> Labels()
+        private IReadOnlyList<BaseDefine> Labels()
         {
             return Statements
                    .OfType<LineLabel>()
                    .Select((s, i) => (s.Name, (i + 1).ToString()))
-                   .Select(a => new FindAndReplace(a.Name, a.Item2));
+                   .Select(a => new FindAndReplace(a.Name, a.Item2))
+                   .ToArray();
         }
 
-        private IEnumerable<BaseDefine> Defines()
+        private IReadOnlyList<BaseDefine> Defines()
         {
             // Find all things defined in this file
             var defines = Statements.OfType<BaseDefine>();
@@ -83,10 +70,10 @@ namespace YololAssembler.Grammar.AST
             // Resolve imports
             var imports = Statements.OfType<Import>().SelectMany(Resolve);
 
-            return defines.Concat(imports);
+            return defines.Concat(imports).ToArray();
         }
 
-        private static IEnumerable<BaseDefine> Resolve(Import import)
+        private static IReadOnlyList<BaseDefine> Resolve(Import import)
         {
             string Fetch()
             {

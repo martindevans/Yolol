@@ -9,5 +9,10 @@ namespace YololAssembler.Grammar.Errors
             : base(message)
         {
         }
+
+        public override string ToString()
+        {
+            return Message;
+        }
     }
 }

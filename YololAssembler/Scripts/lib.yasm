@@ -1,4 +1,4 @@
-﻿#define undefined				_
+﻿#define undefined				u
 
 #define err_if_not(expr)        undefined/=expr
 #define continue_if(expr)       undefined/=expr

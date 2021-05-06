@@ -20,9 +20,6 @@ namespace YololAssembler
 
             [Option('w', "watch", HelpText = "If set, the assembler will automatically run every time the input file changes", Required = false)]
             public bool Watch { get; set; }
-
-            [Option('c', "compress", HelpText = "If set, the assembler will automatically compress the output code", Required = false)]
-            public bool Compress { get; set; }
             // ReSharper restore UnusedAutoPropertyAccessor.Local
         }
 
@@ -36,7 +33,7 @@ namespace YololAssembler
             var input = options.InputFile!;
             var output = options.OutputFile!;
 
-            ProcessFile(options.InputFile!, options.OutputFile!, options.Compress);
+            ProcessFile(options.InputFile!, options.OutputFile!);
 
             if (options.Watch)
             {
@@ -52,7 +49,7 @@ namespace YololAssembler
                 void OnChanged(object sender, FileSystemEventArgs fileSystemEventArgs)
                 {
                     Thread.Sleep(100);
-                    ProcessFile(input, output, options.Compress);
+                    ProcessFile(input, output);
                 }
 
                 // Add event handlers.
@@ -68,12 +65,12 @@ namespace YololAssembler
                 while (Console.ReadKey(true).Key != ConsoleKey.Q && File.Exists(options.InputFile))
                 {
                     Thread.Sleep(100);
-                    ProcessFile(input, output, options.Compress);
+                    ProcessFile(input, output);
                 }
             }
         }
 
-        private static void ProcessFile(string inputPath, string outputPath, bool compress)
+        private static void ProcessFile(string inputPath, string outputPath)
         {
             var timer = new Stopwatch();
             timer.Start();
@@ -89,22 +86,13 @@ namespace YololAssembler
                     var parseResult = Grammar.Parser.ParseProgram(File.ReadAllText(inputPath));
                     if (!parseResult.IsOk)
                     {
-                        Console.WriteLine("# yasm parse error");
+                        Console.WriteLine("# Yasm Parse Error");
                         Console.WriteLine("------------------");
                         Console.WriteLine(parseResult.Err.ToString());
                         break;
                     }
 
-                    var compileResult = parseResult.Ok.Compile(compress);
-                    if (!compileResult.IsOk)
-                    {
-                        Console.WriteLine("# yolol parse error");
-                        Console.WriteLine("-------------------");
-                        Console.WriteLine(compileResult.Err.ToString());
-                        break;
-                    }
-
-                    var yolol = compileResult.Ok;
+                    var yolol = parseResult.Ok.Compile();
                     yolol += "\n\n";
                     yolol += "// <-------------- this line is 70 characters long ------------------>";
 
@@ -117,7 +105,10 @@ namespace YololAssembler
                 }
                 catch (BaseCompileException e)
                 {
+                    Console.WriteLine("# YASM Compiler Error");
+                    Console.WriteLine("---------------------");
                     Console.WriteLine(e);
+                    Console.WriteLine();
                     break;
                 }
             }

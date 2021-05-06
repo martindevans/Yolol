@@ -1,0 +1,58 @@
+#import lib.yasm
+
+#define carry c
+
+#define l_bit d
+#define r_bit e
+
+#define init_one_bit() {
+    l_bit=pop_char(:a);
+    r_bit=pop_char(:b)
+    
+    :o=(l_bit!=r_bit)+""
+    carry=l_bit+r_bit>10
+}
+
+#define add_one_bit() {
+    l_bit=pop_char(:a);
+    r_bit=pop_char(:b)
+    
+    :o=(l_bit!=r_bit!=carry)+:o;
+    carry=l_bit+r_bit+carry-0>10
+}
+
+@init:
+    init_one_bit()
+
+@loop:
+    add_one_bit()
+
+    :done=:a<0
+    gotoloop-:done
+
+
+
+
+@end1:
+
+@end2:
+
+a b c | s c
+0 0 0 | 0 0
+0 1 0 | 1 0
+1 0 0 | 1 0
+1 1 0 | 0 1
+0 0 1 | 1 0
+0 1 1 | 0 1
+1 0 1 | 0 1
+1 1 1 | 1 1
+
+s = a xor b xor c
+c = a and b or  c and (a xor b)
+
+and(d)   = sum>1
+or(e)    = sum>0
+xor(a,b) = a!=b
+
+s=a!=b!=c
+c=a and b or c and (a or b)

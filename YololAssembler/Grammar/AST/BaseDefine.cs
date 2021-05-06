@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using YololAssembler.Grammar.Errors;
 
 namespace YololAssembler.Grammar.AST
 {
@@ -15,9 +16,9 @@ namespace YololAssembler.Grammar.AST
             var r = Replace(match.Groups["body"].Value);
             r = Other.Trim(r);
 
-            var v = input.Substring(0, match.Index)
+            var v = input[..match.Index]
                     + r
-                    + input.Substring(0 + match.Index + match.Length);
+                    + input[(0 + match.Index + match.Length)..];
             return v;
         }
 
@@ -31,8 +32,11 @@ namespace YololAssembler.Grammar.AST
         /// <param name="block"></param>
         /// <param name="defines"></param>
         /// <returns></returns>
-        internal static string Apply(string block, IEnumerable<BaseDefine> defines)
+        internal static string Apply(string block, IReadOnlyList<BaseDefine> defines)
         {
+            var original = block;
+            var matches = 0;
+
             var changed = true;
             while (changed)
             {
@@ -41,8 +45,16 @@ namespace YololAssembler.Grammar.AST
                 {
                     var input = block;
                     block = item.Apply(input);
-                    changed |= !block.Equals(input);
+
+                    if (!block.Equals(input))
+                    {
+                        changed = true;
+                        matches++;
+                    }
                 }
+
+                if (matches >= 100)
+                    throw new TooManySubstitutions(original, block, matches);
             }
 
             return block;
