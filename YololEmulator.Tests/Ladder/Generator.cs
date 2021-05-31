@@ -63,7 +63,7 @@ namespace YololEmulator.Tests.Ladder
 
         public static void YololLadderGenerator(List<Dictionary<string, Value>> input, List<Dictionary<string, Value>> output, bool shuffle = true, ScoreMode mode = ScoreMode.BasicScoring, YololChip chip = YololChip.Professional)
         {
-            var d = new Data() {
+            var d = new Data {
                 In = input.ToArray(),
                 Out = output.ToArray(),
                 Shuffle = shuffle,

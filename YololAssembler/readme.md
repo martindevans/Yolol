@@ -11,10 +11,12 @@ To run YololEmulator:
 For example, to run a file called `example.yasm` into `example.yolol`:
 
 ```
-./YololEmulator.exe --input example.yasm --output example.yolol --watch
+./YololEmulator.exe --input example.yasm --watch
 ```
 
 This will immediately compile `example.yasm` into `example.yolol`. The `watch` parameter causes the compiler to watch the input file - as soon as it is changed the compiler will immediately recompile the code. It is often useful to have the input file and the output file open side-by-side in your editor, so you can watch the Yolol output as you write your yasm code.
+
+For larger projects `input` can specify a directory. Every `*.yasm` file in the directory will be compiled into yolol when it changes.
 
 # YASM
 

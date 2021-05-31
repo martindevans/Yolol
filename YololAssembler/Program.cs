@@ -9,16 +9,14 @@ namespace YololAssembler
 {
     internal class Program
     {
+        // ReSharper disable once ClassNeverInstantiated.Local
         private class Options
         {
             // ReSharper disable UnusedAutoPropertyAccessor.Local
-            [Option('i', "input", HelpText = "File to read code from", Required = true)]
-            public string? InputFile { get; set; }
+            [Option('i', "input", HelpText = "File/Folder to read code from", Required = true)]
+            public string InputPath { get; set; } = null!;
 
-            [Option('o', "output", HelpText = "File to write YOLOL code to", Required = true)]
-            public string? OutputFile { get; set; }
-
-            [Option('w', "watch", HelpText = "If set, the assembler will automatically run every time the input file changes", Required = false)]
+            [Option('w', "watch", HelpText = "If set, the assembler will automatically run every time the input file/folder changes", Required = false)]
             public bool Watch { get; set; }
             // ReSharper restore UnusedAutoPropertyAccessor.Local
         }
@@ -30,26 +28,33 @@ namespace YololAssembler
 
         private static void Run(Options options)
         {
-            var input = options.InputFile!;
-            var output = options.OutputFile!;
+            var input = options.InputPath!;
 
-            ProcessFile(options.InputFile!, options.OutputFile!);
+            if (File.Exists(input))
+                ProcessFile(options.InputPath!, Path.GetFileNameWithoutExtension(options.InputPath) + ".yolol");
+            else if (Directory.Exists(input))
+            {
+                var children = Directory.EnumerateFiles(options.InputPath, "*.yasm", new EnumerationOptions { RecurseSubdirectories = true });
+                foreach (var child in children)
+                {
+                    ProcessFile(child, Path.GetFileNameWithoutExtension(child) + ".yolol");
+                }
+            }
 
             if (options.Watch)
             {
-                Console.WriteLine($"Watching for changes in `{Path.GetFullPath(input)}`");
+                using var watcher = CreateWatcher(options.InputPath);
 
-                using var watcher = new FileSystemWatcher {
-                    Path = Path.GetDirectoryName(Path.GetFullPath(input)),
-                    NotifyFilter = NotifyFilters.LastWrite
-                                 | NotifyFilters.Size,
-                    Filter = Path.GetFileName(options.InputFile),
-                };
-
-                void OnChanged(object sender, FileSystemEventArgs fileSystemEventArgs)
+                void OnChanged(object sender, FileSystemEventArgs args)
                 {
+                    // Delay for a while to try and prevent the text editor and the compiler from
+                    // both accessing the file at the same time.
                     Thread.Sleep(100);
-                    ProcessFile(input, output);
+
+                    var i = new FileInfo(args.FullPath);
+                    var o = Path.Combine(i.Directory!.FullName, Path.GetFileNameWithoutExtension(i.FullName) + ".yolol");
+
+                    ProcessFile(i.FullName, o);
                 }
 
                 // Add event handlers.
@@ -61,12 +66,33 @@ namespace YololAssembler
 
                 // Wait for the user to quit the program.
                 Console.WriteLine("Waiting for file changes...");
-                Console.WriteLine("Press 'q' to quit. Press any other key to recompile.");
-                while (Console.ReadKey(true).Key != ConsoleKey.Q && File.Exists(options.InputFile))
-                {
+                Console.WriteLine("Press 'q' to quit.");
+                while (Console.ReadKey(true).Key != ConsoleKey.Q)
                     Thread.Sleep(100);
-                    ProcessFile(input, output);
-                }
+            }
+        }
+
+        private static FileSystemWatcher CreateWatcher(string path)
+        {
+            if (File.Exists(path))
+            {
+                Console.WriteLine($"Watching for file changes to `{Path.GetFullPath(path)}`");
+                return new FileSystemWatcher {
+                    Path = Path.GetDirectoryName(Path.GetFullPath(path))!,
+                    NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size,
+                    IncludeSubdirectories = false,
+                    Filter = Path.GetFileName(path),
+                };
+            }
+            else
+            {
+                Console.WriteLine($"Watching for directory changes in `{Path.GetFullPath(path)}`");
+                return new FileSystemWatcher {
+                    Path = Path.GetDirectoryName(Path.GetFullPath(path))!,
+                    NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size,
+                    IncludeSubdirectories = true,
+                    Filter = Path.GetFileName("*.yasm"),
+                };
             }
         }
 
@@ -78,9 +104,9 @@ namespace YololAssembler
             // Keep retrying the operation 10 times, waiting slightly longer each time. This works around the
             // file lock still (sometimes) being held by the editer that just modified the file when the
             // notification about the change comes in.
-            for (var i = 0; i < 10; i++)
+            for (var i = 1; i <= 10; i++)
             {
-                Thread.Sleep(10 * i);
+                Thread.Sleep(20 * i);
                 try
                 {
                     var parseResult = Grammar.Parser.ParseProgram(File.ReadAllText(inputPath));
@@ -113,7 +139,7 @@ namespace YololAssembler
                 }
             }
 
-            Console.WriteLine($"Done ({timer.ElapsedMilliseconds}ms)");
+            Console.WriteLine($"Done {inputPath}=>{outputPath} ({timer.ElapsedMilliseconds}ms)");
         }
     }
 }

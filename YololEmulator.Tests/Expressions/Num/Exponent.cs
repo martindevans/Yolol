@@ -57,6 +57,21 @@ namespace YololEmulator.Tests.Expressions.Num
         }
 
         [TestMethod]
+        public void AcidTest()
+        {
+            // Results from the actual game, measured by Martin (Acid Test)
+            // https://github.com/martindevans/Yolol-Acid-Test/blob/master/acid_exponents.yasm
+
+            string Calc(string code) => TestExecutor.Execute(code).GetVariable("a").Value.Number.ToString();
+
+            Assert.AreEqual("16", Calc("a=2^4"));
+            Assert.AreEqual("1099511627776", Calc("a=2^40"));
+            Assert.AreEqual("-9223372036854775.808", Calc("a=2^70"));
+            Assert.AreEqual("-9223372036854775.808", Calc("a=2^71"));
+            Assert.AreEqual("-9223372036854775.808", Calc("a=17^17"));
+        }
+
+        [TestMethod]
         public void HugeExponent()
         {
             var a = TestExecutor.Execute("a = 1000000000000000000000000000000").GetVariable("a").Value;

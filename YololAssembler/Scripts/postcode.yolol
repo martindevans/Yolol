@@ -1,0 +1,7 @@
+a=--:c a--b=a---a u/=b>=0and9>=b:o=0:done=(a---a)!=" "goto3-:done*2
+:o=0goto:done++
+a-- b=a---a b=a---a b=a---a a-- b=1
+:o=b>="A"and"Z">=b goto:done++
+
+
+// <-------------- this line is 70 characters long ------------------>

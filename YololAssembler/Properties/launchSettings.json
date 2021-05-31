@@ -2,8 +2,8 @@
   "profiles": {
     "YololAssembler": {
       "commandName": "Project",
-      "commandLineArgs": "-i IsanDemo/isan.yasm -o IsanDemo/isan.yolol --watch",
-      "workingDirectory": "C:\\Users\\Martin\\Documents\\dotnet\\YololEmulator\\YololAssembler\\Scripts"
+      "commandLineArgs": "-i C:\\Users\\Martin\\Documents\\yolol\\Fleets\\Mithril --watch",
+      "workingDirectory": "C:\\Users\\Martin\\Documents\\yolol\\Fleets\\Mithril"
     }
   }
 }

@@ -1,0 +1,41 @@
+#import lib.yasm
+
+#define input a
+#define character b
+
+## For the Inward Code to be valid it must:
+## - Be exactly 3 characters long
+## - Begin with a number
+@inward:
+    {input}=--:c;                               ## Strip 2 chars
+    {input}--
+    character=pop_char({input});                ## Get third char
+    err_if_not({character}>=0and9>={character}) ## Check it's a number
+
+    :o=0
+    :done=({input}---{input})!=" "              ## Check next char is a space
+    goto3-:done*2
+
+@inward_err:
+    :o=0
+    goto:done++
+
+## For the outward code to be valid it must:
+## - Be 2-4 characters long
+## - Start with a letter
+@outward:
+    {input}--;
+    character=pop_char({input});
+    character=pop_char({input});
+    character=pop_char({input});
+    {input}--;
+    {character}=1
+
+@outward_err:
+    :o={character}>="A"and"Z">={character};
+    goto:done++
+
+
+
+##     continue_if(({input}---{input})==" ")
+## err_if_not({character}>=0and9>={character})

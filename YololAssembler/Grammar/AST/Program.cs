@@ -77,7 +77,12 @@ namespace YololAssembler.Grammar.AST
         {
             string Fetch()
             {
-                if (File.Exists(import.Path))
+                var path = Path.Combine(
+                    Environment.CurrentDirectory,
+                    import.Path.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar)
+                );
+
+                if (File.Exists(path))
                     return File.ReadAllText(import.Path);
 
                 if (Uri.TryCreate(import.Path, UriKind.Absolute, out var uri))

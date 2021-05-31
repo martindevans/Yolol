@@ -145,10 +145,11 @@ namespace Yolol.Execution
 
         public static explicit operator Number(double i)
         {
+            if (double.IsPositiveInfinity(i) || double.IsNegativeInfinity(i) || double.IsNaN(i))
+                return MinValue;
+
             var n = i * Scale;
-            if (n > MaxValue._value)
-                return MaxValue;
-            if (n < MinValue._value)
+            if (n > MaxValue._value || n < MinValue._value)
                 return MinValue;
 
             return new Number((long)n);
@@ -185,7 +186,7 @@ namespace Yolol.Execution
             return ((double)n._value) / Scale;
         }
 
-        internal static bool WillModThrow(Number l, Number r)
+        internal static bool WillModThrow(Number _, Number r)
         {
             return r._value == 0;
         }
@@ -600,12 +601,6 @@ namespace Yolol.Execution
             var l = (double)this;
             var r = (double)number;
             var v = Math.Pow(l, r);
-
-            if (double.IsPositiveInfinity(v))
-                return MaxValue;
-
-            if (double.IsNegativeInfinity(v) || double.IsNaN(v))
-                return MinValue;
 
             return (Number)v;
         }
