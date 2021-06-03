@@ -8,6 +8,15 @@ namespace YololEmulator.Tests.Scripts
     public class LadderRepros
     {
         [TestMethod]
+        public void NyefariFactorials()
+        {
+            var ms = TestExecutor.Execute($"a=13! b=13*(12!)");
+
+            Assert.AreEqual(6227020800, (double)ms.GetVariable("a").Value.Number);
+            Assert.AreEqual(6227020800, (double)ms.GetVariable("b").Value.Number);
+        }
+
+        [TestMethod]
         public void ZijkhalExponents()
         {
             var a = 0.315;

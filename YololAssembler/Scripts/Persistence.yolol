@@ -1,7 +1,7 @@
 h="Additive"i="Multiplicative"c=:i%10d=c a=:i/10a-=a%1b=a
-d*=b%10b/=10b-=b%1_/=b>1d*=b%10b/=10b-=b%1_/=b>1goto2
+d*=b%10b/=10b-=b%1u/=b>1d*=b%10b/=10b-=b%1u/=b>1goto2
 c+=a%10a/=10a-=a%1c+=a%10a/=10a-=a%1c+=a%10a/=10a-=a%1/(a>=1)goto3
-g=d<10g+=c<10_/=g<1b=d a=c c=0d=b%10b/=10b-=b%1goto2
+g=d<10g+=c<10u/=g<1b=d a=c c=0d=b%10b/=10b-=b%1goto2
 :o="Neither"ifg==1thenifd<10then:o=i else:o=h endendgoto:done++
 
 // <-------------- this line is 70 characters long ------------------>

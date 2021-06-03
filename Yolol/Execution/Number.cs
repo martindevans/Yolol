@@ -614,7 +614,7 @@ namespace Yolol.Execution
         {
             var v = this;
             var i = 0;
-            var result = 1;
+            var result = 1L;
             while (v > 0)
             {
                 i++;
@@ -623,7 +623,7 @@ namespace Yolol.Execution
                 result *= i;
             }
 
-            return (Number)result;
+            return FromRaw(result * Scale);
         }
     }
 }
