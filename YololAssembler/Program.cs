@@ -19,7 +19,7 @@ namespace YololAssembler
             [Option('w', "watch", HelpText = "If set, the assembler will automatically run every time the input file/folder changes", Required = false)]
             public bool Watch { get; set; }
 
-            [Option('m', "minimal", HelpText = "When set, console output will be minimalized", Required = false)]
+            [Option('m', "minimal", HelpText = "When set, console output will be less verbose", Required = false)]
             public bool Minimal { get; set; }
             // ReSharper restore UnusedAutoPropertyAccessor.Local
         }
