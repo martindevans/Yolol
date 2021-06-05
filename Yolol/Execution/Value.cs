@@ -92,7 +92,7 @@ namespace Yolol.Execution
         public bool ToBool()
         {
             if (_type == Type.String)
-                return true;
+                return false;
             else
                 return _number != 0;
         }
