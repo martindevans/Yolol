@@ -18,6 +18,9 @@ namespace YololAssembler
 
             [Option('w', "watch", HelpText = "If set, the assembler will automatically run every time the input file/folder changes", Required = false)]
             public bool Watch { get; set; }
+
+            [Option('m', "minimal", HelpText = "When set, console output will be less verbose", Required = false)]
+            public bool Minimal { get; set; }
             // ReSharper restore UnusedAutoPropertyAccessor.Local
         }
 
@@ -31,13 +34,13 @@ namespace YololAssembler
             var input = options.InputPath!;
 
             if (File.Exists(input))
-                ProcessFile(options.InputPath!, Path.GetFileNameWithoutExtension(options.InputPath) + ".yolol");
+                ProcessFile(options.InputPath!, Path.GetFileNameWithoutExtension(options.InputPath) + ".yolol", options.Minimal);
             else if (Directory.Exists(input))
             {
                 var children = Directory.EnumerateFiles(options.InputPath, "*.yasm", new EnumerationOptions { RecurseSubdirectories = true });
                 foreach (var child in children)
                 {
-                    ProcessFile(child, Path.GetFileNameWithoutExtension(child) + ".yolol");
+                    ProcessFile(child, Path.GetFileNameWithoutExtension(child) + ".yolol", options.Minimal);
                 }
             }
 
@@ -54,7 +57,7 @@ namespace YololAssembler
                     var i = new FileInfo(args.FullPath);
                     var o = Path.Combine(i.Directory!.FullName, Path.GetFileNameWithoutExtension(i.FullName) + ".yolol");
 
-                    ProcessFile(i.FullName, o);
+                    ProcessFile(i.FullName, o, options.Minimal);
                 }
 
                 // Add event handlers.
@@ -96,8 +99,10 @@ namespace YololAssembler
             }
         }
 
-        private static void ProcessFile(string inputPath, string outputPath)
+        private static void ProcessFile(string inputPath, string outputPath, bool minimalOutput)
         {
+            Console.WriteLine($"Compiling {inputPath}");
+
             var timer = new Stopwatch();
             timer.Start();
 
@@ -112,9 +117,13 @@ namespace YololAssembler
                     var parseResult = Grammar.Parser.ParseProgram(File.ReadAllText(inputPath));
                     if (!parseResult.IsOk)
                     {
-                        Console.WriteLine("# Yasm Parse Error");
-                        Console.WriteLine("------------------");
-                        Console.WriteLine(parseResult.Err.ToString());
+                        if (minimalOutput) {
+                            Console.WriteLine($"{inputPath} @ {parseResult.Err.Cursor.Line}:{parseResult.Err.Cursor.Column-1} : {parseResult.Err.Message}");
+                        } else {
+                            Console.WriteLine($"# Yasm Parse Error");
+                            Console.WriteLine("------------------");
+                            Console.WriteLine(parseResult.Err.ToString());
+                        }
                         break;
                     }
 
@@ -131,10 +140,14 @@ namespace YololAssembler
                 }
                 catch (BaseCompileException e)
                 {
-                    Console.WriteLine("# YASM Compiler Error");
-                    Console.WriteLine("---------------------");
-                    Console.WriteLine(e);
-                    Console.WriteLine();
+                    if (minimalOutput) {
+                        Console.WriteLine($"{inputPath} @ 0:0 : {e.Message}");
+                    } else {
+                        Console.WriteLine($"# YASM Compiler Error");
+                        Console.WriteLine("---------------------");
+                        Console.WriteLine(e);
+                        Console.WriteLine();
+                    }
                     break;
                 }
             }
