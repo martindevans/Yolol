@@ -72,7 +72,16 @@ expr_and <BaseExpression> -memoize
     / e:expr_or { e }
 
 expr_or <BaseExpression> -memoize
-    = l:expr_or _ "or" _ r:expr_equality { new Or(l, r) }
+    = l:expr_or _ "or" _ r:expr_not { new Or(l, r) }
+    / e:expr_not { e }
+
+expr_not <BaseExpression> -memoize
+    = "not"i _ e:expr_additive { new Not(e) }
+    / e:expr_additive { e }
+
+expr_additive <BaseExpression> -memoize
+    = l:expr_additive _ "+" _ r:expr_equality { new Add(l, r) }
+    / l:expr_additive _ "-" _ r:expr_equality { new Subtract(l, r) }
     / e:expr_equality { e }
 
 expr_equality <BaseExpression> -memoize
@@ -81,15 +90,10 @@ expr_equality <BaseExpression> -memoize
     / e:expr_order { e }
 
 expr_order <BaseExpression> -memoize
-    = l:expr_order _ "<" _ r:expr_additive { new LessThan(l, r) }
-    / l:expr_order _ ">" _ r:expr_additive { new GreaterThan(l, r) }
-    / l:expr_order _ "<=" _ r:expr_additive { new LessThanEqualTo(l, r) }
-    / l:expr_order _ ">=" _ r:expr_additive { new GreaterThanEqualTo(l, r) }
-    / e:expr_additive { e }
-
-expr_additive <BaseExpression> -memoize
-    = l:expr_additive _ "+" _ r:expr_multiply { new Add(l, r) }
-    / l:expr_additive _ "-" _ r:expr_multiply { new Subtract(l, r) }
+    = l:expr_order _ "<" _ r:expr_multiply { new LessThan(l, r) }
+    / l:expr_order _ ">" _ r:expr_multiply { new GreaterThan(l, r) }
+    / l:expr_order _ "<=" _ r:expr_multiply { new LessThanEqualTo(l, r) }
+    / l:expr_order _ ">=" _ r:expr_multiply { new GreaterThanEqualTo(l, r) }
     / e:expr_multiply { e }
 
 expr_multiply <BaseExpression> -memoize
@@ -114,7 +118,6 @@ expr_keyword <BaseExpression> -memoize
     / "asin"i _ e:expr_keyword { new ArcSine(e) }
     / "acos"i _ e:expr_keyword { new ArcCos(e) }
     / "atan"i _ e:expr_keyword { new ArcTan(e) }
-    / "not"i _ e:expr_keyword { new Not(e) }
     / e:expr_postfix { e }
 
 expr_postfix <BaseExpression> -memoize

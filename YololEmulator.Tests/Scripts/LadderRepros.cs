@@ -88,18 +88,18 @@ namespace YololEmulator.Tests.Scripts
             }
         }
 
-        [TestMethod]
-        public void EvilStrings()
-        {
-            var ms = TestExecutor.Execute(
-                "a=\"abcdef\"",
-                "a -= \"a\"",
-                "b = a---a"
-            );
+        //[TestMethod]
+        //public void EvilStrings()
+        //{
+        //    var ms = TestExecutor.Execute(
+        //        "a=\"abcdef\"",
+        //        "a -= \"a\"",
+        //        "b = a---a"
+        //    );
 
-            Assert.AreEqual("bcde", ms.GetVariable("a").Value.ToString());
-            Assert.AreEqual("f", ms.GetVariable("b").Value.ToString());
-        }
+        //    Assert.AreEqual("bcde", ms.GetVariable("a").Value.ToString());
+        //    Assert.AreEqual("f", ms.GetVariable("b").Value.ToString());
+        //}
 
         [TestMethod]
         public void EvilStrings2()

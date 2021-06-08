@@ -6,8 +6,10 @@ namespace Yolol.Grammar.AST.Expressions.Unary
         : BaseIncrement, IEquatable<PostIncrement>
     {
         public PostIncrement(VariableName name)
-            : base(name, false)
+            : base(name, true)
         {
+            //note: This currently specifies post increment to do a pre increment because that's how the game does it.
+            //      If/When that's fixed: change the `true` above to a `false`
         }
 
         public bool Equals(PostIncrement? other)

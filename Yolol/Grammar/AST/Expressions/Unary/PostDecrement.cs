@@ -6,8 +6,10 @@ namespace Yolol.Grammar.AST.Expressions.Unary
         : BaseDecrement, IEquatable<PostDecrement>
     {
         public PostDecrement(VariableName name)
-            : base(name, false)
+            : base(name, true)
         {
+            //note: This currently specifies post decrement to do a pre decrement because that's how the game does it.
+            //      If/When that's fixed: change the `true` above to a `false`
         }
 
         public bool Equals(PostDecrement? other)
