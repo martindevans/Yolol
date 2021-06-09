@@ -526,9 +526,14 @@ namespace Yolol.Execution
         public Number Sqrt()
         {
             if (this < 0)
-                throw new ExecutionException("Attempted to Sqrt a negative value");
+                return MinValue;
+            if (this >= 9223372036854775)
+                return MinValue;
 
-            return (Number)(double)Math.Sqrt((float)this);
+            //return FromRaw((long)(Math.Sqrt(1000 * RawValue)));
+            //return FromRaw((long)(Math.Sqrt(RawValue) * 31.62277660168379f));
+
+            return (Number)Math.Sqrt((double)this);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

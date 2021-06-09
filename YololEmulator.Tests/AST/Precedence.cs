@@ -81,8 +81,8 @@ namespace YololEmulator.Tests.AST
         [TestMethod]
         public void MultiplyDiv2()
         {
-            var state = TestExecutor.Execute("a = 10000 * 12.345 / 10000");
-            Assert.AreEqual(10, (int)state.GetVariable("a").Value.Number);
+            var state = TestExecutor.Execute("a = 50000 * 1 / 10000");
+            Assert.AreEqual(5, (int)state.GetVariable("a").Value.Number);
         }
 
         [TestMethod]
@@ -103,28 +103,28 @@ namespace YololEmulator.Tests.AST
         public void AddLt()
         {
             var state = TestExecutor.Execute("a = 2 + 3 < 4");
-            Assert.AreEqual(Number.Zero, state.GetVariable("a").Value.Number);
+            Assert.AreEqual((Number)3, state.GetVariable("a").Value.Number);
         }
 
         [TestMethod]
         public void AddGt()
         {
             var state = TestExecutor.Execute("a = 2 + 3 > 4");
-            Assert.AreEqual(Number.One, state.GetVariable("a").Value.Number);
+            Assert.AreEqual((Number)2, state.GetVariable("a").Value.Number);
         }
 
         [TestMethod]
         public void AddLtEq()
         {
             var state = TestExecutor.Execute("a = 2 + 3 <= 4");
-            Assert.AreEqual(Number.Zero, state.GetVariable("a").Value.Number);
+            Assert.AreEqual((Number)3, state.GetVariable("a").Value.Number);
         }
 
         [TestMethod]
         public void AddGtEq()
         {
             var state = TestExecutor.Execute("a = 2 + 3 >= 4");
-            Assert.AreEqual(Number.One, state.GetVariable("a").Value.Number);
+            Assert.AreEqual((Number)2, state.GetVariable("a").Value.Number);
         }
 
         [TestMethod]

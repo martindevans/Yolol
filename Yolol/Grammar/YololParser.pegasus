@@ -97,12 +97,9 @@ expr_order <BaseExpression> -memoize
     / e:expr_multiply { e }
 
 expr_multiply <BaseExpression> -memoize
-    = l:expr_multiply _ "*" _ r:expr_divisor { new Multiply(l, r) }
-    / e:expr_divisor { e }
-
-expr_divisor <BaseExpression> -memoize
-    = l:expr_divisor _ "/" _ r:expr_exponent { new Divide(l, r) }
-    / l:expr_divisor _ "%" _ r:expr_exponent { new Modulo(l, r) }
+    = l:expr_multiply _ "*" _ r:expr_exponent { new Multiply(l, r) }
+    / l:expr_multiply _ "/" _ r:expr_exponent { new Divide(l, r) }
+    / l:expr_multiply _ "%" _ r:expr_exponent { new Modulo(l, r) }
     / e:expr_exponent { e }
 
 expr_exponent <BaseExpression> -memoize
@@ -118,16 +115,16 @@ expr_keyword <BaseExpression> -memoize
     / "asin"i _ e:expr_keyword { new ArcSine(e) }
     / "acos"i _ e:expr_keyword { new ArcCos(e) }
     / "atan"i _ e:expr_keyword { new ArcTan(e) }
-    / e:expr_postfix { e }
-
-expr_postfix <BaseExpression> -memoize
-    = e:expr_neg "!" !("="!"=") { new Factorial(e) }
     / e:expr_neg { e }
 
 expr_neg <BaseExpression> -memoize
-    = e:expr_ident { e }
+    = e:expr_postfix { e }
     / "-" _ e:expr_neg { new Negate(e) }
 
+expr_postfix <BaseExpression> -memoize
+    = e:expr_ident "!" !("="!"=") { new Factorial(e) }
+    / e:expr_ident { e }
+    
 expr_ident <BaseExpression> -memoize
     = i:identifier "++" { new PostIncrement(i) }
     / i:identifier "--" { new PostDecrement(i) }

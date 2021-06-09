@@ -13,15 +13,17 @@ namespace YololEmulator.Tests.Expressions.Num
 
             var a = result.GetVariable("a");
 
-            Assert.AreEqual(1, (int)a.Value.Number);
+            Assert.AreEqual(1f, (float)a.Value.Number);
         }
 
         [TestMethod]
         public void Negative()
         {
-            Assert.ThrowsException<ExecutionException>(() =>
-                TestExecutor.Execute("a = sqrt(-1)")
-            );
+            var result = TestExecutor.Execute("a = sqrt(-1)");
+
+            var a = result.GetVariable("a");
+
+            Assert.AreEqual(Number.MinValue, a.Value.Number);
         }
     }
 }

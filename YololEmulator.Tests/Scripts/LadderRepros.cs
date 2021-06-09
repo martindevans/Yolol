@@ -55,15 +55,6 @@ namespace YololEmulator.Tests.Scripts
         }
 
         [TestMethod]
-        public void GrahamOrder()
-        {
-            var result = TestExecutor.Execute("a=10000*(12.345/10000) b=10000*12.345/10000");
-
-            Assert.AreEqual(10m, result.GetVariable("a").Value);
-            Assert.AreEqual(10m, result.GetVariable("b").Value);
-        }
-
-        [TestMethod]
         public void ZijkhalStrings()
         {
             //for (var i = 0; i < 4010; i++)
