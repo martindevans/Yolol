@@ -38,8 +38,8 @@ namespace YololEmulator.Tests.Scripts.Acid
         public void Precedence2()
         {
             var ms = TestExecutor.Execute(
-                "num=1 x=(sqrt 4! ) y=4.899 if x!=y then goto19 end num++ ",
-                "x=(sqrt (4!) ) y=4.899 if x!=y then goto19 end num++ ",
+                "num=1 x=(sqrt 3! ) y=2.449 if x!=y then goto19 end num++ ",
+                "x=(sqrt (3!) ) y=2.449 if x!=y then goto19 end num++ ",
                 "x=((sqrt 9) ) y=3 if x!=y then goto19 end num++ ",
                 "x=((abs 3) ) y=3 if x!=y then goto19 end num++ ",
                 "a=2+2 x=(a! ) y=24  if x!=y then goto19 end num++ ",
@@ -100,11 +100,11 @@ namespace YololEmulator.Tests.Scripts.Acid
                 "x=(2^2>1^1 ) y= 1 if x!=y then goto19 end num++ ",
                 "x=(2+1==1+2 ) y= 5 if x!=y then goto19 end num++ ",
                 "x=(2*1==1*2 ) y= 1 if x!=y then goto19 end num++ ",
-                "x=(0==1>1==1 ) y= 0 if x!=y then goto19 end num++ ",               // <---------
+                "x=(0==1>1==1 ) y= 0 if x!=y then goto19 end num++ ",
                 "x=((0==1)>(1==1) ) y= 0 if x!=y then goto19 end num++ ",
                 "x=(0==(1>1)==1 ) y= 1 if x!=y then goto19 end num++ ",
                 "x=((((0==1)>1)==1) ) y= 0 if x!=y then goto19 end num++ ",
-                "x=(0>1==0 ) y= 1 if x!=y then goto19 end num++ ",                  // <----------
+                "x=(0>1==0 ) y= 1 if x!=y then goto19 end num++ ",
                 "x=((0>1)==0 ) y= 1 if x!=y then goto19 end num++ ",
                 "x=(0>(1==0) ) y= 0 if x!=y then goto19 end num++ ",
                 "x=(0==(0 or 1)==1 ) y= 0 if x!=y then goto19 end num++ ",

@@ -80,17 +80,14 @@ expr_not <BaseExpression> -memoize
     / e:expr_additive { e }
 
 expr_additive <BaseExpression> -memoize
-    = l:expr_additive _ "+" _ r:expr_equality { new Add(l, r) }
-    / l:expr_additive _ "-" _ r:expr_equality { new Subtract(l, r) }
-    / e:expr_equality { e }
-
-expr_equality <BaseExpression> -memoize
-    = l:expr_equality _ "==" _ r:expr_order { new EqualTo(l, r) }
-    / l:expr_equality _ "!=" _ r:expr_order { new NotEqualTo(l, r) }
+    = l:expr_additive _ "+" _ r:expr_order { new Add(l, r) }
+    / l:expr_additive _ "-" _ r:expr_order { new Subtract(l, r) }
     / e:expr_order { e }
 
 expr_order <BaseExpression> -memoize
-    = l:expr_order _ "<" _ r:expr_multiply { new LessThan(l, r) }
+    = l:expr_order _ "==" _ r:expr_multiply { new EqualTo(l, r) }
+    / l:expr_order _ "!=" _ r:expr_multiply { new NotEqualTo(l, r) }
+    / l:expr_order _ "<" _ r:expr_multiply { new LessThan(l, r) }
     / l:expr_order _ ">" _ r:expr_multiply { new GreaterThan(l, r) }
     / l:expr_order _ "<=" _ r:expr_multiply { new LessThanEqualTo(l, r) }
     / l:expr_order _ ">=" _ r:expr_multiply { new GreaterThanEqualTo(l, r) }

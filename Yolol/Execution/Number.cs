@@ -520,7 +520,11 @@ namespace Yolol.Execution
 
         public Number Abs()
         {
-            return new Number(Math.Abs(_value));
+            if (_value == long.MinValue)
+                return MinValue;
+
+            var abs = Math.Abs(_value);
+            return new Number(abs);
         }
 
         public Number Sqrt()
@@ -617,6 +621,9 @@ namespace Yolol.Execution
 
         public Number Factorial()
         {
+            if (RawValue < 0)
+                return MinValue;
+
             var v = this;
             var i = 0;
             var result = 1L;

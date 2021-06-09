@@ -43,7 +43,7 @@ namespace YololEmulator.Tests.Expressions.Num
 
             var a = result.GetVariable("a");
 
-            Assert.AreEqual(1, (int)a.Value.Number);
+            Assert.AreEqual(Number.MinValue, a.Value.Number);
         }
 
         [TestMethod]
