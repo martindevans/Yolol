@@ -534,10 +534,12 @@ namespace Yolol.Execution
             if (this >= 9223372036854775)
                 return MinValue;
 
-            //return FromRaw((long)(Math.Sqrt(1000 * RawValue)));
-            //return FromRaw((long)(Math.Sqrt(RawValue) * 31.62277660168379f));
+            var converted = (double)this;
+            var result = Math.Sqrt(converted);
 
-            return (Number)Math.Sqrt((double)this);
+            var epsilon = result < 0 ? -0.00005 : 0.00005;
+
+            return (Number)(epsilon + result);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
