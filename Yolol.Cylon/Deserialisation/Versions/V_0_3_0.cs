@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using Newtonsoft.Json.Linq;
 using Semver;
@@ -132,7 +133,7 @@ namespace Yolol.Cylon.Deserialisation.Versions
                     return ParseUnaryExpression(jtok);
 
                 case "expression::number":
-                    return new ConstantNumber((Number)decimal.Parse(jtok.Value<string>("num")));
+                    return new ConstantNumber((Number)decimal.Parse(jtok.Value<string>("num"), CultureInfo.InvariantCulture));
 
                 case "expression::string":
                     return new ConstantString(jtok.Value<string>("str"));

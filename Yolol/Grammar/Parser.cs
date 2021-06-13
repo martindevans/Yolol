@@ -16,7 +16,7 @@ namespace Yolol.Grammar
             catch (FormatException e)
             {
                 var c = e.Data["cursor"] as Cursor;
-                return new Result<Program, ParseError>(new ParseError(c!, e.Message));
+                return new Result<Program, ParseError>(new ParseError(c, e.Message));
             }
         }
 
@@ -65,10 +65,10 @@ namespace Yolol.Grammar
 
         public class ParseError
         {
-            public Cursor Cursor { get; }
+            public Cursor? Cursor { get; }
             public string Message { get; }
 
-            public ParseError(Cursor cursor, string message)
+            public ParseError(Cursor? cursor, string message)
             {
                 message = message
                     .Replace("\r", "\\r")
@@ -80,6 +80,9 @@ namespace Yolol.Grammar
 
             public override string ToString()
             {
+                if (Cursor == null)
+                    return Message;
+
                 var spaces = new string(' ', Math.Max(0, Cursor.Column - 2));
 
                 return $"{Cursor.Subject}\n"

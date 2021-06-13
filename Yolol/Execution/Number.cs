@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Runtime.CompilerServices;
 using Yolol.Execution.Attributes;
 
@@ -124,13 +125,13 @@ namespace Yolol.Execution
         public static Number Parse(string s)
         {
             // First check if the number is out of the valid range
-            var d = double.Parse(s);
+            var d = double.Parse(s, CultureInfo.InvariantCulture);
             if (d >= MaxValue._value)
                 return MaxValue;
             else if (d <= MinValue._value)
                 return MinValue;
 
-            return (Number)decimal.Parse(s);
+            return (Number)decimal.Parse(s, CultureInfo.InvariantCulture);
         }
 
         public static explicit operator Number(bool b)
