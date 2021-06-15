@@ -202,13 +202,28 @@ namespace Yolol.Execution
             return !r;
         }
 
-        [ErrorMetadata(nameof(WillModThrow))]
+        internal static Number UnsafeMod(Number l, Number r)
+        {
+            return new Number(l._value % r._value);
+        }
+
+        internal static Number UnsafeMod(Number l, Value r)
+        {
+            return l % r.Number;
+        }
+
+        internal static Number UnsafeMod(Number l, bool _)
+        {
+            return l % One;
+        }
+
+        [ErrorMetadata(nameof(WillModThrow), nameof(UnsafeMod))]
         public static Number operator %(Number l, Number r)
         {
             if (r._value == 0)
                 throw new ExecutionException("Modulus by zero");
 
-            return new Number(l._value % r._value);
+            return UnsafeMod(l, r);
         }
 
         public static StaticError operator %(Number _, YString __)
@@ -216,16 +231,16 @@ namespace Yolol.Execution
             return new StaticError("Attempted to modulus by a string");
         }
 
-        [ErrorMetadata(nameof(WillModThrow))]
+        [ErrorMetadata(nameof(WillModThrow), nameof(UnsafeMod))]
         public static Value operator %(Number l, Value r)
         {
             if (r.Type == Type.String)
                 return new StaticError("Attempted to modulus by a string");
             else
-                return l % r.Number;
+                return UnsafeMod(l, r);
         }
 
-        [ErrorMetadata(nameof(WillModThrow))]
+        [ErrorMetadata(nameof(WillModThrow), nameof(UnsafeMod))]
         public static Number operator %(Number l, bool r)
         {
             return l % (Number)r;
@@ -276,6 +291,21 @@ namespace Yolol.Execution
             return !r;
         }
 
+        internal static Number UnsafeDivide(Number l, Number r)
+        {
+            return new Number(l._value * Scale / r._value);
+        }
+
+        internal static Number UnsafeDivide(Number l, Value r)
+        {
+            return l / r.Number;
+        }
+
+        internal static Number UnsafeDivide(Number l, bool _)
+        {
+            return l;
+        }
+
         [ErrorMetadata(nameof(WillDivThrow), nameof(UnsafeDivide))]
         public static Number operator /(Number l, Number r)
         {
@@ -285,17 +315,12 @@ namespace Yolol.Execution
             return UnsafeDivide(l, r);
         }
 
-        public static Number UnsafeDivide(Number l, Number r)
-        {
-            return new Number(l._value * Scale / r._value);
-        }
-
         public static StaticError operator /(Number _, YString __)
         {
             return new StaticError("Attempted to divide by a string");
         }
 
-        [ErrorMetadata(nameof(WillDivThrow))]
+        [ErrorMetadata(nameof(WillDivThrow), nameof(UnsafeDivide))]
         public static Value operator /(Number l, Value r)
         {
             if (r.Type == Type.String)
@@ -304,7 +329,7 @@ namespace Yolol.Execution
             return l / r.Number;
         }
 
-        [ErrorMetadata(nameof(WillDivThrow))]
+        [ErrorMetadata(nameof(WillDivThrow), nameof(UnsafeDivide))]
         public static Number operator /(Number l, bool r)
         {
             if (r)

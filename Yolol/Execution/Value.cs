@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using Yolol.Execution.Attributes;
 using Yolol.Grammar.AST.Expressions;
 
@@ -414,19 +415,28 @@ namespace Yolol.Execution
         #endregion
 
         #region op *
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static bool WillMulThrow(Value l, Value r)
         {
             return l._type == Type.String || r._type == Type.String;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static bool WillMulThrow(Value l, Number _)
         {
             return l._type == Type.String;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static bool WillMulThrow(Value l, bool _)
         {
             return l._type == Type.String;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static Number UnsafeMultiply(Value left, Number right)
+        {
+            return left._number * right;
         }
 
         [ErrorMetadata(nameof(WillMulThrow))]
@@ -443,11 +453,11 @@ namespace Yolol.Execution
             throw new ExecutionException("Attempted to multiply a string");
         }
 
-        [ErrorMetadata(nameof(WillMulThrow))]
+        [ErrorMetadata(nameof(WillMulThrow), nameof(UnsafeMultiply))]
         public static Number operator *(Value left, Number right)
         {
             if (left._type == Type.Number)
-                return left._number * right;
+                return UnsafeMultiply(left, right);
             else
                 throw new ExecutionException("Attempted to multiply a string");
         }

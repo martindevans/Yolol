@@ -357,7 +357,12 @@ namespace Yolol.Execution
             return str.Length == 0;
         }
 
-        [ErrorMetadata(nameof(WillDecThrow))]
+        internal static YString UnsafeDecrement(YString value)
+        {
+            return new YString(value._span.Decrement());
+        }
+
+        [ErrorMetadata(nameof(WillDecThrow), nameof(UnsafeDecrement))]
         public static YString operator --(YString value)
         {
             if (value.Length == 0)
@@ -365,6 +370,8 @@ namespace Yolol.Execution
 
             return new YString(value._span.Decrement());
         }
+
+        
 
         public static YString operator ++(YString value)
         {
