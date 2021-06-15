@@ -282,7 +282,12 @@ namespace Yolol.Execution
             if (r._value == 0)
                 throw new ExecutionException("Divide by zero");
 
-            return new Number((l._value * Scale) / r._value);
+            return UnsafeDivide(l, r);
+        }
+
+        public static Number UnsafeDivide(Number l, Number r)
+        {
+            return new Number(l._value * Scale / r._value);
         }
 
         public static StaticError operator /(Number _, YString __)
