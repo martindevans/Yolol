@@ -11,24 +11,18 @@ namespace Yolol.Execution.Attributes
     {
         public bool IsInfallible { get; }
         public string? WillThrow { get; }
-
-        /// <summary>
-        /// </summary>
-        /// <param name="isInfallible">If true, indicates that this method can never throw a runtime error</param>
-        public ErrorMetadataAttribute(bool isInfallible)
-        {
-            IsInfallible = isInfallible;
-            WillThrow = null;
-        }
+        public string? UnsafeAlternative { get; }
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="willThrow">The name of a method which checks if the operation (given value(s)) will throw.</param>
-        public ErrorMetadataAttribute(string willThrow)
+        /// <param name="unsafeAlternative">An alternative implementation of the tagged method which does not have a runtime check</param>
+        public ErrorMetadataAttribute(string willThrow, string? unsafeAlternative = null)
         {
             IsInfallible = false;
             WillThrow = willThrow;
+            UnsafeAlternative = unsafeAlternative;
         }
     }
 }

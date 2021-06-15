@@ -276,7 +276,7 @@ namespace Yolol.Execution
             return !r;
         }
 
-        [ErrorMetadata(nameof(WillDivThrow))]
+        [ErrorMetadata(nameof(WillDivThrow), nameof(UnsafeDivide))]
         public static Number operator /(Number l, Number r)
         {
             if (r._value == 0)
