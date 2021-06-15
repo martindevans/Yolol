@@ -125,7 +125,7 @@ namespace YololEmulator.Tests
         public void AddNumber()
         {
             var a = new YString("abc");
-            var b = 7;
+            var b = (Number)7;
             var c = a + b;
 
             Assert.AreEqual("abc7", c.ToString());
@@ -136,7 +136,7 @@ namespace YololEmulator.Tests
         {
             var a = new YString("abc");
             a--;
-            var b = 7;
+            var b = (Number)7;
             var c = a + b;
 
             Assert.AreEqual("ab7", c.ToString());

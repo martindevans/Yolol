@@ -13,7 +13,7 @@ namespace Yolol.Cylon.JSON
             if (value.Type == Execution.Type.String)
                 writer.WriteValue(value.String.ToString());
             else
-                writer.WriteValue((decimal)value.Number);
+                writer.WriteRawValue(value.Number.ToString());
         }
 
         public override Value ReadJson(JsonReader reader, Type objectType, Value existingValue, bool hasExistingValue, JsonSerializer serializer)

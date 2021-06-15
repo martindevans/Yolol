@@ -36,7 +36,7 @@ namespace YololEmulator.Tests.Ladder
             {
                 if (!_saved.TryGetValue(name, out var v))
                 {
-                    v = new Variable { Value = 0 };
+                    v = new Variable { Value = (Value)0 };
                     _saved.Add(name, v);
                 }
 
@@ -90,7 +90,7 @@ namespace YololEmulator.Tests.Ladder
                     state.GetVariable($":{key}").Value = value;
 
                 // Clear completion indicator
-                done.Value = 0;
+                done.Value = (Value)0;
 
                 // Run lines until completion indicator is set or execution time limit is exceeded
                 while (!done.Value.ToBool())

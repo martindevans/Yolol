@@ -55,7 +55,7 @@ namespace YololEmulator.Tests.Ladder
                 });
 
                 output.Add(new Dictionary<string, Value> {
-                    { "o", (Number)Math.Round(result * 1000) / 1000 }
+                    { "o", (Value)(Math.Round(result * 1000) / 1000) }
                 });
             }
 

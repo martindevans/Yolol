@@ -21,8 +21,8 @@ namespace YololEmulator.Tests.Ladder
                 var num = rng.Next(0, 1001);
                 for (var i = 10; i >= 0; i--)
                 {
-                    input.Add(new Dictionary<string, Value> {{"countdown", i}});
-                    output.Add(new Dictionary<string, Value> {{"o", num}});
+                    input.Add(new Dictionary<string, Value> {{"countdown", (Value)i}});
+                    output.Add(new Dictionary<string, Value> {{"o", (Value)num}});
                 }
             }
 

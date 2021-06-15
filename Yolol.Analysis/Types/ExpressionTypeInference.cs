@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using Yolol.Analysis.ControlFlowGraph.AST;
 using Yolol.Analysis.TreeVisitor;
+using Yolol.Execution;
 using Yolol.Execution.Extensions;
 using Yolol.Grammar;
 using Yolol.Grammar.AST.Expressions;
@@ -215,7 +216,7 @@ namespace Yolol.Analysis.Types
             if (div.Right.IsConstant)
             {
                 var r = div.Right.StaticEvaluate();
-                if (r.Type == Type.Number && r.Number != 0)
+                if (r.Type == Type.Number && r.Number != Number.Zero)
                     forceError = false;
             }
 

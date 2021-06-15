@@ -35,7 +35,7 @@ namespace YololEmulator.Tests.Ladder
                 });
 
                 output.Add(new Dictionary<string, Value> {
-                    { "o", str.Length },
+                    { "o", (Value)str.Length },
                 });
             }
             

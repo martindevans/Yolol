@@ -47,7 +47,7 @@ namespace YololEmulator.Tests.Ladder
 
                 var o = Output(parts.ToArray());
 
-                input.Add(new Dictionary<string, Value> { { "a", i } });
+                input.Add(new Dictionary<string, Value> { { "a", (Value)i } });
                 output.Add(new Dictionary<string, Value> { { "o", o } });
             }
 

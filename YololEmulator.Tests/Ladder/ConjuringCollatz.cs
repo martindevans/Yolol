@@ -20,8 +20,8 @@ namespace YololEmulator.Tests.Ladder
             var l = CollatzLength(index + 1);
             if (l < 50)
             {
-                inputs.Add("i", index + 1);
-                outputs.Add("o", CollatzLength(index + 1));
+                inputs.Add("i", (Number)(index + 1));
+                outputs.Add("o", (Number)CollatzLength(index + 1));
                 return true;
             }
 

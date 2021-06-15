@@ -20,7 +20,7 @@ namespace YololEmulator.Tests.Ladder
                 index++;
 
                 input.Add(new Dictionary<string, Value> {
-                    { "i", index },
+                    { "i", (Value)index },
                 });
 
                 output.Add(new Dictionary<string, Value> {

@@ -119,8 +119,8 @@ namespace YololEmulator.Tests.Ladder
 
             for (var i = 0; i < 200; i++)
             {
-                Value a = rng.NextDouble() < 0.5f ? 1 : 0;
-                Value b = rng.NextDouble() < 0.5f ? 1 : 0;
+                Value a = (Value)(rng.NextDouble() < 0.5f ? 1 : 0);
+                Value b = (Value)(rng.NextDouble() < 0.5f ? 1 : 0);
 
                 var op = rng.Next(0, 3) switch
                 {
@@ -163,8 +163,8 @@ namespace YololEmulator.Tests.Ladder
 
             for (var i = 0; i < 1000; i++)
             {
-                Value a = rng.NextDouble() < 0.5f ? 1 : 0;
-                Value b = rng.NextDouble() < 0.5f ? 1 : 0;
+                Value a = (Value)(rng.NextDouble() < 0.5f ? 1 : 0);
+                Value b = (Value)(rng.NextDouble() < 0.5f ? 1 : 0);
 
                 var opi = rng.Next(0, 10);
                 var op = opi switch
@@ -216,7 +216,7 @@ namespace YololEmulator.Tests.Ladder
             {
                 var a = (Number)(rng.NextDouble() * 20);
                 var b = (Number)(rng.NextDouble() * 20);
-                if (a == 0 && b == 0)
+                if (a == Number.Zero && b == Number.Zero)
                     continue;
 
                 var c = Math.Atan2((float)a, (float)b);
@@ -331,19 +331,19 @@ namespace YololEmulator.Tests.Ladder
                 var min = numbers.Min();
 
                 input.Add(new Dictionary<string, Value> {
-                    { "a", numbers[0] },
-                    { "b", numbers[1] },
-                    { "c", numbers[2] },
-                    { "d", numbers[3] },
-                    { "e", numbers[4] },
-                    { "f", numbers[5] },
-                    { "g", numbers[6] },
-                    { "h", numbers[7] },
-                    { "i", numbers[8] },
-                    { "j", numbers[9] },
+                    { "a", (Value)numbers[0] },
+                    { "b", (Value)numbers[1] },
+                    { "c", (Value)numbers[2] },
+                    { "d", (Value)numbers[3] },
+                    { "e", (Value)numbers[4] },
+                    { "f", (Value)numbers[5] },
+                    { "g", (Value)numbers[6] },
+                    { "h", (Value)numbers[7] },
+                    { "i", (Value)numbers[8] },
+                    { "j", (Value)numbers[9] },
                 });
 
-                output.Add(new Dictionary<string, Value> { { "o", min } });
+                output.Add(new Dictionary<string, Value> { { "o", (Value)min } });
             }
 
             Generator.YololLadderGenerator(input, output, true);
@@ -368,7 +368,7 @@ namespace YololEmulator.Tests.Ladder
                 var str = RandomString(rng, rng.Next(5, 50));
                 var enc = Cipher(str, key);
 
-                input.Add(new Dictionary<string, Value> { { "s", str}, { "k", key } });
+                input.Add(new Dictionary<string, Value> { { "s", str}, { "k", (Value)key } });
                 output.Add(new Dictionary<string, Value> { { "c", enc } });
             }
 
@@ -452,7 +452,7 @@ namespace YololEmulator.Tests.Ladder
             for (var x = 0; x < 2000; x++)
             {
                 var a = (Number)(rng.NextDouble() * 10000);
-                if (a == 0)
+                if (a == Number.Zero)
                     a = (Number)0.001;
 
                 var c = Math.Round(Math.Log2((double)a), Number.Decimals);

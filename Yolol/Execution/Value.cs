@@ -63,7 +63,7 @@ namespace Yolol.Execution
             return new Value(n);
         }
 
-        public static implicit operator Value(decimal d)
+        public static explicit operator Value(decimal d)
         {
             return new Value((Number)d);
         }
@@ -94,7 +94,7 @@ namespace Yolol.Execution
             if (_type == Type.String)
                 return false;
             else
-                return _number != 0;
+                return _number != Number.Zero;
         }
 
         public object ToObject()

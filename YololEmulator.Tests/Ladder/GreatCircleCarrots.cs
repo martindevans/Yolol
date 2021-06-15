@@ -28,7 +28,7 @@ namespace YololEmulator.Tests.Ladder
                     { "lon_1", (Number)longitude1 },
                 });
 
-                var carrots = gcd.Value * 3;
+                var carrots = gcd.Value * (Number)3;
 
                 output.Add(new Dictionary<string, Value> {
                     { "o", carrots },

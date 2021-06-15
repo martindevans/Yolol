@@ -55,7 +55,7 @@ namespace YololEmulator.Tests.Ladder
                 var b = MultiplicativePersistence(number);
                 var o = a == b ? "Neither" : a < b ? "Additive" : "Multiplicative";
 
-                input.Add(new Dictionary<string, Value> { { "i", number } });
+                input.Add(new Dictionary<string, Value> { { "i", (Value)number } });
                 output.Add(new Dictionary<string, Value> { { "o", o } });
             }
 

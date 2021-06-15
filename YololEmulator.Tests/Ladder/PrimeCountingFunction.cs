@@ -20,8 +20,8 @@ namespace YololEmulator.Tests.Ladder
         protected override bool GenerateCase(Random random, int index, Dictionary<string, Value> inputs, Dictionary<string, Value> outputs)
         {
             var i = index + 1;
-            inputs.Add("i", i);
-            outputs.Add("o", PrimeCount(i));
+            inputs.Add("i", (Value)i);
+            outputs.Add("o", (Value)PrimeCount(i));
             return true;
         }
 

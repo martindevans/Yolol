@@ -63,11 +63,11 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
                 var b = idx / 10m;
                 try
                 {
-                    var log = Math.Log((double)(decimal)value, (double)b);
+                    var log = Math.Log((double)value, (double)b);
                     if (double.IsNaN(log))
                         continue;
 
-                    var exp = new Exponent(new ConstantNumber((Number)b), new ConstantNumber((Number)(decimal)log));
+                    var exp = new Exponent(new ConstantNumber((Number)b), new ConstantNumber((Number)log));
                     Submit(exp);
 
                     var integral = new Exponent(new ConstantNumber((Number)b), new ConstantNumber((Number)(int)Math.Round(log)));
@@ -144,12 +144,12 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
                 }
             }
 
-            if (number >= 1)
+            if (number >= Number.One)
                 return new ConstantNumber(number);
 
             var (fn, fd) = RealToFraction((double)number, 0.001f);
 
-            var replacement = new Divide(new ConstantNumber((Number)(decimal)fn), new ConstantNumber((Number)(decimal)fd));
+            var replacement = new Divide(new ConstantNumber((Number)fn), new ConstantNumber((Number)fd));
 
             if (replacement.StaticEvaluate().Number == number)
                 return replacement;

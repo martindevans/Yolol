@@ -194,7 +194,7 @@ namespace Yolol.Execution
 
         internal static bool WillModThrow(Number _, Value r)
         {
-            return r.Type == Type.String || r.Number == 0;
+            return r.Type == Type.String || r.Number.RawValue == 0;
         }
 
         internal static bool WillModThrow(Number _, bool r)
@@ -237,7 +237,7 @@ namespace Yolol.Execution
             return new Number((l._value * r._value) / Scale);
         }
 
-        public static StaticError operator *(Number l, YString r)
+        public static StaticError operator *(Number _, YString __)
         {
             return new StaticError("Attempted to multiply by a string");
         }
@@ -263,12 +263,12 @@ namespace Yolol.Execution
         {
             if (r.Type == Type.String)
                 return true;
-            return r.Number == 0;
+            return r.Number.RawValue == 0;
         }
 
         internal static bool WillDivThrow(Number _, Number r)
         {
-            return r == 0;
+            return r.RawValue == 0;
         }
 
         internal static bool WillDivThrow(Number _, bool r)
@@ -295,8 +295,8 @@ namespace Yolol.Execution
         {
             if (r.Type == Type.String)
                 return new StaticError("Attempted to divide by a string");
-            else
-                return l / r.Number;
+            
+            return l / r.Number;
         }
 
         [ErrorMetadata(nameof(WillDivThrow))]
@@ -304,8 +304,8 @@ namespace Yolol.Execution
         {
             if (r)
                 return l;
-            else
-                throw new ExecutionException("Divide by zero");
+            
+            throw new ExecutionException("Divide by zero");
         }
 
 
@@ -530,9 +530,9 @@ namespace Yolol.Execution
 
         public Number Sqrt()
         {
-            if (this < 0)
+            if (_value < 0)
                 return MinValue;
-            if (this >= 9223372036854775)
+            if (_value >= 9223372036854775000)
                 return MinValue;
 
             var converted = (double)this;
@@ -630,7 +630,7 @@ namespace Yolol.Execution
             var v = this;
             var i = 0;
             var result = 1L;
-            while (v > 0)
+            while (v.RawValue > 0)
             {
                 i++;
                 v--;

@@ -21,7 +21,7 @@ namespace YololEmulator.Tests.Ladder
             for (var i = 0; i < 2000; i++)
             {
                 var inputNum = rng.Next(0, 5000);
-                input.Add(new Dictionary<string, Value> {{"i", inputNum}});
+                input.Add(new Dictionary<string, Value> {{"i", (Value)inputNum}});
 
                 var octal = Convert.ToString(inputNum, 8);
                 var binary = Convert.ToString(inputNum, 2);

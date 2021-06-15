@@ -50,7 +50,7 @@ namespace YololEmulator.Tests.Ladder
             void SingleCase(string top, string bot)
             {
                 input.Add(new Dictionary<string, Value> { { "n", top }, { "d", bot } });
-                output.Add(new Dictionary<string, Value> { { "o", Matches(top, bot) } });
+                output.Add(new Dictionary<string, Value> { { "o", (Value)Matches(top, bot) } });
             }
 
             void GenSingleCase(Random rng)

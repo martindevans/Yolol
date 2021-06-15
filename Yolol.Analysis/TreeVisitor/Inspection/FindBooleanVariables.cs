@@ -5,12 +5,14 @@ using System.Linq;
 using Yolol.Analysis.ControlFlowGraph.AST;
 using Yolol.Analysis.ControlFlowGraph.Extensions;
 using Yolol.Analysis.Types;
+using Yolol.Execution;
 using Yolol.Execution.Extensions;
 using Yolol.Grammar;
 using Yolol.Grammar.AST.Expressions;
 using Yolol.Grammar.AST.Expressions.Binary;
 using Yolol.Grammar.AST.Expressions.Unary;
 using Yolol.Grammar.AST.Statements;
+using Variable = Yolol.Grammar.AST.Expressions.Variable;
 
 namespace Yolol.Analysis.TreeVisitor.Inspection
 {
@@ -95,7 +97,7 @@ namespace Yolol.Analysis.TreeVisitor.Inspection
                 if (val.Value.Type != Execution.Type.Number)
                     return false;
 
-                return (val.Value.Number == 0) || (val.Value.Number == 1);
+                return (val.Value.Number == Number.Zero) || (val.Value.Number == Number.One);
             }
 
             protected override bool Visit(Or or) => true;

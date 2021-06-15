@@ -38,7 +38,7 @@ namespace YololEmulator.Tests.Ladder
             {
                 for (var i = 100; i >= 0; i--)
                 {
-                    var din = new Dictionary<string, Value> {{"countdown", i}};
+                    var din = new Dictionary<string, Value> {{"countdown", (Value)i}};
                     if (i == 100)
                     {
                         // Set initial speed and distance
@@ -50,7 +50,7 @@ namespace YololEmulator.Tests.Ladder
                     input.Add(din);
 
                     // always target exactly zero distance from station
-                    var dout = new Dictionary<string, Value> {{"dist", 0}};
+                    var dout = new Dictionary<string, Value> {{"dist", (Value)0}};
                     output.Add(dout);
                 }
             }

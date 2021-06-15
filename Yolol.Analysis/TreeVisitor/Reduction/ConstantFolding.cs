@@ -51,7 +51,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
             if (cond.Type != Type.Number)
                 return base.Visit(@if);
 
-            if (cond.Number != 0)
+            if (cond.Number != Number.Zero)
                 return Visit(@if.TrueBranch);
             else
                 return Visit(@if.FalseBranch);

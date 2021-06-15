@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using Microsoft.Z3;
 using Yolol.Execution;
 using Yolol.Grammar;
@@ -63,7 +64,7 @@ namespace Yolol.Analysis.SAT
 
         internal Expr MakeNumber(Number value)
         {
-            return Context.MkInt((value * 1000).ToString());
+            return Context.MkInt(((decimal)value * 1000).ToString(CultureInfo.InvariantCulture));
         }
 
         public ModelVariable GetGotoVariable()

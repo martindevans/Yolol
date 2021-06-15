@@ -73,13 +73,13 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
             // If both sides have a numeric value just statically evaluate
             if (lv.HasValue && rv.HasValue)
             {
-                if (rv.Value == 0)
+                if (rv.Value == Number.Zero)
                     return new ErrorExpression();
                 return new ConstantNumber(div.StaticEvaluate().Number);
             }
 
             // `0/anything` is zero
-            if (lv.HasValue && lv.Value == 0)
+            if (lv.HasValue && lv.Value == Number.Zero)
                 return new ConstantNumber((Number)0);
 
             // if bottom side doesn't have a value we can't optimise

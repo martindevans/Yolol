@@ -193,7 +193,7 @@ namespace Yolol.Cylon.Deserialisation.Versions
                     return ParseModify(type[2]);
 
                 case "number":
-                    return new ConstantNumber((Number)decimal.Parse(jtok.Value<string>("num"), CultureInfo.InvariantCulture));
+                    return new ConstantNumber(Number.Parse(jtok.Value<string>("num")));
 
                 case "string":
                     return new ConstantString(jtok.Value<string>("str"));
