@@ -167,3 +167,7 @@ This could match `foo` and `bar`, or it could match `foobar`. To fix this:
 @:
     x={foo}{bar}
 ```
+
+## Cheatsheet
+
+For a compact YASM reference, open `cheatsheet.md`.
