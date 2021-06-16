@@ -33,6 +33,9 @@ namespace Yolol.Execution
             }
         }
 
+        internal Number UnsafeNumber => _number;
+        internal YString UnsafeString => _string;
+
         public Value(string str)
         {
             _string = new YString(str);

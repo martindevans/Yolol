@@ -187,34 +187,41 @@ namespace Yolol.Execution
             return ((double)n._value) / Scale;
         }
 
+        #region mod
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static bool WillModThrow(Number _, Number r)
         {
             return r._value == 0;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static bool WillModThrow(Number _, Value r)
         {
-            return r.Type == Type.String || r.Number.RawValue == 0;
+            return r.Type != Type.Number || r.UnsafeNumber._value == 0;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static bool WillModThrow(Number _, bool r)
         {
             return !r;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static Number UnsafeMod(Number l, Number r)
         {
             return new Number(l._value % r._value);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static Number UnsafeMod(Number l, Value r)
         {
             return l % r.Number;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static Number UnsafeMod(Number l, bool _)
         {
-            return l % One;
+            return FromRaw(l._value % Scale);
         }
 
         [ErrorMetadata(nameof(WillModThrow), nameof(UnsafeMod))]
@@ -245,7 +252,20 @@ namespace Yolol.Execution
         {
             return l % (Number)r;
         }
+        #endregion
 
+        #region multiply
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static bool WillMulThrow(Number _, Value v)
+        {
+            return v.Type == Type.String;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static Number UnsafeMul(Number l, Value v)
+        {
+            return l * v.UnsafeNumber;
+        }
 
         public static Number operator *(Number l, Number r)
         {
@@ -257,12 +277,13 @@ namespace Yolol.Execution
             return new StaticError("Attempted to multiply by a string");
         }
 
+        [ErrorMetadata(nameof(WillMulThrow), nameof(UnsafeMul))]
         public static Value operator *(Number l, Value r)
         {
-            if (r.Type == Type.String)
+            if (r.Type != Type.Number)
                 return new StaticError("Attempted to multiply by a string");
             else
-                return l * r.Number;
+                return l * r.UnsafeNumber;
         }
 
         public static Number operator *(Number l, bool r)
@@ -272,18 +293,19 @@ namespace Yolol.Execution
             else
                 return Zero;
         }
+        #endregion
 
-
+        #region divide
         internal static bool WillDivThrow(Number _, Value r)
         {
-            if (r.Type == Type.String)
+            if (r.Type != Type.Number)
                 return true;
-            return r.Number.RawValue == 0;
+            return r.UnsafeNumber._value == 0;
         }
 
         internal static bool WillDivThrow(Number _, Number r)
         {
-            return r.RawValue == 0;
+            return r._value == 0;
         }
 
         internal static bool WillDivThrow(Number _, bool r)
@@ -298,7 +320,7 @@ namespace Yolol.Execution
 
         internal static Number UnsafeDivide(Number l, Value r)
         {
-            return l / r.Number;
+            return l / r.UnsafeNumber;
         }
 
         internal static Number UnsafeDivide(Number l, bool _)
@@ -323,10 +345,10 @@ namespace Yolol.Execution
         [ErrorMetadata(nameof(WillDivThrow), nameof(UnsafeDivide))]
         public static Value operator /(Number l, Value r)
         {
-            if (r.Type == Type.String)
+            if (r.Type != Type.Number)
                 return new StaticError("Attempted to divide by a string");
             
-            return l / r.Number;
+            return l / r.UnsafeNumber;
         }
 
         [ErrorMetadata(nameof(WillDivThrow), nameof(UnsafeDivide))]
@@ -337,7 +359,7 @@ namespace Yolol.Execution
             
             throw new ExecutionException("Divide by zero");
         }
-
+        #endregion
 
         public static Number operator +(Number l, Number r)
         {
@@ -628,7 +650,7 @@ namespace Yolol.Execution
         public Number Exponent(Value right)
         {
             if (right.Type == Type.Number)
-                return Exponent(right.Number);
+                return Exponent(right.UnsafeNumber);
             else
                 throw new ExecutionException("Attempted to exponent a string");
         }
@@ -654,13 +676,13 @@ namespace Yolol.Execution
 
         public Number Factorial()
         {
-            if (RawValue < 0)
+            if (_value < 0)
                 return MinValue;
 
             var v = this;
             var i = 0;
             var result = 1L;
-            while (v.RawValue > 0)
+            while (v._value > 0)
             {
                 i++;
                 v--;
