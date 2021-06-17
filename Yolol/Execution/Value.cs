@@ -437,12 +437,24 @@ namespace Yolol.Execution
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static Number UnsafeMultiply(Value left, Value right)
+        {
+            return left._number * right._number;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static Number UnsafeMultiply(Value left, Number right)
         {
             return left._number * right;
         }
 
-        [ErrorMetadata(nameof(WillMulThrow))]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static Number UnsafeMultiply(Value left, bool right)
+        {
+            return left._number * right;
+        }
+
+        [ErrorMetadata(nameof(WillMulThrow), nameof(UnsafeMultiply))]
         public static Number operator *(Value left, Value right)
         {
             if (left._type == Type.Number && right._type == Type.Number)
@@ -465,7 +477,7 @@ namespace Yolol.Execution
                 throw new ExecutionException("Attempted to multiply a string");
         }
 
-        [ErrorMetadata(nameof(WillMulThrow))]
+        [ErrorMetadata(nameof(WillMulThrow), nameof(UnsafeMultiply))]
         public static Number operator *(Value left, bool right)
         {
             if (left._type == Type.Number)
@@ -476,6 +488,7 @@ namespace Yolol.Execution
         #endregion
 
         #region op /
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static bool WillDivThrow(Value l, Value r)
         {
             if (l._type == Type.Number && r._type == Type.Number)
@@ -484,6 +497,7 @@ namespace Yolol.Execution
                 return true;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static bool WillDivThrow(Value l, Number r)
         {
             if (l._type == Type.Number)
@@ -492,6 +506,7 @@ namespace Yolol.Execution
                 return true;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static bool WillDivThrow(Value l, bool r)
         {
             if (l._type == Type.Number)
@@ -500,11 +515,29 @@ namespace Yolol.Execution
                 return true;
         }
 
-        [ErrorMetadata(nameof(WillDivThrow))]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static Number UnsafeDiv(Value left, Value right)
+        {
+            return Number.UnsafeDivide(left._number, right._number);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static Number UnsafeDiv(Value left, Number right)
+        {
+            return Number.UnsafeDivide(left._number, right);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static Number UnsafeDiv(Value left, bool right)
+        {
+            return Number.UnsafeDivide(left._number, right);
+        }
+
+        [ErrorMetadata(nameof(WillDivThrow), nameof(UnsafeDiv))]
         public static Number operator /(Value left, Value right)
         {
             if (left._type == Type.Number && right._type == Type.Number)
-                return left._number / right._number;
+                return left.Number / right.Number;
             else
                 throw new ExecutionException("Attempted to divide a string");
         }
@@ -514,7 +547,7 @@ namespace Yolol.Execution
             throw new ExecutionException("Attempted to divide a string");
         }
 
-        [ErrorMetadata(nameof(WillDivThrow))]
+        [ErrorMetadata(nameof(WillDivThrow), nameof(UnsafeDiv))]
         public static Number operator /(Value left, Number right)
         {
             if (left._type == Type.Number)
@@ -523,7 +556,7 @@ namespace Yolol.Execution
                 throw new ExecutionException("Attempted to divide a string");
         }
 
-        [ErrorMetadata(nameof(WillDivThrow))]
+        [ErrorMetadata(nameof(WillDivThrow), nameof(UnsafeDiv))]
         public static Number operator /(Value left, bool right)
         {
             if (left._type == Type.Number)
@@ -548,6 +581,7 @@ namespace Yolol.Execution
         #endregion
 
         #region op %
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static bool WillModThrow(Value l, Value r)
         {
             if (l._type == Type.Number && r._type == Type.Number)
@@ -556,6 +590,7 @@ namespace Yolol.Execution
                 return true;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static bool WillModThrow(Value l, Number r)
         {
             if (l._type == Type.Number)
@@ -564,6 +599,7 @@ namespace Yolol.Execution
                 return true;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static bool WillModThrow(Value l, bool r)
         {
             if (l._type == Type.Number)
@@ -572,7 +608,25 @@ namespace Yolol.Execution
                 return true;
         }
 
-        [ErrorMetadata(nameof(WillModThrow))]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static Number UnsafeMod(Value left, Value right)
+        {
+            return Number.UnsafeMod(left._number, right._number);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static Number UnsafeMod(Value left, Number right)
+        {
+            return Number.UnsafeMod(left._number, right);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static Number UnsafeMod(Value left, bool right)
+        {
+            return Number.UnsafeMod(left._number, right);
+        }
+
+        [ErrorMetadata(nameof(WillModThrow), nameof(UnsafeMod))]
         public static Number operator %(Value left, Value right)
         {
             if (left._type == Type.Number && right._type == Type.Number)
@@ -586,7 +640,7 @@ namespace Yolol.Execution
             return new StaticError("Attempted to modulo a string");
         }
 
-        [ErrorMetadata(nameof(WillModThrow))]
+        [ErrorMetadata(nameof(WillModThrow), nameof(UnsafeMod))]
         public static Number operator %(Value left, Number right)
         {
             if (left._type == Type.Number)
@@ -595,11 +649,11 @@ namespace Yolol.Execution
                 throw new ExecutionException("Attempted to modulo a string");
         }
 
-        [ErrorMetadata(nameof(WillModThrow))]
+        [ErrorMetadata(nameof(WillModThrow), nameof(UnsafeMod))]
         public static Number operator %(Value left, bool right)
         {
             if (left._type == Type.Number)
-                return left._number % (Number)right;
+                return left._number % right;
             else
                 throw new ExecutionException("Attempted to modulo a string");
         }
