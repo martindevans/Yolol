@@ -703,7 +703,38 @@ namespace Yolol.Execution
         }
         #endregion
 
+        #region exponent
+        internal static bool WillExponentThrow(Value left, Value right)
+        {
+            return left.Type != Type.Number || right.Type != Type.Number;
+        }
 
+        internal static bool WillExponentThrow(Value left, Number _)
+        {
+            return left.Type != Type.Number;
+        }
+
+        internal static bool WillExponentThrow(Value left, bool _)
+        {
+            return left.Type != Type.Number;
+        }
+
+        internal static Number UnsafeExponent(Value left, Value right)
+        {
+            return left._number.Exponent(right._number);
+        }
+
+        internal static Number UnsafeExponent(Value left, Number right)
+        {
+            return left._number.Exponent(right);
+        }
+
+        internal static Number UnsafeExponent(Value left, bool right)
+        {
+            return left._number.Exponent(right);
+        }
+
+        [ErrorMetadata(nameof(WillExponentThrow), nameof(UnsafeExponent))]
         public static Number Exponent(Value left, Value right)
         {
             if (left._type == Type.Number && right._type == Type.Number)
@@ -717,6 +748,7 @@ namespace Yolol.Execution
             return new StaticError("Attempted to exponent a string");
         }
 
+        [ErrorMetadata(nameof(WillExponentThrow), nameof(UnsafeExponent))]
         public static Number Exponent(Value left, Number right)
         {
             if (left._type == Type.Number)
@@ -725,6 +757,7 @@ namespace Yolol.Execution
                 throw new ExecutionException("Attempted to exponent a string");
         }
 
+        [ErrorMetadata(nameof(WillExponentThrow), nameof(UnsafeExponent))]
         public static Number Exponent(Value left, bool right)
         {
             if (left._type == Type.Number)
@@ -732,13 +765,25 @@ namespace Yolol.Execution
             else
                 throw new ExecutionException("Attempted to exponent a string");
         }
-
+        #endregion
 
         public static bool operator !(Value value)
         {
             return value == Number.Zero;
         }
 
+        #region negate
+        internal static bool WillNegateThrow(Value value)
+        {
+            return value.Type != Type.Number;
+        }
+
+        internal static Number UnsafeNegate(Value value)
+        {
+            return -value._number;
+        }
+
+        [ErrorMetadata(nameof(WillNegateThrow), nameof(UnsafeNegate))]
         public static Number operator -(Value value)
         {
             if (value._type == Type.String)
@@ -746,7 +791,20 @@ namespace Yolol.Execution
 
             return -value._number;
         }
+        #endregion
 
+        #region abs
+        internal static bool WillAbsThrow(Value value)
+        {
+            return value.Type != Type.Number;
+        }
+
+        internal static Number UnsafeAbs(Value value)
+        {
+            return value._number.Abs();
+        }
+
+        [ErrorMetadata(nameof(WillAbsThrow), nameof(UnsafeAbs))]
         public static Number Abs(Value value)
         {
             if (value._type == Type.String)
@@ -754,7 +812,20 @@ namespace Yolol.Execution
 
             return value._number.Abs();
         }
+        #endregion
 
+        #region sqrt
+        internal static bool WillSqrtThrow(Value value)
+        {
+            return value.Type != Type.Number;
+        }
+
+        internal static Number UnsafeSqrt(Value value)
+        {
+            return value._number.Sqrt();
+        }
+
+        [ErrorMetadata(nameof(WillSqrtThrow), nameof(UnsafeSqrt))]
         public static Number Sqrt(Value value)
         {
             if (value._type == Type.String)
@@ -762,7 +833,20 @@ namespace Yolol.Execution
 
             return value._number.Sqrt();
         }
+        #endregion
 
+        #region sin
+        internal static bool WillSinThrow(Value value)
+        {
+            return value.Type != Type.Number;
+        }
+
+        internal static Number UnsafeSin(Value value)
+        {
+            return value._number.Sin();
+        }
+
+        [ErrorMetadata(nameof(WillSinThrow), nameof(UnsafeSin))]
         public static Number Sin(Value value)
         {
             if (value._type == Type.String)
@@ -770,7 +854,20 @@ namespace Yolol.Execution
 
             return value._number.Sin();
         }
+        #endregion
 
+        #region cos
+        internal static bool WillCosThrow(Value value)
+        {
+            return value.Type != Type.Number;
+        }
+
+        internal static Number UnsafeCos(Value value)
+        {
+            return value._number.Cos();
+        }
+
+        [ErrorMetadata(nameof(WillCosThrow), nameof(UnsafeCos))]
         public static Number Cos(Value value)
         {
             if (value._type == Type.String)
@@ -778,13 +875,27 @@ namespace Yolol.Execution
 
             return value._number.Cos();
         }
+        #endregion
 
+        #region tan
+        internal static bool WillTanThrow(Value value)
+        {
+            return value.Type != Type.Number;
+        }
+
+        internal static Number UnsafeTan(Value value)
+        {
+            return value._number.Tan();
+        }
+
+        [ErrorMetadata(nameof(WillTanThrow), nameof(UnsafeTan))]
         public static Number Tan(Value value)
         {
             if (value._type == Type.String)
                 throw new ExecutionException($"Attempted to `Tan` a string value");
             return value._number.Tan();
         }
+        #endregion
 
         #region atan
         internal static bool WillAtanThrow(Value value)
@@ -857,15 +968,25 @@ namespace Yolol.Execution
                 return new ConstantString(String);
         }
 
+        #region factorial
+        internal static bool WillFactorialThrow(Value value)
+        {
+            return value.Type != Type.Number;
+        }
+
+        internal static Number UnsafeFactorial(Value value)
+        {
+            return value._number.Factorial();
+        }
+
+        [ErrorMetadata(nameof(WillFactorialThrow), nameof(UnsafeFactorial))]
         public Value Factorial()
         {
             if (_type == Type.String)
                 throw new ExecutionException("Attempted to apply factorial to a string");
             
-            if (_type != Type.Number)
-                throw new ExecutionException($"Attempted to apply factorial to a `{_type}` object");
-
-            return Number.Factorial();
+            return _number.Factorial();
         }
+        #endregion
     }
 }
