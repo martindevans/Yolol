@@ -786,6 +786,18 @@ namespace Yolol.Execution
             return value._number.Tan();
         }
 
+        #region atan
+        internal static bool WillAtanThrow(Value value)
+        {
+            return value.Type != Type.Number;
+        }
+
+        internal static Number UnsafeAtan(Value value)
+        {
+            return value._number.ArcTan();
+        }
+
+        [ErrorMetadata(nameof(WillAtanThrow), nameof(UnsafeAtan))]
         public static Number ArcTan(Value value)
         {
             if (value._type == Type.String)
@@ -793,7 +805,20 @@ namespace Yolol.Execution
 
             return value._number.ArcTan();
         }
+        #endregion
 
+        #region asin
+        internal static bool WillArcSinThrow(Value value)
+        {
+            return value.Type != Type.Number;
+        }
+
+        internal static Number UnsafeArcSin(Value value)
+        {
+            return value._number.ArcSin();
+        }
+
+        [ErrorMetadata(nameof(WillArcSinThrow), nameof(UnsafeArcSin))]
         public static Number ArcSin(Value value)
         {
             if (value._type == Type.String)
@@ -801,7 +826,20 @@ namespace Yolol.Execution
 
             return value._number.ArcSin();
         }
+        #endregion
 
+        #region acos
+        internal static bool WillArcCosThrow(Value value)
+        {
+            return value.Type != Type.Number;
+        }
+
+        internal static Number UnsafeArcCos(Value value)
+        {
+            return value._number.ArcCos();
+        }
+
+        [ErrorMetadata(nameof(WillArcCosThrow), nameof(UnsafeArcCos))]
         public static Number ArcCos(Value value)
         {
             if (value._type == Type.String)
@@ -809,6 +847,7 @@ namespace Yolol.Execution
 
             return value._number.ArcCos();
         }
+        #endregion
 
         public BaseExpression ToConstant()
         {
