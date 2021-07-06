@@ -492,7 +492,7 @@ namespace Yolol.Execution
         internal static bool WillDivThrow(Value l, Value r)
         {
             if (l._type == Type.Number && r._type == Type.Number)
-                return Number.WillDivThrow(l.Number, r.Number);
+                return Number.WillDivThrow(l._number, r._number);
             else
                 return true;
         }
@@ -501,7 +501,7 @@ namespace Yolol.Execution
         internal static bool WillDivThrow(Value l, Number r)
         {
             if (l._type == Type.Number)
-                return Number.WillDivThrow(l.Number, r);
+                return Number.WillDivThrow(l._number, r);
             else
                 return true;
         }
@@ -510,7 +510,7 @@ namespace Yolol.Execution
         internal static bool WillDivThrow(Value l, bool r)
         {
             if (l._type == Type.Number)
-                return Number.WillDivThrow(l.Number, (Number)r);
+                return Number.WillDivThrow(l._number, (Number)r);
             else
                 return true;
         }
@@ -537,7 +537,7 @@ namespace Yolol.Execution
         public static Number operator /(Value left, Value right)
         {
             if (left._type == Type.Number && right._type == Type.Number)
-                return left.Number / right.Number;
+                return left._number / right._number;
             else
                 throw new ExecutionException("Attempted to divide a string");
         }
@@ -585,7 +585,7 @@ namespace Yolol.Execution
         internal static bool WillModThrow(Value l, Value r)
         {
             if (l._type == Type.Number && r._type == Type.Number)
-                return Number.WillModThrow(l.Number, r.Number);
+                return Number.WillModThrow(l._number, r._number);
             else
                 return true;
         }
@@ -594,7 +594,7 @@ namespace Yolol.Execution
         internal static bool WillModThrow(Value l, Number r)
         {
             if (l._type == Type.Number)
-                return Number.WillModThrow(l.Number, r);
+                return Number.WillModThrow(l._number, r);
             else
                 return true;
         }
@@ -603,7 +603,7 @@ namespace Yolol.Execution
         internal static bool WillModThrow(Value l, bool r)
         {
             if (l._type == Type.Number)
-                return Number.WillModThrow(l.Number, r);
+                return Number.WillModThrow(l._number, r);
             else
                 return true;
         }

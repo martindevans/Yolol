@@ -189,19 +189,19 @@ namespace Yolol.Execution
 
         #region mod
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static bool WillModThrow(Number _, Number r)
+        internal static bool WillModThrow([IgnoreParam] Number _, Number r)
         {
             return r._value == 0;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static bool WillModThrow(Number _, Value r)
+        internal static bool WillModThrow([IgnoreParam] Number _, Value r)
         {
             return r.Type != Type.Number || r.UnsafeNumber._value == 0;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static bool WillModThrow(Number _, bool r)
+        internal static bool WillModThrow([IgnoreParam] Number _, bool r)
         {
             return !r;
         }
@@ -256,7 +256,7 @@ namespace Yolol.Execution
 
         #region multiply
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static bool WillMulThrow(Number _, Value v)
+        internal static bool WillMulThrow([IgnoreParam] Number _, Value v)
         {
             return v.Type == Type.String;
         }
@@ -296,19 +296,19 @@ namespace Yolol.Execution
         #endregion
 
         #region divide
-        internal static bool WillDivThrow(Number _, Value r)
+        internal static bool WillDivThrow([IgnoreParam] Number _, Value r)
         {
             if (r.Type != Type.Number)
                 return true;
             return r.UnsafeNumber._value == 0;
         }
 
-        internal static bool WillDivThrow(Number _, Number r)
+        internal static bool WillDivThrow([IgnoreParam] Number _, Number r)
         {
             return r._value == 0;
         }
 
-        internal static bool WillDivThrow(Number _, bool r)
+        internal static bool WillDivThrow([IgnoreParam] Number _, bool r)
         {
             return !r;
         }
@@ -666,7 +666,9 @@ namespace Yolol.Execution
             var r = (double)number;
             var v = Math.Pow(l, r);
 
-            return (Number)v;
+            var epsilon = v < 0 ? -0.00005 : 0.00005;
+
+            return (Number)(epsilon + v);
         }
 
         public Number Exponent(bool right)
