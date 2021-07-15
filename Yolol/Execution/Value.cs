@@ -425,13 +425,13 @@ namespace Yolol.Execution
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static bool WillMulThrow(Value l, Number _)
+        internal static bool WillMulThrow(Value l, [IgnoreParam] Number _)
         {
             return l._type == Type.String;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static bool WillMulThrow(Value l, bool _)
+        internal static bool WillMulThrow(Value l, [IgnoreParam] bool _)
         {
             return l._type == Type.String;
         }
@@ -709,12 +709,12 @@ namespace Yolol.Execution
             return left.Type != Type.Number || right.Type != Type.Number;
         }
 
-        internal static bool WillExponentThrow(Value left, Number _)
+        internal static bool WillExponentThrow(Value left, [IgnoreParam] Number _)
         {
             return left.Type != Type.Number;
         }
 
-        internal static bool WillExponentThrow(Value left, bool _)
+        internal static bool WillExponentThrow(Value left, [IgnoreParam] bool _)
         {
             return left.Type != Type.Number;
         }
@@ -979,13 +979,21 @@ namespace Yolol.Execution
             return value._number.Factorial();
         }
 
-        [ErrorMetadata(nameof(WillFactorialThrow), nameof(UnsafeFactorial))]
         public Value Factorial()
         {
             if (_type == Type.String)
                 throw new ExecutionException("Attempted to apply factorial to a string");
             
             return _number.Factorial();
+        }
+
+        [ErrorMetadata(nameof(WillFactorialThrow), nameof(UnsafeFactorial))]
+        public static Value Factorial(Value value)
+        {
+            if (value.Type == Type.String)
+                throw new ExecutionException("Attempted to apply factorial to a string");
+            
+            return value._number.Factorial();
         }
         #endregion
     }

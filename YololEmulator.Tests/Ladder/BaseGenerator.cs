@@ -13,6 +13,8 @@ namespace YololEmulator.Tests.Ladder
             var input = new List<Dictionary<string, Value>>();
             var output = new List<Dictionary<string, Value>>();
 
+            Setup(input, output);
+
             for (var i = 0; i < count; i++)
             {
                 var ii = new Dictionary<string, Value>();
@@ -25,6 +27,11 @@ namespace YololEmulator.Tests.Ladder
             }
 
             Generator.YololLadderGenerator(input, output, shuffle, mode, chip);
+        }
+
+        protected virtual void Setup(List<Dictionary<string, Value>> inputs, List<Dictionary<string, Value>> outputs)
+        {
+
         }
 
         protected abstract bool GenerateCase(Random random, int index, Dictionary<string, Value> inputs, Dictionary<string, Value> outputs);
