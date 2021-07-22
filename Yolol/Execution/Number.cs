@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using Yolol.Execution.Attributes;
 
 namespace Yolol.Execution
 {
+    [StructLayout(LayoutKind.Explicit)]
     public readonly struct Number
         : IEquatable<Number>
     {
@@ -17,6 +19,7 @@ namespace Yolol.Execution
         public static readonly Number One = new Number(1000);
         public static readonly Number Zero = new Number(0);
 
+        [FieldOffset(0)]
         private readonly long _value;
 
         /// <summary>
@@ -134,16 +137,20 @@ namespace Yolol.Execution
             return (Number)decimal.Parse(s, CultureInfo.InvariantCulture);
         }
 
+        #region casts
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static explicit operator Number(bool b)
         {
             return b ? One : Zero;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static explicit operator Number(int i)
         {
             return new Number(i * (long)Scale);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static explicit operator Number(double i)
         {
             if (double.IsPositiveInfinity(i) || double.IsNegativeInfinity(i) || double.IsNaN(i))
@@ -156,6 +163,7 @@ namespace Yolol.Execution
             return new Number((long)n);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static explicit operator Number(decimal d)
         {
             var n = d * Scale;
@@ -167,25 +175,30 @@ namespace Yolol.Execution
             return new Number((long)(d * Scale));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static explicit operator decimal(Number n)
         {
             return ((decimal)n._value) / Scale;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static explicit operator int(Number n)
         {
             return (int)(n._value / Scale);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static explicit operator float(Number n)
         {
             return ((float)n._value) / Scale;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static explicit operator double(Number n)
         {
             return ((double)n._value) / Scale;
         }
+        #endregion
 
         #region mod
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -361,6 +374,7 @@ namespace Yolol.Execution
         }
         #endregion
 
+        #region add
         public static Number operator +(Number l, Number r)
         {
             return new Number(l._value + r._value);
@@ -387,7 +401,7 @@ namespace Yolol.Execution
         {
             return l + (Number)r;
         }
-
+        #endregion
 
         public static Number operator -(Number l, Number r)
         {

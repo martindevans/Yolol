@@ -173,7 +173,7 @@ namespace Yolol.Analysis.ControlFlowGraph
             }
 
             #region equality
-            public bool Equals(IEdge other)
+            public bool Equals(IEdge? other)
             {
                 if (other is null)
                     return false;

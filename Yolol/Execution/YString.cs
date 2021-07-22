@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using Yolol.Execution.Attributes;
 
 namespace Yolol.Execution
 {
+    [StructLayout(LayoutKind.Explicit)]
     public readonly struct YString
         : IEquatable<YString>, IEquatable<string>
     {
+        [FieldOffset(0)]
         private readonly RopeSlice _span;
 
         public int Length => _span.Length;

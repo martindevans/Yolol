@@ -1,16 +1,20 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using Yolol.Execution.Attributes;
 using Yolol.Grammar.AST.Expressions;
 
 namespace Yolol.Execution
 {
+    [StructLayout(LayoutKind.Explicit)]
     public readonly struct Value
         : IEquatable<Value>
     {
+        [FieldOffset(16)]
         private readonly Type _type;
         public Type Type => _type;
 
+        [FieldOffset(0)]
         private readonly Number _number;
         public Number Number
         {
@@ -22,6 +26,7 @@ namespace Yolol.Execution
             }
         }
 
+        [FieldOffset(0)]
         private readonly YString _string;
         public YString String
         {
@@ -38,20 +43,26 @@ namespace Yolol.Execution
 
         public Value(string str)
         {
+            // initialisation order is important because String and number fields overlap!
+            // The number must be set before the string overwrites it!
+            _number = default;
             _string = new YString(str);
-            _number = Number.Zero;
             _type = Type.String;
         }
 
         public Value(YString str)
         {
+            // initialisation order is important because String and number fields overlap!
+            // The number must be set before the string overwrites it!
+            _number = default;
             _string = str;
-            _number = Number.Zero;
             _type = Type.String;
         }
 
         public Value(Number num)
         {
+            // initialisation order is important because String and number fields overlap!
+            // The string must be set before the number overwrites it!
             _string = default;
             _number = num;
             _type = Type.Number;
@@ -140,6 +151,7 @@ namespace Yolol.Execution
         }
 
         #region op <
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator <(Value left, Value right)
         {
             return (left._type, right._type) switch {
@@ -151,6 +163,7 @@ namespace Yolol.Execution
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator <(Value left, YString right)
         {
             if (left._type == Type.Number)
@@ -159,6 +172,7 @@ namespace Yolol.Execution
                 return left._string < right;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator <(Value left, Number right)
         {
             if (left._type == Type.Number)
@@ -167,6 +181,7 @@ namespace Yolol.Execution
                 return left._string < right;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator <(Value left, bool right)
         {
             if (left._type == Type.Number)
@@ -177,6 +192,7 @@ namespace Yolol.Execution
         #endregion
 
         #region op <=
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator <=(Value left, Value right)
         {
             return (left._type, right._type) switch {
@@ -188,6 +204,7 @@ namespace Yolol.Execution
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator <=(Value left, YString right)
         {
             if (left._type == Type.Number)
@@ -196,6 +213,7 @@ namespace Yolol.Execution
                 return left._string <= right;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator <=(Value left, Number right)
         {
             if (left._type == Type.Number)
@@ -204,6 +222,7 @@ namespace Yolol.Execution
                 return left._string <= right;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator <=(Value left, bool right)
         {
             if (left._type == Type.Number)
@@ -214,6 +233,7 @@ namespace Yolol.Execution
         #endregion
 
         #region op >
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator >(Value left, Value right)
         {
             return (left._type, right._type) switch {
@@ -225,6 +245,7 @@ namespace Yolol.Execution
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator >(Value left, YString right)
         {
             if (left._type == Type.Number)
@@ -233,6 +254,7 @@ namespace Yolol.Execution
                 return left._string > right;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator >(Value left, Number right)
         {
             if (left._type == Type.Number)
@@ -241,6 +263,7 @@ namespace Yolol.Execution
                 return left._string > right;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator >(Value left, bool right)
         {
             if (left._type == Type.Number)
@@ -251,6 +274,7 @@ namespace Yolol.Execution
         #endregion
 
         #region op >=
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator >=(Value left, Value right)
         {
             return (left._type, right._type) switch {
@@ -262,6 +286,7 @@ namespace Yolol.Execution
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator >=(Value left, YString right)
         {
             if (left._type == Type.Number)
@@ -270,6 +295,7 @@ namespace Yolol.Execution
                 return left._string >= right;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator >=(Value left, Number right)
         {
             if (left._type == Type.Number)
@@ -278,6 +304,7 @@ namespace Yolol.Execution
                 return left._string >= right;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator >=(Value left, bool right)
         {
             if (left._type == Type.Number)
@@ -288,6 +315,7 @@ namespace Yolol.Execution
         #endregion
 
         #region op ==
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator ==(Value left, Value right)
         {
             return (left._type, right._type) switch {
@@ -299,6 +327,7 @@ namespace Yolol.Execution
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator ==(Value left, YString right)
         {
             if (left._type != Type.String)
@@ -307,6 +336,7 @@ namespace Yolol.Execution
                 return left._string == right;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator ==(Value left, Number right)
         {
             if (left._type != Type.Number)
@@ -315,6 +345,7 @@ namespace Yolol.Execution
                 return left._number == right;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator ==(Value left, bool right)
         {
             if (left._type != Type.Number)
@@ -325,11 +356,13 @@ namespace Yolol.Execution
         #endregion
 
         #region op !=
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator !=(Value left, Value right)
         {
             return !(left == right);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator !=(Value left, YString right)
         {
             if (left._type != Type.String)
@@ -338,6 +371,7 @@ namespace Yolol.Execution
                 return left._string != right;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator !=(Value left, Number right)
         {
             if (left._type != Type.Number)
@@ -346,6 +380,7 @@ namespace Yolol.Execution
                 return left._number != right;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator !=(Value left, bool right)
         {
             if (left._type != Type.Number)
@@ -356,6 +391,7 @@ namespace Yolol.Execution
         #endregion
 
         #region op -
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Value operator -(Value left, Value right)
         {
             return (left._type, right._type) switch {
@@ -367,11 +403,13 @@ namespace Yolol.Execution
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static YString operator -(Value left, YString right)
         {
             return left.ToYString() - right;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Value operator -(Value l, Number r)
         {
             if (l._type == Type.Number)
@@ -380,6 +418,7 @@ namespace Yolol.Execution
                 return new Value(l._string - r);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Value operator -(Value l, bool r)
         {
             return l - (Number)r;
@@ -387,6 +426,7 @@ namespace Yolol.Execution
         #endregion
 
         #region op +
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Value operator +(Value left, Value right)
         {
             return (left._type, right._type) switch {
@@ -398,11 +438,13 @@ namespace Yolol.Execution
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static YString operator +(Value left, YString right)
         {
             return left.ToYString() + right;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Value operator +(Value l, Number r)
         {
             if (l._type == Type.Number)
@@ -411,6 +453,7 @@ namespace Yolol.Execution
                 return new Value(l._string + r);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Value operator +(Value l, bool r)
         {
             return l + (Number)r;

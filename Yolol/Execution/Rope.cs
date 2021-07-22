@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Yolol.Execution
@@ -76,13 +77,20 @@ namespace Yolol.Execution
         }
     }
 
+    [StructLayout(LayoutKind.Explicit)]
     internal readonly struct RopeSlice
         : IEquatable<string>
     {
-        private readonly Rope? _rope;
+        [FieldOffset(0)]
         private readonly int _start;
 
-        public int Length { get; }
+        [FieldOffset(4)]
+        private readonly int _length;
+        // ReSharper disable once ConvertToAutoProperty
+        public int Length => _length;
+
+        [FieldOffset(8)]
+        private readonly Rope? _rope;
 
         public char this[int index]
         {
@@ -104,7 +112,7 @@ namespace Yolol.Execution
         {
             _rope = rope;
             _start = start;
-            Length = length;
+            _length = length;
 
 #if DEBUG
             if (start < 0)
@@ -124,13 +132,13 @@ namespace Yolol.Execution
             {
                 _rope = null;
                 _start = 0;
-                Length = 0;
+                _length = 0;
             }
             else
             {
                 _rope = new Rope(str);
                 _start = 0;
-                Length = str.Length;
+                _length = str.Length;
             }
         }
 
