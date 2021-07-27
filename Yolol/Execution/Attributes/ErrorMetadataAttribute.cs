@@ -9,8 +9,7 @@ namespace Yolol.Execution.Attributes
     public class ErrorMetadataAttribute
         : Attribute
     {
-        public bool IsInfallible { get; }
-        public string? WillThrow { get; }
+        public string WillThrow { get; }
         public string? UnsafeAlternative { get; }
 
         /// <summary>
@@ -20,14 +19,13 @@ namespace Yolol.Execution.Attributes
         /// <param name="unsafeAlternative">An alternative implementation of the tagged method which does not have any runtime checks</param>
         public ErrorMetadataAttribute(string willThrow, string? unsafeAlternative = null)
         {
-            IsInfallible = false;
             WillThrow = willThrow;
             UnsafeAlternative = unsafeAlternative;
         }
     }
 
     /// <summary>
-    /// Marks a parameter as not important for a `WillThrow`/`unsafeAlternative` method.
+    /// Marks a parameter as not important for a `WillThrow` method.
     /// </summary>
     [AttributeUsage(AttributeTargets.Parameter)]
     public class IgnoreParamAttribute

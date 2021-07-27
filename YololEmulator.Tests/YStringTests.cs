@@ -102,6 +102,16 @@ namespace YololEmulator.Tests
         }
 
         [TestMethod]
+        public void AddEmptyStringToNumber()
+        {
+            var a = (Number)7;
+            var b = new YString("");
+            var c = a + b;
+
+            Assert.AreEqual("7", c.ToString());
+        }
+
+        [TestMethod]
         public void AddEmptyString()
         {
             var a = new YString("abcd");
