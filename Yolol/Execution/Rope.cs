@@ -476,5 +476,13 @@ namespace Yolol.Execution
 
             return new RopeSlice(_rope, _start, Length - 1);
         }
+
+        public RopeSlice Trim(int length)
+        {
+            if (_length <= length || _rope == null)
+                return this;
+
+            return new RopeSlice(_rope, _start, length);
+        }
     }
 }

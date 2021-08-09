@@ -488,5 +488,23 @@ namespace YololEmulator.Tests
             var str = new YString("Hello");
             Assert.AreEqual("o", str.LastCharacter().ToString());
         }
+
+        [TestMethod]
+        public void TrimShort()
+        {
+            var str = new YString("Hello");
+            var trimmed = YString.Trim(str, 10);
+
+            Assert.AreEqual(str, trimmed);
+        }
+
+        [TestMethod]
+        public void TrimLong()
+        {
+            var str = new YString("Hello, Cylon");
+            var trimmed = YString.Trim(str, 10);
+
+            Assert.AreEqual("Hello, Cyl", trimmed.ToString());
+        }
     }
 }

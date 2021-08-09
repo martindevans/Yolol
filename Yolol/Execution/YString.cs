@@ -50,6 +50,12 @@ namespace Yolol.Execution
         }
 
 
+        public static YString Trim(YString str, int length)
+        {
+            return new YString(str._span.Trim(length));
+        }
+
+
         public static bool operator <(YString left, YString right)
         {
             return CompareStringSpans(left, right) < 0;
