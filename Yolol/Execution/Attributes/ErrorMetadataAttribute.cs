@@ -23,13 +23,4 @@ namespace Yolol.Execution.Attributes
             UnsafeAlternative = unsafeAlternative;
         }
     }
-
-    /// <summary>
-    /// Marks a parameter as not important for a `WillThrow` method.
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Parameter)]
-    public class IgnoreParamAttribute
-        : Attribute
-    {
-    }
 }

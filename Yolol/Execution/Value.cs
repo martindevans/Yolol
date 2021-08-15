@@ -498,7 +498,7 @@ namespace Yolol.Execution
         }
 
         [ErrorMetadata(nameof(WillMulThrow), nameof(UnsafeMultiply))]
-        public static Number operator *(Value left, Value right)
+        public static Number operator *([TypeImplication(Type.Number)] Value left, [TypeImplication(Type.Number)] Value right)
         {
             if (left._type == Type.Number && right._type == Type.Number)
                 return left._number * right._number;
@@ -512,7 +512,7 @@ namespace Yolol.Execution
         }
 
         [ErrorMetadata(nameof(WillMulThrow), nameof(UnsafeMultiply))]
-        public static Number operator *(Value left, Number right)
+        public static Number operator *([TypeImplication(Type.Number)] Value left, Number right)
         {
             if (left._type == Type.Number)
                 return UnsafeMultiply(left, right);
@@ -521,7 +521,7 @@ namespace Yolol.Execution
         }
 
         [ErrorMetadata(nameof(WillMulThrow), nameof(UnsafeMultiply))]
-        public static Number operator *(Value left, bool right)
+        public static Number operator *([TypeImplication(Type.Number)] Value left, bool right)
         {
             if (left._type == Type.Number)
                 return left._number * right;
@@ -577,7 +577,7 @@ namespace Yolol.Execution
         }
 
         [ErrorMetadata(nameof(WillDivThrow), nameof(UnsafeDiv))]
-        public static Number operator /(Value left, Value right)
+        public static Number operator /([TypeImplication(Type.Number)] Value left, [TypeImplication(Type.Number)] Value right)
         {
             if (left._type == Type.Number && right._type == Type.Number)
                 return left._number / right._number;
@@ -591,7 +591,7 @@ namespace Yolol.Execution
         }
 
         [ErrorMetadata(nameof(WillDivThrow), nameof(UnsafeDiv))]
-        public static Number operator /(Value left, Number right)
+        public static Number operator /([TypeImplication(Type.Number)] Value left, Number right)
         {
             if (left._type == Type.Number)
                 return left._number / right;
@@ -600,7 +600,7 @@ namespace Yolol.Execution
         }
 
         [ErrorMetadata(nameof(WillDivThrow), nameof(UnsafeDiv))]
-        public static Number operator /(Value left, bool right)
+        public static Number operator /([TypeImplication(Type.Number)] Value left, bool right)
         {
             if (left._type == Type.Number)
                 return left._number / right;
@@ -670,7 +670,7 @@ namespace Yolol.Execution
         }
 
         [ErrorMetadata(nameof(WillModThrow), nameof(UnsafeMod))]
-        public static Number operator %(Value left, Value right)
+        public static Number operator %([TypeImplication(Type.Number)] Value left, [TypeImplication(Type.Number)] Value right)
         {
             if (left._type == Type.Number && right._type == Type.Number)
                 return left._number % right._number;
@@ -684,7 +684,7 @@ namespace Yolol.Execution
         }
 
         [ErrorMetadata(nameof(WillModThrow), nameof(UnsafeMod))]
-        public static Number operator %(Value left, Number right)
+        public static Number operator %([TypeImplication(Type.Number)] Value left, Number right)
         {
             if (left._type == Type.Number)
                 return left._number % right;
@@ -693,7 +693,7 @@ namespace Yolol.Execution
         }
 
         [ErrorMetadata(nameof(WillModThrow), nameof(UnsafeMod))]
-        public static Number operator %(Value left, bool right)
+        public static Number operator %([TypeImplication(Type.Number)] Value left, bool right)
         {
             if (left._type == Type.Number)
                 return left._number % right;
@@ -778,7 +778,7 @@ namespace Yolol.Execution
         }
 
         [ErrorMetadata(nameof(WillExponentThrow), nameof(UnsafeExponent))]
-        public static Number Exponent(Value left, Value right)
+        public static Number Exponent([TypeImplication(Type.Number)] Value left, [TypeImplication(Type.Number)] Value right)
         {
             if (left._type == Type.Number && right._type == Type.Number)
                 return left._number.Exponent(right._number);
@@ -792,7 +792,7 @@ namespace Yolol.Execution
         }
 
         [ErrorMetadata(nameof(WillExponentThrow), nameof(UnsafeExponent))]
-        public static Number Exponent(Value left, Number right)
+        public static Number Exponent([TypeImplication(Type.Number)] Value left, Number right)
         {
             if (left._type == Type.Number)
                 return left._number.Exponent(right);
@@ -801,7 +801,7 @@ namespace Yolol.Execution
         }
 
         [ErrorMetadata(nameof(WillExponentThrow), nameof(UnsafeExponent))]
-        public static Number Exponent(Value left, bool right)
+        public static Number Exponent([TypeImplication(Type.Number)] Value left, bool right)
         {
             if (left._type == Type.Number)
                 return left._number.Exponent(right);
@@ -827,7 +827,7 @@ namespace Yolol.Execution
         }
 
         [ErrorMetadata(nameof(WillNegateThrow), nameof(UnsafeNegate))]
-        public static Number operator -(Value value)
+        public static Number operator -([TypeImplication(Type.Number)] Value value)
         {
             if (value._type == Type.String)
                 throw new ExecutionException("Attempted to negate a String value");
@@ -848,7 +848,7 @@ namespace Yolol.Execution
         }
 
         [ErrorMetadata(nameof(WillAbsThrow), nameof(UnsafeAbs))]
-        public static Number Abs(Value value)
+        public static Number Abs([TypeImplication(Type.Number)] Value value)
         {
             if (value._type == Type.String)
                 throw new ExecutionException("Attempted to Abs a string value");
@@ -869,7 +869,7 @@ namespace Yolol.Execution
         }
 
         [ErrorMetadata(nameof(WillSqrtThrow), nameof(UnsafeSqrt))]
-        public static Number Sqrt(Value value)
+        public static Number Sqrt([TypeImplication(Type.Number)] Value value)
         {
             if (value._type == Type.String)
                 throw new ExecutionException("Attempted to Sqrt a string value");
@@ -890,7 +890,7 @@ namespace Yolol.Execution
         }
 
         [ErrorMetadata(nameof(WillSinThrow), nameof(UnsafeSin))]
-        public static Number Sin(Value value)
+        public static Number Sin([TypeImplication(Type.Number)] Value value)
         {
             if (value._type == Type.String)
                 throw new ExecutionException($"Attempted to `Sin` a string value");
@@ -911,7 +911,7 @@ namespace Yolol.Execution
         }
 
         [ErrorMetadata(nameof(WillCosThrow), nameof(UnsafeCos))]
-        public static Number Cos(Value value)
+        public static Number Cos([TypeImplication(Type.Number)] Value value)
         {
             if (value._type == Type.String)
                 throw new ExecutionException($"Attempted to `Cos` a string value");
@@ -932,7 +932,7 @@ namespace Yolol.Execution
         }
 
         [ErrorMetadata(nameof(WillTanThrow), nameof(UnsafeTan))]
-        public static Number Tan(Value value)
+        public static Number Tan([TypeImplication(Type.Number)] Value value)
         {
             if (value._type == Type.String)
                 throw new ExecutionException($"Attempted to `Tan` a string value");
@@ -952,7 +952,7 @@ namespace Yolol.Execution
         }
 
         [ErrorMetadata(nameof(WillAtanThrow), nameof(UnsafeAtan))]
-        public static Number ArcTan(Value value)
+        public static Number ArcTan([TypeImplication(Type.Number)] Value value)
         {
             if (value._type == Type.String)
                 throw new ExecutionException($"Attempted to `ATan` a string value");
@@ -973,7 +973,7 @@ namespace Yolol.Execution
         }
 
         [ErrorMetadata(nameof(WillArcSinThrow), nameof(UnsafeArcSin))]
-        public static Number ArcSin(Value value)
+        public static Number ArcSin([TypeImplication(Type.Number)] Value value)
         {
             if (value._type == Type.String)
                 throw new ExecutionException($"Attempted to `ASin` a string value");
@@ -994,7 +994,7 @@ namespace Yolol.Execution
         }
 
         [ErrorMetadata(nameof(WillArcCosThrow), nameof(UnsafeArcCos))]
-        public static Number ArcCos(Value value)
+        public static Number ArcCos([TypeImplication(Type.Number)] Value value)
         {
             if (value._type == Type.String)
                 throw new ExecutionException($"Attempted to `ACos` a string value");
@@ -1031,7 +1031,7 @@ namespace Yolol.Execution
         }
 
         [ErrorMetadata(nameof(WillFactorialThrow), nameof(UnsafeFactorial))]
-        public static Value Factorial(Value value)
+        public static Value Factorial([TypeImplication(Type.Number)] Value value)
         {
             if (value.Type == Type.String)
                 throw new ExecutionException("Attempted to apply factorial to a string");

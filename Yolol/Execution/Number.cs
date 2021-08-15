@@ -252,7 +252,7 @@ namespace Yolol.Execution
         }
 
         [ErrorMetadata(nameof(WillModThrow), nameof(UnsafeMod))]
-        public static Value operator %(Number l, Value r)
+        public static Value operator %(Number l, [TypeImplication(Type.Number)] Value r)
         {
             if (r.Type == Type.String)
                 return new StaticError("Attempted to modulus by a string");
@@ -291,7 +291,7 @@ namespace Yolol.Execution
         }
 
         [ErrorMetadata(nameof(WillMulThrow), nameof(UnsafeMul))]
-        public static Value operator *(Number l, Value r)
+        public static Value operator *(Number l, [TypeImplication(Type.Number)] Value r)
         {
             if (r.Type != Type.Number)
                 return new StaticError("Attempted to multiply by a string");
@@ -356,7 +356,7 @@ namespace Yolol.Execution
         }
 
         [ErrorMetadata(nameof(WillDivThrow), nameof(UnsafeDivide))]
-        public static Value operator /(Number l, Value r)
+        public static Value operator /(Number l, [TypeImplication(Type.Number)] Value r)
         {
             if (r.Type != Type.Number)
                 return new StaticError("Attempted to divide by a string");
@@ -403,6 +403,7 @@ namespace Yolol.Execution
         }
         #endregion
 
+        #region subtract
         public static Number operator -(Number l, Number r)
         {
             return new Number(l._value - r._value);
@@ -422,14 +423,16 @@ namespace Yolol.Execution
         {
             return l - (Number)r;
         }
+        #endregion
 
-
+        #region negate
         public static Number operator -(Number n)
         {
             return new Number(-n._value);
         }
+        #endregion
 
-
+        #region >
         public static bool operator >(Number l, Number r)
         {
             return l._value > r._value;
@@ -452,8 +455,9 @@ namespace Yolol.Execution
         {
             return l > (Number)r;
         }
+        #endregion
 
-
+        #region <
         public static bool operator <(Number l, Number r)
         {
             return l._value < r._value;
@@ -476,8 +480,9 @@ namespace Yolol.Execution
         {
             return l < (Number)r;
         }
+        #endregion
 
-
+        #region >=
         public static bool operator >=(Number l, Number r)
         {
             return l._value >= r._value;
@@ -500,8 +505,9 @@ namespace Yolol.Execution
         {
             return l >= (Number)r;
         }
+        #endregion
 
-
+        #region <=
         public static bool operator <=(Number l, Number r)
         {
             return l._value <= r._value;
@@ -524,8 +530,9 @@ namespace Yolol.Execution
         {
             return l <= (Number)r;
         }
+        #endregion
 
-
+        #region ==
         public static bool operator ==(Number l, Number r)
         {
             return l._value == r._value;
@@ -548,8 +555,9 @@ namespace Yolol.Execution
         {
             return l == (Number)r;
         }
+        #endregion
 
-
+        #region !=
         public static bool operator !=(Number l, Number r)
         {
             return l._value != r._value;
@@ -572,7 +580,7 @@ namespace Yolol.Execution
         {
             return l != (Number)r;
         }
-
+        #endregion
 
         public static Number operator ++(Number value)
         {
