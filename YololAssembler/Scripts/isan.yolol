@@ -1,4 +1,4 @@
-:DT="station_" :AT=:DT+"hq_imperial_a" :BT=:DT+"proving_grounds" 
+c=21:DT="station_" :AT=:DT+"hq_imperial_a" :BT=:DT+"proving_grounds" 
 :CT=:DT+"kingdom_outpost_b" :DT+="kingdom_outpost_b_2" t=999999 
 e= 207744.954 f=-1550111.534 g=486779.292 h=-160699.392 i=-46169.175 
 j=-140483.070 k=  103669.797 l=799664.698 m=-264673.522 n= -4718.935 

@@ -2,7 +2,7 @@
   "profiles": {
     "YololAssembler": {
       "commandName": "Project",
-      "commandLineArgs": "-i C:\\Users\\Martin\\Documents\\dotnet\\YololEmulator\\YololAssembler\\Scripts\\ --watch",
+      "commandLineArgs": "-i C:\\Users\\Martin\\Documents\\dotnet\\YololEmulator\\YololAssembler\\Scripts\\WhatTheChess.yasm --watch",
       "workingDirectory": "C:\\Users\\Martin\\Documents\\dotnet\\YololEmulator\\YololAssembler\\Scripts\\"
     }
   }

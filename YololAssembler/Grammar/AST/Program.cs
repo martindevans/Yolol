@@ -13,7 +13,7 @@ namespace YololAssembler.Grammar.AST
 
         public Program(IEnumerable<BaseStatement> statements)
         {
-            Statements = statements.ToArray();
+            Statements = statements.Where(a => a is not Comment).ToArray();
         }
 
         public string Compile()
