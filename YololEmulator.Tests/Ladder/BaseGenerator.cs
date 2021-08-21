@@ -6,8 +6,11 @@ namespace YololEmulator.Tests.Ladder
 {
     public abstract class BaseGenerator
     {
+        protected int Count { get; private set; }
+
         protected void Run(int seed, int count, bool shuffle, Generator.ScoreMode mode, Generator.YololChip chip = Generator.YololChip.Professional)
         {
+            Count = count;
             var rng = new Random(seed);
 
             var input = new List<Dictionary<string, Value>>();
