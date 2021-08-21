@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Yolol.Analysis.ControlFlowGraph;
 using Yolol.Analysis.ControlFlowGraph.Extensions;
-using Yolol.Analysis.Fuzzer;
 using Yolol.Analysis.TreeVisitor.Reduction;
 using Yolol.Analysis.Types;
 using Yolol.Grammar;
@@ -17,16 +16,6 @@ namespace Yolol.Analysis
         private readonly int _itersLimit;
         private readonly bool _keepTypes;
         private readonly int _maxLines;
-
-        /// <summary>
-        /// How many unique runs of the program will the fuzzer run before and after optimisation to verify correctness
-        /// </summary>
-        public int FuzzSafetyRuns { get; set; } = 250;
-
-        /// <summary>
-        /// How many lines will each fuzzer run execute (max)
-        /// </summary>
-        public int FuzzSafetyIterations { get; set; } = 50;
 
         /// <summary>
         /// Disable all AST bsed optimisation passes
@@ -61,9 +50,6 @@ namespace Yolol.Analysis
             if (input.Lines.Count < _maxLines)
                 throw new NotImplementedException("Pad to _maxLines lines");
 
-            var fuzz = new QuickFuzz(_typeHints);
-            var startFuzz = fuzz.Fuzz(input, FuzzSafetyRuns, FuzzSafetyIterations);
-
             var count = 0;
             var result = input.Fixpoint(_itersLimit, p => {
 
@@ -91,35 +77,7 @@ namespace Yolol.Analysis
             if (!_keepTypes)
                 result = result.StripTypes();
 
-            //// Check that the fuzz test results are the same before and after optimisation
-            //var end = await fuzz.Fuzz(result);
-            //if (!CheckFuzz(await startFuzz, end))
-            //    throw new InvalidOperationException("Fuzz test failed - this program encountered an optimisation bug");
-
             return result;
-        }
-
-        private static bool CheckFuzz(IFuzzResult startFuzz, IFuzzResult endFuzz)
-        {
-            if (startFuzz.Count != endFuzz.Count)
-                return false;
-
-            for (var i = 0; i < startFuzz.Count; i++)
-            {
-                var a = startFuzz[i];
-                var b = endFuzz[i];
-
-                if (!a.Equals(b))
-                {
-                    Console.WriteLine("# Fuzz Fail!");
-                    Console.WriteLine($"Expected: {a}");
-                    Console.WriteLine($"Actual: {b}");
-                    Console.WriteLine();
-                    return false;
-                }
-            }
-
-            return true;
         }
 
         private static Program Optimise(Program program)
@@ -197,7 +155,7 @@ namespace Yolol.Analysis
                 // Remove edges in the CFG which cannot happen based on type info (e.g. remove `Error` edges if an error cannot happen, or `Continue` edges if an error is guaranteed to happen)
                 cf = cf.TypeDrivenEdgeTrimming(types);
 
-                //Merge together blocks which do not need to be separate any more(e.g.there used to be an error which has now been proven impossible)
+                // Merge together blocks which do not need to be separate any more(e.g.there used to be an error which has now been proven impossible)
                 cf = cf.MergeAdjacentBasicBlocks();
 
                 // Remove nodes of the CFG which can never be reached

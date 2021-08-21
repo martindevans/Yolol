@@ -1,0 +1,73 @@
+#import lib.yasm
+
+#define a_letter :a
+#define a_number b
+#define b_letter :b
+#define b_number d
+
+#define input i
+
+#define const_Bis1hopKni0ght s
+#define const_Bis1hop t
+#define const_Kni0ght u
+
+#define odd_numbers v
+#define odd_letters w
+#define const_rook x
+#define const_knight z
+#define const_bk z
+
+#define delta_odd(haystack, left, right) {
+    (set_find_char(haystack, left))!=(set_find_char(haystack, right))
+}
+
+@initialise:
+    odd_numbers="1357"
+    odd_letters="bdfh"
+    const_Bis1hop="Bis1hop"
+    const_Kni0ght="Kni0ght"
+    const_Bis1hopKni0ght=const_Bis1hop+const_Kni0ght
+
+@run_case:
+    a_number=pop_char(:a)
+
+    ## :done=1/((:b-a_number-:a)!=:b)
+
+    b_number=pop_char(:b)
+
+    :done=1/(a_number==b_number+a_letter==b_letter)
+
+    :o="Rook"
+    gotorun_case
+
+@is_bishop:
+    :o=const_Bis1hopKni0ght
+        -
+            set_find_char(odd_letters, b_letter)!=(set_find_char(odd_letters, a_letter))
+            ==(set_find_char(odd_numbers, a_number))!=(set_find_char(odd_numbers, b_number))
+        -const_Kni0ght
+        -const_Bis1hop
+    :done=1
+    goto2
+
+
+
+
+## a != b == c != d
+##
+## a b c d | result
+## 0 0 0 0 | 1
+## 0 0 0 1 | 0
+## 0 0 1 0 | 0
+## 0 0 1 1 | 1
+## 0 1 0 0 | 0
+## 0 1 0 1 | 1
+## 0 1 1 0 | 1
+## 0 1 1 1 | 0
+## 1 0 0 0 | 0
+## 1 0 0 1 | 1
+## 1 0 1 0 | 1
+## 1 0 1 1 | 0
+## 1 1 0 0 | 1
+## 1 1 0 1 | 0
+## 1 1 1 1 | 1

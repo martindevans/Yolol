@@ -1,9 +1,19 @@
-﻿using Yolol.Grammar;
+﻿using Yolol.Execution;
+using Yolol.Grammar;
 
 namespace Yolol.Analysis.Types
 {
     public interface ITypeAssignments
     {
-        Execution.Type? TypeOf(VariableName varName);
+        Type? TypeOf(VariableName varName);
+    }
+
+    public class NullTypeAssignments
+        : ITypeAssignments
+    {
+        public Type? TypeOf(VariableName varName)
+        {
+            return null;
+        }
     }
 }

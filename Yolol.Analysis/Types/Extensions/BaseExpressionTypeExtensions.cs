@@ -6,8 +6,9 @@ namespace Yolol.Analysis.Types.Extensions
 {
     public static class BaseExpressionTypeExtensions
     {
-        public static Type InferType(this BaseExpression expr, ITypeAssignments types)
+        public static Type InferType(this BaseExpression expr, ITypeAssignments? types = null)
         {
+            types ??= new NullTypeAssignments();
             return new ExpressionTypeInference(types).Visit(expr);
         }
     }
