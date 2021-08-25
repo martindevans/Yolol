@@ -234,7 +234,7 @@ namespace Yolol.Execution
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static Number UnsafeMod(Number l, bool _)
         {
-            return FromRaw(l._value % Scale);
+            return l % One;
         }
 
         [ErrorMetadata(nameof(WillModThrow), nameof(UnsafeMod))]
@@ -280,17 +280,20 @@ namespace Yolol.Execution
             return l * v.UnsafeNumber;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Number operator *(Number l, Number r)
         {
             return new Number((l._value * r._value) / Scale);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static StaticError operator *(Number _, YString __)
         {
             return new StaticError("Attempted to multiply by a string");
         }
 
         [ErrorMetadata(nameof(WillMulThrow), nameof(UnsafeMul))]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Value operator *(Number l, [TypeImplication(Type.Number)] Value r)
         {
             if (r.Type != Type.Number)
@@ -299,16 +302,19 @@ namespace Yolol.Execution
                 return l * r.UnsafeNumber;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Number operator *(Number l, bool r)
         {
+            // Due to over/underflow `x*1` does not always equal `x`
             if (r)
-                return l;
+                return l * One;
             else
                 return Zero;
         }
         #endregion
 
         #region divide
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static bool WillDivThrow([IgnoreParam] Number _, Value r)
         {
             if (r.Type != Type.Number)
@@ -316,32 +322,39 @@ namespace Yolol.Execution
             return r.UnsafeNumber._value == 0;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static bool WillDivThrow([IgnoreParam] Number _, Number r)
         {
             return r._value == 0;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static bool WillDivThrow([IgnoreParam] Number _, bool r)
         {
             return !r;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static Number UnsafeDivide(Number l, Number r)
         {
             return new Number(l._value * Scale / r._value);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static Number UnsafeDivide(Number l, Value r)
         {
             return l / r.UnsafeNumber;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static Number UnsafeDivide(Number l, bool _)
         {
-            return l;
+            // Due to over/underflow `x/1` does not always equal `x`
+            return l / One;
         }
 
         [ErrorMetadata(nameof(WillDivThrow), nameof(UnsafeDivide))]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Number operator /(Number l, Number r)
         {
             if (r._value == 0)
@@ -356,6 +369,7 @@ namespace Yolol.Execution
         }
 
         [ErrorMetadata(nameof(WillDivThrow), nameof(UnsafeDivide))]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Value operator /(Number l, [TypeImplication(Type.Number)] Value r)
         {
             if (r.Type != Type.Number)
@@ -365,6 +379,7 @@ namespace Yolol.Execution
         }
 
         [ErrorMetadata(nameof(WillDivThrow), nameof(UnsafeDivide))]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Number operator /(Number l, bool r)
         {
             if (r)
