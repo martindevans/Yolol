@@ -1,0 +1,8 @@
+a=:a e=:i:o=0
+j=a a-=e-e--u/=a>0u/=a!=j j=a a-=e-e--goto2+(a<0or a==j)
+ife<0and0>a thengoto:done++endgoto:o+4
+a=:b e=:i:o=1j=a a-=e-e--goto2+(a==j)*3
+a=:c e=:i:o=2j=a a-=e-e--goto2+(a==j)*4
+:o=3goto:done++
+
+// <-------------- this line is 70 characters long ------------------>

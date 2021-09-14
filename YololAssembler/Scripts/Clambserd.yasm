@@ -1,0 +1,73 @@
+#import lib.yasm
+
+#define in_a a
+#define in_b b
+#define in_c c
+#define in_d d
+
+#define input0 e
+#define input1 f
+#define input2 g
+
+#define temp j
+#define return k
+
+#define check_single_char_fallthrough(tinput, test) {
+    temp=test;
+    test-=pop_char(tinput)
+    continue_if(test>0)
+    continue_if(test!=temp);
+}
+
+#define check_single_char_goto(tinput, test) {
+    temp=test;
+    test-=pop_char(tinput)
+    gotochecker+(test<0or test==temp)
+}
+
+#define initchk_single_char_goto(tinput, test, next_line) {
+    temp=test;
+    test-=pop_char(tinput)
+    gotochecker+(test==temp)*eval(next_line-checker)
+}
+
+#define check_line(input, test) {
+    check_single_char_fallthrough(input, test)
+    check_single_char_goto(input, test)
+}
+
+#define submit_line(input, test) {
+    ifinput<0and0>test then
+        goto:done++
+    end
+    goto:o+4
+}
+
+@init_a:
+    in_a=:a;
+    input0=:i
+    :o=0
+
+@checker:
+    check_line(input0, a)
+
+@submission:
+    submit_line(input0, a)
+
+@init_b:
+    in_a=:b;
+    input0=:i
+    :o=1
+
+    initchk_single_char_goto(input0, a, init_c)
+
+@init_c:
+    in_a=:c;
+    input0=:i
+    :o=2
+    
+    initchk_single_char_goto(input0, a, init_d)
+
+@init_d:
+    :o=3
+    goto:done++

@@ -10,10 +10,6 @@ namespace Yolol.Execution
     public readonly struct Value
         : IEquatable<Value>
     {
-        [FieldOffset(16)]
-        private readonly Type _type;
-        public Type Type => _type;
-
         [FieldOffset(0)]
         private readonly Number _number;
         public Number Number
@@ -37,6 +33,10 @@ namespace Yolol.Execution
                 return _string;
             }
         }
+
+        [FieldOffset(16)]
+        private readonly Type _type;
+        public Type Type => _type;
 
         internal Number UnsafeNumber => _number;
         internal YString UnsafeString => _string;

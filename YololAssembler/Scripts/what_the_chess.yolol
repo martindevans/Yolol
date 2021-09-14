@@ -1,0 +1,5 @@
+v="1357"w="bdfh"t="Bis1hop"u="Kni0ght"s=t+u
+b=:a-:a--d=:b-:b--:done=1/(b==d+:a==:b):o="Rook"goto2
+:o=s-(w-:b)!=w!=((w-:a)!=w)==((v-b)!=v)!=((v-d)!=v)-u-t:done=1goto2
+
+// <-------------- this line is 70 characters long ------------------>

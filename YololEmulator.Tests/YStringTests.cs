@@ -15,6 +15,20 @@ namespace YololEmulator.Tests
         }
 
         [TestMethod]
+        public void VeryLargeOffset()
+        {
+            // Create a string longer than ushort.MaxValue
+            var a = new YString("a");
+            for (var i = 0; i < 16; i++)
+                a += a;
+
+            // Subtract off the start, to create an offset into the rope larger than ushort.MaxValue
+            var b = (a + "1234567") - a;
+
+            Assert.AreEqual("1234567", b.ToString());
+        }
+
+        [TestMethod]
         public void ConcatSimple()
         {
             var a = new YString("abc");

@@ -45,7 +45,7 @@ namespace Yolol.Execution
 
         public Rope CloneSlice(int start, int length, int capacity)
         {
-            var r = new Rope(capacity);
+            var r = new Rope(Math.Max(length, capacity));
             r._builder.Append(_builder, start, length);
             return r;
         }
@@ -82,12 +82,14 @@ namespace Yolol.Execution
         : IEquatable<string>
     {
         [FieldOffset(0)]
-        private readonly int _start;
+        private readonly ushort _start;
 
-        [FieldOffset(4)]
-        private readonly int _length;
-        // ReSharper disable once ConvertToAutoProperty
-        public int Length => _length;
+        //Note: 2 spare bytes here
+        //[FieldOffset(2)]
+        //private readonly ushort _spare;
+
+        [field: FieldOffset(4)]
+        public int Length { get; }
 
         [FieldOffset(8)]
         private readonly Rope? _rope;
@@ -110,10 +112,6 @@ namespace Yolol.Execution
 
         private RopeSlice(Rope rope, int start, int length)
         {
-            _rope = rope;
-            _start = start;
-            _length = length;
-
 #if DEBUG
             if (start < 0)
                 throw new ArgumentOutOfRangeException(nameof(start), "start < 0");
@@ -124,6 +122,20 @@ namespace Yolol.Execution
             if (start + length > rope.Length)
                 throw new ArgumentOutOfRangeException(nameof(length), "start + length > rope.Length");
 #endif
+
+            _rope = rope;
+            Length = length;
+
+            // If the start offset is too large create a new rope with the relevant data at offset 0
+            if (start > ushort.MaxValue)
+            {
+                _rope = rope.CloneSlice(start, length, length);
+                _start = 0;
+            }
+            else
+            {
+                _start = (ushort)start;
+            }
         }
 
         public RopeSlice(string str)
@@ -132,13 +144,13 @@ namespace Yolol.Execution
             {
                 _rope = null;
                 _start = 0;
-                _length = 0;
+                Length = 0;
             }
             else
             {
                 _rope = new Rope(str);
                 _start = 0;
-                _length = str.Length;
+                Length = str.Length;
             }
         }
 
@@ -479,7 +491,7 @@ namespace Yolol.Execution
 
         public RopeSlice Trim(int length)
         {
-            if (_length <= length || _rope == null)
+            if (Length <= length || _rope == null)
                 return this;
 
             return new RopeSlice(_rope, _start, length);
