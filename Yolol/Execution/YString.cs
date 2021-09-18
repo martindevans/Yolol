@@ -24,6 +24,11 @@ namespace Yolol.Execution
             _span = new RopeSlice(str);
         }
 
+        internal YString(string str, int zeroes, int ones)
+        {
+            _span = new RopeSlice(str, zeroes, ones);
+        }
+
         public override string ToString()
         {
             return _span.ToString();

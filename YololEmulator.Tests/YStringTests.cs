@@ -338,6 +338,42 @@ namespace YololEmulator.Tests
         }
 
         [TestMethod]
+        public void SubtractMoreOnesNumber()
+        {
+            var a = new YString("abc111");
+            var c = a - (Number)1111;
+
+            Assert.AreEqual("abc111", c.ToString());
+        }
+
+        [TestMethod]
+        public void SubtractMoreZeroesNumber()
+        {
+            var a = new YString("abc000");
+            var c = a - (Number)10000;
+
+            Assert.AreEqual("abc000", c.ToString());
+        }
+
+        [TestMethod]
+        public void SubtractMoreOnes()
+        {
+            var a = new YString("abc111");
+            var c = a - "1111";
+
+            Assert.AreEqual("abc111", c.ToString());
+        }
+
+        [TestMethod]
+        public void SubtractMoreZeroes()
+        {
+            var a = new YString("abc000");
+            var c = a - "0000";
+
+            Assert.AreEqual("abc000", c.ToString());
+        }
+
+        [TestMethod]
         public void SubtractBool()
         {
             var a = new YString("58dsfg135y");
@@ -519,6 +555,15 @@ namespace YololEmulator.Tests
             var trimmed = YString.Trim(str, 10);
 
             Assert.AreEqual("Hello, Cyl", trimmed.ToString());
+        }
+
+        [TestMethod]
+        public void TrimOnesAndZeroes()
+        {
+            var str = new YString("ABCD1F0HIJA101");
+            var trimmed = YString.Trim(str, 10);
+
+            Assert.AreEqual("ABCD1F0HIJ", trimmed.ToString());
         }
     }
 }
