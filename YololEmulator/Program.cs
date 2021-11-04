@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using CommandLine;
@@ -37,6 +36,7 @@ namespace YololEmulator
         }
         // ReSharper restore UnusedAutoPropertyAccessor.Local
 
+        
         private static void Main(string[] args)
         {
             CommandLine.Parser.Default.ParseArguments<Options>(args).WithParsed(Run);

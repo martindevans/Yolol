@@ -156,7 +156,9 @@ namespace Yolol.Execution
             if (double.IsPositiveInfinity(i) || double.IsNegativeInfinity(i) || double.IsNaN(i))
                 return MinValue;
 
-            var n = i * Scale;
+            var epsilon = i < 0 ? -0.00005 : 0.00005; 
+            var n = (i + epsilon) * Scale;
+
             if (n > MaxValue._value || n < MinValue._value)
                 return MinValue;
 
@@ -627,9 +629,7 @@ namespace Yolol.Execution
             var converted = (double)this;
             var result = Math.Sqrt(converted);
 
-            var epsilon = result < 0 ? -0.00005 : 0.00005;
-
-            return (Number)(epsilon + result);
+            return (Number)result;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -703,9 +703,7 @@ namespace Yolol.Execution
             var r = (double)number;
             var v = Math.Pow(l, r);
 
-            var epsilon = v < 0 ? -0.00005 : 0.00005;
-
-            return (Number)(epsilon + v);
+            return (Number)v;
         }
 
         public Number Exponent(bool right)
@@ -717,11 +715,13 @@ namespace Yolol.Execution
         {
             if (_value < 0)
                 return MinValue;
+            if (_value > 63000)
+                return Zero;
 
             var v = this;
             var i = 0;
             var result = 1L;
-            while (v._value > 0)
+            while (v._value > 0 && result != 0)
             {
                 i++;
                 v--;
