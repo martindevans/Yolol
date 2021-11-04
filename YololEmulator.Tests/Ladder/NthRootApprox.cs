@@ -9,24 +9,6 @@ namespace YololEmulator.Tests.Ladder
     public class NthRootApprox
     {
         [TestMethod]
-        public void MethodName()
-        {
-            var yololInput = (Number)66.669;
-            var val = (double)yololInput;
-
-            var root = Math.Pow(val, 1.0 / 2);
-            Console.WriteLine(root);
-
-            var round = Math.Round(root, 3);
-            Console.WriteLine(round);
-
-            var yololOutput = (Number)round;
-            Console.WriteLine(yololOutput);
-
-            Assert.AreEqual(8.164, (double)yololOutput);
-        }
-
-        [TestMethod]
         public void GenerateNthRootApprox()
         {
             var input = new List<Dictionary<string, Value>>();
