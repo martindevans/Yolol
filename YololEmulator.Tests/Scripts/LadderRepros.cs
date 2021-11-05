@@ -8,6 +8,14 @@ namespace YololEmulator.Tests.Scripts
     public class LadderRepros
     {
         [TestMethod]
+        public void FuzzExponent()
+        {
+            var ms = TestExecutor.Execute($"b=-9223372036854775.808 b%=-0.001");
+
+            Assert.AreEqual(0, (double)ms.GetVariable("b").Value.Number);
+        }
+
+        [TestMethod]
         public void NyefariFactorials()
         {
             var ms = TestExecutor.Execute($"a=13! b=13*(12!)");

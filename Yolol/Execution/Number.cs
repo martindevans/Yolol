@@ -224,6 +224,9 @@ namespace Yolol.Execution
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static Number UnsafeMod(Number l, Number r)
         {
+            if (l._value == long.MinValue && r._value == -1)
+                return Zero;
+
             return new Number(l._value % r._value);
         }
 
