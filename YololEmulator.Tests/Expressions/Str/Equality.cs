@@ -16,6 +16,16 @@ namespace YololEmulator.Tests.Expressions.Str
         }
 
         [TestMethod]
+        public void ConstantConstantFalse()
+        {
+            var result = TestExecutor.Execute("a = \"AAA\" == \"aaa\"");
+
+            var a = result.GetVariable("a");
+
+            Assert.AreEqual(0, (int)a.Value.Number);
+        }
+
+        [TestMethod]
         public void VariableConstant()
         {
             var result = TestExecutor.Execute("a = \"2\" b = a == \"2\"");

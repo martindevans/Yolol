@@ -10,6 +10,7 @@
 @using Yolol.Execution;
 @start program
 @trace true
+@ignorecase true
 
 program <Program>
     = lines:line<0,,newline> _ EOF { new Program(lines) }
@@ -104,14 +105,14 @@ expr_exponent <BaseExpression> -memoize
     / e:expr_keyword { e }
 
 expr_keyword <BaseExpression> -memoize
-    = "abs"i _ e:expr_keyword { new Abs(e) }
-    / "sqrt"i _ e:expr_keyword { new Sqrt(e) }
-    / "sin"i _ e:expr_keyword { new Sine(e) }
-    / "cos"i _ e:expr_keyword { new Cosine(e) }
-    / "tan"i _ e:expr_keyword { new Tangent(e) }
-    / "asin"i _ e:expr_keyword { new ArcSine(e) }
-    / "acos"i _ e:expr_keyword { new ArcCos(e) }
-    / "atan"i _ e:expr_keyword { new ArcTan(e) }
+    = "abs" _ e:expr_keyword { new Abs(e) }
+    / "sqrt" _ e:expr_keyword { new Sqrt(e) }
+    / "sin" _ e:expr_keyword { new Sine(e) }
+    / "cos" _ e:expr_keyword { new Cosine(e) }
+    / "tan" _ e:expr_keyword { new Tangent(e) }
+    / "asin" _ e:expr_keyword { new ArcSine(e) }
+    / "acos" _ e:expr_keyword { new ArcCos(e) }
+    / "atan" _ e:expr_keyword { new ArcTan(e) }
     / e:expr_neg { e }
 
 expr_neg <BaseExpression> -memoize
