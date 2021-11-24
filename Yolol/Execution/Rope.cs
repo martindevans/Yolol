@@ -2,79 +2,74 @@
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Text;
 using Yolol.Execution.Extensions;
 
 namespace Yolol.Execution
 {
     internal class Rope
     {
-        private readonly StringBuilder _builder;
+        private int _count;
+        private char[] _chars;
 
-        public int Length => _builder.Length;
+        public int Length => _count;
 
         public Rope(int capacity = 64)
         {
-            _builder = new StringBuilder(capacity);
+            _chars = new char[64];
         }
 
         public Rope(string initial, int capacity = 64)
         {
-            _builder = new StringBuilder(initial, capacity);
+            _chars = new char[Math.Max(initial.Length, capacity)];
+
+            initial.CopyTo(0, _chars, 0, initial.Length);
+            _count = initial.Length;
         }
 
         public string ToString(int start, int length)
         {
-            return _builder.ToString(start, length);
-        }
-
-        public void Append(Rope other, int sliceStart, int sliceLength)
-        {
-            _builder.Append(other._builder, sliceStart, sliceLength);
+            return new string(_chars.AsSpan(start, length));
         }
 
         public void Append(ReadOnlySpan<char> other)
         {
-            _builder.Append(other);
+            if (_count + other.Length > _chars.Length)
+            {
+                var expanded = new char[Math.Max(_chars.Length * 2, _count + other.Length)];
+                _chars.CopyTo(expanded, 0);
+                _chars = expanded;
+            }
+
+            other.CopyTo(_chars.AsSpan(_count));
+            _count += other.Length;
         }
 
         public char this[int index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => _builder[index];
+            get => _chars[index];
         }
 
         public Rope CloneSlice(int start, int length, int capacity)
         {
             var r = new Rope(Math.Max(length, capacity));
-            r._builder.Append(_builder, start, length);
+            r.Append(_chars.AsSpan(start, length));
             return r;
         }
 
-        public Span<char> CopyTo(Span<char> destination, int sourceIndex, int sourceCount)
+        public ReadOnlySpan<char> GetSpan(int sourceIndex, int sourceCount)
         {
             //ncrunch: no coverage start
-            if (destination.Length < sourceCount)
-                throw new ArgumentOutOfRangeException(nameof(destination), "Input span is too short for entire string");
             if (sourceCount - sourceIndex > Length)
                 throw new ArgumentOutOfRangeException(nameof(sourceCount), "(sourceCount - sourceIndex) is longer than source");
             //ncrunch: no coverage end
 
-            _builder.CopyTo(sourceIndex, destination, sourceCount);
-            return destination[sourceCount..];
+            return _chars.AsSpan(sourceIndex, sourceCount);
         }
 
         public bool SliceEquals(string other, int start, int count)
         {
-            if (other.Length != count)
-                return false;
-
-            var i = 0;
-            foreach (var c in other)
-                if (c != _builder[start + i++])
-                    return false;
-
-            return true;
+            return GetSpan(start, count).SequenceEqual(other);
         }
     }
 
@@ -305,7 +300,7 @@ namespace Yolol.Execution
             // the rope can be extended in place.
             if (left._start + left.Length == left._rope.Length)
             {
-                left._rope.Append(right._rope, right._start, right.Length);
+                left._rope.Append(right._rope.GetSpan(right._start, right.Length));
                 return new RopeSlice(
                     left._rope,
                     left._start, left.Length + right.Length,
@@ -316,7 +311,7 @@ namespace Yolol.Execution
 
             // Create a copy of the rope to extend
             var rope = left._rope.CloneSlice(left._start, left.Length, left.Length + right.Length);
-            rope.Append(right._rope, right._start, right.Length);
+            rope.Append(right._rope.GetSpan(right._start, right.Length));
             return new RopeSlice(
                 rope,
                 0,
@@ -371,7 +366,7 @@ namespace Yolol.Execution
             // Create a new rope containing the data
             var rope = new Rope(left.Length + right.Length);
             rope.Append(left);
-            rope.Append(right._rope, right._start, right.Length);
+            rope.Append(right._rope.GetSpan(right._start, right.Length));
             return new RopeSlice(rope, 0, rope.Length, lz + right._zeroCount, lo + right._onesCount);
         }
 
@@ -466,10 +461,10 @@ namespace Yolol.Execution
             var rope = new Rope(haystack.Length);
 
             // Copy bit of haystack to the left of the needle into new rope
-            rope.Append(haystack._rope, haystack._start, startIndex);
+            rope.Append(haystack._rope.GetSpan(haystack._start, startIndex));
 
             // Copy bit of haystack to the right of the needle into new rope
-            rope.Append(haystack._rope, haystack._start + startIndex + needleLength, haystack.Length - (startIndex + needleLength));
+            rope.Append(haystack._rope.GetSpan(haystack._start + startIndex + needleLength, haystack.Length - (startIndex + needleLength)));
 
             return new RopeSlice(rope, 0, rope.Length, zeroCount, onesCount);
         }
@@ -484,15 +479,9 @@ namespace Yolol.Execution
             if (Length < needle.Length)
                 return -1;
 
-            // Copy the strings to two stack buffers and search in those buffers.
-            unsafe
-            {
-                var needleBuffer = stackalloc char[needle.Length];
-                var needleSpan = new Span<char>(needleBuffer, needle.Length);
-                needle._rope.CopyTo(needleSpan, needle._start, needle.Length);
+            var needleSpan = needle._rope.GetSpan(needle._start, needle.Length);
 
-                return LastIndexOf(needleSpan, needle._zeroCount, needle._onesCount);
-            }
+            return LastIndexOf(needleSpan, needle._zeroCount, needle._onesCount);
         }
 
         private int LastIndexOf(in ReadOnlySpan<char> needle, SaturatingByte needleZeroes, SaturatingByte needleOnes)
@@ -518,15 +507,9 @@ namespace Yolol.Execution
             // rope cannot be null.
             Debug.Assert(_rope != null);
 
-            // Copy the strings to two stack buffers and search in those buffers.
-            unsafe
-            {
-                var haystackBuffer = stackalloc char[Length];
-                var haystackSpan = new Span<char>(haystackBuffer, Length);
-                _rope.CopyTo(haystackSpan, _start, Length);
+            var haystackSpan = _rope.GetSpan(_start, Length);
 
-                return haystackSpan.LastIndexOf(needle);
-            }
+            return haystackSpan.LastIndexOf(needle);
         }
 
         public RopeSlice Decrement()
