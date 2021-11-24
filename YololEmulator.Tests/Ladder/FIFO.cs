@@ -27,7 +27,7 @@ namespace YololEmulator.Tests.Ladder
             var input = new List<Dictionary<string, Value>>();
             var output = new List<Dictionary<string, Value>>();
 
-            Queue<string> queue = new Queue<string>();
+            Queue<string> queue = new();
             void SingleCase(string str, bool locked)
             {
                 input.Add(new Dictionary<string, Value> {
