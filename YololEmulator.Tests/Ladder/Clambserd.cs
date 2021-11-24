@@ -1,135 +1,134 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MoreLinq.Extensions;
 using Yolol.Execution;
 
 namespace YololEmulator.Tests.Ladder
 {
     [TestClass]
-    public class AlmostRandomAccess
+    public class Clambserd
         : BaseGenerator
     {
-        private readonly char[] _memory = new char[1024];
-
-        private BaseAccessStrategy? _current;
+        private readonly string[] _initialCases = {
+            "HelloCylon",
+            "FindTheScrambledInput",
+            "FromFiveOptions",
+            "GoodLuck",
+            "GLkooduc",
+        };
 
         [TestMethod]
         public void Generate()
         {
-            Array.Fill(_memory, ' ');
-            Run(87457, 50000, false, Generator.ScoreMode.BasicScoring);
+            Run(64545, 50000, true, Generator.ScoreMode.BasicScoring);
         }
 
         protected override bool GenerateCase(Random random, int index, Dictionary<string, Value> inputs, Dictionary<string, Value> outputs)
         {
-            if (_current == null || _current.IsComplete)
-                _current = PickStrategy(random);
+            string word;
+            if (index < _initialCases.Length)
+                word = _initialCases[index];
+            else
+                word = RandomString(random, 5, 20);
 
-            _current.Generate(_memory, inputs, outputs);
+            var result = Scramble(random, word);
+            if (result == null)
+                return false;
+
+            var (a, b, c, d, idx) = result.Value;
+
+            inputs.Add("i", word);
+            inputs.Add("a", a);
+            inputs.Add("b", b);
+            inputs.Add("c", c);
+            inputs.Add("d", d);
+
+            outputs.Add("o", (Number)idx);
+
             return true;
         }
 
-        private BaseAccessStrategy PickStrategy(Random random)
+        private static string RandomString(Random rng, int minLength, int maxLength)
         {
-            return random.Next(0, 3) switch
-            {
-                0 => new SingleRandomWrite(random),
-                1 => new SingleRandomRead(random),
-                2 => new RepeatedDuplicateAccess(random),
-                _ => throw new NotImplementedException()
-            };
+            const string lower = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+            var length = rng.Next(minLength, maxLength);
+            var chars = Enumerable.Repeat(lower, length)
+                                  .Select(s => lower[rng.Next(lower.Length)])
+                                  .ToArray();
+
+            return string.Join("", chars);
         }
 
-        private static char RandomChar(Random rng)
+        private static (string, string, string, string, int)? Scramble(Random rng, string word)
         {
-            const string lower = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            return lower[rng.Next(lower.Length)];
+            var scrambled = new string(word.Shuffle().ToArray());
+
+            var m1 = new string(Mutate1(rng, scrambled.ToList()).ToArray());
+            var m2 = new string(Mutate1(rng, scrambled.ToList()).ToArray());
+            var m3 = new string(Mutate2(rng, scrambled.ToList()).ToArray());
+
+            // Check that none of the alternatives are accidentally permutations of the original input
+            if (ArePermutation(m1, word) || ArePermutation(m2, word) || ArePermutation(m3, word))
+                return null;
+
+            var arr = new[] { scrambled, m1, m2, m3 }.Shuffle().ToArray();
+            return (arr[0], arr[1], arr[2], arr[3], Array.IndexOf(arr, scrambled));
+            
         }
 
-        private abstract class BaseAccessStrategy
+        private static List<char> Mutate1(Random rng, List<char> s)
         {
-            public abstract bool IsComplete { get; }
+            // Replace some characters with some other characters
+            var count = rng.Next(0, s.Count / 2);
+            for (var i = 0; i < count; i++)
+                ReplaceChar(rng, s);
 
-            public abstract void Generate(char[] memory, Dictionary<string, Value> inputs, Dictionary<string, Value> outputs);
-
-            protected static void Read(int address, char[] memory, Dictionary<string, Value> inputs, Dictionary<string, Value> outputs)
-            {
-                inputs.Add("i", (Number)address);
-                inputs.Add("m", "r");
-
-                var value = memory[address];
-                outputs.Add("v", value.ToString());
-            }
-
-            protected static void Write(int address, char[] memory, char value, Dictionary<string, Value> inputs, Dictionary<string, Value> outputs)
-            {
-                memory[address] = value;
-
-                inputs.Add("i", (Number)address);
-                inputs.Add("m", "w");
-                inputs.Add("v", value.ToString());
-            }
+            return s;
         }
 
-        class SingleRandomRead
-            : BaseAccessStrategy
+        private static List<char> Mutate2(Random rng, List<char> s)
         {
-            private readonly Random _rand;
+            // Remove some characters
+            var count = rng.Next(0, s.Count / 4);
+            for (int i = 0; i < count; i++)
+                s.RemoveAt(rng.Next(0, s.Count));
 
-            public override bool IsComplete => _rand.NextDouble() < 0.75;
+            // Add some extra characters
+            s.AddRange(RandomString(rng, 0, s.Count / 4));
 
-            public SingleRandomRead(Random rand)
-            {
-                _rand = rand;
-            }
-
-            public override void Generate(char[] memory, Dictionary<string, Value> inputs, Dictionary<string, Value> outputs)
-            {
-                Read(_rand.Next(1024), memory, inputs, outputs);
-            }
+            // Shuffle it and return it
+            return s.Shuffle().ToList();
         }
 
-        class SingleRandomWrite
-            : BaseAccessStrategy
+        private static void ReplaceChar(Random rng, List<char> s)
         {
-            private readonly Random _rand;
-
-            public override bool IsComplete => _rand.NextDouble() < 0.75;
-
-            public SingleRandomWrite(Random rand)
+            var idx = rng.Next(0, s.Count);
+            var original = s[idx];
+            char chr;
+            do
             {
-                _rand = rand;
-            }
+                chr = RandomString(rng, 1, 1)[0];
+            } while (chr == original);
 
-            public override void Generate(char[] memory, Dictionary<string, Value> inputs, Dictionary<string, Value> outputs)
-            {
-                var addr = _rand.Next(1024);
-                var value = RandomChar(_rand);
-                Write(addr, memory, value, inputs, outputs);
-            }
+            s[idx] = chr;
         }
 
-        class RepeatedDuplicateAccess
-            : BaseAccessStrategy
+        private static bool ArePermutation(string str1, string str2)
         {
-            private readonly Random _rand;
-            private readonly int _addr;
+            if (str1.Length != str2.Length)
+                return false;
 
-            public override bool IsComplete => _rand.NextDouble() < 0.15;
+            var s1 = str1.OrderBy(a => a).ToList();
+            var s2 = str2.OrderBy(a => a).ToList();
 
-            public RepeatedDuplicateAccess(Random rand)
-            {
-                _rand = rand;
-                _addr = rand.Next(1024);
-            }
-
-            public override void Generate(char[] memory, Dictionary<string, Value> inputs, Dictionary<string, Value> outputs)
-            {
-                if (_rand.NextDouble() < 0.6)
-                    Read(_addr, memory, inputs, outputs);
-                else
-                    Write(_addr, memory, RandomChar(_rand), inputs, outputs);
-            }
+            for (var i = 0; i < str1.Length;  i++)
+                if (s1[i] != s2[i])
+                    return false;
+ 
+            return true;
         }
     }
 }
