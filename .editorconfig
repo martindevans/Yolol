@@ -2,3 +2,6 @@
 
 # CS1998: Async method lacks 'await' operators and will run synchronously
 dotnet_diagnostic.CS1998.severity = silent
+
+# IDE0060: Remove unused parameter
+dotnet_diagnostic.IDE0060.severity = none

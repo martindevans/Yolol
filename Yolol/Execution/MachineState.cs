@@ -26,7 +26,7 @@ namespace Yolol.Execution
 
             if (name.StartsWith(":"))
             {
-                return _network.Get(name.Substring(1));
+                return _network.Get(name[1..]);
             }
             else
             {

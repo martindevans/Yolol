@@ -17,7 +17,7 @@ namespace YololAssembler.Grammar.AST
             if (idx != -1)
             {
                 // Remove the comment
-                Content = Content.Substring(0, idx);
+                Content = Content[..idx];
 
                 // If there was space trailing the line leading up to the comment, remove it
                 Content = Content.TrimEnd(' ');

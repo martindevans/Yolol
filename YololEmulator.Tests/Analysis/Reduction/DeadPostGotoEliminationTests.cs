@@ -6,7 +6,7 @@ namespace YololEmulator.Tests.Analysis.Reduction
     [TestClass]
     public class DeadPostGotoEliminationTests
     {
-        private static readonly ReducerTestHelper Helper = new ReducerTestHelper(ast => ast.DeadPostGotoElimination());
+        private static readonly ReducerTestHelper Helper = new(ast => ast.DeadPostGotoElimination());
 
         [TestMethod]
         public void BasicElimination() => Helper.Run("a=1 goto 2 a=3", "a=1 goto 2");

@@ -6,7 +6,7 @@ namespace YololEmulator.Tests.Analysis.Reduction
     [TestClass]
     public class ConstantFoldingTests
     {
-        private static readonly ReducerTestHelper Helper = new ReducerTestHelper(ast => ast.FoldConstants());
+        private static readonly ReducerTestHelper Helper = new(ast => ast.FoldConstants());
 
         [TestMethod]
         public void FoldNumber() => Helper.Run("a=-2+(2*3)/2", "a=1");

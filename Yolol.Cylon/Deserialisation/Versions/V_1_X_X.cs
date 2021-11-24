@@ -48,7 +48,11 @@ namespace Yolol.Cylon.Deserialisation.Versions
 
         private BaseStatement ParseStatement(JToken jtok)
         {
-            var type = jtok["type"].Value<string>().Split(new[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
+            var maybeType = jtok["type"]?.Value<string>();
+            if (maybeType is null)
+                throw new InvalidCastException("Cannot parse: null `type` field");
+
+            var type = maybeType.Split(new[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
 
             if (type[0] != "statement")
                 throw new InvalidOperationException($"Expected `statement`, found `{type[0]}`");
@@ -78,6 +82,9 @@ namespace Yolol.Cylon.Deserialisation.Versions
         private BaseStatement ParseAssignment(JToken jtok, string op)
         {
             var id = jtok.Tok("identifier").Value<string>();
+            if (id is null)
+                throw new InvalidCastException("Cannot parse: null `identifier` field");
+
             var expr = ParseExpression(jtok.Tok("value"));
 
             Type? type = null;
@@ -118,7 +125,9 @@ namespace Yolol.Cylon.Deserialisation.Versions
 
         private BaseExpression ParseExpression(JToken jtok)
         {
-            var type = jtok.Tok("type").Value<string>().Split(new[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
+            var type = jtok.Tok("type")?.Value<string>()?.Split(new[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
+            if (type is null)
+                throw new InvalidCastException("Cannot parse: null `type` field");
 
             if (type[0] != "expression")
                 throw new InvalidOperationException($"Expected `expression`, found `{type[0]}`");
@@ -170,13 +179,21 @@ namespace Yolol.Cylon.Deserialisation.Versions
 
             BaseExpression ParseModify(string op)
             {
-                var name = new VariableName(jtok.Tok("operand").Tok("name").Value<string>());
+                var operand = jtok.Tok("operand");
+                if (operand is null)
+                    throw new InvalidCastException("Cannot parse: null `operand` field");
+
+                var name = operand.Tok("name").Value<string>();
+                if (name is null)
+                    throw new InvalidCastException("Cannot parse: null `name` field");
+
+                var vname = new VariableName(name);
 
                 return op switch {
-                    "post_increment" => new PostIncrement(name),
-                    "pre_increment" => new PreIncrement(name),
-                    "post_decrement" => new PostDecrement(name),
-                    "pre_decrement" => new PreDecrement(name),
+                    "post_increment" => new PostIncrement(vname),
+                    "pre_increment" => new PreIncrement(vname),
+                    "post_decrement" => new PostDecrement(vname),
+                    "pre_decrement" => new PreDecrement(vname),
                     _ => throw new InvalidOperationException($"Cannot parse: Unknown modify expression type `{op}`")
                 };
             }
@@ -193,13 +210,16 @@ namespace Yolol.Cylon.Deserialisation.Versions
                     return ParseModify(type[2]);
 
                 case "number":
-                    return new ConstantNumber(Number.Parse(jtok.Value<string>("num")));
+                    return new ConstantNumber(Number.Parse(jtok.Value<string>("num") ?? "0"));
 
                 case "string":
-                    return new ConstantString(jtok.Value<string>("str"));
+                    return new ConstantString(jtok.Value<string>("str") ?? "");
 
                 case "identifier":
                     var name = jtok.Value<string>("name");
+                    if (name is null)
+                        throw new InvalidCastException("Cannot parse: null `name` field");
+
                     return new Variable(new VariableName(name));
 
                 default:

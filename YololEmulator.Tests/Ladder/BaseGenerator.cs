@@ -29,7 +29,11 @@ namespace YololEmulator.Tests.Ladder
                 }
             }
 
+            Console.WriteLine($"Cases: {input.Count}");
+
             Generator.YololLadderGenerator(input, output, shuffle, mode, chip);
+
+            
         }
 
         protected virtual void Setup(List<Dictionary<string, Value>> inputs, List<Dictionary<string, Value>> outputs)

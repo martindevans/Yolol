@@ -10,20 +10,19 @@ namespace YololEmulator.Tests.Ladder
     public class PrimeNumberSieve
         : BaseGenerator
     {
-        const int Count = 200000;
-
+        private const int _caseCount = 20000;
         private HashSet<int>? _primes;
 
         [TestMethod]
         public void Generate()
         {
-            Run(678345, Count, false, Generator.ScoreMode.BasicScoring);
+            Run(678345, _caseCount, false, Generator.ScoreMode.BasicScoring);
         }
 
         protected override bool GenerateCase(Random random, int index, Dictionary<string, Value> inputs, Dictionary<string, Value> outputs)
         {
             if (_primes == null)
-                _primes = GeneratePrimes(Count);
+                _primes = GeneratePrimes(_caseCount);
 
             var i = index + 1;
             inputs.Add("i", (Value)i);

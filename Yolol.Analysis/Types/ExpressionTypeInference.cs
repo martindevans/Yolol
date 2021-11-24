@@ -100,9 +100,7 @@ namespace Yolol.Analysis.Types
             return err | n | s;
         }
 
-#pragma warning disable IDE0060 // Remove unused parameter
         private Type UnaryNumeric(BaseExpression expr, BaseExpression parameter, bool forceError, bool allowString)
-#pragma warning restore IDE0060 // Remove unused parameter
         {
             var t = base.Visit(parameter);
 

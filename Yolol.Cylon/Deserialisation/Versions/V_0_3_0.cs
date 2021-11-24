@@ -77,6 +77,9 @@ namespace Yolol.Cylon.Deserialisation.Versions
         private BaseStatement ParseAssignment(JToken jtok)
         {
             var id = jtok.Tok("identifier").Value<string>();
+            if (id is null)
+                throw new InvalidOperationException($"Cannot parse: Null `identifier`");
+
             var op = jtok.Tok("operator").Value<string>();
             var exp = ParseExpression(jtok.Tok("value"));
 
@@ -133,14 +136,14 @@ namespace Yolol.Cylon.Deserialisation.Versions
                     return ParseUnaryExpression(jtok);
 
                 case "expression::number":
-                    return new ConstantNumber(Number.Parse(jtok.Value<string>("num")));
+                    return new ConstantNumber(Number.Parse(jtok.Value<string>("num") ?? ""));
 
                 case "expression::string":
-                    return new ConstantString(jtok.Value<string>("str"));
+                    return new ConstantString(jtok.Value<string>("str") ?? "");
 
                 case "expression::identifier":
                     var name = jtok.Value<string>("name");
-                    return new Variable(new VariableName(name));
+                    return new Variable(new VariableName(name ?? throw new InvalidCastException("Cannot parse: Null identifier `name`")));
 
                 default:
                     throw new InvalidOperationException($"Cannot parse: Unknown expression type `{type}`");

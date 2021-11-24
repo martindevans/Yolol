@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
 
     <IsPackable>false</IsPackable>
 
@@ -31,16 +31,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
     <PackageReference Include="Microsoft.Z3.x64" Version="4.8.10" />
     <PackageReference Include="morelinq" Version="3.3.2" />
-    <PackageReference Include="MSTest.TestAdapter" Version="2.2.5" />
-    <PackageReference Include="MSTest.TestFramework" Version="2.2.5" />
+    <PackageReference Include="MSTest.TestAdapter" Version="2.2.8" />
+    <PackageReference Include="MSTest.TestFramework" Version="2.2.8" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Yolol.Analysis.SAT\Yolol.Analysis.SAT.csproj" />
     <ProjectReference Include="..\Yolol.Analysis\Yolol.Analysis.csproj" />
     <ProjectReference Include="..\Yolol.Cylon\Yolol.Cylon.csproj" />
     <ProjectReference Include="..\Yolol\Yolol.csproj" />

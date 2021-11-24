@@ -2,8 +2,13 @@
   "profiles": {
     "YololAssembler": {
       "commandName": "Project",
-      "commandLineArgs": "-i C:\\Users\\Martin\\Documents\\dotnet\\YololEmulator\\YololAssembler\\Scripts\\WhatTheChess.yasm --watch",
+      "commandLineArgs": "-i C:\\Users\\Martin\\Documents\\dotnet\\YololEmulator\\YololAssembler\\Scripts\\roman_numerals.yasm --watch",
       "workingDirectory": "C:\\Users\\Martin\\Documents\\dotnet\\YololEmulator\\YololAssembler\\Scripts\\"
+    },
+    "WSL": {
+      "commandName": "WSL2",
+      "environmentVariables": {},
+      "distributionName": ""
     }
   }
 }

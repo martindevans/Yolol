@@ -1,0 +1,50 @@
+#import lib.yasm
+
+#define input   :i
+#define output  :o
+
+#define number   n
+
+// Handles pairs of numbers
+// - threshold_hi: threshold for top number (e.g. 1000)
+// - threshold_lo: threshold for top number (e.g. 900)
+// - symbol: symbol hi (e.g. "M")
+// - prefix: symbol prefix lo (e.g. "C" to make "CM")
+#define dual_num(threshold_hi, threshold_lo, symbol, prefix) {
+    continue_if(number>=threshold_lo)
+    output+=eval(0+prefix+symbol)-(number<threshold_hi+prefix)-0
+    number-=select_num_s(number<threshold_hi, threshold_lo, threshold_hi)
+    goto@/(number>=threshold_lo)
+}
+
+#define num1() {
+    output+="1I"-((number<1)+"I")-1
+    number--
+}
+
+@entry:
+    number=input
+    output=""
+    goto2+(number<900)+(number<400)
+
+@n900dual:
+    dual_num(1000, 900, "M", "C")
+
+@n400dual:
+    dual_num(500, 400, "D", "C")
+
+@n90dual:
+    dual_num(100, 90, "C", "X")
+
+@n40dual:
+    dual_num(50, 40, "L", "X")
+
+@n9dual:
+    dual_num(10, 9, "X", "I")
+
+@n4dual:
+    dual_num(5, 4, "V", "I")
+
+@n1:
+    :o+="1I1I1I"-(number>2)-(number>1)-(number>0)-"1I"-"1I"-"1I"-1-1-1
+    goto:done++

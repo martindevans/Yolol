@@ -6,7 +6,7 @@ namespace YololEmulator.Tests
     public class ConstantNetwork
         : IDeviceNetwork
     {
-        private readonly Dictionary<string, IVariable> _variables = new Dictionary<string, IVariable>();
+        private readonly Dictionary<string, IVariable> _variables = new();
 
         public ConstantNetwork(params KeyValuePair<string, Value>[] values)
         {

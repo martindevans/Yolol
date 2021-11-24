@@ -12,25 +12,34 @@ namespace YololEmulator.Tests.Ladder
         private class Data
         {
             [JsonProperty("shuffle")]
-            public bool Shuffle { get; set; }
+            public bool Shuffle { get; }
 
             [JsonProperty("mode")]
-            public ScoreMode Mode { get; set; }
+            public ScoreMode Mode { get; }
 
             [JsonProperty("chip")]
-            public YololChip Chip { get; set; }
+            public YololChip Chip { get; }
 
             [JsonProperty("in")]
-            public Dictionary<string, Value>[] In { get; set; }
+            public Dictionary<string, Value>[] In { get; }
 
             [JsonProperty("out")]
-            public Dictionary<string, Value>[] Out { get; set; }
+            public Dictionary<string, Value>[] Out { get; }
+
+            public Data(bool shuffle, ScoreMode mode, YololChip chip, Dictionary<string, Value>[] inputs, Dictionary<string, Value>[] outputs)
+            {
+                Shuffle = shuffle;
+                Mode = mode;
+                Chip = chip;
+                In = inputs;
+                Out = outputs;
+            }
         }
 
         private class DeviceNetwork
             : IDeviceNetwork
         {
-            private readonly Dictionary<string, IVariable> _saved = new Dictionary<string, IVariable>();
+            private readonly Dictionary<string, IVariable> _saved = new();
 
             public IVariable Get(string name)
             {
@@ -63,13 +72,7 @@ namespace YololEmulator.Tests.Ladder
 
         public static void YololLadderGenerator(List<Dictionary<string, Value>> input, List<Dictionary<string, Value>> output, bool shuffle = true, ScoreMode mode = ScoreMode.BasicScoring, YololChip chip = YololChip.Professional)
         {
-            var d = new Data {
-                In = input.ToArray(),
-                Out = output.ToArray(),
-                Shuffle = shuffle,
-                Mode = mode,
-                Chip = chip
-            };
+            var d = new Data(shuffle, mode, chip, input.ToArray(), output.ToArray());
 
             Console.WriteLine(JsonConvert.SerializeObject(d, new YololValueConverter()));
         }

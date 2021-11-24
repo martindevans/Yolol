@@ -11,15 +11,14 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
         {
             var inner = Visit(brk.Parameter);
 
-            switch (inner)
+            return inner switch
             {
-                case Variable v: return v;
-                case ConstantNumber n: return n;
-                case ConstantString s: return s;
-                case Bracketed b: return b;
-            }
-
-            return base.Visit(new Bracketed(inner));
+                Variable v => v,
+                ConstantNumber n => n,
+                ConstantString s => s,
+                Bracketed b => b,
+                _ => base.Visit(new Bracketed(inner)),
+            };
         }
 
         protected override BaseStatement Visit(Assignment ass)

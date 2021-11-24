@@ -117,9 +117,21 @@ namespace YololAssembler
                     var parseResult = Grammar.Parser.ParseProgram(File.ReadAllText(inputPath));
                     if (!parseResult.IsOk)
                     {
-                        if (minimalOutput) {
-                            Console.WriteLine($"{inputPath} @ {parseResult.Err.Cursor.Line}:{parseResult.Err.Cursor.Column-1} : {parseResult.Err.Message}");
-                        } else {
+                        if (minimalOutput)
+                        {
+                            var err = parseResult.Err;
+                            if (err is null)
+                            {
+                                Console.WriteLine($"{inputPath} @ Unknown error");
+                            }
+                            else
+                            {
+                                var (line, col) = (err.Cursor?.Line ?? -1, err.Cursor?.Column ?? -1);
+                                Console.WriteLine($"{inputPath} @ {line}:{col - 1} : {parseResult.Err.Message}");
+                            }
+                        }
+                        else
+                        {
                             Console.WriteLine($"# Yasm Parse Error");
                             Console.WriteLine("------------------");
                             Console.WriteLine(parseResult.Err.ToString());

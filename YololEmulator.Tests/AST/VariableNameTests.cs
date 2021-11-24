@@ -39,7 +39,7 @@ namespace YololEmulator.Tests.AST
             Assert.IsFalse(a.Equals(null));
 
             Assert.IsFalse(a.Equals((object)b));
-            Assert.IsFalse(a.Equals((object)null));
+            Assert.IsFalse(a.Equals((object)null!));
             // ReSharper disable once SuspiciousTypeConversion.Global
             Assert.IsFalse(a.Equals(1));
 

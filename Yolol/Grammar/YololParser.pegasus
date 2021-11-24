@@ -13,9 +13,9 @@
 @ignorecase true
 
 program <Program>
-    = lines:line<0,,newline> _ EOF { new Program(lines) }
+    = lines:Line<0,,newline> _ EOF { new Program(lines) }
 
-line <Line> -public
+Line <Line> -public
     = _ stmts:statement<0,, _> _ { new Line(new StatementList(stmts)) }
 
 // ########################################

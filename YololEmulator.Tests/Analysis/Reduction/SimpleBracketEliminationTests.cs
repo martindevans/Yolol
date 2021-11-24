@@ -6,7 +6,7 @@ namespace YololEmulator.Tests.Analysis.Reduction
     [TestClass]
     public class SimpleBracketEliminationTests
     {
-        private static readonly ReducerTestHelper Helper = new ReducerTestHelper(ast => ast.SimpleBracketElimination());
+        private static readonly ReducerTestHelper Helper = new(ast => ast.SimpleBracketElimination());
 
         [TestMethod]
         public void NumBrackets() => Helper.Run("a=(1)*2+3", "a=1*2+3");

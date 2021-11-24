@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Yolol.Execution;
 
@@ -11,11 +13,11 @@ namespace YololEmulator.Tests.Ladder
     public class Macbeth
     {
         [TestMethod]
-        public void GenerateMacbeth()
+        public async Task GenerateMacbeth()
         {
             string contents;
-            using (var wc = new System.Net.WebClient())
-                contents = wc.DownloadString("https://raw.githubusercontent.com/cs109/2015/f4dcbcc1446b7dfc33ecad4dd5e92b9a23a274e0/Lectures/Lecture15b/sparklect/shakes/macbeth.txt");
+            using (var wc = new HttpClient())
+                contents = await wc.GetStringAsync("https://raw.githubusercontent.com/cs109/2015/f4dcbcc1446b7dfc33ecad4dd5e92b9a23a274e0/Lectures/Lecture15b/sparklect/shakes/macbeth.txt");
 
             static char? Clean(char c)
             {

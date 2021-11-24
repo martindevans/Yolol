@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using YololAssembler.Grammar.Errors;
 
 namespace YololAssembler.Grammar.AST
@@ -86,8 +87,8 @@ namespace YololAssembler.Grammar.AST
                     return File.ReadAllText(import.Path);
 
                 if (Uri.TryCreate(import.Path, UriKind.Absolute, out var uri))
-                    using (var client = new WebClient())
-                        return client.DownloadString(uri);
+                    using (var client = new HttpClient())
+                        return client.GetStringAsync(uri).Result;
 
                 throw new CannotResolveImport(import.Path);
             }
@@ -104,7 +105,7 @@ namespace YololAssembler.Grammar.AST
         private IEnumerable<string> Others()
         {
             var run = new List<string>();
-            foreach (var stmt in Statements.SkipWhile(a => !(a is LineLabel)))
+            foreach (var stmt in Statements.SkipWhile(a => a is not LineLabel))
             {
                 if (stmt is Other other)
                 {

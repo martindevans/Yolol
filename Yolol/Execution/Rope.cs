@@ -296,9 +296,9 @@ namespace Yolol.Execution
         public static RopeSlice Concat(in RopeSlice left, in RopeSlice right)
         {
             // If either part of the concat is an empty string (represented by a null rope) return the other half.
-            if (left._rope == null)
+            if (left._rope == null || left.Length == 0)
                 return right;
-            if (right._rope == null)
+            if (right._rope == null || right.Length == 0)
                 return left;
 
             // If the end of the left span points to the end of the underlying rope then
