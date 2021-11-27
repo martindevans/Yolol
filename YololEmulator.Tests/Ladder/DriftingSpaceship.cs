@@ -9,7 +9,7 @@ namespace YololEmulator.Tests.Ladder
     [TestClass]
     public class DriftingSpaceship
     {
-        private float RandNormal(Random rand, float mean, float stdDev)
+        private static float RandNormal(Random rand, float mean, float stdDev)
         {
             var u1 = 1.0 - rand.NextDouble();
             var u2 = 1.0 - rand.NextDouble();

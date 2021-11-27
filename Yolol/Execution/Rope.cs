@@ -8,31 +8,100 @@ namespace Yolol.Execution
 {
     internal class Rope
     {
+        private enum Variant
+        {
+            /// <summary>
+            /// There are `count` characters stored in `_chars`
+            /// </summary>
+            Flat,
+
+            /// <summary>
+            /// `_chars` is null and the string is the concatenation of `_left` and `_right`
+            /// </summary>
+            Concat,
+        }
+
+        #region data fields
+        private Variant _variant;
+
         private int _count;
-        private char[] _chars;
+        private char[]? _chars;
 
-        public int Length => _count;
+        private RopeSlice _left;
+        private RopeSlice _right;
+        #endregion
 
+        public int Length => _variant == Variant.Flat ? _count : _left.Length + _right.Length;
+
+        public char this[int index]
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                Flatten();
+                Debug.Assert(_chars != null);
+                return _chars[index];
+            }
+        }
+
+        #region constructors
         public Rope(int capacity = 64)
         {
             _chars = new char[64];
+            _variant = Variant.Flat;
         }
 
         public Rope(string initial, int capacity = 64)
         {
             _chars = new char[Math.Max(initial.Length, capacity)];
+            _variant = Variant.Flat;
 
             initial.CopyTo(0, _chars, 0, initial.Length);
             _count = initial.Length;
         }
 
+        public Rope(RopeSlice left, RopeSlice right)
+        {
+            _left = left;
+            _right = right;
+            _variant = Variant.Concat;
+
+            _chars = null;
+            _count = 0;
+        }
+        #endregion
+
+        /// <summary>
+        /// Transform into the flat variant
+        /// </summary>
+        private void Flatten()
+        {
+            if (_variant == Variant.Flat)
+                return;
+
+            _chars = new char[_left.Length + _right.Length + 64];
+            _variant = Variant.Flat;
+
+            _left.AsSpan.CopyTo(_chars.AsSpan());
+            _right.AsSpan.CopyTo(_chars.AsSpan(_left.Length));
+            _count = _left.Length + _right.Length;
+
+            _left = default;
+            _right = default;
+        }
+
         public string ToString(int start, int length)
         {
+            Flatten();
+            Debug.Assert(_chars != null);
             return new string(_chars.AsSpan(start, length));
         }
 
         public void Append(ReadOnlySpan<char> other)
         {
+            Flatten();
+            Debug.Assert(_chars != null);
+
             if (_count + other.Length > _chars.Length)
             {
                 var expanded = new char[Math.Max(_chars.Length * 2, _count + other.Length)];
@@ -44,14 +113,11 @@ namespace Yolol.Execution
             _count += other.Length;
         }
 
-        public char this[int index]
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => _chars[index];
-        }
-
         public Rope CloneSlice(int start, int length, int capacity)
         {
+            Flatten();
+            Debug.Assert(_chars != null);
+
             var r = new Rope(Math.Max(length, capacity));
             r.Append(_chars.AsSpan(start, length));
             return r;
@@ -59,17 +125,15 @@ namespace Yolol.Execution
 
         public ReadOnlySpan<char> GetSpan(int sourceIndex, int sourceCount)
         {
+            Flatten();
+            Debug.Assert(_chars != null);
+
             //ncrunch: no coverage start
             if (sourceCount - sourceIndex > Length)
                 throw new ArgumentOutOfRangeException(nameof(sourceCount), "(sourceCount - sourceIndex) is longer than source");
             //ncrunch: no coverage end
 
             return _chars.AsSpan(sourceIndex, sourceCount);
-        }
-
-        public bool SliceEquals(string other, int start, int count)
-        {
-            return GetSpan(start, count).SequenceEqual(other);
         }
     }
 
@@ -105,6 +169,25 @@ namespace Yolol.Execution
             }
         }
 
+        public ReadOnlySpan<char> AsSpan
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                return _rope == null ? ReadOnlySpan<char>.Empty : AsSpanUnchecked;
+            }
+        }
+        private ReadOnlySpan<char> AsSpanUnchecked
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                Debug.Assert(_rope != null);
+                return _rope.GetSpan(_start, Length);
+            }
+        }
+
+        #region constructors
         private RopeSlice(Rope rope, int start, int length, SaturatingByte zeroCount, SaturatingByte onesCount)
         {
 #if DEBUG
@@ -200,28 +283,27 @@ namespace Yolol.Execution
                 _onesCount = oneCount;
             }
         }
+        #endregion
 
         public override string ToString()
         {
-            return _rope == null ? string.Empty : _rope.ToString(_start, Length);
+            return AsSpan.ToString();
         }
 
         public bool Equals(string other)
         {
-            if (_rope == null)
-                return string.Empty.Equals(other);
-
-            return _rope.SliceEquals(other, _start, Length);
+            return AsSpan.SequenceEqual(other);
         }
 
         public override int GetHashCode()
         {
-            var hashCode = 19;
+            HashCode c = new HashCode();
 
-            for (var i = 0; i < Length; i++)
-                hashCode = HashCode.Combine(hashCode, this[i]);
+            var s = AsSpan;
+            for (int i = 0; i < s.Length; i++)
+                c.Add(s[i]);
 
-            return hashCode;
+            return c.ToHashCode();
         }
 
         public int CompareTo(in RopeSlice other)
@@ -233,23 +315,14 @@ namespace Yolol.Execution
             Debug.Assert(_rope != null);
             Debug.Assert(other._rope != null);
 
+            // Check if both items are identical slices from the same rope
             if (_rope == other._rope && _start == other._start && Length == other.Length)
                 return 0;
 
-            var l = Math.Min(Length, other.Length);
-            for (var i = 0; i < l; i++)
-            {
-                var a = _rope[_start + i];
-                var b = other._rope[other._start + i];
-
-                if (a != b)
-                    return a - b;
-            }
-
-            return Length - other.Length;
+            return CompareTo(other.AsSpanUnchecked);
         }
 
-        public int CompareTo(in Span<char> other)
+        public int CompareTo(in ReadOnlySpan<char> other)
         {
             if (Length == 0 || other.Length == 0)
                 return Length - other.Length;
@@ -257,17 +330,7 @@ namespace Yolol.Execution
             // `_rope` can only be null if `Length == 0`. That was checked above.
             Debug.Assert(_rope != null);
 
-            var l = Math.Min(Length, other.Length);
-            for (var i = 0; i < l; i++)
-            {
-                var a = _rope[_start + i];
-                var b = other[i];
-
-                if (a != b)
-                    return a - b;
-            }
-
-            return Length - other.Length;
+            return AsSpanUnchecked.CompareTo(other, StringComparison.Ordinal);
         }
 
         public RopeSlice PopLast()
@@ -300,7 +363,7 @@ namespace Yolol.Execution
             // the rope can be extended in place.
             if (left._start + left.Length == left._rope.Length)
             {
-                left._rope.Append(right._rope.GetSpan(right._start, right.Length));
+                left._rope.Append(right.AsSpanUnchecked);
                 return new RopeSlice(
                     left._rope,
                     left._start, left.Length + right.Length,
@@ -309,13 +372,11 @@ namespace Yolol.Execution
                 );
             }
 
-            // Create a copy of the rope to extend
-            var rope = left._rope.CloneSlice(left._start, left.Length, left.Length + right.Length);
-            rope.Append(right._rope.GetSpan(right._start, right.Length));
+            var rope = new Rope(left, right);
             return new RopeSlice(
                 rope,
                 0,
-                rope.Length,
+                left.Length + right.Length,
                 left._zeroCount + right._zeroCount,
                 left._onesCount + right._onesCount
             );
@@ -323,7 +384,7 @@ namespace Yolol.Execution
 
         public static RopeSlice Concat(in RopeSlice left, in ReadOnlySpan<char> right)
         {
-            // If either part of the concat is an empty string return the other half.
+            // If part of the concat is an empty string return the other half.
             if (right.Length == 0)
                 return left;
             
@@ -351,7 +412,7 @@ namespace Yolol.Execution
 
         public static RopeSlice Concat(in ReadOnlySpan<char> left, in RopeSlice right)
         {
-            // If either part of the concat is an empty string return the other half.
+            // If part of the concat is an empty string return the other half.
             if (left.Length == 0)
                 return right;
 
@@ -366,7 +427,7 @@ namespace Yolol.Execution
             // Create a new rope containing the data
             var rope = new Rope(left.Length + right.Length);
             rope.Append(left);
-            rope.Append(right._rope.GetSpan(right._start, right.Length));
+            rope.Append(right.AsSpanUnchecked);
             return new RopeSlice(rope, 0, rope.Length, lz + right._zeroCount, lo + right._onesCount);
         }
 
@@ -479,9 +540,7 @@ namespace Yolol.Execution
             if (Length < needle.Length)
                 return -1;
 
-            var needleSpan = needle._rope.GetSpan(needle._start, needle.Length);
-
-            return LastIndexOf(needleSpan, needle._zeroCount, needle._onesCount);
+            return LastIndexOf(needle.AsSpanUnchecked, needle._zeroCount, needle._onesCount);
         }
 
         private int LastIndexOf(in ReadOnlySpan<char> needle, SaturatingByte needleZeroes, SaturatingByte needleOnes)
@@ -507,9 +566,7 @@ namespace Yolol.Execution
             // rope cannot be null.
             Debug.Assert(_rope != null);
 
-            var haystackSpan = _rope.GetSpan(_start, Length);
-
-            return haystackSpan.LastIndexOf(needle);
+            return AsSpanUnchecked.LastIndexOf(needle);
         }
 
         public RopeSlice Decrement()

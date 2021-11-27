@@ -1,4 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Linq;
+using System.Text;
 using Yolol.Execution;
 
 namespace YololEmulator.Tests.Expressions.Str
@@ -6,6 +8,23 @@ namespace YololEmulator.Tests.Expressions.Str
     [TestClass]
     public class Addition
     {
+        [TestMethod]
+        public void SaturateOnes()
+        {
+            var result = TestExecutor.Execute(
+                "a=\"a\" c=500",
+                "a+=1 c-- goto2+(c==0)"
+            );
+
+            var a = result.GetVariable("a");
+
+            var expected = new StringBuilder("a");
+            for (int i = 0; i < 500; i++)
+                expected.Append('1');
+
+            Assert.AreEqual(new YString(expected.ToString()), a.Value.String);
+        }
+
         [TestMethod]
         public void ConstantConstant()
         {
