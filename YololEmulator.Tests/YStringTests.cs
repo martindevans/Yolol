@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Yolol.Execution;
 
@@ -206,6 +207,38 @@ namespace YololEmulator.Tests
             var c = a + true;
 
             Assert.AreEqual("b1", c.ToString());
+        }
+
+        [TestMethod]
+        public void RemoveFuzz()
+        {
+            static string RandomString(Random rng, int length)
+            {
+                const string Numbers = "0123456789";
+                return string.Join("", Enumerable.Range(0, length).Select(_ => Numbers[rng.Next(Numbers.Length)]));
+            }
+
+            var rng = new Random(345897);
+            for (int i = 0; i < 1024; i++)
+            {
+                // Generate a random string
+                var str = RandomString(rng, 20);
+
+                // Take a random chunk in the middle
+                var mid = str[rng.Next(str.Length)..];
+                mid = mid[..rng.Next(mid.Length)];
+
+                // Subtract that chunk using Yolol semantics
+                var haystack = new YString(str);
+                var needle = new YString(mid);
+                var result = haystack - needle;
+
+                // Subtract it using normal C# operations
+                var index = str.LastIndexOf(mid);
+                var expected = str.Remove(index, mid.Length);
+
+                Assert.AreEqual(expected, result.ToString());
+            }
         }
 
         [TestMethod]

@@ -6,6 +6,9 @@ using Yolol.Execution.Extensions;
 
 namespace Yolol.Execution
 {
+    /// <summary>
+    /// A mutable string of characters
+    /// </summary>
     internal class Rope
     {
         private enum Variant
@@ -22,13 +25,17 @@ namespace Yolol.Execution
         }
 
         #region data fields
+        /// <summary>
+        /// Depending on the value of this field certain other fields may be null. See comments on Variant struct.
+        /// wtb discriminated union.
+        /// </summary>
         private Variant _variant;
 
         private int _count;
         private char[]? _chars;
 
-        private RopeSlice _left;
-        private RopeSlice _right;
+        private Slice _left;
+        private Slice _right;
         #endregion
 
         public int Length => _variant == Variant.Flat ? _count : _left.Length + _right.Length;
@@ -60,7 +67,7 @@ namespace Yolol.Execution
             _count = initial.Length;
         }
 
-        public Rope(RopeSlice left, RopeSlice right)
+        public Rope(Slice left, Slice right)
         {
             _left = left;
             _right = right;
@@ -135,6 +142,22 @@ namespace Yolol.Execution
 
             return _chars.AsSpan(sourceIndex, sourceCount);
         }
+    }
+
+    internal readonly struct Slice
+    {
+        public readonly Rope Rope;
+        public readonly int Start;
+        public readonly int Length;
+
+        public Slice(Rope rope, int start, int length)
+        {
+            Rope = rope;
+            Start = start;
+            Length = length;
+        }
+
+        public ReadOnlySpan<char> AsSpan => Rope.GetSpan(Start, Length);
     }
 
     [StructLayout(LayoutKind.Explicit)]
@@ -351,6 +374,7 @@ namespace Yolol.Execution
             return new RopeSlice(_rope, _start + Length - 1, 1, zc, oc);
         }
 
+        #region concat
         public static RopeSlice Concat(in RopeSlice left, in RopeSlice right)
         {
             // If either part of the concat is an empty string (represented by a null rope) return the other half.
@@ -372,7 +396,10 @@ namespace Yolol.Execution
                 );
             }
 
-            var rope = new Rope(left, right);
+            var rope = new Rope(
+                new Slice(left._rope, left._start, left.Length),
+                new Slice(right._rope, right._start, right.Length)
+            );
             return new RopeSlice(
                 rope,
                 0,
@@ -439,30 +466,21 @@ namespace Yolol.Execution
                 return Concat(left, new Span<char>(&r, 1));
             }
         }
+        #endregion
 
+        #region remove
         public static RopeSlice Remove(in RopeSlice haystack, in RopeSlice needle)
         {
-            // if the needle or haystack is an empty string early exit
-            if (needle.Length == 0 || haystack.Length == 0)
-                return haystack;
-
-            // We just checked the length of both things is not zero. Which means the rope cannot be null either.
-            Debug.Assert(haystack._rope != null);
-            Debug.Assert(needle._rope != null);
-
-            // Find the right slice within the left slice
-            var index = haystack.LastIndexOf(needle);
-            if (index < 0)
-                return haystack;
-
-            return Remove(in haystack, index, needle.Length, (needle._zeroCount, needle._onesCount));
+            return Remove(haystack, needle.AsSpan, needle._zeroCount, needle._onesCount);
         }
 
         public static RopeSlice Remove(in RopeSlice haystack, in ReadOnlySpan<char> needle)
         {
-            if (needle.Length == 0 || haystack.Length == 0)
+            // Check trivial cases
+            if (needle.Length == 0 || haystack.Length < needle.Length)
                 return haystack;
 
+            // Special case for removing booleans from the string
             if (needle.Length == 1)
             {
                 if (needle[0] == '0' && haystack._zeroCount.IsZero)
@@ -476,6 +494,27 @@ namespace Yolol.Execution
 
             // Count the ones/zeroes in the needle, we'll need this anyway if the needle is found in the haystack
             var (needleZeros, needleOnes) = needle.CountDigits();
+
+            return Remove(haystack, needle, needleZeros, needleOnes);
+        }
+
+        private static RopeSlice Remove(in RopeSlice haystack, in ReadOnlySpan<char> needle, SaturatingByte needleZeros, SaturatingByte needleOnes)
+        {
+            // Any empty needle is a no-op
+            if (needle.Length == 0 || haystack.Length == 0)
+                return haystack;
+
+            // Special case for removing booleans from the string
+            if (needle.Length == 1)
+            {
+                if (needle[0] == '0' && haystack._zeroCount.IsZero)
+                    return haystack;
+                if (needle[0] == '1' && haystack._onesCount.IsZero)
+                    return haystack;
+            }
+
+            // We just checked the length of both things is not zero. Which means the rope cannot be null either.
+            Debug.Assert(haystack._rope != null);
 
             // Find the needle slice within the haystack
             var index = haystack.LastIndexOf(needle, needleZeros, needleOnes);
@@ -514,21 +553,15 @@ namespace Yolol.Execution
 
             // If the left slice _ends_ with the right string we can just shorten the slice
             if (startIndex + needleLength == haystack.Length)
-            {
                 return new RopeSlice(haystack._rope, haystack._start, haystack.Length - needleLength, zeroCount, onesCount);
-            }
 
-            // We'll have to make a new rope and remove it
-            var rope = new Rope(haystack.Length);
-
-            // Copy bit of haystack to the left of the needle into new rope
-            rope.Append(haystack._rope.GetSpan(haystack._start, startIndex));
-
-            // Copy bit of haystack to the right of the needle into new rope
-            rope.Append(haystack._rope.GetSpan(haystack._start + startIndex + needleLength, haystack.Length - (startIndex + needleLength)));
-
-            return new RopeSlice(rope, 0, rope.Length, zeroCount, onesCount);
+            // Make a new rope out of the two parts
+            var leftPart = new Slice(haystack._rope, haystack._start, startIndex);
+            var rightPart = new Slice(haystack._rope, haystack._start + startIndex + needleLength, haystack.Length - needleLength - startIndex);
+            var concat = new Rope(leftPart, rightPart);
+            return new RopeSlice(concat, 0, concat.Length, zeroCount, onesCount);
         }
+        #endregion
 
         private int LastIndexOf(in RopeSlice needle)
         {
