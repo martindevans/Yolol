@@ -97,13 +97,6 @@ namespace Yolol.Execution
             _right = default;
         }
 
-        public string ToString(int start, int length)
-        {
-            Flatten();
-            Debug.Assert(_chars != null);
-            return new string(_chars.AsSpan(start, length));
-        }
-
         public void Append(ReadOnlySpan<char> other)
         {
             Flatten();
@@ -120,7 +113,7 @@ namespace Yolol.Execution
             _count += other.Length;
         }
 
-        public Rope CloneSlice(int start, int length, int capacity)
+        public Rope CloneSlice(int start, int length, int capacity = 64)
         {
             Flatten();
             Debug.Assert(_chars != null);
@@ -233,7 +226,7 @@ namespace Yolol.Execution
             // If the start offset is too large create a new rope with the relevant data at offset 0
             if (start > ushort.MaxValue)
             {
-                _rope = rope.CloneSlice(start, length, length);
+                _rope = rope.CloneSlice(start, length);
                 _start = 0;
             }
             else
@@ -329,6 +322,7 @@ namespace Yolol.Execution
             return c.ToHashCode();
         }
 
+        #region CompareTo
         public int CompareTo(in RopeSlice other)
         {
             if (Length == 0 || other.Length == 0)
@@ -355,6 +349,7 @@ namespace Yolol.Execution
 
             return AsSpanUnchecked.CompareTo(other, StringComparison.Ordinal);
         }
+        #endregion
 
         public RopeSlice PopLast()
         {
@@ -383,18 +378,18 @@ namespace Yolol.Execution
             if (right._rope == null || right.Length == 0)
                 return left;
 
-            // If the end of the left span points to the end of the underlying rope then
-            // the rope can be extended in place.
-            if (left._start + left.Length == left._rope.Length)
-            {
-                left._rope.Append(right.AsSpanUnchecked);
-                return new RopeSlice(
-                    left._rope,
-                    left._start, left.Length + right.Length,
-                    left._zeroCount + right._zeroCount,
-                    left._onesCount + right._onesCount
-                );
-            }
+            //// If the end of the left span points to the end of the underlying rope then
+            //// the rope can be extended in place.
+            //if (left._start + left.Length == left._rope.Length)
+            //{
+            //    left._rope.Append(right.AsSpanUnchecked);
+            //    return new RopeSlice(
+            //        left._rope,
+            //        left._start, left.Length + right.Length,
+            //        left._zeroCount + right._zeroCount,
+            //        left._onesCount + right._onesCount
+            //    );
+            //}
 
             var rope = new Rope(
                 new Slice(left._rope, left._start, left.Length),
@@ -581,7 +576,7 @@ namespace Yolol.Execution
             if (needle.Length <= 0)
                 throw new ArgumentOutOfRangeException(nameof(needle), "Length of needle must be > 0");
 
-            // if this is shorter than needle then this can't possibly contain needle
+            // if haystack is shorter than needle then haystack can't possibly contain needle
             if (Length < needle.Length)
                 return -1;
 
