@@ -242,6 +242,32 @@ namespace YololEmulator.Tests
         }
 
         [TestMethod]
+        public void ConcatFuzz()
+        {
+            static string RandomString(Random rng, int length)
+            {
+                const string Numbers = "0123456789";
+                return string.Join("", Enumerable.Range(0, length).Select(_ => Numbers[rng.Next(Numbers.Length)]));
+            }
+
+            var rng = new Random(7324);
+            for (int i = 0; i < 1024; i++)
+            {
+                var a = RandomString(rng, rng.Next(1, 10));
+                var b = RandomString(rng, rng.Next(1, 10));
+                var c = RandomString(rng, rng.Next(1, 10));
+
+                var ay = new YString(a);
+                var by = new YString(b);
+                var cy = new YString(c);
+
+                var final = ay + by + cy;
+
+                Assert.AreEqual(a + b + c, final.ToString());
+            }
+        }
+
+        [TestMethod]
         public void SubtractFromEnd()
         {
             var a = new YString("abc");

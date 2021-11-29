@@ -89,8 +89,8 @@ namespace Yolol.Execution
             _chars = new char[_left.Length + _right.Length + 64];
             _variant = Variant.Flat;
 
-            _left.AsSpan.CopyTo(_chars.AsSpan());
-            _right.AsSpan.CopyTo(_chars.AsSpan(_left.Length));
+            _left.CopyTo(_chars);
+            _right.CopyTo(_chars.AsSpan(_left.Length));
             _count = _left.Length + _right.Length;
 
             _left = default;
@@ -115,11 +115,16 @@ namespace Yolol.Execution
 
         public Rope CloneSlice(int start, int length, int capacity = 64)
         {
-            Flatten();
-            Debug.Assert(_chars != null);
-
+            // Create a new rope with enough capacity for the relevant data
             var r = new Rope(Math.Max(length, capacity));
-            r.Append(_chars.AsSpan(start, length));
+
+            Debug.Assert(r._chars != null);
+            Debug.Assert(r._chars.Length >= length);
+
+            // Copy from this slice into the flat buffer
+            CopySlice(start, length, r._chars);
+            r._count = length;
+
             return r;
         }
 
@@ -135,22 +140,59 @@ namespace Yolol.Execution
 
             return _chars.AsSpan(sourceIndex, sourceCount);
         }
-    }
 
+        internal void CopySlice(int start, int length, Span<char> destination)
+        {
+            if (_variant == Variant.Flat)
+            {
+                Debug.Assert(_chars != null);
+                _chars[start..(start + length)].CopyTo(destination);
+            }
+            else if (_variant == Variant.Concat)
+            {
+                var end = start + length;
+
+                // Copy from the left span
+                var leftCopy = Math.Min(_left.Length - start, length);
+                if (leftCopy > 0)
+                    _left.CopyTo(start, leftCopy, destination);
+
+                // Copy from the right span
+                if (end > _left.Length)
+                    _right.CopyTo(Math.Max(0, start - leftCopy), length - leftCopy, destination.Slice(leftCopy));
+            }
+            else
+                throw new InvalidOperationException($"Unknown Rope variant: `{_variant}`");
+        }
+    }
+    
     internal readonly struct Slice
     {
-        public readonly Rope Rope;
-        public readonly int Start;
+        private readonly Rope _rope;
+        private readonly int _start;
         public readonly int Length;
 
         public Slice(Rope rope, int start, int length)
         {
-            Rope = rope;
-            Start = start;
+            _rope = rope;
+            _start = start;
             Length = length;
         }
 
-        public ReadOnlySpan<char> AsSpan => Rope.GetSpan(Start, Length);
+        internal void CopyTo(Span<char> destination)
+        {
+            _rope.CopySlice(_start, Length, destination);
+        }
+
+        internal void CopyTo(int start, int length, Span<char> destination)
+        {
+            if (start < 0) throw new ArgumentOutOfRangeException("Must be greater than zero", nameof(start));
+            if (start >= Length) throw new ArgumentOutOfRangeException("Must be less than length", nameof(start));
+            if (length < 0) throw new ArgumentOutOfRangeException("Must be greater than zero", nameof(length));
+            if (length > Length - start) throw new ArgumentOutOfRangeException("Must be within slice", nameof(length));
+
+            _rope.CopySlice(_start + start, length, destination);
+        }
     }
 
     [StructLayout(LayoutKind.Explicit)]
