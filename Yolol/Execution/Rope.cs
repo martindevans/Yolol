@@ -32,7 +32,7 @@ namespace Yolol.Execution
         private Variant _variant;
 
         private int _count;
-        private char[]? _chars;
+        private Memory<char>? _chars;
 
         private Slice _left;
         private Slice _right;
@@ -45,9 +45,18 @@ namespace Yolol.Execution
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                Flatten();
-                Debug.Assert(_chars != null);
-                return _chars[index];
+                if (_variant == Variant.Flat)
+                {
+                    Debug.Assert(_chars.HasValue);
+                    return _chars.Value.Span[index];
+                }
+                else
+                {
+                    if (index < _left.Length)
+                        return _left[index];
+                    else
+                        return _right[index - _left.Length];
+                }
             }
         }
 
@@ -63,7 +72,7 @@ namespace Yolol.Execution
             _chars = new char[Math.Max(initial.Length, capacity)];
             _variant = Variant.Flat;
 
-            initial.CopyTo(0, _chars, 0, initial.Length);
+            initial.AsSpan().CopyTo(_chars.Value.Span);
             _count = initial.Length;
         }
 
@@ -89,8 +98,8 @@ namespace Yolol.Execution
             _chars = new char[_left.Length + _right.Length + 64];
             _variant = Variant.Flat;
 
-            _left.CopyTo(_chars);
-            _right.CopyTo(_chars.AsSpan(_left.Length));
+            _left.CopyTo(_chars.Value.Span);
+            _right.CopyTo(_chars.Value.Span[_left.Length..]);
             _count = _left.Length + _right.Length;
 
             _left = default;
@@ -102,14 +111,14 @@ namespace Yolol.Execution
             Flatten();
             Debug.Assert(_chars != null);
 
-            if (_count + other.Length > _chars.Length)
+            if (_count + other.Length > _chars.Value.Length)
             {
-                var expanded = new char[Math.Max(_chars.Length * 2, _count + other.Length)];
-                _chars.CopyTo(expanded, 0);
+                var expanded = new char[Math.Max(_chars.Value.Length * 2, _count + other.Length)];
+                _chars.Value.CopyTo(expanded);
                 _chars = expanded;
             }
 
-            other.CopyTo(_chars.AsSpan(_count));
+            other.CopyTo(_chars.Value[_count..].Span);
             _count += other.Length;
         }
 
@@ -118,11 +127,11 @@ namespace Yolol.Execution
             // Create a new rope with enough capacity for the relevant data
             var r = new Rope(Math.Max(length, capacity));
 
-            Debug.Assert(r._chars != null);
-            Debug.Assert(r._chars.Length >= length);
+            Debug.Assert(r._chars.HasValue);
+            Debug.Assert(r._chars.Value.Length >= length);
 
             // Copy from this slice into the flat buffer
-            CopySlice(start, length, r._chars);
+            CopySlice(start, length, r._chars.Value.Span);
             r._count = length;
 
             return r;
@@ -138,7 +147,7 @@ namespace Yolol.Execution
                 throw new ArgumentOutOfRangeException(nameof(sourceCount), "(sourceCount - sourceIndex) is longer than source");
             //ncrunch: no coverage end
 
-            return _chars.AsSpan(sourceIndex, sourceCount);
+            return _chars.Value.Slice(sourceIndex, sourceCount).Span;
         }
 
         internal void CopySlice(int start, int length, Span<char> destination)
@@ -146,7 +155,7 @@ namespace Yolol.Execution
             if (_variant == Variant.Flat)
             {
                 Debug.Assert(_chars != null);
-                _chars[start..(start + length)].CopyTo(destination);
+                _chars.Value.Slice(start, length).Span.CopyTo(destination);
             }
             else if (_variant == Variant.Concat)
             {
@@ -159,7 +168,7 @@ namespace Yolol.Execution
 
                 // Copy from the right span
                 if (end > _left.Length)
-                    _right.CopyTo(Math.Max(0, start - leftCopy), length - leftCopy, destination.Slice(leftCopy));
+                    _right.CopyTo(Math.Max(0, start - leftCopy), length - leftCopy, destination[leftCopy..]);
             }
             else
                 throw new InvalidOperationException($"Unknown Rope variant: `{_variant}`");
@@ -177,6 +186,15 @@ namespace Yolol.Execution
             _rope = rope;
             _start = start;
             Length = length;
+        }
+
+        public char this[int index]
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                return _rope[_start + index];
+            }
         }
 
         internal void CopyTo(Span<char> destination)

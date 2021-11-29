@@ -9,6 +9,20 @@ namespace YololEmulator.Tests
     public class YStringTests
     {
         [TestMethod]
+        public void SpanTest()
+        {
+            var a = "Hello";
+            var chars = a.ToArray();
+            var sub = System.Runtime.CompilerServices.RuntimeHelpers.GetSubArray<char>(chars, new Range(0, 3));
+            sub[0] = 'W';
+            Console.WriteLine(new string(chars));
+
+            var cspan = chars.AsMemory()[1..].Span;
+            cspan[0] = 'X';
+            Console.WriteLine(new string(chars));
+        }
+
+        [TestMethod]
         public void YStringToString()
         {
             var s = new YString("abc");
