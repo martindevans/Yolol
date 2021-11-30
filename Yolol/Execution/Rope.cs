@@ -32,7 +32,7 @@ namespace Yolol.Execution
         private Variant _variant;
 
         private int _count;
-        private Memory<char>? _chars;
+        private Memory<char> _chars;
 
         private Slice _left;
         private Slice _right;
@@ -47,8 +47,7 @@ namespace Yolol.Execution
             {
                 if (_variant == Variant.Flat)
                 {
-                    Debug.Assert(_chars.HasValue);
-                    return _chars.Value.Span[index];
+                    return _chars.Span[index];
                 }
                 else
                 {
@@ -63,16 +62,16 @@ namespace Yolol.Execution
         #region constructors
         public Rope(int capacity = 64)
         {
-            _chars = new char[64];
+            _chars = new char[capacity];
             _variant = Variant.Flat;
         }
 
         public Rope(ReadOnlySpan<char> initial, int capacity = 64)
         {
-            _chars = new char[Math.Max(initial.Length, capacity)];
+            _chars = new char[Math.Max(initial.Length * 2, capacity)];
             _variant = Variant.Flat;
 
-            initial.CopyTo(_chars.Value.Span);
+            initial.CopyTo(_chars.Span);
             _count = initial.Length;
         }
 
@@ -98,8 +97,8 @@ namespace Yolol.Execution
             _chars = new char[_left.Length + _right.Length + 64];
             _variant = Variant.Flat;
 
-            _left.CopyTo(_chars.Value.Span);
-            _right.CopyTo(_chars.Value.Span[_left.Length..]);
+            _left.CopyTo(_chars.Span);
+            _right.CopyTo(_chars.Span[_left.Length..]);
             _count = _left.Length + _right.Length;
 
             _left = default;
@@ -109,16 +108,15 @@ namespace Yolol.Execution
         public void Append(ReadOnlySpan<char> other)
         {
             Flatten();
-            Debug.Assert(_chars != null);
 
-            if (_count + other.Length > _chars.Value.Length)
+            if (_count + other.Length > _chars.Length)
             {
-                var expanded = new char[Math.Max(_chars.Value.Length * 2, _count + other.Length)];
-                _chars.Value.CopyTo(expanded);
+                var expanded = new char[Math.Max(_chars.Length * 2, _count + other.Length)];
+                _chars.CopyTo(expanded);
                 _chars = expanded;
             }
 
-            other.CopyTo(_chars.Value[_count..].Span);
+            other.CopyTo(_chars[_count..].Span);
             _count += other.Length;
         }
 
@@ -127,11 +125,9 @@ namespace Yolol.Execution
             // Create a new rope with enough capacity for the relevant data
             var r = new Rope(Math.Max(length, capacity));
 
-            Debug.Assert(r._chars.HasValue);
-            Debug.Assert(r._chars.Value.Length >= length);
-
             // Copy from this slice into the flat buffer
-            CopySlice(start, length, r._chars.Value.Span);
+            Debug.Assert(r._chars.Length >= length);
+            CopySlice(start, length, r._chars.Span);
             r._count = length;
 
             return r;
@@ -141,18 +137,16 @@ namespace Yolol.Execution
         {
             Flatten();
 
-            Debug.Assert(_chars != null);
             Debug.Assert(sourceCount - sourceIndex <= _count);
 
-            return _chars.Value.Slice(sourceIndex, sourceCount).Span;
+            return _chars.Slice(sourceIndex, sourceCount).Span;
         }
 
         internal void CopySlice(int start, int length, Span<char> destination)
         {
             if (_variant == Variant.Flat)
             {
-                Debug.Assert(_chars != null);
-                _chars.Value.Slice(start, length).Span.CopyTo(destination);
+                _chars.Slice(start, length).Span.CopyTo(destination);
             }
             else if (_variant == Variant.Concat)
             {
