@@ -67,12 +67,12 @@ namespace Yolol.Execution
             _variant = Variant.Flat;
         }
 
-        public Rope(string initial, int capacity = 64)
+        public Rope(ReadOnlySpan<char> initial, int capacity = 64)
         {
             _chars = new char[Math.Max(initial.Length, capacity)];
             _variant = Variant.Flat;
 
-            initial.AsSpan().CopyTo(_chars.Value.Span);
+            initial.CopyTo(_chars.Value.Span);
             _count = initial.Length;
         }
 
@@ -140,12 +140,9 @@ namespace Yolol.Execution
         public ReadOnlySpan<char> GetSpan(int sourceIndex, int sourceCount)
         {
             Flatten();
-            Debug.Assert(_chars != null);
 
-            //ncrunch: no coverage start
-            if (sourceCount - sourceIndex > Length)
-                throw new ArgumentOutOfRangeException(nameof(sourceCount), "(sourceCount - sourceIndex) is longer than source");
-            //ncrunch: no coverage end
+            Debug.Assert(_chars != null);
+            Debug.Assert(sourceCount - sourceIndex <= _count);
 
             return _chars.Value.Slice(sourceIndex, sourceCount).Span;
         }
@@ -163,8 +160,7 @@ namespace Yolol.Execution
 
                 // Copy from the left span
                 var leftCopy = Math.Min(_left.Length - start, length);
-                if (leftCopy > 0)
-                    _left.CopyTo(start, leftCopy, destination);
+                _left.CopyTo(start, Math.Max(0, leftCopy), destination);
 
                 // Copy from the right span
                 if (end > _left.Length)
@@ -204,10 +200,10 @@ namespace Yolol.Execution
 
         internal void CopyTo(int start, int length, Span<char> destination)
         {
-            if (start < 0) throw new ArgumentOutOfRangeException("Must be greater than zero", nameof(start));
-            if (start >= Length) throw new ArgumentOutOfRangeException("Must be less than length", nameof(start));
-            if (length < 0) throw new ArgumentOutOfRangeException("Must be greater than zero", nameof(length));
-            if (length > Length - start) throw new ArgumentOutOfRangeException("Must be within slice", nameof(length));
+            if (start < 0) throw new ArgumentOutOfRangeException(nameof(start), "Must be greater than zero");
+            if (start >= Length) throw new ArgumentOutOfRangeException(nameof(start), "Must be less than length");
+            if (length < 0) throw new ArgumentOutOfRangeException(nameof(length), "Must be greater than zero");
+            if (length > Length - start) throw new ArgumentOutOfRangeException(nameof(length), "Must be within slice");
 
             _rope.CopySlice(_start + start, length, destination);
         }
@@ -366,9 +362,9 @@ namespace Yolol.Execution
             return AsSpan.ToString();
         }
 
-        public bool Equals(string other)
+        public bool Equals(string? other)
         {
-            return AsSpan.SequenceEqual(other);
+            return AsSpan.SequenceEqual(other ?? ReadOnlySpan<char>.Empty);
         }
 
         public override int GetHashCode()
@@ -500,11 +496,7 @@ namespace Yolol.Execution
 
             var (lz, lo) = left.CountDigits();
             if (right._rope == null)
-            {
-                var r = new Rope(left.Length);
-                r.Append(left);
-                return new RopeSlice(r, 0, r.Length, lz, lo);
-            }
+                return new RopeSlice(new Rope(left), 0, left.Length, lz, lo);
 
             // Create a new rope containing the data
             var rope = new Rope(left.Length + right.Length);
@@ -618,10 +610,10 @@ namespace Yolol.Execution
         }
         #endregion
 
+        #region search
         private int LastIndexOf(in RopeSlice needle)
         {
-            if (needle.Length == 0)
-                throw new ArgumentOutOfRangeException(nameof(needle), "Length of needle must be > 0");
+            Debug.Assert(needle.Length > 0);
             Debug.Assert(needle._rope != null);
 
             // if this is shorter than needle then this can't possibly contain needle
@@ -633,8 +625,7 @@ namespace Yolol.Execution
 
         private int LastIndexOf(in ReadOnlySpan<char> needle, SaturatingByte needleZeroes, SaturatingByte needleOnes)
         {
-            if (needle.Length <= 0)
-                throw new ArgumentOutOfRangeException(nameof(needle), "Length of needle must be > 0");
+            Debug.Assert(needle.Length > 0);
 
             // if haystack is shorter than needle then haystack can't possibly contain needle
             if (Length < needle.Length)
@@ -656,6 +647,7 @@ namespace Yolol.Execution
 
             return AsSpanUnchecked.LastIndexOf(needle);
         }
+        #endregion
 
         public RopeSlice Decrement()
         {

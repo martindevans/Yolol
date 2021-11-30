@@ -44,7 +44,7 @@ namespace Yolol.Execution
             return this == other;
         }
 
-        public bool Equals(string other)
+        public bool Equals(string? other)
         {
             return _span.Equals(other);
         }
@@ -393,6 +393,7 @@ namespace Yolol.Execution
         }
 
 
+#pragma warning disable CA1822 // Mark members as static
         public StaticError Exponent(Value _)
         {
             throw new ExecutionException("Attempted to exponent a string");
@@ -418,6 +419,7 @@ namespace Yolol.Execution
         {
             throw new ExecutionException("Attempted to sqrt a string");
         }
+#pragma warning restore CA1822 // Mark members as static
 
 
         [ErrorMetadata(nameof(WillDecThrow))]
