@@ -24,13 +24,13 @@ namespace Yolol.Grammar.AST.Expressions
             return state.GetVariable(Name.Name).Value;
         }
 
-        public bool Equals(Variable other)
+        public bool Equals(Variable? other)
         {
             return other != null
                 && other.Name.Equals(Name);
         }
 
-        public override bool Equals(BaseExpression other)
+        public override bool Equals(BaseExpression? other)
         {
             return other is Variable var
                 && var.Equals(this);
@@ -39,6 +39,11 @@ namespace Yolol.Grammar.AST.Expressions
         public override string ToString()
         {
             return Name.Name;
+        }
+
+        public override int GetHashCode()
+        {
+            return unchecked(Name.GetHashCode() * 19);
         }
     }
 }

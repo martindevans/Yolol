@@ -62,7 +62,7 @@ namespace Yolol.Analysis.ControlFlowGraph.Extensions
 
             var vs = graph.Vertices.Where(a => a.Type != BasicBlockType.Entry).Select(vertex => {
                 var style = vertex.Type == BasicBlockType.LineStart ? "style=none" : "style=rounded";
-                return $"  {ID(vertex.ID)} [label=\"{vertex.ToString().Replace("\"", "'")}\" shape=box {style}]";
+                return $"  {ID(vertex.ID)} [label=\"{vertex.ToString()!.Replace("\"", "'")}\" shape=box {style}]";
             });
 
             sb.AppendJoin(";\n", vs);

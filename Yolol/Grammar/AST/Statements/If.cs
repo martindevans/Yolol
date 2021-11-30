@@ -52,7 +52,7 @@ namespace Yolol.Grammar.AST.Statements
             var ts = TrueBranch.ToString();
             if (!string.IsNullOrWhiteSpace(ts))
             {
-                builder.Append(" ");
+                builder.Append(' ');
                 builder.Append(ts);
             }
 
@@ -66,6 +66,15 @@ namespace Yolol.Grammar.AST.Statements
             builder.Append(" end");
 
             return builder.ToString();
+        }
+
+        public override int GetHashCode()
+        {
+            return unchecked(
+                  Condition.GetHashCode() 
+                * TrueBranch.GetHashCode()
+                * FalseBranch.GetHashCode()
+            );
         }
     }
 }

@@ -34,8 +34,8 @@ namespace Yolol.Analysis.DataFlowGraph.Extensions
                 if (nodes.Count() > 1)
                     sb.AppendLine($"    { string.Join(" -> ", nodes.Select(a => GetNodeId(a))) } [style=invis]");
             }
-            OutputNameSection(dfg.Inputs, "min", "inputs", a => a.ToString(), a => (a as IDataFlowGraphInputVariable)?.Name.IsExternal ?? false);
-            OutputNameSection(dfg.Outputs, "max", "outputs", a => a.ToString(), a => false);
+            OutputNameSection(dfg.Inputs, "min", "inputs", a => a.ToString()!, a => (a as IDataFlowGraphInputVariable)?.Name.IsExternal ?? false);
+            OutputNameSection(dfg.Outputs, "max", "outputs", a => a.ToString()!, a => false);
 
             // Insert an invisible edge to line up the input and output blocks
             if (dfg.Inputs.Any() && dfg.Outputs.Any())

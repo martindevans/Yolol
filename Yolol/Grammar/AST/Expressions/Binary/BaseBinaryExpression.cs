@@ -32,5 +32,10 @@ namespace Yolol.Grammar.AST.Expressions.Binary
         {
             return op.ToExpression(lhs, rhs);
         }
+
+        public override int GetHashCode()
+        {
+            return unchecked(Left.GetHashCode() * Right.GetHashCode());
+        }
     }
 }

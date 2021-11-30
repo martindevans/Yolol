@@ -31,13 +31,13 @@ namespace Yolol.Analysis.ControlFlowGraph.AST
             //return v;
         }
 
-        public bool Equals(Increment other)
+        public bool Equals(Increment? other)
         {
             return other != null
                 && other.Name.Equals(Name);
         }
 
-        public override bool Equals(BaseExpression other)
+        public override bool Equals(BaseExpression? other)
         {
             return other is Increment a
                 && a.Equals(this);
@@ -46,6 +46,11 @@ namespace Yolol.Analysis.ControlFlowGraph.AST
         public override string ToString()
         {
             return $"inc({Name.Name})";
+        }
+
+        public override int GetHashCode()
+        {
+            return Name.GetHashCode();
         }
     }
 }

@@ -27,5 +27,10 @@ namespace Yolol.Grammar.AST.Statements
         {
             return "";
         }
+
+        public override int GetHashCode()
+        {
+            return 19;
+        }
     }
 }

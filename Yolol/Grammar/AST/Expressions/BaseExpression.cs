@@ -23,7 +23,14 @@ namespace Yolol.Grammar.AST.Expressions
 
         public abstract Value Evaluate(MachineState state);
 
-        public abstract bool Equals(BaseExpression other);
+        public abstract bool Equals(BaseExpression? other);
+
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as BaseExpression);
+        }
+
+        public abstract override int GetHashCode();
 
         public abstract override string ToString();
     }

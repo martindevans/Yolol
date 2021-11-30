@@ -14,7 +14,7 @@ namespace Yolol.Grammar.AST
             Lines = lines.ToArray();
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return obj is Program p && Equals(p);
         }

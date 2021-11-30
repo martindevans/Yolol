@@ -25,13 +25,13 @@ namespace Yolol.Analysis.ControlFlowGraph.AST
             throw new InvalidOperationException("Cannot execute `Conditional` node");
         }
 
-        public bool Equals(Conditional other)
+        public bool Equals(Conditional? other)
         {
             return other != null
                 && other.Condition.Equals(Condition);
         }
 
-        public override bool Equals(BaseStatement other)
+        public override bool Equals(BaseStatement? other)
         {
             return other is Conditional a
                 && a.Equals(this);
@@ -40,6 +40,11 @@ namespace Yolol.Analysis.ControlFlowGraph.AST
         public override string ToString()
         {
             return $"conditional({Condition})";
+        }
+
+        public override int GetHashCode()
+        {
+            return Condition.GetHashCode();
         }
     }
 }

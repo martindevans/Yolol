@@ -21,5 +21,10 @@ namespace Yolol.Grammar.AST.Expressions.Unary
             var value = Parameter.Evaluate(state);
             return Evaluate(value);
         }
+
+        public override int GetHashCode()
+        {
+            return unchecked(Parameter.GetHashCode() * 17);
+        }
     }
 }

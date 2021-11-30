@@ -5,3 +5,8 @@ dotnet_diagnostic.CS1998.severity = silent
 
 # IDE0060: Remove unused parameter
 dotnet_diagnostic.IDE0060.severity = none
+dotnet_diagnostic.CA1507.severity=error
+
+[*.{cs,vb}]
+dotnet_diagnostic.CA1066.severity=suggestion
+dotnet_diagnostic.CA1067.severity=silent

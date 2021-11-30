@@ -70,5 +70,10 @@ namespace Yolol.Grammar.AST.Statements
         {
             return string.Join(" ", Statements.Select(s => s.ToString()));
         }
+
+        public override int GetHashCode()
+        {
+            return Statements.GetHashCode();
+        }
     }
 }

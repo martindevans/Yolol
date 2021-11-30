@@ -28,5 +28,10 @@ namespace Yolol.Analysis.ControlFlowGraph.AST
         {
             return "error()";
         }
+
+        public override int GetHashCode()
+        {
+            return 11;
+        }
     }
 }

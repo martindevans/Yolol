@@ -15,12 +15,12 @@ namespace Yolol.Analysis.ControlFlowGraph.AST
             throw new ExecutionException("Static error");
         }
 
-        public bool Equals(ErrorExpression other)
+        public bool Equals(ErrorExpression? other)
         {
             return other != null;
         }
 
-        public override bool Equals(BaseExpression other)
+        public override bool Equals(BaseExpression? other)
         {
             return other is ErrorExpression a
                 && a.Equals(this);
@@ -29,6 +29,11 @@ namespace Yolol.Analysis.ControlFlowGraph.AST
         public override string ToString()
         {
             return "error()";
+        }
+
+        public override int GetHashCode()
+        {
+            return 3;
         }
     }
 }

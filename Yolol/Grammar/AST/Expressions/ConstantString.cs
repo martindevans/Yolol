@@ -45,5 +45,10 @@ namespace Yolol.Grammar.AST.Expressions
         {
             return $"\"{Value}\"";
         }
+
+        public override int GetHashCode()
+        {
+            return Value.GetHashCode();
+        }
     }
 }

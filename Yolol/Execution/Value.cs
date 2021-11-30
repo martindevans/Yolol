@@ -130,7 +130,7 @@ namespace Yolol.Execution
                 return false;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return obj is Value other && Equals(other);
         }

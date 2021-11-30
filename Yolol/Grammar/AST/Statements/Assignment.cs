@@ -43,5 +43,10 @@ namespace Yolol.Grammar.AST.Statements
         {
             return $"{Left}={Right}";
         }
+
+        public override int GetHashCode()
+        {
+            return unchecked(Left.GetHashCode() * Right.GetHashCode());
+        }
     }
 }

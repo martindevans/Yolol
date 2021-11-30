@@ -49,7 +49,7 @@ namespace Yolol.Analysis.ControlFlowGraph.AST
             throw new PhiExecutionException();
         }
 
-        public bool Equals(Phi other)
+        public bool Equals(Phi? other)
         {
             if (other == null)
                 return false;
@@ -63,10 +63,15 @@ namespace Yolol.Analysis.ControlFlowGraph.AST
             return other.AssignedNames.OrderBy(a => a.Name).Zip(AssignedNames.OrderBy(a => a.Name), (a, b) => a.Equals(b)).All(a => a);
         }
 
-        public override bool Equals(BaseExpression other)
+        public override bool Equals(BaseExpression? other)
         {
             return other is Phi a
                 && a.Equals(this);
+        }
+
+        public override int GetHashCode()
+        {
+            return BaseVariable.GetHashCode();
         }
 
         public override string ToString()

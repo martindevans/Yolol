@@ -24,13 +24,13 @@ namespace Yolol.Grammar.AST.Expressions
             return new Value(Value);
         }
 
-        public bool Equals(ConstantNumber other)
+        public bool Equals(ConstantNumber? other)
         {
             return other != null
                 && other.Value.Equals(Value);
         }
 
-        public override bool Equals(BaseExpression other)
+        public override bool Equals(BaseExpression? other)
         {
             return other is ConstantNumber num
                 && num.Equals(this);
@@ -39,6 +39,11 @@ namespace Yolol.Grammar.AST.Expressions
         public override string ToString()
         {
             return Value.ToString();
+        }
+
+        public override int GetHashCode()
+        {
+            return Value.GetHashCode();
         }
     }
 }

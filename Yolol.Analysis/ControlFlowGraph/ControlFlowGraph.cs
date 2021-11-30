@@ -42,10 +42,10 @@ namespace Yolol.Analysis.ControlFlowGraph
         public IBasicBlock Vertex(Guid id)
         {
             _vertexLookup.TryGetValue(id, out var block);
-            return block;
+            return block!;
         }
 
-        public bool Equals(IControlFlowGraph other)
+        public bool Equals(IControlFlowGraph? other)
         {
             if (other is null)
                 return false;

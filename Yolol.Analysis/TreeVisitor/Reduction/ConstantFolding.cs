@@ -27,7 +27,7 @@ namespace Yolol.Analysis.TreeVisitor.Reduction
                 if (v.HasValue)
                 {
                     // Do not substitute the constant value if it is a longer string than the expression
-                    if (!_allowLonger && v.ToString().Length > expression.ToString().Length)
+                    if (!_allowLonger && v.ToString()!.Length > expression.ToString().Length)
                         return base.Visit(expression);
 
                     if (v.Value.Type == Type.Number)

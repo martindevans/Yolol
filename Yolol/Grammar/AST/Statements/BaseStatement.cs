@@ -13,7 +13,14 @@ namespace Yolol.Grammar.AST.Statements
 
         public abstract ExecutionResult Evaluate(MachineState state);
 
-        public abstract bool Equals(BaseStatement other);
+        public abstract bool Equals(BaseStatement? other);
+
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as BaseStatement);
+        }
+
+        public abstract override int GetHashCode();
 
         public abstract override string ToString();
     }

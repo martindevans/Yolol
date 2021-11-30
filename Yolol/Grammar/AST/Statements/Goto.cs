@@ -45,5 +45,10 @@ namespace Yolol.Grammar.AST.Statements
         {
             return $"goto {Destination}";
         }
+
+        public override int GetHashCode()
+        {
+            return Destination.GetHashCode();
+        }
     }
 }

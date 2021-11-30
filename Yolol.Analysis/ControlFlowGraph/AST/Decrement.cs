@@ -27,13 +27,13 @@ namespace Yolol.Analysis.ControlFlowGraph.AST
             throw new InvalidOperationException("Cannot execute `Decrement` node");
         }
 
-        public bool Equals(Decrement other)
+        public bool Equals(Decrement? other)
         {
             return other != null
                 && other.Name.Equals(Name);
         }
 
-        public override bool Equals(BaseExpression other)
+        public override bool Equals(BaseExpression? other)
         {
             return other is Decrement post
                 && post.Equals(this);
@@ -42,6 +42,11 @@ namespace Yolol.Analysis.ControlFlowGraph.AST
         public override string ToString()
         {
             return $"dec({Name.Name})";
+        }
+
+        public override int GetHashCode()
+        {
+            return Name.GetHashCode();
         }
     }
 }

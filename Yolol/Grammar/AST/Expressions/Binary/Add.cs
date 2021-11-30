@@ -18,14 +18,14 @@ namespace Yolol.Grammar.AST.Expressions.Binary
             return l + r;
         }
 
-        public bool Equals(Add other)
+        public bool Equals(Add? other)
         {
             return other != null
                 && other.Left.Equals(Left)
                 && other.Right.Equals(Right);
         }
 
-        public override bool Equals(BaseExpression other)
+        public override bool Equals(BaseExpression? other)
         {
             return other is Add a
                 && a.Equals(this);

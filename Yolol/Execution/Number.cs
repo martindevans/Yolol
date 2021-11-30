@@ -115,7 +115,7 @@ namespace Yolol.Execution
             return _value == other._value;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return obj is Number other && Equals(other);
         }
@@ -695,7 +695,9 @@ namespace Yolol.Execution
                 throw new ExecutionException("Attempted to exponent a string");
         }
 
+#pragma warning disable CA1822 // Mark members as static
         public StaticError Exponent(YString _)
+#pragma warning restore CA1822 // Mark members as static
         {
             return new StaticError("Attempted to exponent a string");
         }

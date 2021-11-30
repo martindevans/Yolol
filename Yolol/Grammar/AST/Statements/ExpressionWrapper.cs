@@ -39,5 +39,10 @@ namespace Yolol.Grammar.AST.Statements
         {
             return Expression.ToString();
         }
+
+        public override int GetHashCode()
+        {
+            return Expression.GetHashCode();
+        }
     }
 }
