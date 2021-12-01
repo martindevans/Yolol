@@ -421,13 +421,22 @@ namespace Yolol.Execution
         }
 #pragma warning restore CA1822 // Mark members as static
 
+        private bool WillLastCharacterThrow()
+        {
+            return WillDecThrow(this);
+        }
 
-        [ErrorMetadata(nameof(WillDecThrow))]
+        [ErrorMetadata(nameof(WillLastCharacterThrow), unsafeAlternative: nameof(UnsafeLastCharacter))]
         public YString LastCharacter()
         {
             if (Length == 0)
                 throw new ExecutionException("Attempted to decrement empty string");
 
+            return UnsafeLastCharacter();
+        }
+
+        internal YString UnsafeLastCharacter()
+        {
             return new YString(_span.PopLast());
         }
     }
