@@ -14,3 +14,4 @@ _ReSharper.Caches
 /Yolol.Analysis/nuget-push.ps1
 /Yolol/*.ncrunchproject
 YololEmulator/Scripts/test.lol
+/Yolol.Analysis/*.bak
