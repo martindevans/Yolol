@@ -36,8 +36,6 @@ namespace Yolol.Execution
 
         private Slice _left;
         private Slice _right;
-
-        public int Depth => _variant == Variant.Flat ? 0 : Math.Max(_left.Depth, _right.Depth);
         #endregion
 
         public int Length => _variant == Variant.Flat ? _count : _left.Length + _right.Length;
@@ -67,7 +65,7 @@ namespace Yolol.Execution
             _chars = null;
             _count = 0;
 
-            if (Depth > 5)
+            if (IsDepthGreaterThan(5))
                 Flatten();
         }
         #endregion
@@ -158,6 +156,15 @@ namespace Yolol.Execution
             else
                 throw new InvalidOperationException($"Unknown Rope variant: `{_variant}`");
         }
+
+        public bool IsDepthGreaterThan(int limit)
+        {
+            if (_variant == Variant.Flat)
+                return false;
+            if (limit == 0)
+                return true;
+            return _left.IsDepthGreaterThan(limit - 1) || _right.IsDepthGreaterThan(limit - 1);
+        }
     }
     
     internal readonly struct Slice
@@ -166,13 +173,16 @@ namespace Yolol.Execution
         private readonly int _start;
         public readonly int Length;
 
-        public int Depth => _rope.Depth;
-
         public Slice(Rope rope, int start, int length)
         {
             _rope = rope;
             _start = start;
             Length = length;
+        }
+
+        public bool IsDepthGreaterThan(int limit)
+        {
+            return _rope.IsDepthGreaterThan(limit);
         }
 
         internal void CopyTo(Span<char> destination)
