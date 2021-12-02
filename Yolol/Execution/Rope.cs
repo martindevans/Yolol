@@ -40,25 +40,6 @@ namespace Yolol.Execution
 
         public int Length => _variant == Variant.Flat ? _count : _left.Length + _right.Length;
 
-        public char this[int index]
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get
-            {
-                if (_variant == Variant.Flat)
-                {
-                    return _chars.Span[index];
-                }
-                else
-                {
-                    if (index < _left.Length)
-                        return _left[index];
-                    else
-                        return _right[index - _left.Length];
-                }
-            }
-        }
-
         #region constructors
         public Rope(int capacity = 64)
         {
@@ -136,9 +117,7 @@ namespace Yolol.Execution
         public ReadOnlySpan<char> GetSpan(int sourceIndex, int sourceCount)
         {
             Flatten();
-
             Debug.Assert(sourceCount - sourceIndex <= _count);
-
             return _chars.Slice(sourceIndex, sourceCount).Span;
         }
 
@@ -178,15 +157,6 @@ namespace Yolol.Execution
             Length = length;
         }
 
-        public char this[int index]
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get
-            {
-                return _rope[_start + index];
-            }
-        }
-
         internal void CopyTo(Span<char> destination)
         {
             _rope.CopySlice(_start, Length, destination);
@@ -218,22 +188,6 @@ namespace Yolol.Execution
 
         [FieldOffset(8)]
         private readonly Rope? _rope;
-
-        public char this[int index]
-        {
-            get
-            {
-                if (index < 0)
-                    throw new IndexOutOfRangeException("Index is less than zero");
-                if (index >= Length)
-                    throw new IndexOutOfRangeException("Index is greater than or equal to length");
-
-                // `_rope` can only be null if `Length == 0`. We've already checked against the length, so rope cannot be null.
-                Debug.Assert(_rope != null);
-
-                return _rope[_start + index];
-            }
-        }
 
         public ReadOnlySpan<char> AsSpan
         {
@@ -401,19 +355,26 @@ namespace Yolol.Execution
         }
         #endregion
 
+        private char LastCharUnchecked()
+        {
+            Debug.Assert(_rope != null);
+            Span<char> lastChar = stackalloc char[1];
+            _rope.CopySlice(_start + Length - 1, 1, lastChar);
+            return lastChar[0];
+        }
+
         public RopeSlice PopLast()
         {
-            if (_rope == null)
-                throw new InvalidOperationException("Attempted to `PopLast` on null `RopeSlice`");
             if (Length < 1)
                 throw new InvalidOperationException("Attempted to `PopLast` on empty `RopeSlice`");
+            Debug.Assert(_rope != null);
 
             var zc = default(SaturatingByte);
             var oc = default(SaturatingByte);
-            var last = this[Length - 1];
-            if (last == '0')
+            var lastChar = LastCharUnchecked();
+            if (lastChar == '0')
                 zc = new SaturatingByte(1);
-            else if (last == '1')
+            else if (lastChar == '1')
                 oc = new SaturatingByte(1);
 
             return new RopeSlice(_rope, _start + Length - 1, 1, zc, oc);
@@ -645,16 +606,16 @@ namespace Yolol.Execution
 
         public RopeSlice Decrement()
         {
-            if (Length == 0)
+            if (Length < 1)
                 throw new InvalidOperationException("Cannot decrement empty slice");
             Debug.Assert(_rope != null);
 
             var zc = _zeroCount;
             var oc = _onesCount;
-            var last = this[Length - 1];
-            if (last == '0')
+            var lastChar = LastCharUnchecked();
+            if (lastChar == '0')
                 zc--;
-            else if (last == '1')
+            else if (lastChar == '1')
                 oc--;
 
             return new RopeSlice(_rope, _start, Length - 1, zc, oc);
@@ -665,12 +626,16 @@ namespace Yolol.Execution
             if (Length <= length || _rope == null)
                 return this;
 
-            // Count how many zeroes and ones have been removed
+            // Get a copy of the removed chars
+            Span<char> removed = stackalloc char[Length - length];
+            _rope.CopySlice(_start + length, Length - length, removed);
+
+            // Count the number of removed characters
             var lostZero = 0;
             var lostOnes = 0;
-            for (var i = length; i < Length; i++)
+            for (int i = 0; i < removed.Length; i++)
             {
-                var c = this[i];
+                var c = removed[i];
                 if (c == '0')
                     lostZero++;
                 else if (c == '1')
