@@ -36,6 +36,8 @@ namespace Yolol.Execution
 
         private Slice _left;
         private Slice _right;
+
+        public int Depth => _variant == Variant.Flat ? 0 : Math.Max(_left.Depth, _right.Depth);
         #endregion
 
         public int Length => _variant == Variant.Flat ? _count : _left.Length + _right.Length;
@@ -64,6 +66,9 @@ namespace Yolol.Execution
 
             _chars = null;
             _count = 0;
+
+            if (Depth > 5)
+                Flatten();
         }
         #endregion
 
@@ -160,6 +165,8 @@ namespace Yolol.Execution
         private readonly Rope _rope;
         private readonly int _start;
         public readonly int Length;
+
+        public int Depth => _rope.Depth;
 
         public Slice(Rope rope, int start, int length)
         {
@@ -644,20 +651,32 @@ namespace Yolol.Execution
             if (Length <= length || _rope == null)
                 return this;
 
-            // Get a copy of the removed chars
-            Span<char> removed = stackalloc char[Length - length];
-            _rope.CopySlice(_start + length, Length - length, removed);
+            // Keep track of the slice that's been removed
+            var removedStart = length;
+            var removedEnd = Length;
 
             // Count the number of removed characters
             var lostZero = 0;
             var lostOnes = 0;
-            for (int i = 0; i < removed.Length; i++)
+
+            // Create a slice large enough to hold some chars without blowing up the stack
+            Span<char> chars = stackalloc char[128];
+
+            // Get chunks of the removed section and count the ones/zeroes
+            while (removedStart < removedEnd)
             {
-                var c = removed[i];
-                if (c == '0')
-                    lostZero++;
-                else if (c == '1')
-                    lostOnes++;
+                var count = Math.Min(chars.Length, removedEnd - removedStart);
+                _rope.CopySlice(removedStart, count, chars);
+                for (int i = 0; i < count; i++)
+                {
+                    var c = chars[i];
+                    if (c == '0')
+                        lostZero++;
+                    else if (c == '1')
+                        lostOnes++;
+                }
+
+                removedStart += count;
             }
 
             return new RopeSlice(_rope, _start, length, _zeroCount - lostZero, _onesCount - lostOnes);
