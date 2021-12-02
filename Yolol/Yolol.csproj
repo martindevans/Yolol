@@ -9,7 +9,7 @@
     <PackageProjectUrl>https://github.com/martindevans/Yolol</PackageProjectUrl>
     <RepositoryUrl>https://github.com/martindevans/Yolol</RepositoryUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>14.7.11</Version>
+    <Version>14.7.12</Version>
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
     <Platforms>AnyCPU;x64</Platforms>

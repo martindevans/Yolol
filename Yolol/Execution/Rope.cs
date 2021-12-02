@@ -131,13 +131,24 @@ namespace Yolol.Execution
             {
                 var end = start + length;
 
+                // |---------------|------------|
+                //      |-----|
+                //          |----------|
+                //                    |---|
+
                 // Copy from the left span
-                var leftCopy = Math.Min(_left.Length - start, length);
-                _left.CopyTo(start, Math.Max(0, leftCopy), destination);
+                var leftCopy = Math.Max(0, Math.Min(_left.Length - start, length));
+                _left.CopyTo(start, leftCopy, destination);
 
                 // Copy from the right span
                 if (end > _left.Length)
-                    _right.CopyTo(Math.Max(0, start - leftCopy), length - leftCopy, destination[leftCopy..]);
+                {
+                    var rStart = Math.Max(0, start - _left.Length);
+                    var rEnd = end - _left.Length;
+                    var rLen = rEnd - rStart;
+                    if (rLen > 0)
+                        _right.CopyTo(rStart, rLen, destination[leftCopy..]);
+                }
             }
             else
                 throw new InvalidOperationException($"Unknown Rope variant: `{_variant}`");
@@ -164,10 +175,17 @@ namespace Yolol.Execution
 
         internal void CopyTo(int start, int length, Span<char> destination)
         {
-            if (start < 0) throw new ArgumentOutOfRangeException(nameof(start), "Must be greater than zero");
-            if (start >= Length) throw new ArgumentOutOfRangeException(nameof(start), "Must be less than length");
-            if (length < 0) throw new ArgumentOutOfRangeException(nameof(length), "Must be greater than zero");
-            if (length > Length - start) throw new ArgumentOutOfRangeException(nameof(length), "Must be within slice");
+            if (length == 0)
+                return;
+
+            if (start < 0)
+                throw new ArgumentOutOfRangeException(nameof(start), "Must be greater than zero");
+            if (start >= Length)
+                throw new ArgumentOutOfRangeException(nameof(start), "Must be less than length");
+            if (length < 0)
+                throw new ArgumentOutOfRangeException(nameof(length), "Must be greater than zero");
+            if (length > Length - start)
+                throw new ArgumentOutOfRangeException(nameof(length), "Must be within slice");
 
             _rope.CopySlice(_start + start, length, destination);
         }

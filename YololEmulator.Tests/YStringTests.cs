@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Yolol.Execution;
 
@@ -41,6 +42,30 @@ namespace YololEmulator.Tests
             var b = (a + "1234567") - a;
 
             Assert.AreEqual("1234567", b.ToString());
+        }
+
+        [TestMethod]
+        public void Trim2048()
+        {
+            var builder = new StringBuilder(2048);
+            for (int i = 0; i < 1024; i++)
+                builder.Append("*a");
+
+            var slice = new RopeSlice(builder.ToString());
+
+            slice.Trim(1024);
+        }
+
+        [TestMethod]
+        public void Concat1024()
+        {
+            var y = new YString("*a");
+            var x = new YString("");
+
+            for (int i = 0; i < 1024; i++)
+                x += y;
+
+            var t = YString.Trim(x, 1024);
         }
 
         [TestMethod]
