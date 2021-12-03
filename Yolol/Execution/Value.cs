@@ -395,7 +395,7 @@ namespace Yolol.Execution
         public static Value operator -(Value left, Value right)
         {
             return (left._type, right._type) switch {
-                (Type.Number, Type.Number) => left._number - right._number,
+                (Type.Number, Type.Number) => new Value(left._number - right._number),
                 (Type.Number, Type.String) => new Value(left._number - right._string),
                 (Type.String, Type.Number) => new Value(left._string - right._number),
                 (Type.String, Type.String) => new Value(left._string - right._string),
@@ -406,7 +406,10 @@ namespace Yolol.Execution
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static YString operator -(Value left, YString right)
         {
-            return left.ToYString() - right;
+            if (left._type == Type.Number)
+                return left._number - right;
+            else
+                return left._string - right;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
