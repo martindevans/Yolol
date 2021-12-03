@@ -461,7 +461,7 @@ namespace Yolol.Execution
         public static Value Add(Value l, Number r, int maxStringLength)
         {
             if (l._type == Type.Number)
-                return Add(l._number, r, maxStringLength);
+                return l._number + r;
             else
                 return new Value(YString.Add(l._string, r, maxStringLength));
         }
