@@ -24,11 +24,6 @@ namespace Yolol.Execution
             _span = new RopeSlice(str);
         }
 
-        internal YString(string str, int zeroes, int ones)
-        {
-            _span = new RopeSlice(str, zeroes, ones);
-        }
-
         public override string ToString()
         {
             return _span.ToString();
@@ -205,7 +200,6 @@ namespace Yolol.Execution
         }
 
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int CompareStringToNumber(in YString left, in Number right)
         {
             unsafe
@@ -218,57 +212,103 @@ namespace Yolol.Execution
             }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int CompareStringSpans(in YString left, in YString right)
         {
             return left._span.CompareTo(right._span);
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int CompareStringSpans(in YString left, in Span<char> right)
         {
             return left._span.CompareTo(right);
         }
 
 
+        public static YString Add(YString l, YString r, int maxLength)
+        {
+            return new YString(RopeSlice.Concat(l._span, r._span, maxLength));
+        }
+
         public static YString operator +(YString l, YString r)
         {
-            return new YString(RopeSlice.Concat(l._span, r._span));
+            return Add(l, r, int.MaxValue);
+        }
+
+        public static YString Add(Number l, YString r, int maxLength)
+        {
+            if (r.Length >= maxLength)
+                return r;
+
+            unsafe
+            {
+                const int bufferSize = 64;
+                var buffer = stackalloc char[bufferSize];
+                var leftSpan = l.ToString(new Span<char>(buffer, bufferSize));
+
+                return new YString(RopeSlice.Concat(leftSpan, r._span, maxLength));
+            }
+        }
+
+        public static YString Add(YString l, Number r, int maxLength)
+        {
+            if (l.Length >= maxLength)
+                return l;
+
+            unsafe
+            {
+                const int bufferSize = 64;
+                var buffer = stackalloc char[bufferSize];
+                var rightSpan = r.ToString(new Span<char>(buffer, bufferSize));
+
+                return new YString(RopeSlice.Concat(l._span, rightSpan, maxLength));
+            }
         }
 
         public static YString operator +(YString l, Number r)
         {
-            unsafe
-            {
-                const int bufferSize = 128;
-                var buffer = stackalloc char[bufferSize];
-                var rightSpan = r.ToString(new Span<char>(buffer, bufferSize));
+            return Add(l, r, int.MaxValue);
+        }
 
-                return new YString(RopeSlice.Concat(l._span, rightSpan));
-            }
+        public static YString Add(Span<char> l, YString r, int maxLength)
+        {
+            return new YString(RopeSlice.Concat(l, r._span, maxLength));
         }
 
         public static YString operator +(Span<char> l, YString r)
         {
-            return new YString(RopeSlice.Concat(l, r._span));
+            return Add(l, r, int.MaxValue);
+        }
+
+        public static YString Add(YString l, Value r, int maxLength)
+        {
+            if (r.Type == Type.Number)
+                return Add(l, r.Number, maxLength);
+            else
+                return Add(l, r.String, maxLength);
         }
 
         public static YString operator +(YString l, Value r)
         {
-            if (r.Type == Type.Number)
-                return l + r.Number;
-            else
-                return l + r.String;
+            return Add(l, r, int.MaxValue);
+        }
+
+        public static YString Add(YString l, char r, int maxLength)
+        {
+            return new YString(RopeSlice.Concat(l._span, r, maxLength));
         }
 
         public static YString operator +(YString l, char r)
         {
-            return new YString(RopeSlice.Concat(l._span, r));
+            return Add(l, r, int.MaxValue);
+        }
+
+        public static YString Add(YString l, bool r, int maxLength)
+        {
+            return new YString(RopeSlice.Concat(l._span, r ? '1' : '0', maxLength));
         }
 
         public static YString operator +(YString l, bool r)
         {
-            return new YString(RopeSlice.Concat(l._span, r ? '1' : '0'));
+            return Add(l, r, int.MaxValue);
         }
 
 
@@ -376,7 +416,6 @@ namespace Yolol.Execution
             return new YString(value._span.Decrement());
         }
 
-        [ErrorMetadata(nameof(WillDecThrow), nameof(UnsafeDecrement))]
         public static YString operator --(YString value)
         {
             if (value.Length == 0)
@@ -385,11 +424,17 @@ namespace Yolol.Execution
             return new YString(value._span.Decrement());
         }
 
-        
+
+        public static YString Increment(YString value, int maxLength)
+        {
+            if (value.Length >= maxLength)
+                return value;
+            return value + ' ';
+        }
 
         public static YString operator ++(YString value)
         {
-            return value + ' ';
+            return Increment(value, int.MaxValue);
         }
 
 

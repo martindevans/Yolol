@@ -15,7 +15,7 @@ namespace Yolol.Grammar.AST.Expressions.Unary
         {
         }
 
-        protected override Value Evaluate(Value value) => new Value(!value);
+        protected override Value Evaluate(Value value, int _) => new Value(!value);
 
         public bool Equals(Not? other)
         {

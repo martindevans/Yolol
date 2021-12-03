@@ -64,52 +64,52 @@ namespace YololEmulator.Tests.Ladder
             return j;
         }
 
-        [TestMethod]
-        public void GenerateJsonPath()
-        {
-            var rng = new Random(6704);
-            var input = new List<Dictionary<string, Value>>();
-            var output = new List<Dictionary<string, Value>>();
+        //[TestMethod]
+        //public void GenerateJsonPath()
+        //{
+        //    var rng = new Random(6704);
+        //    var input = new List<Dictionary<string, Value>>();
+        //    var output = new List<Dictionary<string, Value>>();
 
-            void SingleCase(JToken j, string path)
-            {
-                input.Add(new Dictionary<string, Value> {
-                    { "i", j.ToString(Newtonsoft.Json.Formatting.None).Replace("\"", "'") },
-                    { "p", path }
-                });
+        //    void SingleCase(JToken j, string path)
+        //    {
+        //        input.Add(new Dictionary<string, Value> {
+        //            { "i", j.ToString(Newtonsoft.Json.Formatting.None).Replace("\"", "'") },
+        //            { "p", path }
+        //        });
 
-                var jt =  j.SelectToken(path);
-                if (jt == null)
-                    return;
+        //        var jt =  j.SelectToken(path);
+        //        if (jt == null)
+        //            return;
 
-                Value ov;
-                if (jt.Type == JTokenType.String)
-                    ov = jt.ToString();
-                else if (jt.Type == JTokenType.Integer)
-                    ov = (Value)(int)jt;
-                else
-                    return;
+        //        Value ov;
+        //        if (jt.Type == JTokenType.String)
+        //            ov = jt.ToString();
+        //        else if (jt.Type == JTokenType.Integer)
+        //            ov = (Value)(int)jt;
+        //        else
+        //            return;
 
-                output.Add(new Dictionary<string, Value> {
-                    { "o", ov },
-                });
-            }
+        //        output.Add(new Dictionary<string, Value> {
+        //            { "o", ov },
+        //        });
+        //    }
 
-            SingleCase(JToken.Parse("{'a':1}"), "a");
-            SingleCase(JToken.Parse("{'a':1,'b':2}"), "b");
-            SingleCase(JToken.Parse("{'a':1,'b':{'a':1}}"), "b.a");
-            SingleCase(JToken.Parse("{'a':[1,2,3]}"), "a.[1]");
-            SingleCase(JToken.Parse("{'a':1,'b':{'a':[1,2,'z']}}"), "b.a.[2]");
+        //    SingleCase(JToken.Parse("{'a':1}"), "a");
+        //    SingleCase(JToken.Parse("{'a':1,'b':2}"), "b");
+        //    SingleCase(JToken.Parse("{'a':1,'b':{'a':1}}"), "b.a");
+        //    SingleCase(JToken.Parse("{'a':[1,2,3]}"), "a.[1]");
+        //    SingleCase(JToken.Parse("{'a':1,'b':{'a':[1,2,'z']}}"), "b.a.[2]");
 
-            for (var x = 0; x < 10000; x++)
-            {
-                var obj = GenerateJObj(rng);
-                var path = GeneratePath(rng, obj)?.TrimEnd('.');
-                if (path != null)
-                    SingleCase(obj, path);
-            }
+        //    for (var x = 0; x < 10000; x++)
+        //    {
+        //        var obj = GenerateJObj(rng);
+        //        var path = GeneratePath(rng, obj)?.TrimEnd('.');
+        //        if (path != null)
+        //            SingleCase(obj, path);
+        //    }
 
-            Generator.YololLadderGenerator(input, output, true, Generator.ScoreMode.BasicScoring);
-        }
+        //    Generator.YololLadderGenerator(input, output, true, Generator.ScoreMode.BasicScoring);
+        //}
     }
 }

@@ -24,9 +24,9 @@ namespace Yolol.Grammar.AST.Expressions
             Value = value;
         }
 
-        public override Value Evaluate(MachineState _)
+        public override Value Evaluate(MachineState state)
         {
-            return new Value(Value);
+            return new Value(YString.Trim(Value, state.MaxStringLength));
         }
 
         public bool Equals(ConstantString? other)

@@ -31,6 +31,13 @@ namespace Yolol.Execution
                 _value = (byte)value;
         }
 
+        public override string ToString()
+        {
+            return IsSaturated
+                ? "SATURATED"
+                : _value.ToString();
+        }
+
         public static SaturatingByte operator +(SaturatingByte a, SaturatingByte b)
         {
             var sum = a._value + b._value;

@@ -11,7 +11,7 @@ namespace Yolol.Grammar.AST.Expressions.Unary
         {
         }
 
-        protected override Value Evaluate(Value value)
+        protected override Value Evaluate(Value value, int _)
         {
             return Value.Tan(value);
         }

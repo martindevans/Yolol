@@ -13,9 +13,9 @@ namespace Yolol.Grammar.AST.Expressions.Binary
         {
         }
 
-        protected override Value Evaluate(Value l, Value r)
+        protected override Value Evaluate(Value l, Value r, int maxStringLength)
         {
-            return l + r;
+            return Value.Add(l, r, maxStringLength);
         }
 
         public bool Equals(Add? other)

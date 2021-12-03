@@ -9,14 +9,17 @@ namespace Yolol.Execution
         : IEnumerable<KeyValuePair<string, IVariable>>
     {
         public ushort MaxLineNumber { get; }
+        public int MaxStringLength { get; }
 
         private readonly IDeviceNetwork _network;
 
         private readonly Dictionary<string, IVariable> _variables = new Dictionary<string, IVariable>();
 
-        public MachineState(IDeviceNetwork network, ushort maxLineNumber = 20)
+        public MachineState(IDeviceNetwork network, ushort maxLineNumber = 20, int maxStringLength = 1024)
         {
             MaxLineNumber = maxLineNumber;
+            MaxStringLength = maxStringLength;
+
             _network = network ?? throw new ArgumentNullException(nameof(network));
         }
 

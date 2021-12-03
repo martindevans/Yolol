@@ -15,7 +15,7 @@ namespace Yolol.Grammar.AST.Expressions.Unary
         {
         }
 
-        protected override Value Evaluate(Value value) => Value.Abs(value);
+        protected override Value Evaluate(Value value, int _) => Value.Abs(value);
 
         public bool Equals(Abs? other)
         {

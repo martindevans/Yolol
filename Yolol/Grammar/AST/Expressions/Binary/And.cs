@@ -33,7 +33,7 @@ namespace Yolol.Grammar.AST.Expressions.Binary
             return $"{Left} and {Right}";
         }
 
-        protected override Value Evaluate(Value l, Value r)
+        protected override Value Evaluate(Value l, Value r, int _)
         {
             return new Value(l & r);
         }

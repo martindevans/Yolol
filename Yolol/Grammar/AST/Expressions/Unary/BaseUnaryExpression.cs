@@ -14,12 +14,12 @@ namespace Yolol.Grammar.AST.Expressions.Unary
             Parameter = parameter;
         }
 
-        protected abstract Value Evaluate(Value value);
+        protected abstract Value Evaluate(Value value, int maxStringLength);
 
         public override Value Evaluate(MachineState state)
         {
             var value = Parameter.Evaluate(state);
-            return Evaluate(value);
+            return Evaluate(value, state.MaxStringLength);
         }
 
         public override int GetHashCode()

@@ -21,40 +21,40 @@ namespace YololEmulator.Tests.Ladder
             return string.Join("", order);
         }
 
-        [TestMethod]
-        public void GenerateStringdexing()
-        {
-            var input = new List<Dictionary<string, Value>>();
-            var output = new List<Dictionary<string, Value>>();
+        //[TestMethod]
+        //public void GenerateStringdexing()
+        //{
+        //    var input = new List<Dictionary<string, Value>>();
+        //    var output = new List<Dictionary<string, Value>>();
 
-            void SingleCase(string value, int index)
-            {
-                input.Add(new Dictionary<string, Value> { { "s", value }, { "i", (Number)index } });
-                output.Add(new Dictionary<string, Value> { { "o", value[index].ToString() } });
-            }
+        //    void SingleCase(string value, int index)
+        //    {
+        //        input.Add(new Dictionary<string, Value> { { "s", value }, { "i", (Number)index } });
+        //        output.Add(new Dictionary<string, Value> { { "o", value[index].ToString() } });
+        //    }
 
-            void GenSingleCase(Random rng)
-            {
-                var length = rng.Next(5, 100);
-                if (rng.NextDouble() < 0.25)
-                    length = rng.Next(100, 1024);
+        //    void GenSingleCase(Random rng)
+        //    {
+        //        var length = rng.Next(5, 100);
+        //        if (rng.NextDouble() < 0.25)
+        //            length = rng.Next(100, 1024);
 
-                var value = RandomString(rng, length);
-                var index = rng.Next(value.Length);
-                SingleCase(value, index);
-            }
+        //        var value = RandomString(rng, length);
+        //        var index = rng.Next(value.Length);
+        //        SingleCase(value, index);
+        //    }
 
-            SingleCase("hello cylon", 0);
-            SingleCase("get the character", 1);
-            SingleCase("from the string", 2);
-            SingleCase("with a zero based index", 3);
-            SingleCase("good luck", 4);
+        //    SingleCase("hello cylon", 0);
+        //    SingleCase("get the character", 1);
+        //    SingleCase("from the string", 2);
+        //    SingleCase("with a zero based index", 3);
+        //    SingleCase("good luck", 4);
 
-            var rng = new Random(345897);
-            for (var x = 0; x < 50000; x++)
-                GenSingleCase(rng);
+        //    var rng = new Random(345897);
+        //    for (var x = 0; x < 50000; x++)
+        //        GenSingleCase(rng);
 
-            Generator.YololLadderGenerator(input, output, true);
-        }
+        //    Generator.YololLadderGenerator(input, output, true);
+        //}
     }
 }

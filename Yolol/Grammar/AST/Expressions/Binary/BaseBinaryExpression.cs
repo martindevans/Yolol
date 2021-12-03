@@ -18,14 +18,14 @@ namespace Yolol.Grammar.AST.Expressions.Binary
             Right = right;
         }
 
-        protected abstract Value Evaluate(Value left, Value right);
+        protected abstract Value Evaluate(Value left, Value right, int maxStringLength);
 
         public override Value Evaluate(MachineState state)
         {
             var l = Left.Evaluate(state);
             var r = Right.Evaluate(state);
 
-            return Evaluate(l, r);
+            return Evaluate(l, r, state.MaxStringLength);
         }
 
         public static BaseExpression Create(YololBinaryOp op, BaseExpression lhs, BaseExpression rhs)

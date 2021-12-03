@@ -53,7 +53,9 @@ namespace YololEmulator.Tests
 
             var slice = new RopeSlice(builder.ToString());
 
-            slice.Trim(1024);
+            var trimmed = slice.Trim(1024);
+
+            Assert.AreEqual(1024, trimmed.Length);
         }
 
         [TestMethod]
@@ -66,6 +68,43 @@ namespace YololEmulator.Tests
                 x += y;
 
             var t = YString.Trim(x, 1024);
+        }
+
+        [TestMethod]
+        public void Concat2048()
+        {
+            var y = new YString("*a");
+            var x = new YString("");
+
+            for (int i = 0; i < 1024; i++)
+            {
+                x = YString.Add(x, y, 1024);
+                Assert.IsTrue(x.Length <= 1024);
+            }
+        }
+
+        [TestMethod]
+        public void ConcatShortened()
+        {
+            var y = new YString("abcdefghijklmnopqrstuvwxyz");
+            var x = y - "defghijklmnopqrstuvw";
+
+            var j = new YString("0123");
+            for (int i = 0; i < 3; i++)
+                j += x;
+
+            Assert.AreEqual("0123abcxyzabcxyzabcxyz", j.ToString());
+        }
+
+        [TestMethod]
+        public void ConcatNumber()
+        {
+            var x = Number.One;
+            var y = new YString("234");
+
+            var j = x + y;
+
+            Assert.AreEqual("1234", j.ToString());
         }
 
         [TestMethod]

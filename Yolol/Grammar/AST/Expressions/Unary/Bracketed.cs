@@ -16,7 +16,7 @@ namespace Yolol.Grammar.AST.Expressions.Unary
         {
         }
 
-        protected override Value Evaluate(Value value) => value;
+        protected override Value Evaluate(Value value, int _) => value;
 
         public bool Equals(Bracketed? other)
         {

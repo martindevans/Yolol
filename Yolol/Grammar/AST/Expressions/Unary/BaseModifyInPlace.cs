@@ -30,7 +30,7 @@ namespace Yolol.Grammar.AST.Expressions.Unary
             var variable = state.GetVariable(Name);
 
             var original = variable.Value;
-            var modified = Evaluate(original);
+            var modified = Evaluate(original, state.MaxStringLength);
 
             variable.Value = modified;
 

@@ -426,37 +426,59 @@ namespace Yolol.Execution
         #endregion
 
         #region op +
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Value operator +(Value left, Value right)
+        public static Value Add(Value left, Value right, int maxStringLength)
         {
-            return (left._type, right._type) switch {
+            return (left._type, right._type) switch
+            {
                 (Type.Number, Type.Number) => left._number + right._number,
-                (Type.Number, Type.String) => new Value(left._number + right._string),
-                (Type.String, Type.Number) => new Value(left._string + right._number),
-                (Type.String, Type.String) => new Value(left._string + right._string),
+                (Type.Number, Type.String) => new Value(YString.Add(left._number, right._string, maxStringLength)),
+                (Type.String, Type.Number) => new Value(YString.Add(left._string, right._number, maxStringLength)),
+                (Type.String, Type.String) => new Value(YString.Add(left._string, right._string, maxStringLength)),
                 _ => throw new InvalidOperationException($"Cannot execute {left._type} + {right._type}")
             };
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Value operator +(Value left, Value right)
+        {
+            return Add(left, right, int.MaxValue);
+        }
+
+        public static YString Add(Value left, YString right, int maxStringLength)
+        {
+            return (left._type) switch
+            {
+                Type.Number => YString.Add(left._number, right, maxStringLength),
+                Type.String => YString.Add(left._string, right, maxStringLength),
+                _ => throw new InvalidOperationException($"Cannot execute {left._type} + String")
+            };
+        }
+
         public static YString operator +(Value left, YString right)
         {
-            return left.ToYString() + right;
+            return Add(left, right, int.MaxValue);
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Value operator +(Value l, Number r)
+        public static Value Add(Value l, Number r, int maxStringLength)
         {
             if (l._type == Type.Number)
-                return l._number + r;
+                return Add(l._number, r, maxStringLength);
             else
-                return new Value(l._string + r);
+                return new Value(YString.Add(l._string, r, maxStringLength));
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Value operator +(Value l, Number r)
+        {
+            return Add(l, r, int.MaxValue);
+        }
+
+        public static Value Add(Value l, bool r, int maxStringLength)
+        {
+            return Add(l, (Number)r, maxStringLength);
+        }
+
         public static Value operator +(Value l, bool r)
         {
-            return l + (Number)r;
+            return Add(l, r, int.MaxValue);
         }
         #endregion
 
@@ -703,7 +725,7 @@ namespace Yolol.Execution
         #endregion
 
         #region op ++
-        public static Value operator ++(Value value)
+        public static Value Increment(Value value, int maxStringLength)
         {
             if (value._type == Type.Number)
             {
@@ -713,10 +735,13 @@ namespace Yolol.Execution
             }
             else
             {
-                var a = value._string;
-                a++;
-                return new Value(a);
+                return new Value(YString.Increment(value._string, maxStringLength));
             }
+        }
+
+        public static Value operator ++(Value value)
+        {
+            return Increment(value, int.MaxValue);
         }
         #endregion
 

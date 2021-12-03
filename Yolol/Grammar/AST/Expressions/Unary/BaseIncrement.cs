@@ -10,9 +10,9 @@ namespace Yolol.Grammar.AST.Expressions.Unary
         {
         }
 
-        protected override Value Evaluate(Value value)
+        protected override Value Evaluate(Value value, int maxStringLength)
         {
-            return ++value;
+            return Value.Increment(value, maxStringLength);
         }
     }
 }

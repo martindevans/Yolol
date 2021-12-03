@@ -32,7 +32,7 @@ namespace Yolol.Grammar.AST.Expressions.Unary
             return $"{Parameter}!";
         }
 
-        protected override Value Evaluate(Value value)
+        protected override Value Evaluate(Value value, int _)
         {
             return value.Factorial();
         }
