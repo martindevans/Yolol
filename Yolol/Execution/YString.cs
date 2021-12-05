@@ -339,7 +339,7 @@ namespace Yolol.Execution
 
         public static YString operator -(YString l, bool r)
         {
-            return new YString(RopeSlice.Remove(l._span, r ? '1' : '0'));
+            return new YString(RopeSlice.Remove(l._span, r));
         }
 
 

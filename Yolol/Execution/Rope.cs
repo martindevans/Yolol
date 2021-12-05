@@ -559,11 +559,17 @@ namespace Yolol.Execution
             return Remove(in haystack, index, needle.Length, needleCount);
         }
 
-        public static RopeSlice Remove(in RopeSlice haystack, char right)
+        public static RopeSlice Remove(in RopeSlice haystack, bool right)
         {
+            // If there are no ones/zeroes in the string there's no need to search for it
+            if (right && haystack._counts.OnesCount.IsZero)
+                return haystack;
+            if (!right && haystack._counts.ZeroCount.IsZero)
+                return haystack;
+
             unsafe
             {
-                var r = right;
+                var r = right ? '1' : '0';
                 return Remove(haystack, new Span<char>(&r, 1));
             }
         }
