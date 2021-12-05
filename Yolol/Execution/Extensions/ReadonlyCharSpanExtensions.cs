@@ -4,7 +4,7 @@ namespace Yolol.Execution.Extensions
 {
     internal static class ReadonlyCharSpanExtensions
     {
-        public static (SaturatingByte zeros, SaturatingByte ones) CountDigits(this ReadOnlySpan<char> chars)
+        public static SaturatingCounters CountDigits(this ReadOnlySpan<char> chars)
         {
             var z = 0;
             var o = 0;
@@ -17,10 +17,10 @@ namespace Yolol.Execution.Extensions
                     o++;
             }
 
-            return (new SaturatingByte(z), new SaturatingByte(o));
+            return new SaturatingCounters(new SaturatingByte(z), new SaturatingByte(o));
         }
 
-        public static (SaturatingByte zeros, SaturatingByte ones) CountDigits(this ReadOnlySpan<byte> chars)
+        public static SaturatingCounters CountDigits(this ReadOnlySpan<byte> chars)
         {
             var z = 0;
             var o = 0;
@@ -33,7 +33,7 @@ namespace Yolol.Execution.Extensions
                     o++;
             }
 
-            return (new SaturatingByte(z), new SaturatingByte(o));
+            return new SaturatingCounters(new SaturatingByte(z), new SaturatingByte(o));
         }
     }
 }

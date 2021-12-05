@@ -216,9 +216,9 @@ namespace Yolol.Execution
         [FieldOffset(0)]
         private readonly ushort _start;
 
-        //There are two spare bytes here, available for extra metadata
-        //[FieldOffset(2)] private readonly byte _spare0;
-        //[FieldOffset(3)] private readonly byte _spare1;
+        // Keep count of the total number of zeroes/ones in the string. This can be used to accelerate
+        // the very common task of subtracting booleans from the string.
+        [FieldOffset(2)] private readonly SaturatingCounters _counts;
 
         [field: FieldOffset(4)]
         public int Length { get; }
@@ -245,7 +245,7 @@ namespace Yolol.Execution
         }
 
         #region constructors
-        private RopeSlice(Rope rope, int start, int length)
+        private RopeSlice(Rope rope, int start, int length, SaturatingCounters counts)
         {
 #if DEBUG
             if (start < 0)
@@ -259,6 +259,7 @@ namespace Yolol.Execution
 #endif
 
             _rope = rope;
+            _counts = counts;
 
             Length = length;
 
@@ -275,18 +276,27 @@ namespace Yolol.Execution
         }
 
         public RopeSlice(string str)
+            : this(str.AsMemory().Span)
         {
-            if (string.IsNullOrEmpty(str))
+        }
+
+        public RopeSlice(ReadOnlySpan<char> str)
+        {
+            if (str.Length == 0)
             {
                 _rope = null;
                 _start = 0;
                 Length = 0;
+
+                _counts = default;
             }
             else
             {
                 _rope = new Rope(str);
                 _start = 0;
                 Length = str.Length;
+
+                _counts = str.CountDigits();
             }
         }
         #endregion
@@ -311,6 +321,91 @@ namespace Yolol.Execution
 
             return c.ToHashCode();
         }
+
+        #region substring
+        private RopeSlice Substring(ushort substringStart, int substringLength)
+        {
+            if (substringLength == 0)
+                return default;
+            if (substringLength == Length)
+                return this;
+
+            Debug.Assert(_rope != null);
+            Debug.Assert(substringStart + substringLength <= Length);
+
+            var counts = CountInSpan(substringStart, substringLength);
+            return new RopeSlice(_rope, _start + substringStart, substringLength, counts);
+        }
+
+        private RopeSlice Substring(int substringStart, int substringLength, SaturatingCounters removed)
+        {
+            if (substringLength == 0)
+                return default;
+            if (substringLength == Length)
+                return this;
+
+            Debug.Assert(_rope != null);
+            Debug.Assert(substringStart + substringLength <= Length);
+
+            var counts = _counts - removed;
+            return new RopeSlice(_rope, _start + substringStart, substringLength, counts);
+        }
+
+        /// <summary>
+        /// Directly count one/zero characters in the given span of this slice
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        private SaturatingCounters SimpleCountInSpan(ushort start, int length)
+        {
+            if (_rope == null)
+                return default;
+
+            // Keep track of the slice that's been removed
+            var spanStart = _start + start;
+            var spanEnd = length;
+
+            // Create a slice large enough to hold some chars without blowing up the stack
+            Span<char> chars = stackalloc char[128];
+
+            // Get chunks of the removed section and count the ones/zeroes
+            var zeros = 0;
+            var ones = 0;
+            while (spanStart < spanEnd)
+            {
+                var count = Math.Min(chars.Length, spanEnd - spanStart);
+                _rope.CopySlice(spanStart, count, chars);
+                for (int i = 0; i < count; i++)
+                {
+                    var c = chars[i];
+                    if (c == '0')
+                        zeros++;
+                    else if (c == '1')
+                        ones++;
+                }
+
+                spanStart += count;
+            }
+
+            return new SaturatingCounters(new SaturatingByte(zeros), new SaturatingByte(ones));
+        }
+
+        /// <summary>
+        /// Count how many ones/zeroes are in the given span
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        private SaturatingCounters CountInSpan(ushort start, int length)
+        {
+            //todo: improve this to count whichever is shorter:
+            // - the given span
+            // - everything else
+            return SimpleCountInSpan(start, length);
+        }
+        #endregion
 
         #region CompareTo
         public int CompareTo(in RopeSlice other)
@@ -355,7 +450,7 @@ namespace Yolol.Execution
                 throw new InvalidOperationException("Attempted to `PopLast` on empty `RopeSlice`");
             Debug.Assert(_rope != null);
 
-            return new RopeSlice(_rope, _start + Length - 1, 1);
+            return Substring((ushort)(Length - 1), 1);
         }
 
         #region concat
@@ -377,7 +472,8 @@ namespace Yolol.Execution
             return new RopeSlice(
                 rope,
                 0,
-                rope.Length
+                rope.Length,
+                left._counts + right._counts
             );
         }
 
@@ -390,27 +486,13 @@ namespace Yolol.Execution
             
             // Trim right side down to length
             right = right[..Math.Min(maxLength - left.Length, right.Length)];
+            var rightRopeSlice = new RopeSlice(right);
 
             // If left is null just return right
             if (left._rope == null)
-            {
-                var r = new Rope(right.Length);
-                r.Append(right);
-                return new RopeSlice(r, 0, r.Length);
-            }
+                return rightRopeSlice;
 
-            // If the end of the left span points to the end of the underlying rope then
-            // the rope can be extended in place.
-            if (left._start + left.Length == left._rope.Length)
-            {
-                left._rope.Append(right);
-                return new RopeSlice(left._rope, left._start, left.Length + right.Length);
-            }
-
-            // Create a copy of the rope to extend
-            var rope = left._rope.CloneSlice(left._start, left.Length, left.Length + right.Length);
-            rope.Append(right);
-            return new RopeSlice(rope, 0, rope.Length);
+            return Concat(left, rightRopeSlice, maxLength);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -420,25 +502,19 @@ namespace Yolol.Execution
             if (left.Length == 0)
                 return right;
 
-            // Trim left down to length and count the digits
+            // Trim left down to length
             left = left[..Math.Min(left.Length, maxLength)];
-            var (lz, lo) = left.CountDigits();
+            var leftRopeSlice = new RopeSlice(left);
 
-            // If the right still is null (i.e. zero length) return a new rope which is just the left string
-            if (right._rope == null || right.Length == 0)
-                return new RopeSlice(new Rope(left), 0, left.Length);
+            // If the right is zero length or the left takes up the max string length just return left
+            if (right.Length == 0 || left.Length == maxLength)
+                return leftRopeSlice;
 
-            // Create a new rope and append the left part
-            var rope = new Rope(Math.Min(maxLength, left.Length + right.Length));
-            rope.Append(left);
+            // Take a slice of the right side, as much as possible without going over the max size
+            var rightRopeSlice = right.Substring(0, Math.Min(right.Length, maxLength - left.Length));
 
-            // Now append as much of the right as possible
-            if (rope.Length < maxLength)
-            {
-                var rSpan = right.AsSpanUnchecked[..Math.Min(right.Length, maxLength - left.Length)];
-                rope.Append(rSpan);
-            }
-            return new RopeSlice(rope, 0, rope.Length);
+            // Concat the two sides
+            return Concat(leftRopeSlice, rightRopeSlice, maxLength);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -458,11 +534,15 @@ namespace Yolol.Execution
         #region remove
         public static RopeSlice Remove(in RopeSlice haystack, in RopeSlice needle)
         {
+            //todo: use counters to skip string searches where possible
+
             return Remove(haystack, needle.AsSpan);
         }
 
         public static RopeSlice Remove(in RopeSlice haystack, in ReadOnlySpan<char> needle)
         {
+            //todo: use counters to skip string searches where possible
+
             // Any empty needle is a no-op
             if (needle.Length == 0 || haystack.Length == 0)
                 return haystack;
@@ -475,7 +555,8 @@ namespace Yolol.Execution
             if (index < 0)
                 return haystack;
 
-            return Remove(in haystack, index, needle.Length);
+            var needleCount = needle.CountDigits();
+            return Remove(in haystack, index, needle.Length, needleCount);
         }
 
         public static RopeSlice Remove(in RopeSlice haystack, char right)
@@ -487,29 +568,27 @@ namespace Yolol.Execution
             }
         }
 
-        private static RopeSlice Remove(in RopeSlice haystack, int startIndex, int needleLength)
+        private static RopeSlice Remove(in RopeSlice haystack, int needleStartIndex, int needleLength, SaturatingCounters needleCounts)
         {
             Debug.Assert(haystack._rope != null);
 
-            // If left slice _starts_ with the right string we can just offset the start of the slice
-            if (startIndex == 0)
+            // If haystack _starts_ with the need we can just offset the start of the slice
+            if (needleStartIndex == 0)
             {
-                var start = haystack._start + needleLength;
+                var start = needleLength;
                 var length = haystack.Length - needleLength;
-                if (length == 0)
-                    start = 0;
-                return new RopeSlice(haystack._rope, start, length);
+                return haystack.Substring(start, length, needleCounts);
             }
 
             // If the left slice _ends_ with the right string we can just shorten the slice
-            if (startIndex + needleLength == haystack.Length)
-                return new RopeSlice(haystack._rope, haystack._start, haystack.Length - needleLength);
+            if (needleStartIndex + needleLength == haystack.Length)
+                return haystack.Substring(0, haystack.Length - needleLength, needleCounts);
 
             // Make a new rope out of the two parts
-            var leftPart = new Slice(haystack._rope, haystack._start, startIndex);
-            var rightPart = new Slice(haystack._rope, haystack._start + startIndex + needleLength, haystack.Length - needleLength - startIndex);
+            var leftPart = new Slice(haystack._rope, haystack._start, needleStartIndex);
+            var rightPart = new Slice(haystack._rope, haystack._start + needleStartIndex + needleLength, haystack.Length - needleLength - needleStartIndex);
             var concat = new Rope(leftPart, rightPart);
-            return new RopeSlice(concat, 0, concat.Length);
+            return new RopeSlice(concat, 0, concat.Length, haystack._counts - needleCounts);
         }
         #endregion
 
@@ -548,7 +627,7 @@ namespace Yolol.Execution
                 throw new InvalidOperationException("Cannot decrement empty slice");
             Debug.Assert(_rope != null);
 
-            return new RopeSlice(_rope, _start, Length - 1);
+            return Substring(_start, Length - 1);
         }
 
         public RopeSlice Trim(int length)
@@ -556,7 +635,7 @@ namespace Yolol.Execution
             if (Length <= length || _rope == null)
                 return this;
 
-            return new RopeSlice(_rope, _start, length);
+            return Substring(0, length);
         }
     }
 }

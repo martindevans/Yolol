@@ -68,6 +68,8 @@ namespace YololEmulator.Tests
                 x += y;
 
             var t = YString.Trim(x, 1024);
+
+            Assert.AreEqual(1024, t.Length);
         }
 
         [TestMethod]
