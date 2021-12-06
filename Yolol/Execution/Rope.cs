@@ -532,19 +532,41 @@ namespace Yolol.Execution
         #endregion
 
         #region remove
+        private static bool IsSubstringSearchPossible(SaturatingCounters haystack, int haystackLength, SaturatingCounters needle, int needleLength)
+        {
+            // Check if the needle has more zeroes/ones than the haystack.
+            // If so, early exit immediately since the needle can't possibly be in the haystack.
+            if (!needle.ZeroCount.IsSaturated && !haystack.ZeroCount.IsSaturated && needle.ZeroCount > haystack.ZeroCount)
+                return false;
+            if (!needle.OnesCount.IsSaturated && !haystack.OnesCount.IsSaturated && needle.OnesCount > haystack.OnesCount)
+                return false;
+
+            // Any empty needle is a no-op. An empty haystack can't contain anything
+            if (needleLength == 0 || haystackLength == 0)
+                return false;
+
+            return true;
+        }
+
         public static RopeSlice Remove(in RopeSlice haystack, in RopeSlice needle)
         {
-            //todo: use counters to skip string searches where possible
+            // Check if the needle has more zeroes/ones than the haystack.
+            // If so, early exit immediately since the needle can't possibly be in the haystack.
+            if (!IsSubstringSearchPossible(haystack._counts, haystack.Length, needle._counts, needle.Length))
+                return haystack;
 
-            return Remove(haystack, needle.AsSpan);
+            // Find the needle slice within the haystack
+            var index = haystack.LastIndexOf(needle);
+            if (index < 0)
+                return haystack;
+
+            return Remove(in haystack, index, needle.Length, needle._counts);
         }
 
         public static RopeSlice Remove(in RopeSlice haystack, in ReadOnlySpan<char> needle)
         {
-            //todo: use counters to skip string searches where possible
-
-            // Any empty needle is a no-op
-            if (needle.Length == 0 || haystack.Length == 0)
+            var needleCounts = needle.CountDigits();
+            if (!IsSubstringSearchPossible(haystack._counts, haystack.Length, needleCounts, needle.Length))
                 return haystack;
 
             // We just checked the length of both things is not zero. Which means the rope cannot be null either.
@@ -555,8 +577,7 @@ namespace Yolol.Execution
             if (index < 0)
                 return haystack;
 
-            var needleCount = needle.CountDigits();
-            return Remove(in haystack, index, needle.Length, needleCount);
+            return Remove(in haystack, index, needle.Length, needleCounts);
         }
 
         public static RopeSlice Remove(in RopeSlice haystack, bool right)
