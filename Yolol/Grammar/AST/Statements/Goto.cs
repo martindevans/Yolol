@@ -25,8 +25,12 @@ namespace Yolol.Grammar.AST.Statements
             if (dest.Type != Type.Number)
                 throw new ExecutionException($"Attempted to goto to a value of type `{dest.Type}`");
 
-            var line = Math.Min(state.MaxLineNumber, Math.Max(1, (int)dest.Number));
-            return new ExecutionResult(line);
+            if (dest.Number < Number.One)
+                dest = Number.One;
+            if (dest.Number > (Number)state.MaxLineNumber)
+                dest = (Number)state.MaxLineNumber;
+
+            return new ExecutionResult((int)dest.Number);
         }
 
         public bool Equals(Goto? other)
