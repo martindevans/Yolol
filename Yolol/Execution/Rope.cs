@@ -273,6 +273,8 @@ namespace Yolol.Execution
             {
                 _start = (ushort)start;
             }
+
+            Debug.Assert(CountInSpan(0, Length).Equals(counts));
         }
 
         public RopeSlice(string str)
@@ -364,7 +366,7 @@ namespace Yolol.Execution
 
             // Keep track of the slice that's been removed
             var spanStart = _start + start;
-            var spanEnd = length;
+            var spanEnd = _start + length;
 
             // Create a slice large enough to hold some chars without blowing up the stack
             Span<char> chars = stackalloc char[128];
@@ -455,7 +457,7 @@ namespace Yolol.Execution
 
         #region concat
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static RopeSlice Concat(in RopeSlice left, in RopeSlice right, int maxLength)
+        public static RopeSlice Concat(in RopeSlice left, RopeSlice right, int maxLength)
         {
             // If either part of the concat is an empty string (represented by a null rope) return the other half.
             if (left._rope == null || left.Length == 0)
@@ -465,7 +467,9 @@ namespace Yolol.Execution
 
             // Create slices for the two parts, respecting the length limit
             var sliceLeft = new Slice(left._rope, left._start, left.Length);
-            var sliceRight = new Slice(right._rope, right._start, Math.Min(right.Length, maxLength - left.Length));
+
+            right = right.Substring(0, Math.Min(right.Length, maxLength - left.Length));
+            var sliceRight = new Slice(right._rope!, right._start, right.Length);
 
             // Create a new rope concatenating the two slices
             var rope = new Rope(sliceLeft, sliceRight);

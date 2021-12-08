@@ -1,9 +1,11 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 
 namespace Yolol.Execution
 {
     [StructLayout(LayoutKind.Explicit)]
     internal struct SaturatingCounters
+        : IEquatable<SaturatingCounters>
     {
         [FieldOffset(0)] public SaturatingByte ZeroCount;
         [FieldOffset(1)] public SaturatingByte OnesCount;
@@ -12,6 +14,11 @@ namespace Yolol.Execution
         {
             ZeroCount = z;
             OnesCount = o;
+        }
+
+        public bool Equals(SaturatingCounters other)
+        {
+            return ZeroCount.Equals(other.ZeroCount) && OnesCount.Equals(other.OnesCount);
         }
 
         public static SaturatingCounters operator +(SaturatingCounters a, SaturatingCounters b)
@@ -29,5 +36,7 @@ namespace Yolol.Execution
                 a.OnesCount - b.OnesCount
             );
         }
+
+
     }
 }
