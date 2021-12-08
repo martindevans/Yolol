@@ -654,7 +654,7 @@ namespace Yolol.Execution
                 throw new InvalidOperationException("Cannot decrement empty slice");
             Debug.Assert(_rope != null);
 
-            return Substring(_start, Length - 1);
+            return Substring(0, Length - 1);
         }
 
         public RopeSlice Trim(int length)
