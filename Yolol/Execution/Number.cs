@@ -233,7 +233,7 @@ namespace Yolol.Execution
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static Number UnsafeMod(Number l, Value r)
         {
-            return l % r.Number;
+            return UnsafeMod(l, r.Number);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -242,7 +242,7 @@ namespace Yolol.Execution
             // An unsafe mod (i.e. guaranteed not to throw given the arguments) by a
             // bool must always be mod 1 because mod 0 would throw.
 
-            return new Number(l._value % One._value);
+            return UnsafeMod(l, One);
         }
 
         [ErrorMetadata(nameof(WillModThrow), nameof(UnsafeMod))]
@@ -351,14 +351,14 @@ namespace Yolol.Execution
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static Number UnsafeDivide(Number l, Value r)
         {
-            return l / r.UnsafeNumber;
+            return UnsafeDivide(l, r.UnsafeNumber);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static Number UnsafeDivide(Number l, bool _)
         {
             // Due to over/underflow `x/1` does not always equal `x`
-            return l / One;
+            return UnsafeDivide(l, One);
         }
 
         [ErrorMetadata(nameof(WillDivThrow), nameof(UnsafeDivide))]
