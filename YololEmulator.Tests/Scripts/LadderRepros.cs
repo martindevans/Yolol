@@ -8,6 +8,15 @@ namespace YololEmulator.Tests.Scripts
     public class LadderRepros
     {
         [TestMethod]
+        public void FuzzMultiplyHuge()
+        {
+            var ms = TestExecutor.Execute($"x=asin 1992768.34 c=1*x");
+
+            Assert.AreEqual(-9223372036854775.808, (double)ms.GetVariable("x").Value.Number);
+            Assert.AreEqual(0, (double)ms.GetVariable("c").Value.Number);
+        }
+
+        [TestMethod]
         public void FuzzExponent()
         {
             var ms = TestExecutor.Execute($"b=-9223372036854775.808 b%=-0.001");

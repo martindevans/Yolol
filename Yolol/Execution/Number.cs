@@ -239,7 +239,10 @@ namespace Yolol.Execution
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static Number UnsafeMod(Number l, bool _)
         {
-            return l % One;
+            // An unsafe mod (i.e. guaranteed not to throw given the arguments) by a
+            // bool must always be mod 1 because mod 0 would throw.
+
+            return new Number(l._value % One._value);
         }
 
         [ErrorMetadata(nameof(WillModThrow), nameof(UnsafeMod))]
