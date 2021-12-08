@@ -658,6 +658,25 @@ namespace YololEmulator.Tests
         }
 
         [TestMethod]
+        public void DecrementSimple()
+        {
+            var a = new YString("abc");
+            a--;
+
+            Assert.AreEqual("ab", a.ToString());
+        }
+
+        [TestMethod]
+        public void DecrementComplex()
+        {
+            var a = new YString("abc");
+            a -= "a";
+            a--;
+
+            Assert.AreEqual("b", a.ToString());
+        }
+
+        [TestMethod]
         public void StringEquals()
         {
             var a = new YString("1234");
