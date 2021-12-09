@@ -110,6 +110,14 @@ namespace YololEmulator.Tests
         }
 
         [TestMethod]
+        public void ConcatNumberStringOverLengthLimit()
+        {
+            var result = YString.Add(Number.One, new YString("abcdefghij"), 5);
+
+            Assert.AreEqual("1abcd", result.ToString());
+        }
+
+        [TestMethod]
         public void ConcatSimple()
         {
             var a = new YString("abc");
@@ -289,6 +297,57 @@ namespace YololEmulator.Tests
             Assert.AreEqual("b1", c.ToString());
         }
 
+        private static string RemoveLast(string haystack, string needle)
+        {
+            var index = haystack.LastIndexOf(needle);
+            if (index >= 0)
+                haystack = haystack.Remove(index, needle.Length);
+
+            return haystack;
+        }
+
+        [TestMethod]
+        public void CombinedFuzz()
+        {
+            static string RandomString(Random rng, int length)
+            {
+                const string Numbers = "0123";
+                return string.Join("", Enumerable.Range(0, length).Select(_ => Numbers[rng.Next(Numbers.Length)]));
+            }
+
+            static Number RandomNumber(Random rng)
+            {
+                return (Number)rng.Next(0, 100);
+            }
+
+            var rng = new Random(7324);
+            for (int i = 0; i < 8192; i++)
+            {
+                var a = RandomString(rng, rng.Next(1, 10));
+                var b = RandomString(rng, rng.Next(1, 10));
+                var c = RandomString(rng, rng.Next(1, 10));
+                var d = RandomString(rng, rng.Next(1, 5));
+                var e = RandomString(rng, rng.Next(1, 3));
+                var n = RandomNumber(rng);
+
+                var ay = new YString(a);
+                var by = new YString(b);
+                var cy = new YString(c);
+                var dy = new YString(d);
+                var ey = new YString(e);
+
+                var final = ay + by + cy - dy - ey - n;
+
+                var abc = a + b + c;
+
+                abc = RemoveLast(abc, d);
+                abc = RemoveLast(abc, e);
+                abc = RemoveLast(abc, n.ToString());
+
+                Assert.AreEqual(abc, final.ToString());
+            }
+        }
+
         [TestMethod]
         public void RemoveFuzz()
         {
@@ -299,7 +358,7 @@ namespace YololEmulator.Tests
             }
 
             var rng = new Random(345897);
-            for (int i = 0; i < 1024; i++)
+            for (int i = 0; i < 8192; i++)
             {
                 // Generate a random string
                 var str = RandomString(rng, 20);
@@ -331,7 +390,7 @@ namespace YololEmulator.Tests
             }
 
             var rng = new Random(7324);
-            for (int i = 0; i < 1024; i++)
+            for (int i = 0; i < 8192; i++)
             {
                 var a = RandomString(rng, rng.Next(1, 10));
                 var b = RandomString(rng, rng.Next(1, 10));
@@ -344,6 +403,32 @@ namespace YololEmulator.Tests
                 var final = ay + by + cy;
 
                 Assert.AreEqual(a + b + c, final.ToString());
+            }
+        }
+
+        [TestMethod]
+        public void ConcatNumberFuzz()
+        {
+            static string RandomString(Random rng, int length)
+            {
+                const string Numbers = "0123456789";
+                return string.Join("", Enumerable.Range(0, length).Select(_ => Numbers[rng.Next(Numbers.Length)]));
+            }
+
+            static Number RandomNumber(Random rng)
+            {
+                return (Number)(rng.NextDouble() * rng.Next());
+            }
+
+            var rng = new Random(7324);
+            for (int i = 0; i < 8192; i++)
+            {
+                var a = RandomString(rng, rng.Next(1, 10));
+                var b = RandomNumber(rng);
+
+                var ab = new YString(a) + b;
+
+                Assert.AreEqual(a.ToString() + b.ToString(), ab.ToString());
             }
         }
 

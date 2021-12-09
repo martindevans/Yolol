@@ -390,7 +390,13 @@ namespace Yolol.Execution
                 spanStart += count;
             }
 
-            return new SaturatingCounters(new SaturatingByte(zeros), new SaturatingByte(ones));
+            var counts = new SaturatingCounters(new SaturatingByte(zeros), new SaturatingByte(ones));
+
+#if DEBUG
+            Debug.Assert(AsSpan[start..(start + length)].CountDigits().Equals(counts));
+#endif
+
+            return counts;
         }
 
         /// <summary>
@@ -457,7 +463,7 @@ namespace Yolol.Execution
 
         #region concat
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static RopeSlice Concat(in RopeSlice left, RopeSlice right, int maxLength)
+        public static RopeSlice Concat(RopeSlice left, RopeSlice right, int maxLength)
         {
             // If either part of the concat is an empty string (represented by a null rope) return the other half.
             if (left._rope == null || left.Length == 0)

@@ -483,6 +483,14 @@ namespace Yolol.Execution
         {
             return Add(l, r, int.MaxValue);
         }
+
+        public static Value Add(Number l, Value r, int maxStringLength)
+        {
+            if (r._type == Type.Number)
+                return l + r._number;
+            else
+                return new Value(Add(l, r._string, maxStringLength));
+        }
         #endregion
 
         #region op *

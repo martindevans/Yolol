@@ -235,9 +235,6 @@ namespace Yolol.Execution
 
         public static YString Add(Number l, YString r, int maxLength)
         {
-            if (r.Length >= maxLength)
-                return r;
-
             unsafe
             {
                 const int bufferSize = 64;
