@@ -244,6 +244,8 @@ namespace Yolol.Execution
             }
         }
 
+        private Slice AsSlice => new Slice(_rope, _start, Length);
+
         #region constructors
         private RopeSlice(Rope rope, int start, int length, SaturatingCounters counts)
         {
@@ -444,14 +446,6 @@ namespace Yolol.Execution
         }
         #endregion
 
-        private char LastCharUnchecked()
-        {
-            Debug.Assert(_rope != null);
-            Span<char> lastChar = stackalloc char[1];
-            _rope.CopySlice(_start + Length - 1, 1, lastChar);
-            return lastChar[0];
-        }
-
         public RopeSlice PopLast()
         {
             if (Length < 1)
@@ -471,14 +465,11 @@ namespace Yolol.Execution
             if (right._rope == null || right.Length == 0 || left.Length >= maxLength)
                 return left;
 
-            // Create slices for the two parts, respecting the length limit
-            var sliceLeft = new Slice(left._rope, left._start, left.Length);
-
+            // Create slices for the right part, respecting the length limit
             right = right.Substring(0, Math.Min(right.Length, maxLength - left.Length));
-            var sliceRight = new Slice(right._rope!, right._start, right.Length);
 
             // Create a new rope concatenating the two slices
-            var rope = new Rope(sliceLeft, sliceRight);
+            var rope = new Rope(left.AsSlice, right.AsSlice);
             return new RopeSlice(
                 rope,
                 0,
@@ -609,17 +600,17 @@ namespace Yolol.Execution
         {
             Debug.Assert(haystack._rope != null);
 
-            // If haystack _starts_ with the need we can just offset the start of the slice
+            // If haystack _starts_ with the needle we can just offset the start of the slice
             if (needleStartIndex == 0)
             {
                 var start = needleLength;
                 var length = haystack.Length - needleLength;
-                return haystack.Substring(start, length, needleCounts);
+                return haystack.Substring(start, length, removed: needleCounts);
             }
 
             // If the left slice _ends_ with the right string we can just shorten the slice
             if (needleStartIndex + needleLength == haystack.Length)
-                return haystack.Substring(0, haystack.Length - needleLength, needleCounts);
+                return haystack.Substring(0, haystack.Length - needleLength, removed: needleCounts);
 
             // Make a new rope out of the two parts
             var leftPart = new Slice(haystack._rope, haystack._start, needleStartIndex);
