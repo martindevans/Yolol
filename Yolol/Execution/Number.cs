@@ -6,7 +6,8 @@ using Yolol.Execution.Attributes;
 
 namespace Yolol.Execution
 {
-    [StructLayout(LayoutKind.Explicit)]
+    //todo:add StructLayout/FieldOffset back in once Blazor WASM is fixed (https://github.com/dotnet/runtime/issues/61385)
+    //[StructLayout(LayoutKind.Explicit)]
     public readonly struct Number
         : IEquatable<Number>
     {
@@ -19,7 +20,7 @@ namespace Yolol.Execution
         public static readonly Number One = new Number(1000);
         public static readonly Number Zero = new Number(0);
 
-        [FieldOffset(0)]
+        //[FieldOffset(0)]
         private readonly long _value;
 
         /// <summary>

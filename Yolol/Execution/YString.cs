@@ -5,11 +5,12 @@ using Yolol.Execution.Attributes;
 
 namespace Yolol.Execution
 {
-    [StructLayout(LayoutKind.Explicit)]
+    //todo:add StructLayout/FieldOffset back in once Blazor WASM is fixed (https://github.com/dotnet/runtime/issues/61385)
+    //[StructLayout(LayoutKind.Explicit)]
     public readonly struct YString
         : IEquatable<YString>, IEquatable<string>
     {
-        [FieldOffset(0)]
+        //[FieldOffset(0)]
         private readonly RopeSlice _span;
 
         public int Length => _span.Length;
