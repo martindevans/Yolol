@@ -2,7 +2,7 @@
   "profiles": {
     "YololEmulator": {
       "commandName": "Project",
-      "commandLineArgs": "-i \"C:\\Users\\Martin\\Documents\\dotnet\\YololEmulator\\YololAssembler\\Scripts\\Stringdexing3.yolol\" --save --end_program=\"done\""
+      "commandLineArgs": "-i \"C:\\Users\\Martin\\Documents\\yolol\\ZeroDay.yolol\" --save --end_program=\"done\""
     }
   }
 }

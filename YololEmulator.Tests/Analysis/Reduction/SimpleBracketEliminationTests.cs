@@ -33,9 +33,9 @@ namespace YololEmulator.Tests.Analysis.Reduction
         public void GotoNoBrackets() => Helper.Run("goto 1*2+3", "goto 1*2+3");
 
         [TestMethod]
-        public void Ifbrackets() => Helper.Run("if (1*2+3) then else end", "if 1*2+3 then else end");
+        public void Ifbrackets() => Helper.Run("if (1*2+3) then else end", "if 1*2+3 then end");
 
         [TestMethod]
-        public void IfNoBrackets() => Helper.Run("if 1*2+3 then else end", "if 1*2+3 then else end");
+        public void IfNoBrackets() => Helper.Run("if 1*2+3 then else end", "if 1*2+3 then end");
     }
 }

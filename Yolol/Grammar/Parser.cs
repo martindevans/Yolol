@@ -10,8 +10,11 @@ namespace Yolol.Grammar
         {
             try
             {
-                var p = new YololParser();
-                return new Result<Program, ParseError>(p.Parse(program));
+                var parser = new YololParser();
+                var parsed = parser.Parse(program);
+                parsed.SourceCode = program;
+
+                return new Result<Program, ParseError>(parsed);
             }
             catch (FormatException e)
             {

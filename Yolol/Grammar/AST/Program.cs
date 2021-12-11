@@ -7,6 +7,8 @@ namespace Yolol.Grammar.AST
     public class Program
         : IEquatable<Program>
     {
+        internal string? SourceCode { get; set; }
+
         public IReadOnlyList<Line> Lines { get; }
 
         public Program(IEnumerable<Line> lines)
@@ -43,7 +45,8 @@ namespace Yolol.Grammar.AST
 
         public override string ToString()
         {
-            return string.Join("\n", Lines.Select(l => l.ToString())).TrimEnd('\n');
+            return (SourceCode ?? string.Join("\n", Lines.Select(l => l.ToString())))
+                   .TrimEnd('\n');
         }
     }
 }
