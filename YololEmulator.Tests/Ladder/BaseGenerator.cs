@@ -8,6 +8,8 @@ namespace YololEmulator.Tests.Ladder
     {
         protected int Count { get; private set; }
 
+        protected bool RepeatedFailed = false;
+
         protected void Run(int seed, int count, bool shuffle, Generator.ScoreMode mode, Generator.YololChip chip = Generator.YololChip.Professional)
         {
             Count = count;
@@ -27,18 +29,25 @@ namespace YololEmulator.Tests.Ladder
                     input.Add(ii);
                     output.Add(io);
                 }
+                else if (RepeatedFailed)
+                {
+                    i--;
+                }
             }
 
             Console.WriteLine($"Cases: {input.Count}");
 
-            Generator.YololLadderGenerator(input, output, shuffle, mode, chip);
+            Finalise(input, output);
 
-            
+            Generator.YololLadderGenerator(input, output, shuffle, mode, chip);
+        }
+
+        protected virtual void Finalise(List<Dictionary<string, Value>> input, List<Dictionary<string, Value>> output)
+        {
         }
 
         protected virtual void Setup(List<Dictionary<string, Value>> inputs, List<Dictionary<string, Value>> outputs)
         {
-
         }
 
         protected abstract bool GenerateCase(Random random, int index, Dictionary<string, Value> inputs, Dictionary<string, Value> outputs);

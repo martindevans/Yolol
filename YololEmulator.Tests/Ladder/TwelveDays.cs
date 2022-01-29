@@ -31,7 +31,7 @@ namespace YololEmulator.Tests.Ladder
             Generator.YololLadderGenerator(input, output, false);
         }
 
-        private IEnumerable<string> TwelveDaysOfChristmas()
+        private static IEnumerable<string> TwelveDaysOfChristmas()
         {
             var lines = new[] {
                 "Twelve Drummers Drumming,",

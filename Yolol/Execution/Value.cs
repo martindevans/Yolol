@@ -392,6 +392,7 @@ namespace Yolol.Execution
         #endregion
 
         #region op -
+        [TrimSafe]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Value operator -(Value left, Value right)
         {
@@ -404,6 +405,7 @@ namespace Yolol.Execution
             };
         }
 
+        [TrimSafe]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static YString operator -(Value left, YString right)
         {
@@ -413,6 +415,7 @@ namespace Yolol.Execution
                 return left._string - right;
         }
 
+        [TrimSafe]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Value operator -(Value l, Number r)
         {
@@ -422,6 +425,7 @@ namespace Yolol.Execution
                 return new Value(l._string - r);
         }
 
+        [TrimSafe]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Value operator -(Value l, bool r)
         {
@@ -430,6 +434,7 @@ namespace Yolol.Execution
         #endregion
 
         #region op +
+        [TrimSafe]
         public static Value Add(Value left, Value right, int maxStringLength)
         {
             return (left._type, right._type) switch
@@ -447,6 +452,7 @@ namespace Yolol.Execution
             return Add(left, right, int.MaxValue);
         }
 
+        [TrimSafe]
         public static YString Add(Value left, YString right, int maxStringLength)
         {
             return (left._type) switch
@@ -462,6 +468,7 @@ namespace Yolol.Execution
             return Add(left, right, int.MaxValue);
         }
 
+        [TrimSafe]
         public static Value Add(Value l, Number r, int maxStringLength)
         {
             if (l._type == Type.Number)
@@ -475,6 +482,7 @@ namespace Yolol.Execution
             return Add(l, r, int.MaxValue);
         }
 
+        [TrimSafe]
         public static Value Add(Value l, bool r, int maxStringLength)
         {
             return Add(l, (Number)r, maxStringLength);
@@ -485,6 +493,7 @@ namespace Yolol.Execution
             return Add(l, r, int.MaxValue);
         }
 
+        [TrimSafe]
         public static Value Add(Number l, Value r, int maxStringLength)
         {
             if (r._type == Type.Number)

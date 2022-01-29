@@ -281,7 +281,7 @@ namespace Yolol.Execution
         }
 
         public RopeSlice(string str)
-            : this(str.AsMemory().Span)
+            : this(str.AsSpan())
         {
         }
 

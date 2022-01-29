@@ -18,7 +18,7 @@ namespace YololEmulator.Tests.Statements
         }
 
         [TestMethod]
-        public new void ToString()
+        public void StatementToString()
         {
             Assert.AreEqual("", new EmptyStatement().ToString());
         }
