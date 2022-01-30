@@ -1,19 +1,34 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using Yolol.Execution.Extensions;
 
 namespace Yolol.Execution
 {
     [StructLayout(LayoutKind.Explicit)]
-    internal struct SaturatingCounters
+    public struct SaturatingCounters
         : IEquatable<SaturatingCounters>
     {
-        [FieldOffset(0)] public SaturatingByte ZeroCount;
-        [FieldOffset(1)] public SaturatingByte OnesCount;
+        [FieldOffset(0)] internal SaturatingByte ZeroCount;
+        public byte Zero => ZeroCount.Value;
 
-        public SaturatingCounters(SaturatingByte z, SaturatingByte o)
+        [FieldOffset(1)] internal SaturatingByte OnesCount;
+        public byte One => OnesCount.Value;
+
+        internal SaturatingCounters(SaturatingByte z, SaturatingByte o)
         {
             ZeroCount = z;
             OnesCount = o;
+        }
+
+        public SaturatingCounters(byte z, byte o)
+        {
+            ZeroCount = new SaturatingByte(z);
+            OnesCount = new SaturatingByte(o);
+        }
+
+        public static SaturatingCounters FromString(string str)
+        {
+            return str.AsSpan().CountDigits();
         }
 
         public bool Equals(SaturatingCounters other)
@@ -36,7 +51,5 @@ namespace Yolol.Execution
                 a.OnesCount - b.OnesCount
             );
         }
-
-
     }
 }

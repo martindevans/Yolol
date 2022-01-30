@@ -23,9 +23,9 @@ namespace Yolol.Execution
             _span = new RopeSlice(str);
         }
 
-        public YString(string str, StringOptimisationData optimisation)
+        public YString(string str, SaturatingCounters counters)
         {
-            _span = new RopeSlice(str, optimisation.Counts);
+            _span = new RopeSlice(str, counters);
         }
 
         public override string ToString()

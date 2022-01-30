@@ -11,6 +11,8 @@ namespace Yolol.Execution
         [FieldOffset(0)]
         private readonly byte _value;
 
+        public byte Value => _value;
+
         public bool IsNonZero => _value > 0;
         public bool IsZero => _value == 0;
 
