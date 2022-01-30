@@ -285,14 +285,23 @@ namespace Yolol.Execution
         {
         }
 
+        public RopeSlice(string str, SaturatingCounters counts)
+            : this(str.AsSpan(), counts)
+        {
+        }
+
         public RopeSlice(ReadOnlySpan<char> str)
+            : this(str, str.CountDigits())
+        {
+        }
+
+        public RopeSlice(ReadOnlySpan<char> str, SaturatingCounters counts)
         {
             if (str.Length == 0)
             {
                 _rope = null;
                 _start = 0;
                 Length = 0;
-
                 _counts = default;
             }
             else
@@ -301,7 +310,7 @@ namespace Yolol.Execution
                 _start = 0;
                 Length = str.Length;
 
-                _counts = str.CountDigits();
+                _counts = counts;
             }
         }
         #endregion

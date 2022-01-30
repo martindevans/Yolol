@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using Yolol.Execution.Attributes;
 
 namespace Yolol.Execution
@@ -23,6 +21,11 @@ namespace Yolol.Execution
         public YString(string str)
         {
             _span = new RopeSlice(str);
+        }
+
+        public YString(string str, StringOptimisationData optimisation)
+        {
+            _span = new RopeSlice(str, optimisation.Counts);
         }
 
         public override string ToString()
