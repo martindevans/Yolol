@@ -746,6 +746,7 @@ namespace Yolol.Execution
         #endregion
 
         #region op ++
+        [TrimSafe]
         public static Value Increment(Value value, int maxStringLength)
         {
             if (value._type == Type.Number)
@@ -773,6 +774,7 @@ namespace Yolol.Execution
                 && value._string.Length == 0;
         }
 
+        [TrimSafe]
         [ErrorMetadata(nameof(WillDecThrow))]
         public static Value operator --(Value value)
         {
