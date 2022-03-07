@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using Newtonsoft.Json;
 using Yolol.Cylon.JSON;
 using Yolol.Execution;
@@ -70,11 +71,19 @@ namespace YololEmulator.Tests.Ladder
             Approximate = 2,
         }
 
-        public static void YololLadderGenerator(List<Dictionary<string, Value>> input, List<Dictionary<string, Value>> output, bool shuffle = true, ScoreMode mode = ScoreMode.BasicScoring, YololChip chip = YololChip.Professional)
+        public static void YololLadderGenerator(List<Dictionary<string, Value>> input, List<Dictionary<string, Value>> output, bool shuffle = true, ScoreMode mode = ScoreMode.BasicScoring, YololChip chip = YololChip.Professional, string? outputPath = null)
         {
             var d = new Data(shuffle, mode, chip, input.ToArray(), output.ToArray());
+            var j = JsonConvert.SerializeObject(d, Formatting.Indented, new YololValueConverter());
 
-            Console.WriteLine(JsonConvert.SerializeObject(d, new YololValueConverter()));
+            if (outputPath != null)
+            {
+                File.WriteAllText(outputPath, j);
+            }
+            else
+            {
+                Console.WriteLine(j);
+            }
         }
 
         public static IEnumerable<(IReadOnlyDictionary<string, Value>, IReadOnlyDictionary<string, Value>)> RunYololGenerator(Func<Dictionary<string, Value>> generateInput, int count, Program ast, params string[] outputs)

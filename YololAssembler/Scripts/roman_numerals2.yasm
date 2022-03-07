@@ -1,0 +1,105 @@
+#import lib.yasm
+
+#define input   :i
+#define output  :o
+
+#define numeral__M a
+#define numeral_CM b
+#define numeral__D c
+#define numeral_CD d
+#define numeral__C e
+#define numeral_XC f
+#define numeral__L g
+#define numeral_XL h
+#define numeral__X i
+#define numeral_IX j
+#define numeral__V k
+#define numeral_IV l
+#define numeral__I m
+#define numeral_I2 n
+#define numeral_I3 o
+#define numeral_C2 p
+#define numeral_M2 q
+
+#define const_500 s
+#define const_2000 t
+
+#define saved_in     u
+#define accum_out    v
+
+#define const__50 w
+
+#define out_temp  x
+
+#define numeral_X2 y
+
+
+
+
+#define try_expr_numeral(input_string, expected_numeral, numeric_value) {
+    numeric_value*try_expr_nonum_numeral(input_string, expected_numeral)
+}
+
+#define try_expr_nonum_numeral(input_string, expected_numeral) {
+    (input_string!=(input_string-expected_numeral))
+}
+
+@initialise:
+    numeral__M="M"
+    numeral_CM="CM"
+    numeral__D="D"
+    numeral_CD="CD"
+    numeral__C="C"
+    numeral_XC="XC"
+    numeral__L="L"
+    numeral_XL="XL"
+    numeral__X="X"
+    numeral_IX="IX"
+    numeral__V="V"
+    numeral_IV="IV"
+    
+
+@initialise2:
+    numeral__I="I"
+    numeral_I2="II"
+    numeral_C2="CC"
+    numeral_M2="MM"
+    numeral_X2="XX"
+    const_500=500
+    const_2000=const_500*4
+    numeral_I3=numeral__I+numeral_I2
+
+@start_test:
+    saved_in=input;
+    accum_out=try_expr_numeral(saved_in, numeral_CM, 900)
+             +try_expr_numeral(saved_in, numeral_CD, 400)
+             +try_expr_numeral(saved_in, numeral_XC, 90)
+             +try_expr_numeral(saved_in, numeral_XL, 40)
+
+@:
+    accum_out+=try_expr_numeral(saved_in, numeral_IX, 9)
+             +try_expr_numeral(saved_in, numeral_IV, 4)
+             +try_expr_numeral(saved_in, numeral_I3, 3)
+             +try_expr_numeral(saved_in, numeral_M2, const_2000)
+    saved_in=saved_in-numeral_IX-numeral_IV-numeral_CM-numeral_CD-numeral_XC-numeral_I3
+
+@:
+    accum_out+=try_expr_numeral(saved_in, numeral__D, const_500)
+             +try_expr_numeral(saved_in, numeral_C2, 200)
+             +try_expr_numeral(saved_in, numeral_I2, 2)
+             +try_expr_numeral(saved_in, numeral_X2, 20)
+
+    saved_in=saved_in-numeral_C2-numeral_I2-numeral_XL-numeral_X2-numeral_M2
+
+@:
+    accum_out+=try_expr_numeral(saved_in, numeral__L, 50)
+             +try_expr_numeral(saved_in, numeral__C, 100)
+             +try_expr_numeral(saved_in, numeral__X, 10)
+             +try_expr_numeral(saved_in, numeral__V, 5)
+             +try_expr_nonum_numeral(saved_in, numeral__I)
+@:
+    output=accum_out
+          +try_expr_numeral(saved_in, numeral__M, 1000)
+
+    :done=1
+    goto{start_test}

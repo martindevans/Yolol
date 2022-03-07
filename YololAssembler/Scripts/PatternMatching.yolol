@@ -1,0 +1,6 @@
+b=" "c="|"d=":"h=""
+s=:s
+t=s-s--u/=t!=b a+=t t=s-s--u/=t!=b a+=t t=s-s--u/=t!=b a+=t goto3
+e=c+(:p-:p--)+d f=d+a+c g=e+f t=(h-e)!=h
+
+// <-------------- this line is 70 characters long ------------------>

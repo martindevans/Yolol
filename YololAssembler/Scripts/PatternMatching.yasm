@@ -1,0 +1,58 @@
+﻿#import lib.yasm
+
+#define words   s
+#define pattern :p
+#define output  :o
+
+#define accumulator a
+#define single_space b
+#define single_bar c
+#define single_colon d
+
+#define p_lookup_p e
+#define p_lookup_w f
+#define p_lookup_final g
+
+#define word_set h
+
+#define temp t
+
+#define pop_word_char(words, output) {
+    temp=pop_char(words)
+    continue_if(temp!=single_space);
+    output+=temp
+}
+
+@setup:
+    single_space=" "
+    single_bar="|"
+    single_colon=":"
+    word_set=""
+
+@challenge_setup:
+    words=:s
+
+@pop_word:
+    ## Pop all the characters of the next word
+    pop_word_char(words, accumulator);
+    pop_word_char(words, accumulator);
+    pop_word_char(words, accumulator);
+    
+    goto{pop_word}
+
+@check_pattern_1:
+    ## Setup a pattern like "|a::b|" to put into the set
+
+    p_lookup_p=single_bar+(pop_char(pattern))+single_colon;
+    p_lookup_w=single_colon+accumulator+single_bar;
+    p_lookup_final=p_lookup_p+p_lookup_w;
+
+    ## Fail if:
+    ## - Word set contains "|a:" but not "|a:b|"
+    ## - Word set contains ":b|" but not "|a:b|"
+    ## Otherwise
+    ## - Add to set
+
+    temp=set_find_char(word_set, p_lookup_p)
+
+

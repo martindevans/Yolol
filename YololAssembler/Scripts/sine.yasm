@@ -1,0 +1,42 @@
+#import lib.yasm
+
+## Basic approach (rearranged)
+@line0:
+  i=:i%180
+  j=i*180-i^2
+  :o=(j*(1-(i<:i)*2))
+     /(10125-j/4)
+
+  goto:done++
+
+## Basic approach
+@line1:
+    i=:i%180
+    j=180-i
+
+    :o=4*i*j*(1-(i<:i)*2)
+      /(40453-i*j)        ## Should be 40500
+
+    goto:done++
+
+## Extra precision
+@line2:
+  :i*=10
+  i=:i%1800
+  j=i*180-i^2/10
+
+  :o=j*(4-(i<:i)*8)
+     /(404530-j)
+
+  goto:done++
+
+## Basic approach crushed + very primitive error correction
+@line3:
+  i=:i%180
+  j=i*180-i^2
+
+  :o=j*(4-(i<:i)*8)
+     /(40453-j)
+     -(:i<25)/6!
+
+  goto:done++

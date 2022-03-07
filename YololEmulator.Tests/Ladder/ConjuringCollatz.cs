@@ -28,7 +28,7 @@ namespace YololEmulator.Tests.Ladder
             return false;
         }
 
-        private int CollatzLength(int value)
+        public static int CollatzLength(int value)
         {
             // n → n/2 (n is even)
             // n → 3n + 1 (n is odd)

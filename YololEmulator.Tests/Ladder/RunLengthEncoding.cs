@@ -9,7 +9,7 @@ namespace YololEmulator.Tests.Ladder
     [TestClass]
     public class RunLengthEncoding
     {
-        private static string RandomString(Random rng, int minLength, int maxLength)
+        public static string RandomString(Random rng, int minLength, int maxLength)
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
@@ -28,33 +28,6 @@ namespace YololEmulator.Tests.Ladder
             var input = new List<Dictionary<string, Value>>();
             var output = new List<Dictionary<string, Value>>();
 
-            static string RLE(string input)
-            {
-                if (input == "")
-                    return input;
-
-                var result = "";
-
-                var count = 1;
-                var prev = input[0];
-                for (var i = 1; i < input.Length; i++)
-                {
-                    var c = input[i];
-                    if (c == prev)
-                        count++;
-                    else
-                    {
-                        result += (count > 1 ? count.ToString() : "") + "" + prev;
-                        count = 1;
-                        prev = c;
-                    }
-                }
-
-                result += (count > 1 ? count.ToString() : "") + "" + prev;
-
-                return result;
-            }
-
             void SingleCase(string value)
             {
                 input.Add(new Dictionary<string, Value> { { "a", value } });
@@ -72,6 +45,33 @@ namespace YololEmulator.Tests.Ladder
                 SingleCase(RandomString(rng, 1, 10));
 
             Generator.YololLadderGenerator(input, output, true, Generator.ScoreMode.BasicScoring);
+        }
+
+        public static string RLE(string input)
+        {
+            if (input == "")
+                return input;
+
+            var result = "";
+
+            var count = 1;
+            var prev = input[0];
+            for (var i = 1; i < input.Length; i++)
+            {
+                var c = input[i];
+                if (c == prev)
+                    count++;
+                else
+                {
+                    result += (count > 1 ? count.ToString() : "") + "" + prev;
+                    count = 1;
+                    prev = c;
+                }
+            }
+
+            result += (count > 1 ? count.ToString() : "") + "" + prev;
+
+            return result;
         }
     }
 }

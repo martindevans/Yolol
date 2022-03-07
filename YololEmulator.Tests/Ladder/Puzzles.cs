@@ -252,6 +252,38 @@ namespace YololEmulator.Tests.Ladder
         }
 
         [TestMethod]
+        public void ReallyLongSorting()
+        {
+            var input = new List<Dictionary<string, Value>>();
+            var output = new List<Dictionary<string, Value>>();
+
+            var rng = new Random(8672);
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 1234567890";
+
+            void SingleCase(string i)
+            {
+                var o = string.Concat(i.OrderBy(a => a));
+
+                input.Add(new Dictionary<string, Value> { { "i", i } });
+                output.Add(new Dictionary<string, Value> { { "o", o } });
+            }
+
+            SingleCase("Hello Cylon");
+            SingleCase("Sorting");
+            SingleCase("With really long strings");
+            SingleCase("Up to 1024 chars");
+            SingleCase("Good Luck");
+
+            for (var x = 0; x < 10000; x++)
+            {
+                var i = new string(Enumerable.Repeat(chars, rng.Next(1, 1024)).Select(s => s[rng.Next(s.Length)]).ToArray());
+                SingleCase(i);
+            }
+
+            Generator.YololLadderGenerator(input, output);
+        }
+
+        [TestMethod]
         public void NyefariTapeSorting()
         {
             var rng = new Random(234512);
@@ -413,6 +445,30 @@ namespace YololEmulator.Tests.Ladder
 
                     input.Add(new Dictionary<string, Value> {{ "a", new Value((Number)a) }, { "b", new Value((Number)b) }});
                     output.Add(new Dictionary<string, Value> {{"o", new Value((Number)c) }});
+                }
+            }
+
+            Generator.YololLadderGenerator(input, output);
+        }
+
+        [TestMethod]
+        public void And16()
+        {
+            var rng = new Random(6456533);
+            var input = new List<Dictionary<string, Value>>();
+            var output = new List<Dictionary<string, Value>>();
+
+            checked
+            {
+                for (var x = 0; x < 50000; x++)
+                {
+
+                    var a = (ushort)rng.Next(0, ushort.MaxValue);
+                    var b = (ushort)rng.Next(0, ushort.MaxValue);
+                    var c = (ushort)(a & b);
+
+                    input.Add(new Dictionary<string, Value> { { "a", new Value((Number)a) }, { "b", new Value((Number)b) } });
+                    output.Add(new Dictionary<string, Value> { { "o", new Value((Number)c) } });
                 }
             }
 

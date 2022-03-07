@@ -1,0 +1,9 @@
+a="M"b="CM"c="D"d="CD"e="C"f="XC"g="L"h="XL"i="X"j="IX"k="V"l="IV"
+m="I"n="II"p="CC"q="MM"y="XX"s=500t=s*4o=m+n
+u=:i v=900*(u!=(u-b))+400*(u!=(u-d))+90*(u!=(u-f))+40*(u!=(u-h))
+v+=9*(u!=(u-j))+4*(u!=(u-l))+3*(u!=(u-o))+t*(u!=(u-q))u=u-j-l-b-d-f-o
+v+=s*(u!=(u-c))+200*(u!=(u-p))+2*(u!=(u-n))+20*(u!=(u-y))u=u-p-n-h-y-q
+v+=50*(u!=(u-g))+100*(u!=(u-e))+10*(u!=(u-i))+5*(u!=(u-k))+(u!=(u-m))
+:o=v+1000*(u!=(u-a)):done=1goto3
+
+// <-------------- this line is 70 characters long ------------------>
