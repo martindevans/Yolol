@@ -23,3 +23,9 @@
 #define select_num_s(expr, tval, fval) {
     fval-(expr)*eval(fval-tval)
 }
+
+#define parse_digit(input_char, output_num) {
+    output_num=5*(input_char>4)
+    output_num+=2*(input_char>(output_num+1))
+    output_num+=input_char>output_num+input_char>(output_num+1)
+}

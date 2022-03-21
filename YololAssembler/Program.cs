@@ -120,15 +120,8 @@ namespace YololAssembler
                         if (minimalOutput)
                         {
                             var err = parseResult.Err;
-                            if (err is null)
-                            {
-                                Console.WriteLine($"{inputPath} @ Unknown error");
-                            }
-                            else
-                            {
-                                var (line, col) = (err.Cursor?.Line ?? -1, err.Cursor?.Column ?? -1);
-                                Console.WriteLine($"{inputPath} @ {line}:{col - 1} : {parseResult.Err.Message}");
-                            }
+                            var (line, col) = (err.Cursor?.Line ?? -1, err.Cursor?.Column ?? -1);
+                            Console.WriteLine($"{inputPath} @ {line}:{col - 1} : {parseResult.Err.Message}");
                         }
                         else
                         {

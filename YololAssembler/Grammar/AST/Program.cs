@@ -32,7 +32,7 @@ namespace YololAssembler.Grammar.AST
             lines = lines.Select(l => l.Replace("{", "").Replace("}", "")).ToArray();
 
             // Run all `eval` replacements
-            lines = Apply(new[] { new EvalReplacement() }, lines).ToArray();
+            lines = Apply(new BaseDefine[] { new TryEvalReplacement(), new EvalReplacement() }, lines).ToArray();
 
             // Return compiled program
             return string.Join("\n", lines);

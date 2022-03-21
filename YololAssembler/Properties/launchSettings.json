@@ -2,7 +2,7 @@
   "profiles": {
     "YololAssembler": {
       "commandName": "Project",
-      "commandLineArgs": "-i C:\\Users\\Martin\\Documents\\dotnet\\YololEmulator\\YololAssembler\\Scripts\\run_length_decoding.yasm --watch",
+      "commandLineArgs": "-i C:\\Users\\Martin\\Documents\\dotnet\\YololEmulator\\YololAssembler\\Scripts\\hungarian_assignment.yasm --watch",
       "workingDirectory": "C:\\Users\\Martin\\Documents\\dotnet\\YololEmulator\\YololAssembler\\Scripts\\"
     },
     "WSL": {

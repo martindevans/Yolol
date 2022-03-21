@@ -3,6 +3,7 @@
 #define input :a
 #define icache a
 #define output :o
+#define ocache o
 
 #define tmp_char b
 #define number c
@@ -10,6 +11,8 @@
 #define dup_char e
 #define is_nonalpha f
 #define z_char g
+#define s1023 h
+#define underscore j
 
 #define is_letter(check) {
     check>9
@@ -21,57 +24,67 @@
 
 @setup:
     ## input="a10bcd"
-    icache="_"+input
-    output=""
+
+    underscore="_"
+
+    icache=underscore+input;
+    ocache=""
+
+    s1023="________"
+    s1023+=s1023;
+    s1023+=s1023;
+    s1023+=s1023;
+    s1023+=s1023;
+    s1023+=s1023;
+    s1023+=s1023;
+    s1023+=s1023-underscore
 
 @start:
-    last_char=tmp_char;
-    tmp_char=pop_char(icache);
-    continue_if(is_letter(tmp_char));
-    output=tmp_char+output;
+    tmp_char=pop_char(icache)
+    continue_if(is_letter(tmp_char))
+    ocache=tmp_char+ocache;
 
-    last_char=tmp_char;
-    tmp_char=pop_char(icache);
-    continue_if(is_letter(tmp_char));
-    output=tmp_char+output;
+    tmp_char=pop_char(icache)
+    continue_if(is_letter(tmp_char))
+    ocache=tmp_char+ocache;
+
+    tmp_char=pop_char(icache)
+    continue_if(is_letter(tmp_char))
+    ocache=tmp_char+ocache;
 
     goto{start}+eval(exit-start)*(icache<0)
 
 @check:
-    goto{parse}+(tmp_char=="_")*eval(exit-parse)
+    parse_digit(tmp_char, number)
+
+    goto{parse}+(tmp_char==underscore)*eval(exit-parse)
 
 @parse:
-    ## Parse digit
-    number=5*(tmp_char>4)
-    number+=2*(tmp_char>(number+1))
-    number+=tmp_char>number+tmp_char>(number+1)
-
     ## Check if next character is also a digit
     tmp_char=pop_char(icache)
-    is_nonalpha=is_number(tmp_char)
+    is_nonalpha=tmp_char<=9
 
-    ## Add 10 (if it's a digit) subtract one (for the character we've already copied)
+    ## Add 10 (if it's a digit)
     number+=is_nonalpha*10
     
+    last_char=s1023+ocache-s1023;
     z_char=0+last_char
-
-@parse_cont:
-    dup_char=is_nonalpha+tmp_char-(1+tmp_char)-0;
     
 @dupe:
-    dup_char+=number>5+last_char-z_char-1
-             +number>4+last_char-z_char-1
-             +number>3+last_char-z_char-1
-             +number>2+last_char-z_char-1
-             +number>1+last_char-z_char-1
+    ocache=number>5+last_char-z_char-1
+          +number>4+last_char-z_char-1
+          +number>3+last_char-z_char-1
+          +number>2+last_char-z_char-1
+          +number>1+last_char-z_char-1
+          +ocache;
     number-=5
 
-    goto{dupe}/(number>0)
+    goto{dupe}/(number>1)
 
 @prepend_dupe:
-    output=dup_char+output;
+    ocache=is_nonalpha+tmp_char-(1+tmp_char)-0+ocache-underscore;
     goto{start}/(icache>0)
 
 @exit:
-    output-="_"
+    output=ocache-underscore;
     goto:done++

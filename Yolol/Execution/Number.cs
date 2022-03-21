@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Globalization;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using Yolol.Execution.Attributes;
 
 namespace Yolol.Execution
@@ -9,7 +8,7 @@ namespace Yolol.Execution
     //todo:add StructLayout/FieldOffset back in once Blazor WASM is fixed (https://github.com/dotnet/runtime/issues/61385)
     //[StructLayout(LayoutKind.Explicit)]
     public readonly struct Number
-        : IEquatable<Number>
+        : IEquatable<Number>, IComparable<Number>
     {
         public const int Scale = 1000;
         public const int Decimals = 3;
@@ -124,6 +123,11 @@ namespace Yolol.Execution
         public override int GetHashCode()
         {
             return HashCode.Combine(_value);
+        }
+
+        public int CompareTo(Number other)
+        {
+            return _value.CompareTo(other._value);
         }
 
         public static Number Parse(string s)

@@ -4,28 +4,28 @@ using YololAssembler.Grammar.Errors;
 
 namespace YololAssembler.Grammar.AST
 {
-    internal class EvalReplacement
+    internal class TryEvalReplacement
         : BaseDefine
     {
-        protected override string FindRegex => $"eval\\((?<body>.*?)\\)";
+        protected override string FindRegex => $"eval_try\\((?<body>.*?)\\)";
 
         protected override string Replace(string part)
         {
             // Convert the floating expression into a statement assigning a variable;
-            const string name = "eval";
+            const string name = "try_eval";
             var stmtCode = $"{name}={part}";
 
             // Try to parse this tiny little program
             var parsed = Yolol.Grammar.Parser.ParseProgram(stmtCode);
             if (!parsed.IsOk)
-                throw new CannotParseEval(part, parsed.Err, "eval");
+                throw new CannotParseEval(part, parsed.Err, "eval_try");
             
             // Get the parsed expression back out
             var stmt = (Yolol.Grammar.AST.Statements.Assignment)parsed.Ok.Lines[0].Statements.Statements[0];
             var expr = stmt.Right;
 
             if (!expr.IsConstant)
-                throw new EvalNotConst(expr);
+                return part;
 
             var v = expr.StaticEvaluate();
 

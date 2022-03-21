@@ -1,10 +1,9 @@
-a="_"+:a:o=""
-d=b b=a-a-- u/=b>9 :o=b+:o d=b b=a-a-- u/=b>9 :o=b+:o goto2+6*(a<0)
-goto4+(b=="_")*4
-c=5*(b>4)c+=2*(b>(c+1))c+=b>c+b>(c+1)b=a-a--f=b<=9c+=f*10g=0+d
-e=f+b-(1+b)-0 
-e+=c>5+d-g-1+c>4+d-g-1+c>3+d-g-1+c>2+d-g-1+c>1+d-g-1c-=5goto6/(c>0)
-:o=e+:o goto2/(a>0)
-:o-="_"goto:done++
+j="_"a=j+:a o=""h="________"h+=h h+=h h+=h h+=h h+=h h+=h h+=h-j
+b=a-a--u/=b>9o=b+o b=a-a--u/=b>9o=b+o b=a-a--u/=b>9o=b+o goto2+5*(a<0)
+c=5*(b>4)c+=2*(b>(c+1))c+=b>c+b>(c+1)goto4+(b==j)*3
+b=a-a--f=b<=9c+=f*10d=h+o-h g=0+d
+o=c>5+d-g-1+c>4+d-g-1+c>3+d-g-1+c>2+d-g-1+c>1+d-g-1+o c-=5goto5/(c>1)
+o=f+b-(1+b)-0+o-j goto2/(a>0)
+:o=o-j goto:done++
 
 // <-------------- this line is 70 characters long ------------------>
