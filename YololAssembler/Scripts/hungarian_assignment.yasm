@@ -1,12 +1,22 @@
 #import lib.yasm
 
-#define _a3j0__a0j1 aa
+#define _a3j0__a2j1 aa
 #define _a1j0__a0j1 bb
 #define _a0j0__a2j1 cc
 #define _a2j0__a0j1 dd
 #define _a0j0__a1j1 ee
 #define _a1j0__a2j1 ff
 #define _a2j0__a1j1 gg
+#define _a1j0__a3j1 hh
+#define _a3j0__a0j1 ii
+#define _a0j0__a3j1 jj
+#define _a3j0__a1j1 kk
+#define _a2j0__a3j1 y
+
+#define ca0j2 ll
+#define ca1j2 mm
+#define ca3j2 nn
+#define ca2j2 pp
 
 ## 0123 a
 ## 1023 b
@@ -34,7 +44,6 @@
 ## 3012 x
 
 #define score a
-#define next_str y
 #define best z
 
 #define jobcost(agent, job) {
@@ -66,106 +75,99 @@
 ##     z=select_string("1023", "0123", a==b)
 
 @:
-    _a3j0__a0j1=:a3j0+:a2j1;
+    ca0j2=:a0j2;
+    ca1j2=:a1j2;
+    ca3j2=:a3j2;
+    ca2j2=:a2j2;
+    _a3j0__a2j1=:a3j0+:a2j1;
+    _a0j0__a1j1=:a0j0+:a1j1
+
+@:
+    z="0123"
     _a1j0__a0j1=:a1j0+:a0j1;
     _a0j0__a2j1=:a0j0+:a2j1;
     _a2j0__a0j1=:a2j0+:a0j1;
-    z="0123"
+    a=_a0j0__a1j1+ca2j2;
+    b=_a1j0__a0j1+ca2j2
 
 @:
-    _a0j0__a1j1=:a0j0+:a1j1;
+    _a3j0__a2j1=:a3j0+:a2j1;
     _a1j0__a2j1=:a1j0+:a2j1;
     _a2j0__a1j1=:a2j0+:a1j1;
-    a=_a0j0__a1j1+:a2j2;
-    b=_a1j0__a0j1+:a2j2
+    _a1j0__a3j1=:a1j0+:a3j1;
+    c=_a2j0__a0j1+ca1j2
 
 @:
-    c=_a2j0__a0j1+:a1j2;
-    d=_a0j0__a2j1+:a1j2;
-    e=_a1j0__a2j1+:a0j2;
-    f=_a2j0__a1j1+:a0j2;
-    g=_a2j0__a1j1+:a3j2;
-    h=_a1j0__a2j1+:a3j2
+    _a3j0__a0j1=:a3j0+:a0j1;
+    _a0j0__a3j1=:a0j0+:a3j1;
+    _a3j0__a1j1=:a3j0+:a1j1;
+    _a2j0__a3j1=:a2j0+:a3j1;
+    d=_a0j0__a2j1+ca1j2
 
 @:
-    i=_a3j0__a0j1+:a1j2;
-    j=:a2j0+:a3j1+:a1j2;
-    k=:a1j0+:a3j1+:a2j2;
-    l=:a3j0+:a1j1+:a2j2
+    e=_a1j0__a2j1+ca0j2;
+    f=_a2j0__a1j1+ca0j2;
+    g=_a2j0__a1j1+ca3j2;
+    h=_a1j0__a2j1+ca3j2;
+    i=_a3j0__a2j1+ca1j2;
+    j=_a2j0__a3j1+ca1j2;
+    k=_a1j0__a3j1+ca2j2;
+    l=_a3j0__a1j1+ca2j2;
+    m=_a3j0__a0j1+ca2j2
 
 @:
-    m=:a3j0+:a0j1+:a2j2;
-    n=:a0j0+:a3j1+:a2j2;
-    o=:a2j0+:a3j1+:a0j2;
-    p=_a3j0__a0j1+:a0j2
+    n=_a0j0__a3j1+ca2j2;
+    o=_a2j0__a3j1+ca0j2;
+    p=_a3j0__a2j1+ca0j2;
+    q=_a0j0__a2j1+ca3j2;
+    r=_a2j0__a0j1+ca3j2;
+    s=_a1j0__a0j1+ca3j2;
+    t=_a0j0__a1j1+ca3j2;
+    u=_a3j0__a1j1+ca0j2;
+    v=_a1j0__a3j1+ca0j2
 
 @:
-    q=_a0j0__a2j1+:a3j2;
-    r=_a2j0__a0j1+:a3j2;
-    s=_a1j0__a0j1+:a3j2;
-    t=_a0j0__a1j1+:a3j2;
-    u=:a3j0+:a1j1+:a0j2;
-
-@:
-    v=:a1j0+:a3j1+:a0j2;
-    w=:a0j0+:a3j1+:a1j2;
-    x=:a3j0+:a0j1+:a1j2;
-
-@:
-    check("1023", b)
-    check("2013", c)
-    skip_go(d, e)
+    w=_a0j0__a3j1+ca1j2;
+    x=_a3j0__a0j1+ca1j2;
+    check(1023, b)
+    check(2013, c)
 
 @:
     check("0213", d)
-    check("1203", e)
-    skip_go(f, g)
-
-@:
-    check("2103", f)
-    check("2130", g)
-    skip_go(h, i)
-
-@:
-    check("1230", h)
-    check("3210", i)
-    skip_go(j, k)
-
-@:
-    check("2310", j)
-    check("1320", k)
-    skip_go(l, m)
-
-@:
-    check("3120", l)
-    check("3021", m)
-    skip_go(n, o)
+    check(1203, e)
+    skip_go(n, q)
 
 @:
     check("0321", n)
-    check("2301", o)
-    skip_go(p, q)
-
-@:
-    check("3201", p)
     check("0231", q)
-    skip_go(r, s)
 
 @:
-    check("2031", r)
-    check("1032", s)
-    skip_go(t, u)
+    check(2103, f)
+    check(2130, g)
+    check(1230, h)
+
+@:
+    check(3210, i)
+    check(2310, j)
+    check(1320, k)
+
+@:
+    check(3120, l)
+    check(3021, m)
+    check(2301, o)
+
+@:
+    check(3201, p)
+    check(2031, r)
+    check(1032, s)
+
+@:
+    check(1302, v)
+    check(3102, u)
+    check(3012, x)
 
 @:
     check("0132", t)
-    check("3102", u)
-    skip_go(v, w)
-
-@:
-    check("1302", v)
     check("0312", w)
-
-@:
-    check("3012", x)
-    :o=best;
+    :o=""+best;
     goto:done++
