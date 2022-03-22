@@ -1,0 +1,21 @@
+aa=:a3j0+:a2j1 bb=:a1j0+:a0j1 cc=:a0j0+:a2j1 dd=:a2j0+:a0j1 z="0123"
+ee=:a0j0+:a1j1 ff=:a1j0+:a2j1 gg=:a2j0+:a1j1 a=ee+:a2j2 b=bb+:a2j2
+c=dd+:a1j2 d=cc+:a1j2 e=ff+:a0j2 f=gg+:a0j2 g=gg+:a3j2 h=ff+:a3j2
+i=aa+:a1j2 j=:a2j0+:a3j1+:a1j2 k=:a1j0+:a3j1+:a2j2 l=:a3j0+:a1j1+:a2j2
+m=:a3j0+:a0j1+:a2j2 n=:a0j0+:a3j1+:a2j2 o=:a2j0+:a3j1+:a0j2 p=aa+:a0j2
+q=cc+:a3j2 r=dd+:a3j2 s=bb+:a3j2 t=ee+:a3j2 u=:a3j0+:a1j1+:a0j2 
+v=:a1j0+:a3j1+:a0j2 w=:a0j0+:a3j1+:a1j2 x=:a3j0+:a0j1+:a1j2 
+ifb<a thena=b z="1023"endifc<a thena=c z="2013"endgoto9+(d>a)*(e>a)
+ifd<a thena=d z="0213"endife<a thena=e z="1203"endgoto10+(f>a)*(g>a)
+iff<a thena=f z="2103"endifg<a thena=g z="2130"endgoto11+(h>a)*(i>a)
+ifh<a thena=h z="1230"endifi<a thena=i z="3210"endgoto12+(j>a)*(k>a)
+ifj<a thena=j z="2310"endifk<a thena=k z="1320"endgoto13+(l>a)*(m>a)
+ifl<a thena=l z="3120"endifm<a thena=m z="3021"endgoto14+(n>a)*(o>a)
+ifn<a thena=n z="0321"endifo<a thena=o z="2301"endgoto15+(p>a)*(q>a)
+ifp<a thena=p z="3201"endifq<a thena=q z="0231"endgoto16+(r>a)*(s>a)
+ifr<a thena=r z="2031"endifs<a thena=s z="1032"endgoto17+(t>a)*(u>a)
+ift<a thena=t z="0132"endifu<a thena=u z="3102"endgoto18+(v>a)*(w>a)
+ifv<a thena=v z="1302"endifw<a thena=w z="0312"end
+ifx<a thena=x z="3012"end:o=z goto:done++
+
+// <-------------- this line is 70 characters long ------------------>

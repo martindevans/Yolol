@@ -1,0 +1,171 @@
+#import lib.yasm
+
+#define _a3j0__a0j1 aa
+#define _a1j0__a0j1 bb
+#define _a0j0__a2j1 cc
+#define _a2j0__a0j1 dd
+#define _a0j0__a1j1 ee
+#define _a1j0__a2j1 ff
+#define _a2j0__a1j1 gg
+
+## 0123 a
+## 1023 b
+## 2013 c
+## 0213 d
+## 1203 e
+## 2103 f
+## 2130 g
+## 1230 h
+## 3210 i
+## 2310 j
+## 1320 k
+## 3120 l
+## 3021 m
+## 0321 n
+## 2301 o
+## 3201 p
+## 0231 q
+## 2031 r
+## 1032 s
+## 0132 t
+## 3102 u
+## 1302 v
+## 0312 w
+## 3012 x
+
+#define score a
+#define next_str y
+#define best z
+
+#define jobcost(agent, job) {
+    :aagentjjob
+}
+
+#define totalcost(agent0, agent1, agent2, agent3) {
+    jobcost(agent0, 0)+jobcost(agent1, 1)+jobcost(agent2, 2)
+}
+
+#define select_string(str_true, str_false, choose) {
+    eval_try("0"+str_false+"1"+str_true)-(eval_try(choose+str_true))-0-eval_try("1"+str_true)
+}
+
+#define min2(a, b) {
+    a+(b-a)*(b<a)
+}
+
+#define check(str, var) {
+    ifvar<score thenscore=var best=strend
+}
+
+#define skip_go(next1, next2) {
+    gotoeval(@+1)+(next1>score)*(next2>score)
+}
+
+## @:
+##     a=min2(a, b)
+##     z=select_string("1023", "0123", a==b)
+
+@:
+    _a3j0__a0j1=:a3j0+:a2j1;
+    _a1j0__a0j1=:a1j0+:a0j1;
+    _a0j0__a2j1=:a0j0+:a2j1;
+    _a2j0__a0j1=:a2j0+:a0j1;
+    z="0123"
+
+@:
+    _a0j0__a1j1=:a0j0+:a1j1;
+    _a1j0__a2j1=:a1j0+:a2j1;
+    _a2j0__a1j1=:a2j0+:a1j1;
+    a=_a0j0__a1j1+:a2j2;
+    b=_a1j0__a0j1+:a2j2
+
+@:
+    c=_a2j0__a0j1+:a1j2;
+    d=_a0j0__a2j1+:a1j2;
+    e=_a1j0__a2j1+:a0j2;
+    f=_a2j0__a1j1+:a0j2;
+    g=_a2j0__a1j1+:a3j2;
+    h=_a1j0__a2j1+:a3j2
+
+@:
+    i=_a3j0__a0j1+:a1j2;
+    j=:a2j0+:a3j1+:a1j2;
+    k=:a1j0+:a3j1+:a2j2;
+    l=:a3j0+:a1j1+:a2j2
+
+@:
+    m=:a3j0+:a0j1+:a2j2;
+    n=:a0j0+:a3j1+:a2j2;
+    o=:a2j0+:a3j1+:a0j2;
+    p=_a3j0__a0j1+:a0j2
+
+@:
+    q=_a0j0__a2j1+:a3j2;
+    r=_a2j0__a0j1+:a3j2;
+    s=_a1j0__a0j1+:a3j2;
+    t=_a0j0__a1j1+:a3j2;
+    u=:a3j0+:a1j1+:a0j2;
+
+@:
+    v=:a1j0+:a3j1+:a0j2;
+    w=:a0j0+:a3j1+:a1j2;
+    x=:a3j0+:a0j1+:a1j2;
+
+@:
+    check("1023", b)
+    check("2013", c)
+    skip_go(d, e)
+
+@:
+    check("0213", d)
+    check("1203", e)
+    skip_go(f, g)
+
+@:
+    check("2103", f)
+    check("2130", g)
+    skip_go(h, i)
+
+@:
+    check("1230", h)
+    check("3210", i)
+    skip_go(j, k)
+
+@:
+    check("2310", j)
+    check("1320", k)
+    skip_go(l, m)
+
+@:
+    check("3120", l)
+    check("3021", m)
+    skip_go(n, o)
+
+@:
+    check("0321", n)
+    check("2301", o)
+    skip_go(p, q)
+
+@:
+    check("3201", p)
+    check("0231", q)
+    skip_go(r, s)
+
+@:
+    check("2031", r)
+    check("1032", s)
+    skip_go(t, u)
+
+@:
+    check("0132", t)
+    check("3102", u)
+    skip_go(v, w)
+
+@:
+    check("1302", v)
+    check("0312", w)
+
+@:
+    check("3012", x)
+    :o=best;
+    goto:done++
