@@ -1,17 +1,17 @@
 #import lib.yasm
 
-#define _a3j0__a2j1 aa
-#define _a1j0__a0j1 bb
-#define _a0j0__a2j1 cc
-#define _a2j0__a0j1 dd
-#define _a0j0__a1j1 ee
-#define _a1j0__a2j1 ff
-#define _a2j0__a1j1 gg
-#define _a1j0__a3j1 hh
-#define _a3j0__a0j1 ii
-#define _a0j0__a3j1 jj
-#define _a3j0__a1j1 kk
-#define _a2j0__a3j1 y
+#define _a3j0__a2j1 q
+#define _a1j0__a0j1 t
+#define _a0j0__a2j1 r
+#define _a2j0__a0j1 s
+#define _a0j0__a1j1 u
+#define _a1j0__a2j1 j
+#define _a2j0__a1j1 h
+#define _a1j0__a3j1 w
+#define _a3j0__a0j1 y
+#define _a0j0__a3j1 x
+#define _a3j0__a1j1 v
+#define _a2j0__a3j1 p
 
 #define ca0j2 ll
 #define ca1j2 mm
@@ -62,8 +62,13 @@
     a+(b-a)*(b<a)
 }
 
-#define check(str, var) {
+#define check_if(str, var) {
     ifvar<score thenscore=var best=strend
+}
+
+#define check_div(str, var) {
+    score=var/(var<score)
+    best=str
 }
 
 #define skip_go(next1, next2) {
@@ -80,7 +85,8 @@
     ca3j2=:a3j2;
     ca2j2=:a2j2;
     _a3j0__a2j1=:a3j0+:a2j1;
-    _a0j0__a1j1=:a0j0+:a1j1
+    _a0j0__a1j1=:a0j0+:a1j1;
+    i=_a3j0__a2j1+ca1j2
 
 @:
     z="0123"
@@ -88,86 +94,86 @@
     _a0j0__a2j1=:a0j0+:a2j1;
     _a2j0__a0j1=:a2j0+:a0j1;
     a=_a0j0__a1j1+ca2j2;
-    b=_a1j0__a0j1+ca2j2
+    b=_a1j0__a0j1+ca2j2;
+    c=_a2j0__a0j1+ca1j2
 
 @:
     _a3j0__a2j1=:a3j0+:a2j1;
     _a1j0__a2j1=:a1j0+:a2j1;
     _a2j0__a1j1=:a2j0+:a1j1;
     _a1j0__a3j1=:a1j0+:a3j1;
-    c=_a2j0__a0j1+ca1j2
+    d=_a0j0__a2j1+ca1j2;
+    e=_a1j0__a2j1+ca0j2
 
 @:
     _a3j0__a0j1=:a3j0+:a0j1;
     _a0j0__a3j1=:a0j0+:a3j1;
     _a3j0__a1j1=:a3j0+:a1j1;
     _a2j0__a3j1=:a2j0+:a3j1;
-    d=_a0j0__a2j1+ca1j2
+    f=_a2j0__a1j1+ca0j2;
+    g=_a2j0__a1j1+ca3j2
 
 @:
-    e=_a1j0__a2j1+ca0j2;
-    f=_a2j0__a1j1+ca0j2;
-    g=_a2j0__a1j1+ca3j2;
     h=_a1j0__a2j1+ca3j2;
-    i=_a3j0__a2j1+ca1j2;
     j=_a2j0__a3j1+ca1j2;
     k=_a1j0__a3j1+ca2j2;
     l=_a3j0__a1j1+ca2j2;
-    m=_a3j0__a0j1+ca2j2
-
-@:
+    m=_a3j0__a0j1+ca2j2;
     n=_a0j0__a3j1+ca2j2;
     o=_a2j0__a3j1+ca0j2;
     p=_a3j0__a2j1+ca0j2;
-    q=_a0j0__a2j1+ca3j2;
+    q=_a0j0__a2j1+ca3j2
+    
+@:
+    check_if("0321", n)
+    check_if(1203, e);
+    check_div("0213", d)
+
+@:
+    check_if(2130, g)
+    check_if("0231", q);
+    check_div(2013, c)
+
+@:
     r=_a2j0__a0j1+ca3j2;
+    check_if(1230, h)
+    check_if(2301, o);
+    check_div(2013, c)
+
+@:
     s=_a1j0__a0j1+ca3j2;
+    check_if(2310, j)
+    check_if(3210, i);
+    check_div(1320, k)
+
+@:
     t=_a0j0__a1j1+ca3j2;
     u=_a3j0__a1j1+ca0j2;
-    v=_a1j0__a3j1+ca0j2
+    v=_a1j0__a3j1+ca0j2;
+    check_if(1023, b)
+    
+    gotoeval(@+1)+(v>score)*(m>score)*(s>score)
+
+@:
+    check_if(1302, v)
+    check_if(3021, m);
+    check_div(1032, s)
 
 @:
     w=_a0j0__a3j1+ca1j2;
+    check_if(3120, l)
+    check_if(2031, r);
+    check_div(3102, u)
+
+@:
     x=_a3j0__a0j1+ca1j2;
-    check(1023, b)
-    check(2013, c)
+    check_if(3201, p)
+    check_if(2103, f);
+    check_div(3012, x)
 
 @:
-    check("0213", d)
-    check(1203, e)
-    skip_go(n, q)
-
-@:
-    check("0321", n)
-    check("0231", q)
-
-@:
-    check(2103, f)
-    check(2130, g)
-    check(1230, h)
-
-@:
-    check(3210, i)
-    check(2310, j)
-    check(1320, k)
-
-@:
-    check(3120, l)
-    check(3021, m)
-    check(2301, o)
-
-@:
-    check(3201, p)
-    check(2031, r)
-    check(1032, s)
-
-@:
-    check(1302, v)
-    check(3102, u)
-    check(3012, x)
-
-@:
-    check("0132", t)
-    check("0312", w)
+    
+    check_if("0312", w)
+    check_if("0132", t)
     :o=""+best;
     goto:done++

@@ -1,17 +1,16 @@
-ll=:a0j2 mm=:a1j2 nn=:a3j2 pp=:a2j2 aa=:a3j0+:a2j1 ee=:a0j0+:a1j1
-z="0123"bb=:a1j0+:a0j1 cc=:a0j0+:a2j1 dd=:a2j0+:a0j1 a=ee+pp b=bb+pp
-aa=:a3j0+:a2j1 ff=:a1j0+:a2j1 gg=:a2j0+:a1j1 hh=:a1j0+:a3j1 c=dd+mm
-ii=:a3j0+:a0j1 jj=:a0j0+:a3j1 kk=:a3j0+:a1j1 y=:a2j0+:a3j1 d=cc+mm
-e=ff+ll f=gg+ll g=gg+nn h=ff+nn i=aa+mm j=y+mm k=hh+pp l=kk+pp m=ii+pp
-n=jj+pp o=y+ll p=aa+ll q=cc+nn r=dd+nn s=bb+nn t=ee+nn u=kk+ll v=hh+ll
-w=jj+mm x=ii+mm ifb<a thena=b z=1023endifc<a thena=c z=2013end
-ifd<a thena=d z="0213"endife<a thena=e z=1203endgoto9+(n>a)*(q>a)
-ifn<a thena=n z="0321"endifq<a thena=q z="0231"end
-iff<a thena=f z=2103endifg<a thena=g z=2130endifh<a thena=h z=1230end
-ifi<a thena=i z=3210endifj<a thena=j z=2310endifk<a thena=k z=1320end
-ifl<a thena=l z=3120endifm<a thena=m z=3021endifo<a thena=o z=2301end
-ifp<a thena=p z=3201endifr<a thena=r z=2031endifs<a thena=s z=1032end
-ifv<a thena=v z=1302endifu<a thena=u z=3102endifx<a thena=x z=3012end
-ift<a thena=t z="0132"endifw<a thena=w z="0312"end:o=""+z goto:done++
+ll=:a0j2 mm=:a1j2 nn=:a3j2 pp=:a2j2 q=:a3j0+:a2j1 u=:a0j0+:a1j1 i=q+mm
+z="0123"t=:a1j0+:a0j1 r=:a0j0+:a2j1 s=:a2j0+:a0j1 a=u+pp b=t+pp c=s+mm
+q=:a3j0+:a2j1 j=:a1j0+:a2j1 h=:a2j0+:a1j1 w=:a1j0+:a3j1 d=r+mm e=j+ll
+y=:a3j0+:a0j1 x=:a0j0+:a3j1 v=:a3j0+:a1j1 p=:a2j0+:a3j1 f=h+ll g=h+nn
+h=j+nn j=p+mm k=w+pp l=v+pp m=y+pp n=x+pp o=p+ll p=q+ll q=r+nn
+ifn<a thena=n z="0321"endife<a thena=e z=1203end a=d/(d<a)z="0213"
+ifg<a thena=g z=2130endifq<a thena=q z="0231"end a=c/(c<a)z=2013
+r=s+nn ifh<a thena=h z=1230endifo<a thena=o z=2301end a=c/(c<a)z=2013
+s=t+nn ifj<a thena=j z=2310endifi<a thena=i z=3210end a=k/(k<a)z=1320
+t=u+nn u=v+ll v=w+ll ifb<a thena=b z=1023endgoto11+(v>a)*(m>a)*(s>a)
+ifv<a thena=v z=1302endifm<a thena=m z=3021end a=s/(s<a)z=1032
+w=x+mm ifl<a thena=l z=3120endifr<a thena=r z=2031end a=u/(u<a)z=3102
+x=y+mm ifp<a thena=p z=3201endiff<a thena=f z=2103end a=x/(x<a)z=3012
+ifw<a thena=w z="0312"endift<a thena=t z="0132"end:o=""+z goto:done++
 
 // <-------------- this line is 70 characters long ------------------>
