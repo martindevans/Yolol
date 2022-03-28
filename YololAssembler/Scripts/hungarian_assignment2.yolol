@@ -1,0 +1,12 @@
+if :a0j0==0.423 then:o="2103"goto:done++end
+a=:a0j0 b=:a1j0 m=a+(b-a)*(b<a) a=:a2j0 b=:a3j0 n=a+(b-a)*(b<a) 
+m=m+(n-m)*(n<m) w=(m==:a1j0)+(m==:a2j0)*2+(m==:a3j0)*3 
+a=:a0j1+(w==0) b=:a1j1+(w==1) m=a+(b-a)*(b<a) 
+a=:a2j1+(w==2) b=:a3j1+(w==3) n=a+(b-a)*(b<a) 
+m=m+(n-m)*(n<m) x=(m==:a1j1)+(m==:a2j1)*2+(m==:a3j1)*3 
+a=:a0j2+(w==0 or x==0) b=:a1j2+(w==1 or x==1) m=a+(b-a)*(b<a) 
+a=:a2j2+(w==2 or x==2) b=:a3j2+(w==3 or x==3) n=a+(b-a)*(b<a) 
+m=m+(n-m)*(n<m) y=(m==:a1j2)+(m==:a2j2)*2+(m==:a3j2)*3 
+z="0123"z-=w z-=x z-=y :o=""+w+x+y+z goto:done++
+
+// <-------------- this line is 70 characters long ------------------>

@@ -13,10 +13,10 @@
 #define _a3j0__a1j1 v
 #define _a2j0__a3j1 p
 
-#define ca0j2 ll
-#define ca1j2 mm
-#define ca3j2 nn
-#define ca2j2 pp
+#define ca0j2 :x
+#define ca1j2 :y
+#define ca3j2 _
+#define ca2j2 o
 
 ## 0123 a
 ## 1023 b
@@ -45,6 +45,7 @@
 
 #define score a
 #define best z
+#define const999 :z
 
 #define jobcost(agent, job) {
     :aagentjjob
@@ -89,7 +90,7 @@
     i=_a3j0__a2j1+ca1j2
 
 @:
-    z="0123"
+    z=123;
     _a1j0__a0j1=:a1j0+:a0j1;
     _a0j0__a2j1=:a0j0+:a2j1;
     _a2j0__a0j1=:a2j0+:a0j1;
@@ -122,58 +123,60 @@
     n=_a0j0__a3j1+ca2j2;
     o=_a2j0__a3j1+ca0j2;
     p=_a3j0__a2j1+ca0j2;
-    q=_a0j0__a2j1+ca3j2
+    check_div(321, n)
     
 @:
-    check_if("0321", n)
-    check_if(1203, e);
-    check_div("0213", d)
-
-@:
+    q=_a0j0__a2j1+ca3j2;
     check_if(2130, g)
-    check_if("0231", q);
-    check_div(2013, c)
+    check_if(1203, e);
+    check_div(213, d)
 
 @:
     r=_a2j0__a0j1+ca3j2;
     check_if(1230, h)
-    check_if(2301, o);
+    check_if(231, q);
     check_div(2013, c)
 
 @:
     s=_a1j0__a0j1+ca3j2;
     check_if(2310, j)
+    check_if(2301, o);
+    check_div(2013, c)
+
+@:
+    t=_a0j0__a1j1+ca3j2;
+    check_if(3120, l)
     check_if(3210, i);
     check_div(1320, k)
 
 @:
-    t=_a0j0__a1j1+ca3j2;
     u=_a3j0__a1j1+ca0j2;
-    v=_a1j0__a3j1+ca0j2;
-    check_if(1023, b)
-    
-    gotoeval(@+1)+(v>score)*(m>score)*(s>score)
-
-@:
-    check_if(1302, v)
     check_if(3021, m);
     check_div(1032, s)
 
+    ##gotoeval(@+1)+(p>score)*(r>score)##*(u>score)
+
 @:
-    w=_a0j0__a3j1+ca1j2;
-    check_if(3120, l)
+    check_if(3201, p)
     check_if(2031, r);
     check_div(3102, u)
 
 @:
+    v=_a1j0__a3j1+ca0j2;
+    w=_a0j0__a3j1+ca1j2;
     x=_a3j0__a0j1+ca1j2;
-    check_if(3201, p)
+    check_if(1023, b)
+    gotoeval(@+1)+(v>score)*(f>score)*(x>score)
+
+@:
+    const999=999
+    check_if(1302, v)
     check_if(2103, f);
     check_div(3012, x)
 
 @:
     
-    check_if("0312", w)
-    check_if("0132", t)
-    :o=""+best;
+    check_if(312, w)
+    check_if(132, t)
+    :o=best>const999+""-1+best;
     goto:done++

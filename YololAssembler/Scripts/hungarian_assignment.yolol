@@ -1,16 +1,16 @@
-ll=:a0j2 mm=:a1j2 nn=:a3j2 pp=:a2j2 q=:a3j0+:a2j1 u=:a0j0+:a1j1 i=q+mm
-z="0123"t=:a1j0+:a0j1 r=:a0j0+:a2j1 s=:a2j0+:a0j1 a=u+pp b=t+pp c=s+mm
-q=:a3j0+:a2j1 j=:a1j0+:a2j1 h=:a2j0+:a1j1 w=:a1j0+:a3j1 d=r+mm e=j+ll
-y=:a3j0+:a0j1 x=:a0j0+:a3j1 v=:a3j0+:a1j1 p=:a2j0+:a3j1 f=h+ll g=h+nn
-h=j+nn j=p+mm k=w+pp l=v+pp m=y+pp n=x+pp o=p+ll p=q+ll q=r+nn
-ifn<a thena=n z="0321"endife<a thena=e z=1203end a=d/(d<a)z="0213"
-ifg<a thena=g z=2130endifq<a thena=q z="0231"end a=c/(c<a)z=2013
-r=s+nn ifh<a thena=h z=1230endifo<a thena=o z=2301end a=c/(c<a)z=2013
-s=t+nn ifj<a thena=j z=2310endifi<a thena=i z=3210end a=k/(k<a)z=1320
-t=u+nn u=v+ll v=w+ll ifb<a thena=b z=1023endgoto11+(v>a)*(m>a)*(s>a)
-ifv<a thena=v z=1302endifm<a thena=m z=3021end a=s/(s<a)z=1032
-w=x+mm ifl<a thena=l z=3120endifr<a thena=r z=2031end a=u/(u<a)z=3102
-x=y+mm ifp<a thena=p z=3201endiff<a thena=f z=2103end a=x/(x<a)z=3012
-ifw<a thena=w z="0312"endift<a thena=t z="0132"end:o=""+z goto:done++
+:x=:a0j2 :y=:a1j2 _=:a3j2 o=:a2j2 q=:a3j0+:a2j1 u=:a0j0+:a1j1 i=q+:y
+z=123 t=:a1j0+:a0j1 r=:a0j0+:a2j1 s=:a2j0+:a0j1 a=u+o b=t+o c=s+:y
+q=:a3j0+:a2j1 j=:a1j0+:a2j1 h=:a2j0+:a1j1 w=:a1j0+:a3j1 d=r+:y e=j+:x
+y=:a3j0+:a0j1 x=:a0j0+:a3j1 v=:a3j0+:a1j1 p=:a2j0+:a3j1 f=h+:x g=h+_
+h=j+_ j=p+:y k=w+o l=v+o m=y+o n=x+o o=p+:x p=q+:x a=n/(n<a)z=321
+q=r+_ ifg<a thena=g z=2130endife<a thena=e z=1203end a=d/(d<a)z=213
+r=s+_ ifh<a thena=h z=1230endifq<a thena=q z=231end a=c/(c<a)z=2013
+s=t+_ ifj<a thena=j z=2310endifo<a thena=o z=2301end a=c/(c<a)z=2013
+t=u+_ ifl<a thena=l z=3120endifi<a thena=i z=3210end a=k/(k<a)z=1320
+u=v+:x ifm<a thena=m z=3021end a=s/(s<a)z=1032
+ifp<a thena=p z=3201endifr<a thena=r z=2031end a=u/(u<a)z=3102
+v=w+:x w=x+:y x=y+:y ifb<a thena=b z=1023endgoto13+(v>a)*(f>a)*(x>a)
+:z=999ifv<a thena=v z=1302endiff<a thena=f z=2103end a=x/(x<a)z=3012
+ifw<a thena=w z=312endift<a thena=t z=132end:o=z>:z+""-1+z goto:done++
 
 // <-------------- this line is 70 characters long ------------------>
