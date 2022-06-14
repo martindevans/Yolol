@@ -6,6 +6,26 @@ namespace YololEmulator.Tests.Expressions.Num
     public class Assignment
     {
         [TestMethod]
+        public void Hexadecimal()
+        {
+            var result = TestExecutor.Execute("a=0xFFA1");
+
+            var a = result.GetVariable("a");
+
+            Assert.AreEqual(65441, (int)a.Value.Number);
+        }
+
+        [TestMethod]
+        public void Exponential()
+        {
+            var result = TestExecutor.Execute("a=1.1E-2");
+
+            var a = result.GetVariable("a");
+
+            Assert.AreEqual(0.011, (double)a.Value.Number);
+        }
+
+        [TestMethod]
         public void Positive()
         {
             var result = TestExecutor.Execute("a=1");

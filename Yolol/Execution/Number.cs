@@ -130,16 +130,38 @@ namespace Yolol.Execution
             return _value.CompareTo(other._value);
         }
 
+        internal static Number ParseHex(string s)
+        {
+            var d = long.Parse(s[2..], NumberStyles.HexNumber, CultureInfo.InvariantCulture);
+            return Convert(d);
+        }
+
+        internal static Number ParseExp(string s)
+        {
+            var d = double.Parse(s, NumberStyles.Float, CultureInfo.InvariantCulture);
+            return Convert(d);
+        }
+
         public static Number Parse(string s)
         {
+            if (s.StartsWith("0x") || s.StartsWith("0X"))
+                return ParseHex(s);
+
+            if (s.Contains("e", StringComparison.OrdinalIgnoreCase))
+                return ParseExp(s);
+
+            return Convert(double.Parse(s, CultureInfo.InvariantCulture));
+        }
+
+        private static Number Convert(double d)
+        {
             // First check if the number is out of the valid range
-            var d = double.Parse(s, CultureInfo.InvariantCulture);
             if (d >= MaxValue._value)
                 return MaxValue;
             else if (d <= MinValue._value)
                 return MinValue;
 
-            return (Number)decimal.Parse(s, CultureInfo.InvariantCulture);
+            return (Number)d;
         }
 
         #region casts

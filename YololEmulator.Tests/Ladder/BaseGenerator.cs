@@ -35,8 +35,6 @@ namespace YololEmulator.Tests.Ladder
                 }
             }
 
-            Console.WriteLine($"Cases: {input.Count}");
-
             Finalise(input, output);
 
             Generator.YololLadderGenerator(input, output, shuffle, mode, chip);

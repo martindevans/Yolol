@@ -1,0 +1,7 @@
+a="yxwvutsrqponmlkjihgfedcbaZYXWVUTSRQPONMLKJIHGFEDCBA9876543210 "d=""
+i=:i b=a-a-- 
+u/=i!=(i-b)i-=b d+=b u/=i!=(i-b)i-=b d+=b u/=i!=(i-b)i-=b d+=b goto3
+b=a-a--d+=i!=(i-b)+b-(0+b)-1i-=b d+=i!=(i-b)+b-(0+b)-1i-=b goto3+(i<0)
+:o=d+i goto:done++
+
+// <-------------- this line is 70 characters long ------------------>

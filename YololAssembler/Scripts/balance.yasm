@@ -1,0 +1,65 @@
+#import lib.yasm
+
+#define const_a a
+#define input i
+#define tmp_char c
+#define brk_count b
+
+#define left_paren l
+#define right_paren r
+
+#define process_one_char() {
+    tmp_char=pop_char(input)
+    update_counter()
+}
+
+#define update_counter_expr() {
+    tmp_char==right_paren-tmp_char<right_paren
+}
+
+#define update_counter() {
+    brk_count+=update_counter_expr()
+}
+
+#define check_count_expr() {
+    brk_count>0
+}
+
+#define check_count_stmt() {
+    continue_if(brk_count>0)
+}
+
+@init:
+    const_a="a"
+    left_paren="("
+    right_paren=")"
+    b=1
+    i=:i-const_a-const_a-const_a-const_a-const_a
+        -const_a-const_a-const_a-const_a-const_a
+        -const_a-const_a-const_a-const_a;
+
+    tmp_char=pop_char(input)
+    update_counter()
+    
+@loop:
+    tmp_char=pop_char(input)
+    update_counter();
+
+    tmp_char=pop_char(input)
+    brk_count=update_counter_expr()+brk_count/(check_count_expr())
+
+    tmp_char=pop_char(input)
+    brk_count=update_counter_expr()+brk_count/(check_count_expr())
+
+@:
+    check_count_stmt()
+
+    process_one_char();
+    check_count_stmt()
+    
+    process_one_char();
+    goto{loop}/(check_count_expr())
+
+@fallthrough:
+    :o=brk_count==1
+    goto:done++

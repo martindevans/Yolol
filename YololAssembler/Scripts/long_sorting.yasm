@@ -1,0 +1,53 @@
+#import lib.yasm
+
+#define character_set a
+#define inchar b
+#define unsorted i
+#define output d
+#define tmp1 e
+#define z_char f
+
+#define move_char_from_input_fallthrough(set, inchar) {
+    continue_if(set!=(set-inchar))
+    set-=inchar;
+    output+=inchar
+}
+
+#define move_char_from_input_if(set, inchar) {
+    ifunsorted!=(set-inchar)then
+        set-=inchar;
+        output+=inchar;
+    end
+}
+
+#define move_char_from_input_magic(set, inchar) {
+    output+=set!=(set-inchar)+inchar-(0+inchar)-1
+    set-=inchar
+}
+
+@restart:
+    a="yxwvutsrqponmlkjihgfedcbaZYXWVUTSRQPONMLKJIHGFEDCBA9876543210 "
+    output=""
+
+@restart2:
+    unsorted=:i;
+    inchar=pop_char(character_set);
+
+@move:
+    move_char_from_input_fallthrough(unsorted, inchar);
+    move_char_from_input_fallthrough(unsorted, inchar);
+    move_char_from_input_fallthrough(unsorted, inchar);
+    goto@
+
+@newc:
+    inchar=pop_char(character_set)
+
+    move_char_from_input_magic(unsorted, inchar);
+    move_char_from_input_magic(unsorted, inchar);
+
+    goto{move}+(unsorted<0)
+
+@finish:
+    :o=output+unsorted;
+    goto:done++
+    

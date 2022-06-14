@@ -322,6 +322,46 @@ namespace YololEmulator.Tests.Ladder
         }
 
         [TestMethod]
+        public void NyefariTapeSorting2()
+        {
+            var rng = new Random(3645);
+            var input = new List<Dictionary<string, Value>>();
+            var output = new List<Dictionary<string, Value>>();
+
+            for (var i = 0; i < 2000; i++)
+            {
+                var records = new List<string>();
+                for (var j = 0; j < 100; j++)
+                    records.Add($"<{RandomString(rng, 5)}>");
+
+                var inputString = string.Join("", records);
+                records.Sort(Compare);
+                var outputString = string.Join("", records);
+
+                if (inputString.Length > 1024 || outputString.Length > 1024)
+                    throw new InvalidOperationException("String too long!");
+
+                input.Add(new Dictionary<string, Value> { { "i", inputString } });
+                output.Add(new Dictionary<string, Value> { { "o", outputString } });
+
+            }
+
+            Generator.YololLadderGenerator(input, output);
+
+            int Compare(string a, string b)
+            {
+                var ay = new YString(a);
+                var by = new YString(b);
+
+                if (ay < by)
+                    return -1;
+                if (ay > by)
+                    return 1;
+                return 0;
+            }
+        }
+
+        [TestMethod]
         public void BasicInventoryManagement()
         {
             var inventory = new List<char>();

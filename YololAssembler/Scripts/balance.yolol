@@ -1,0 +1,6 @@
+a="a"l="("r=")"b=1i=:i-a-a-a-a-a-a-a-a-a-a-a-a-a-a c=i-i--b+=c==r-c<r
+c=i-i--b+=c==r-c<r c=i-i--b=c==r-c<r+b/(b>0)c=i-i--b=c==r-c<r+b/(b>0)
+u/=b>0c=i-i--b+=c==r-c<r u/=b>0c=i-i--b+=c==r-c<r goto2/(b>0)
+:o=b==1goto:done++
+
+// <-------------- this line is 70 characters long ------------------>
