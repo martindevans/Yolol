@@ -16,13 +16,23 @@ namespace YololEmulator.Tests.Expressions.Num
         }
 
         [TestMethod]
-        public void Exponential()
+        public void HexadecimalExponential()
         {
-            var result = TestExecutor.Execute("a=1.1E-2");
+            var result = TestExecutor.Execute("a=-0x1AFP2");
 
             var a = result.GetVariable("a");
 
-            Assert.AreEqual(0.011, (double)a.Value.Number);
+            Assert.AreEqual(-1724, (int)a.Value.Number);
+        }
+
+        [TestMethod]
+        public void Exponential()
+        {
+            var result = TestExecutor.Execute("a=-1.1E-2");
+
+            var a = result.GetVariable("a");
+
+            Assert.AreEqual(-0.011, (double)a.Value.Number);
         }
 
         [TestMethod]

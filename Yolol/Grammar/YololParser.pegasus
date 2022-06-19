@@ -178,7 +178,7 @@ decimal_number <Number>
     = s:("-"? [0-9]+ ("." [0-9]+)?) { Number.Parse(s) }
 
 hex_number <Number>
-    = s:("-"? "0" [xX] [0-9a-fA-F]+) { Number.ParseHex(s) }
+    = s:("-"? "0" [xX] [0-9a-fA-F]+ ([pP] "-"? [0-9a-fA-F]+)?) { Number.ParseHex(s) }
 
 exp_number <Number>
     = s:("-"? [0-9]+ ("." [0-9]+)? [Ee] "-"? [0-9]+) { Number.ParseExp(s) }

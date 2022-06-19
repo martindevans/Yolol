@@ -2,7 +2,7 @@
   "profiles": {
     "YololAssembler": {
       "commandName": "Project",
-      "commandLineArgs": "-i C:\\Users\\Martin\\Documents\\dotnet\\YololEmulator\\YololAssembler\\Scripts\\balance.yasm --watch",
+      "commandLineArgs": "-i C:\\Users\\Martin\\Documents\\dotnet\\YololEmulator\\YololAssembler\\Scripts\\record_sorting.yasm --watch",
       "workingDirectory": "C:\\Users\\Martin\\Documents\\dotnet\\YololEmulator\\YololAssembler\\Scripts\\"
     },
     "WSL": {

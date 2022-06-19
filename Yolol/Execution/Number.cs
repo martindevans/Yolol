@@ -132,8 +132,28 @@ namespace Yolol.Execution
 
         internal static Number ParseHex(string s)
         {
-            var d = long.Parse(s[2..], NumberStyles.HexNumber, CultureInfo.InvariantCulture);
-            return Convert(d);
+            var input = s.AsSpan();
+
+            // Remove the negative sign
+            var negate = false;
+            if (input.StartsWith("-"))
+            {
+                negate = true;
+                input = input[1..];
+            }
+
+            // Find the hex exponential specifier (P instead of E)
+            var pidnex = input.IndexOf("p", StringComparison.OrdinalIgnoreCase);
+
+            // If there is no exponential convert the number directly
+            if (pidnex < 0)
+                return Convert(System.Convert.ToInt64(input.ToString(), 16) * (negate ? -1 : 1));
+
+            // Split out the bits before and after the P and parse separately
+            var left = System.Convert.ToInt64(input[..pidnex].ToString(), 16);
+            var right = System.Convert.ToInt64(input[pidnex..][1..].ToString(), 16);
+
+            return Convert(left * Math.Pow(2, right) * (negate ? -1 : 1));
         }
 
         internal static Number ParseExp(string s)
@@ -144,7 +164,7 @@ namespace Yolol.Execution
 
         public static Number Parse(string s)
         {
-            if (s.StartsWith("0x") || s.StartsWith("0X"))
+            if (s.Contains("0x", StringComparison.OrdinalIgnoreCase))
                 return ParseHex(s);
 
             if (s.Contains("e", StringComparison.OrdinalIgnoreCase))
