@@ -208,23 +208,22 @@ namespace Yolol.Execution
         }
     }
 
-    //todo:add StructLayout/FieldOffset back in once Blazor WASM is fixed (https://github.com/dotnet/runtime/issues/61385)
-    //[StructLayout(LayoutKind.Explicit)]
+    [StructLayout(LayoutKind.Explicit)]
     internal readonly struct RopeSlice
         : IEquatable<string>
     {
-        //[FieldOffset(0)]
+        [FieldOffset(0)]
         private readonly ushort _start;
 
         // Keep count of the total number of zeroes/ones in the string. This can be used to accelerate
         // the very common task of subtracting booleans from the string.
-        //[FieldOffset(2)]
+        [FieldOffset(2)]
         private readonly SaturatingCounters _counts;
 
-        //[field: FieldOffset(4)]
+        [field: FieldOffset(4)]
         public int Length { get; }
 
-        //[FieldOffset(8)]
+        [FieldOffset(8)]
         private readonly Rope? _rope;
 
         public ReadOnlySpan<char> AsSpan

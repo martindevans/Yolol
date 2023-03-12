@@ -6,12 +6,11 @@ using Yolol.Grammar.AST.Expressions;
 
 namespace Yolol.Execution
 {
-    //todo:add StructLayout/FieldOffset back in once Blazor WASM is fixed (https://github.com/dotnet/runtime/issues/61385)
-    //[StructLayout(LayoutKind.Explicit)]
+    [StructLayout(LayoutKind.Explicit)]
     public readonly struct Value
         : IEquatable<Value>
     {
-        //[FieldOffset(0)]
+        [FieldOffset(0)]
         private readonly Number _number;
         public Number Number
         {
@@ -23,7 +22,7 @@ namespace Yolol.Execution
             }
         }
 
-        //[FieldOffset(0)]
+        [FieldOffset(0)]
         private readonly YString _string;
         public YString String
         {
@@ -35,7 +34,7 @@ namespace Yolol.Execution
             }
         }
 
-        //[FieldOffset(16)]
+        [FieldOffset(16)]
         private readonly Type _type;
         public Type Type => _type;
 
