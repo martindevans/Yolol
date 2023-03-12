@@ -16,9 +16,6 @@ namespace YololEmulator.Tests.Ladder
             var input = new List<Dictionary<string, Value>>();
             var output = new List<Dictionary<string, Value>>();
 
-            const int CASE_MIN = 2021;
-            const int CASE_MAX = 10000;
-
             void SingleCase(Random random)
             {
                 var agents = new[]

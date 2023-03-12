@@ -15,7 +15,7 @@ namespace Yolol.Grammar.AST.Expressions.Binary
         {
         }
 
-        protected override Value Evaluate(Value l, Value r, int _)
+        protected override Value Evaluate(Value l, Value r, int maxStringLength)
         {
             return new Value(l > r);
         }

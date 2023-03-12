@@ -18,7 +18,7 @@ namespace Yolol.Grammar.AST.Expressions.Binary
             Right = right;
         }
 
-        protected abstract Value Evaluate(Value left, Value right, int maxStringLength);
+        protected abstract Value Evaluate(Value l, Value r, int maxStringLength);
 
         public override Value Evaluate(MachineState state)
         {

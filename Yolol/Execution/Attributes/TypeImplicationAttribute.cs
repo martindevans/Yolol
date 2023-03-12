@@ -6,7 +6,7 @@ namespace Yolol.Execution.Attributes
     /// Tag a parameter of a method. If the method is successful that means that the parameter must be the given type.
     /// </summary>
     [AttributeUsage(AttributeTargets.Parameter)]
-    public class TypeImplicationAttribute
+    public sealed class TypeImplicationAttribute
         : Attribute
     {
         public Type Type { get; }

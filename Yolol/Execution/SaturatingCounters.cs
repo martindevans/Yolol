@@ -31,6 +31,32 @@ namespace Yolol.Execution
             return str.AsSpan().CountDigits();
         }
 
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(
+                ZeroCount,
+                OnesCount
+            );
+        }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is SaturatingCounters c)
+                return Equals(c);
+
+            return false;
+        }
+
+        public static bool operator ==(SaturatingCounters a, SaturatingCounters b)
+        {
+            return a.Equals(b);
+        }
+
+        public static bool operator !=(SaturatingCounters a, SaturatingCounters b)
+        {
+            return !a.Equals(b);
+        }
+
         public bool Equals(SaturatingCounters other)
         {
             return ZeroCount.Equals(other.ZeroCount) && OnesCount.Equals(other.OnesCount);

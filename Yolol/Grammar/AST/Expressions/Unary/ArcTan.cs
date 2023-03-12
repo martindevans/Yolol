@@ -11,7 +11,7 @@ namespace Yolol.Grammar.AST.Expressions.Unary
         {
         }
 
-        protected override Value Evaluate(Value value, int _)
+        protected override Value Evaluate(Value value, int maxStringLength)
         {
             return Value.ArcTan(value);
         }

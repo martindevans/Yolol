@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using Yolol.Grammar;
-
-namespace Yolol.Execution
+﻿namespace Yolol.Execution
 {
     public interface IDeviceNetwork
     {

@@ -74,8 +74,8 @@ namespace Yolol.Grammar
             public ParseError(Cursor? cursor, string message)
             {
                 message = message
-                    .Replace("\r", "\\r")
-                    .Replace("\n", "\\n");
+                    .Replace("\r", "\\r", StringComparison.Ordinal)
+                    .Replace("\n", "\\n", StringComparison.Ordinal);
 
                 Cursor = cursor;
                 Message = message;

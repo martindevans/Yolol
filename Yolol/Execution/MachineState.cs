@@ -27,7 +27,7 @@ namespace Yolol.Execution
         {
             name = name.ToLowerInvariant();
 
-            if (name.StartsWith(":"))
+            if (name.StartsWith(":", StringComparison.Ordinal))
             {
                 return _network.Get(name[1..]);
             }

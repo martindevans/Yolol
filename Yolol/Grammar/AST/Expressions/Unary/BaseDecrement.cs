@@ -10,7 +10,7 @@ namespace Yolol.Grammar.AST.Expressions.Unary
         {
         }
 
-        protected override Value Evaluate(Value value, int _)
+        protected override Value Evaluate(Value value, int maxStringLength)
         {
             if (Value.WillDecThrow(value))
                 throw new ExecutionException($"Attempted to decrement empty string in field `{Name}`");

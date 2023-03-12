@@ -19,7 +19,7 @@ namespace Yolol.Grammar.AST.Expressions
             Value = value;
         }
 
-        public override Value Evaluate(MachineState _)
+        public override Value Evaluate(MachineState state)
         {
             return new Value(Value);
         }

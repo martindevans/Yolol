@@ -6,7 +6,7 @@ namespace Yolol.Execution.Attributes
     /// Marks a parameter as not important (value does not affect the outcome) for a `WillThrow` method.
     /// </summary>
     [AttributeUsage(AttributeTargets.Parameter)]
-    public class IgnoreParamAttribute
+    public sealed class IgnoreParamAttribute
         : Attribute
     {
     }

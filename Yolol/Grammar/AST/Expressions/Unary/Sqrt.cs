@@ -17,7 +17,7 @@ namespace Yolol.Grammar.AST.Expressions.Unary
         {
         }
 
-        protected override Value Evaluate(Value value, int _) => Value.Sqrt(value);
+        protected override Value Evaluate(Value value, int maxStringLength) => Value.Sqrt(value);
 
         public bool Equals(Sqrt? other)
         {

@@ -6,7 +6,7 @@ namespace Yolol.Execution.Attributes
     /// Tags a method with methods that check if it might/will throw
     /// </summary>
     [AttributeUsage(AttributeTargets.Method)]
-    public class ErrorMetadataAttribute
+    public sealed class ErrorMetadataAttribute
         : Attribute
     {
         public string WillThrow { get; }

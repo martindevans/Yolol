@@ -25,7 +25,7 @@ namespace Yolol.Grammar
                 return false;
             if (ReferenceEquals(this, other))
                 return true;
-            return string.Equals(Name, other.Name);
+            return string.Equals(Name, other.Name, StringComparison.Ordinal);
         }
 
         public override bool Equals(object? obj)
