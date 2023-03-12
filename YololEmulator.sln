@@ -24,6 +24,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YololAssembler", "YololAsse
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yolol.Analysis.SAT", "Yolol.Analysis.SAT\Yolol.Analysis.SAT.csproj", "{DB04A0EE-CC23-443E-A6DF-A709F2C9FC3A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yolol.DLL", "Yolol.DLL\Yolol.DLL.csproj", "{A0CB6A5C-FB7F-44A5-B44D-824AE0E05C50}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -95,6 +97,14 @@ Global
 		{DB04A0EE-CC23-443E-A6DF-A709F2C9FC3A}.Release|Any CPU.Build.0 = Release|x64
 		{DB04A0EE-CC23-443E-A6DF-A709F2C9FC3A}.Release|x64.ActiveCfg = Release|x64
 		{DB04A0EE-CC23-443E-A6DF-A709F2C9FC3A}.Release|x64.Build.0 = Release|x64
+		{A0CB6A5C-FB7F-44A5-B44D-824AE0E05C50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0CB6A5C-FB7F-44A5-B44D-824AE0E05C50}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0CB6A5C-FB7F-44A5-B44D-824AE0E05C50}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A0CB6A5C-FB7F-44A5-B44D-824AE0E05C50}.Debug|x64.Build.0 = Debug|Any CPU
+		{A0CB6A5C-FB7F-44A5-B44D-824AE0E05C50}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0CB6A5C-FB7F-44A5-B44D-824AE0E05C50}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0CB6A5C-FB7F-44A5-B44D-824AE0E05C50}.Release|x64.ActiveCfg = Release|Any CPU
+		{A0CB6A5C-FB7F-44A5-B44D-824AE0E05C50}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

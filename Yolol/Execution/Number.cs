@@ -167,7 +167,7 @@ namespace Yolol.Execution
             if (s.Contains("0x", StringComparison.OrdinalIgnoreCase))
                 return ParseHex(s);
 
-            if (s.Contains("e", StringComparison.OrdinalIgnoreCase))
+            if (s.Contains('e', StringComparison.OrdinalIgnoreCase))
                 return ParseExp(s);
 
             return Convert(double.Parse(s, CultureInfo.InvariantCulture));

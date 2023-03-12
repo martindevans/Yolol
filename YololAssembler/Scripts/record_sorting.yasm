@@ -1,0 +1,189 @@
+﻿#define const_pivot_0 a
+#define const_pivot_1 b
+#define const_pivot_2 c
+
+// <= pivot0
+#define section00  d
+
+// > pivot0 AND <= pivot1
+#define section01  e
+
+// > pivot1 AND <= pivot2
+#define section12  f
+
+// > pivot2
+#define section22  g
+
+#define item        i
+#define cache_input j
+
+#define sort_input k
+#define sort_ret   l
+#define sort_out   m
+
+#define sorted00  n
+#define sorted01  o
+#define sorted12  p
+#define sorted22  q
+
+#define const_117chars r
+
+#define sort_internal_moving s
+#define sort_internal_moved t
+#define sort_internal_other u
+#define sort_internal_pivot v
+#define sort_internal_left w
+#define sort_internal_right x
+#define sort_internal_savedret y
+
+#import lib.yasm
+
+#define read_record_checked(read_input, read_output) {
+    read_output=const_117chars+read_input-const_117chars;
+    read_input-=read_output;
+    continue_if(read_output!="")
+}
+
+#define read_record_unchecked(read_input, read_output) {
+    read_output=const_117chars+read_input-const_117chars;
+    read_input-=read_output
+}
+
+#define goto_split_and_sort_func(sort_ret) {
+    sort_internal_savedret=sort_ret;
+    read_record_unchecked(sort_input, sort_internal_pivot);
+    sort_internal_left="";
+    sort_internal_right="";
+    goto{inner_split_sort}
+}
+
+@init:
+    const_117chars="________";
+    const_117chars+=const_117chars;
+    const_117chars+=const_117chars;
+    const_117chars+=const_117chars;
+    const_117chars+=const_117chars;
+    const_117chars+=const_117chars;
+    const_117chars+=const_117chars;
+    const_117chars+=const_117chars-"_______";
+    const_pivot_0="<GHHHH>";
+
+@setup:
+    const_pivot_1="<MMNNN>";
+    const_pivot_2="<TUUUU>";
+    cache_input=:i;
+    section00="";
+    section01="";
+    section12="";
+    section22="";
+    goto{read}
+
+@classify:
+    section22+=item;
+    continue_if(item<=const_pivot_2);
+    section22-=item;
+
+    section01+=item;
+    continue_if(item>const_pivot_1);
+    section01-=item;
+
+    section12+=item;
+
+@read:
+    read_record_checked(cache_input, item);
+    if{item<=const_pivot_0} then
+        section00+=item;
+        goto{@}
+    end;
+    goto{classify}
+
+@dispatch00:
+    sort_input=section00;
+    goto_split_and_sort_func(dispatch01)
+
+@dispatch01:
+    :o=sort_out;
+    sort_input=section01;
+    goto_split_and_sort_func(dispatch12)
+
+@dispatch12:
+    :o+=sort_out;
+    sort_input=section12;
+    goto_split_and_sort_func(dispatch22)
+
+@dispatch22:
+    :o+=sort_out;
+    sort_input=section22;
+    goto_split_and_sort_func(submit)
+
+@submit:
+    :o+=sort_out;
+    :done=1;
+    goto{setup}
+
+## Split `sort_input` into two parts based a pivot
+## Sort both halves
+## Return final sorted list in `sort_ret`
+## Jump back to `sort_internal_savedret`
+@inner_split_sort:
+    read_record_unchecked(sort_input, item);
+
+    sort_internal_right+=item;
+    if item<sort_internal_pivot then;
+        sort_internal_left+=item;
+        sort_internal_right-=item;
+    end;
+    goto{@}+(sort_input=="")
+
+@:
+    sort_input=sort_internal_left;
+    sort_ret={eval(@+1)};
+    goto{sort_func}
+
+@:
+    sort_internal_left=sort_out;
+    sort_input=sort_internal_right;
+    sort_ret={eval(@+1)};
+    goto{sort_func}
+
+@:
+    sort_out=sort_internal_left+sort_internal_pivot+sort_out;
+    goto{sort_internal_savedret}
+
+## Do sorting on `sort_input`
+## Output results to `sort_out`
+## After complete, jump to `sort_ret`
+@sort_func:
+    sort_out="";
+    read_record_checked(sort_input, item);
+    sort_out=item;
+
+    read_record_checked(sort_input, item);
+    sort_internal_moved="";
+    goto{sort_find_place}
+
+@:
+    goto{sort_ret}
+
+@sort_inner:
+    if sort_input=="" then;
+        goto{sort_ret};
+    end;
+    read_record_checked(sort_input, item);
+    sort_internal_moved="";
+    goto{sort_find_place}
+
+## Insert `item` into `sort_out`
+@sort_find_place:
+    read_record_checked(sort_out, sort_internal_moving);
+    if sort_internal_moving>item then;
+        sort_out=sort_internal_moved+item+sort_internal_moving+sort_out;
+        goto{sort_inner};
+    end;
+
+    sort_internal_moved+=sort_internal_moving;
+    goto{sort_find_place}
+
+@:
+    sort_out=sort_internal_moved+sort_internal_moving+item;
+    goto{sort_inner}

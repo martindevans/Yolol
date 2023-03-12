@@ -1,0 +1,20 @@
+r="________" r+=r r+=r r+=r r+=r r+=r r+=r r+=r-"_______" a="<GHHHH>" 
+b="<MMNNN>" c="<TUUUU>" j=:i d="" e="" f="" g="" goto4
+g+=i u/=i<=c g-=i e+=i u/=i>b e-=i f+=i 
+i=r+j-r j-=i u/=i!="" ifi<=a thend+=i goto4end goto3
+k=d y=6 v=r+k-r k-=v w="" x="" goto10
+:o=m k=e y=7 v=r+k-r k-=v w="" x="" goto10
+:o+=m k=f y=8 v=r+k-r k-=v w="" x="" goto10
+:o+=m k=g y=9 v=r+k-r k-=v w="" x="" goto10
+:o+=m :done=1 goto2
+i=r+k-r k-=i x+=i if i<v then w+=i x-=i end goto10+(k=="")
+k=w l=12 goto14
+w=m k=x l=13 goto14
+m=w+v+m gotoy
+m="" i=r+k-r k-=i u/=i!="" m=i i=r+k-r k-=i u/=i!="" t="" goto17
+gotol
+if k=="" then gotol end i=r+k-r k-=i u/=i!="" t="" goto17
+s=r+m-r m-=s u/=s!="" if s>i then m=t+i+s+m goto16 end t+=s goto17
+m=t+s+i goto16
+
+// <-------------- this line is 70 characters long ------------------>
