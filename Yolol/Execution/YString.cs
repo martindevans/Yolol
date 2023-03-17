@@ -417,6 +417,7 @@ namespace Yolol.Execution
             return new YString(value._span.Decrement());
         }
 
+        [ErrorMetadata(nameof(WillDecThrow), unsafeAlternative: nameof(UnsafeDecrement))]
         public static YString operator --(YString value)
         {
             if (value.Length == 0)
