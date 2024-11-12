@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using System.Linq;
 using Newtonsoft.Json.Linq;
 using Semver;
@@ -29,11 +28,11 @@ namespace Yolol.Cylon.Deserialisation.Versions
         {
             var jobj = JObject.Parse(json);
 
-            var version = SemVersion.Parse(jobj.Tok("version").Value<string>());
+            var version = SemVersion.Parse(jobj.Tok("version").Value<string>() ?? "0.0.0");
 
-            if (version < "0.3.0")
+            if (version.LessThan(new SemVersion(0, 3, 0)))
                 throw new InvalidOperationException("AST version is too low (must be >= 0.3.0)");
-            if (version > "0.3.0")
+            if (version.GreaterThan(new SemVersion(0, 3, 0)))
                 throw new InvalidOperationException("AST version is too high (must be <= 0.3.0)");
 
             var program = jobj.Tok("program");
@@ -88,8 +87,8 @@ namespace Yolol.Cylon.Deserialisation.Versions
             if (_typeExtension && typeMeta != null)
             {
                 var types = ((JArray)typeMeta.Tok("types")).Values<string>().ToArray();
-                var version = SemVersion.Parse(typeMeta.Tok("version").Value<string>());
-                if (version >= "1.0.0" && version <= "2.0.0")
+                var version = SemVersion.Parse(typeMeta.Tok("version").Value<string>()!);
+                if (version.GreaterThanOrEqualTo(new SemVersion(1, 0, 0)) && version.LessThanOrEqualTo(new SemVersion(2, 0, 0)))
                 {
                     var num = types.Contains("number");
                     var str = types.Contains("string");

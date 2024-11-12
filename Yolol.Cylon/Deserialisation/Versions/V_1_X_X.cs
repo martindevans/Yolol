@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Globalization;
 using System.Linq;
 using Newtonsoft.Json.Linq;
+using Semver;
 using Yolol.Execution;
 using Yolol.Grammar;
 using Yolol.Grammar.AST;
@@ -28,11 +28,11 @@ namespace Yolol.Cylon.Deserialisation.Versions
         {
             var jobj = JObject.Parse(json);
 
-            var version = Semver.SemVersion.Parse(jobj.Tok("version").Value<string>());
+            var version = SemVersion.Parse(jobj.Tok("version").Value<string>()!);
 
-            if (version < "1.0.0")
+            if (version.LessThan(new SemVersion(1, 0, 0)))
                 throw new InvalidOperationException("AST version is too low (must be >= 1.0.0)");
-            if (version >= "2.0.0")
+            if (version.GreaterThanOrEqualTo(new SemVersion(2, 0, 0)))
                 throw new InvalidOperationException("AST version is too high (must be < 2.0.0)");
 
             var program = jobj.Tok("program");
@@ -92,8 +92,8 @@ namespace Yolol.Cylon.Deserialisation.Versions
             if (_typeExtension && typeMeta != null)
             {
                 var types = ((JArray)typeMeta.Tok("types")).Values<string>().ToArray();
-                var version = Semver.SemVersion.Parse(typeMeta.Tok("version").Value<string>());
-                if (version >= "1.0.0" && version <= "2.0.0")
+                var version = SemVersion.Parse(typeMeta.Tok("version").Value<string>()!);
+                if (version.GreaterThanOrEqualTo(new SemVersion(1, 0, 0)) && version.LessThanOrEqualTo(new SemVersion(2, 0, 0)))
                 {
                     var num = types.Contains("number");
                     var str = types.Contains("string");
@@ -125,7 +125,7 @@ namespace Yolol.Cylon.Deserialisation.Versions
 
         private BaseExpression ParseExpression(JToken jtok)
         {
-            var type = jtok.Tok("type")?.Value<string>()?.Split(new[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
+            var type = jtok.Tok("type").Value<string>()?.Split(new[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
             if (type is null)
                 throw new InvalidCastException("Cannot parse: null `type` field");
 
