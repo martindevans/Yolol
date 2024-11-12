@@ -7,7 +7,7 @@ namespace Yolol.Grammar
     {
         public string Name { get; }
 
-        public bool IsExternal => Name.StartsWith(":");
+        public bool IsExternal => Name.StartsWith(':');
 
         public VariableName(string name)
         {

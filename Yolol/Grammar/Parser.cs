@@ -4,7 +4,7 @@ using Yolol.Grammar.AST;
 
 namespace Yolol.Grammar
 {
-    public class Parser
+    public static class Parser
     {
         public static Result<Program, ParseError> ParseProgram(string program)
         {

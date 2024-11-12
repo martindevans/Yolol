@@ -26,7 +26,7 @@ namespace Yolol.Grammar.AST.Statements
 
         public StatementList(IEnumerable<BaseStatement> statements)
         {
-            Statements = statements.Where(a => !(a is EmptyStatement)).ToArray();
+            Statements = statements.Where(a => a is not EmptyStatement).ToArray();
         }
 
         public override ExecutionResult Evaluate(MachineState state)
