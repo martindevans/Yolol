@@ -1,4 +1,4 @@
-This repository contains 4 projects:
+[![Build status](https://github.com/martindevans/Yolol/workflows/Build/badge.svg?branch=master)](https://github.com/martindevans/Yolol/workflows/Build/badge.svg?branch=master)
 
 #### YololEmulator
 
