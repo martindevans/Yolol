@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MoreLinq.Extensions;
 using Yolol.Execution;
 
 namespace YololEmulator.Tests.Ladder
@@ -56,7 +55,7 @@ namespace YololEmulator.Tests.Ladder
 
             var length = rng.Next(minLength, maxLength);
             var chars = Enumerable.Repeat(lower, length)
-                                  .Select(s => lower[rng.Next(lower.Length)])
+                                  .Select(_ => lower[rng.Next(lower.Length)])
                                   .ToArray();
 
             return string.Join("", chars);

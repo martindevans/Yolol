@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MoreLinq;
 using Yolol.Execution;
 
 namespace YololEmulator.Tests.Ladder
@@ -11,10 +10,10 @@ namespace YololEmulator.Tests.Ladder
     public class StringPatterns
         : BaseGenerator
     {
-        private readonly string[] _words = new[]
-        {
-            "Cylon", "Yolol", "IL", "Referee", "Toaster", "ISAN", "Starbase", "Vasama", "Eos"
-        };
+        private readonly string[] _words =
+        [
+            "Cylon", "Yolol", "IL", "Referee", "Toaster", "ISAN", "Starbase", "Vasama", "Eos",
+        ];
 
         [TestMethod]
         public void Generate()
