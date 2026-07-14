@@ -21,7 +21,7 @@ namespace Yolol.Grammar.AST.Expressions
 
         public override Value Evaluate(MachineState state)
         {
-            return state.GetVariable(Name.Name).Value;
+            return state.GetVariable(Name).Value;
         }
 
         public bool Equals(Variable? other)

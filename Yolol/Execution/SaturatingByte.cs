@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Runtime.InteropServices;
 
 namespace Yolol.Execution
@@ -37,7 +38,7 @@ namespace Yolol.Execution
         {
             return IsSaturated
                 ? "SATURATED"
-                : _value.ToString();
+                : _value.ToString(CultureInfo.InvariantCulture);
         }
 
         public static SaturatingByte operator +(SaturatingByte a, SaturatingByte b)

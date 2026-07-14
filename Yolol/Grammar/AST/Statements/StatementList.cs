@@ -10,7 +10,8 @@ namespace Yolol.Grammar.AST.Statements
     {
         public override bool CanRuntimeError => Statements.Any(s => s.CanRuntimeError);
 
-        public IReadOnlyList<BaseStatement> Statements { get; }
+        private readonly BaseStatement[] _statements;
+        public IReadOnlyList<BaseStatement> Statements => _statements;
 
         public StatementList()
             : this(Array.Empty<BaseStatement>())
@@ -26,12 +27,12 @@ namespace Yolol.Grammar.AST.Statements
 
         public StatementList(IEnumerable<BaseStatement> statements)
         {
-            Statements = statements.Where(a => a is not EmptyStatement).ToArray();
+            _statements = statements.Where(a => a is not EmptyStatement).ToArray();
         }
 
         public override ExecutionResult Evaluate(MachineState state)
         {
-            foreach (var statement in Statements)
+            foreach (var statement in _statements)
             {
                 var r = statement.Evaluate(state);
                 switch (r.Type)

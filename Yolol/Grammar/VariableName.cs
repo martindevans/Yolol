@@ -7,11 +7,20 @@ namespace Yolol.Grammar
     {
         public string Name { get; }
 
+        internal string PureName { get; private set; }
+        
         public bool IsExternal => Name.StartsWith(':');
 
         public VariableName(string name)
         {
+            // Normalise name
             Name = name.ToLowerInvariant();
+
+            // Slice out the "pure" name part
+            if (IsExternal)
+                PureName = Name[1..];
+            else
+                PureName = Name;
         }
 
         public override string ToString()

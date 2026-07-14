@@ -9,7 +9,15 @@ namespace Yolol.Execution.Attributes
     public sealed class ErrorMetadataAttribute
         : Attribute
     {
+        /// <summary>
+        /// The name of a method which checks if the operation (given value(s)) will throw.
+        /// </summary>
         public string WillThrow { get; }
+
+        /// <summary>
+        /// An alternative implementation of the tagged method which does not have any runtime checks. You should only
+        /// use this alternative if you have first checked that it will not throw!
+        /// </summary>
         public string? UnsafeAlternative { get; }
 
         /// <summary>

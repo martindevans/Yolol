@@ -2,6 +2,9 @@
 
 namespace Yolol.Execution
 {
+    /// <summary>
+    /// Throws a <see cref="NullDeviceNetworkAccessException"/> on every attempt to access an external variable
+    /// </summary>
     public class ThrowDeviceNetwork
         : IDeviceNetwork
     {

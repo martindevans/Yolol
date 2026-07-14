@@ -49,7 +49,7 @@ namespace Yolol.Execution
 
             if (little == 0)
             {
-                if (!big.TryFormat(buffer, out var written))
+                if (!big.TryFormat(buffer, out var written, provider: CultureInfo.InvariantCulture))
                     throw new InvalidOperationException($"Attempted to format a number with more than {buffer.Length} digits");
                 return buffer[..written];
             }
@@ -74,7 +74,7 @@ namespace Yolol.Execution
             }
             else
             {
-                if (!big.TryFormat(buffer, out bigWritten))
+                if (!big.TryFormat(buffer, out bigWritten, provider: CultureInfo.InvariantCulture))
                     throw new InvalidOperationException($"Attempted to format a number with more than {bufferSize} digits");
             }
 
@@ -82,7 +82,7 @@ namespace Yolol.Execution
             buffer[bigWritten] = '.';
 
             // Write out the "little" numbers
-            if (!little.TryFormat(buffer.Slice(bigWritten + 1, bufferSize - bigWritten - 1), out var littleWritten, "D3"))
+            if (!little.TryFormat(buffer.Slice(bigWritten + 1, bufferSize - bigWritten - 1), out var littleWritten, "D3", provider: CultureInfo.InvariantCulture))
                 throw new InvalidOperationException($"Attempted to format a number with more than {bufferSize} digits");
 
             // There may be trailing zeros after the "little" number, find them and shorten the `littleWritten` to match

@@ -326,10 +326,10 @@ namespace Yolol.Execution
 
         public override int GetHashCode()
         {
-            HashCode c = new HashCode();
+            var c = new HashCode();
 
             var s = AsSpan;
-            for (int i = 0; i < s.Length; i++)
+            for (var i = 0; i < s.Length; i++)
                 c.Add(s[i]);
 
             return c.ToHashCode();

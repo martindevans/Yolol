@@ -20,7 +20,7 @@ namespace Yolol.Grammar.AST.Statements
 
         public override ExecutionResult Evaluate(MachineState state)
         {
-            var var = state.GetVariable(Left.Name);
+            var var = state.GetVariable(Left);
             var.Value = Right.Evaluate(state);
 
             return new ExecutionResult();
@@ -46,7 +46,7 @@ namespace Yolol.Grammar.AST.Statements
 
         public override int GetHashCode()
         {
-            return unchecked(Left.GetHashCode() * Right.GetHashCode());
+            return unchecked(Left.GetHashCode() + Right.GetHashCode());
         }
     }
 }
