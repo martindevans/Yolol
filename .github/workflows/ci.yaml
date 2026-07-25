@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+    
+jobs:
+  build:
+    permissions:
+      id-token: write
+
+    env:
+      BUILD_CONFIG: 'Release'
+      SOLUTION: 'YololEmulator.sln'
+
+    runs-on: ubuntu-24.04
+
+    steps:
+    - uses: actions/checkout@v7
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v5.3.0
+      with:
+        dotnet-version: 10.x.x
+
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v4.0
+
+    - name: Restore dependencies
+      run: dotnet restore $SOLUTION
+
+    - name: Build
+      run: dotnet build $SOLUTION --configuration $BUILD_CONFIG --no-restore
+
+    - name: Run tests
+      run: dotnet test /p:Configuration=$BUILD_CONFIG --no-restore --no-build --verbosity normal
+
+    - name: Acquire Nuget publishing token
+      uses: NuGet/login@v1.2.0
+      id: login
+      with:
+        user: ${{ secrets.NUGET_USER }}
+
+    - name: Copy Nupkg
+      run: |
+        find . -name '*.nupkg' -exec cp -f {} . \;
+        ls *.nupkg
+
+    - name: Publish
+      if: github.event_name == 'push'
+      run: dotnet nuget push *.nupkg --source 'https://api.nuget.org/v3/index.json' --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --skip-duplicate

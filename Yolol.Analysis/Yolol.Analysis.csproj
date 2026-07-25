@@ -6,6 +6,7 @@
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
     <Platforms>AnyCPU;x64</Platforms>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -27,10 +28,6 @@
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <WarningsAsErrors>NU1605,CS8600,CS8603,CS8604</WarningsAsErrors>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="nuget-push.ps1" />
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Yolol\Yolol.csproj" />

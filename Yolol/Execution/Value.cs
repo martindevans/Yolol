@@ -504,7 +504,7 @@ namespace Yolol.Execution
 
         #region op *
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static bool WillMulThrow(Value l, Value r)
+        public static bool WillMulThrow(Value l, Value r)
         {
             return l._type == Type.String || r._type == Type.String;
         }
@@ -574,7 +574,7 @@ namespace Yolol.Execution
 
         #region op /
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static bool WillDivThrow(Value l, Value r)
+        public static bool WillDivThrow(Value l, Value r)
         {
             if (l._type == Type.Number && r._type == Type.Number)
                 return Number.WillDivThrow(l._number, r._number);
@@ -667,7 +667,7 @@ namespace Yolol.Execution
 
         #region op %
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static bool WillModThrow(Value l, Value r)
+        public static bool WillModThrow(Value l, Value r)
         {
             if (l._type == Type.Number && r._type == Type.Number)
                 return Number.WillModThrow(l._number, r._number);
@@ -767,7 +767,7 @@ namespace Yolol.Execution
         #endregion
 
         #region op --
-        internal static bool WillDecThrow(Value value)
+        public static bool WillDecThrow(Value value)
         {
             return value._type == Type.String
                 && value._string.Length == 0;
@@ -794,7 +794,7 @@ namespace Yolol.Execution
         #endregion
 
         #region exponent
-        internal static bool WillExponentThrow(Value left, Value right)
+        public static bool WillExponentThrow(Value left, Value right)
         {
             return left.Type != Type.Number || right.Type != Type.Number;
         }
@@ -863,7 +863,7 @@ namespace Yolol.Execution
         }
 
         #region negate
-        internal static bool WillNegateThrow(Value value)
+        public static bool WillNegateThrow(Value value)
         {
             return value.Type != Type.Number;
         }
@@ -884,7 +884,7 @@ namespace Yolol.Execution
         #endregion
 
         #region abs
-        internal static bool WillAbsThrow(Value value)
+        public static bool WillAbsThrow(Value value)
         {
             return value.Type != Type.Number;
         }
@@ -905,7 +905,7 @@ namespace Yolol.Execution
         #endregion
 
         #region sqrt
-        internal static bool WillSqrtThrow(Value value)
+        public static bool WillSqrtThrow(Value value)
         {
             return value.Type != Type.Number;
         }
@@ -926,7 +926,7 @@ namespace Yolol.Execution
         #endregion
 
         #region sin
-        internal static bool WillSinThrow(Value value)
+        public static bool WillSinThrow(Value value)
         {
             return value.Type != Type.Number;
         }
@@ -947,7 +947,7 @@ namespace Yolol.Execution
         #endregion
 
         #region cos
-        internal static bool WillCosThrow(Value value)
+        public static bool WillCosThrow(Value value)
         {
             return value.Type != Type.Number;
         }
@@ -968,7 +968,7 @@ namespace Yolol.Execution
         #endregion
 
         #region tan
-        internal static bool WillTanThrow(Value value)
+        public static bool WillTanThrow(Value value)
         {
             return value.Type != Type.Number;
         }
@@ -988,7 +988,7 @@ namespace Yolol.Execution
         #endregion
 
         #region atan
-        internal static bool WillAtanThrow(Value value)
+        public static bool WillAtanThrow(Value value)
         {
             return value.Type != Type.Number;
         }
@@ -1009,7 +1009,7 @@ namespace Yolol.Execution
         #endregion
 
         #region asin
-        internal static bool WillArcSinThrow(Value value)
+        public static bool WillArcSinThrow(Value value)
         {
             return value.Type != Type.Number;
         }
@@ -1030,7 +1030,7 @@ namespace Yolol.Execution
         #endregion
 
         #region acos
-        internal static bool WillArcCosThrow(Value value)
+        public static bool WillArcCosThrow(Value value)
         {
             return value.Type != Type.Number;
         }
@@ -1059,7 +1059,7 @@ namespace Yolol.Execution
         }
 
         #region factorial
-        internal static bool WillFactorialThrow(Value value)
+        public static bool WillFactorialThrow(Value value)
         {
             return value.Type != Type.Number;
         }
