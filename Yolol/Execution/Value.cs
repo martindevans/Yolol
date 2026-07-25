@@ -522,7 +522,7 @@ namespace Yolol.Execution
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static Number UnsafeMultiply(Value left, Value right)
+        public static Number UnsafeMultiply(Value left, Value right)
         {
             return left._number * right._number;
         }
@@ -601,7 +601,7 @@ namespace Yolol.Execution
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static Number UnsafeDiv(Value left, Value right)
+        public static Number UnsafeDiv(Value left, Value right)
         {
             return Number.UnsafeDivide(left._number, right._number);
         }
@@ -694,7 +694,7 @@ namespace Yolol.Execution
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static Number UnsafeMod(Value left, Value right)
+        public static Number UnsafeMod(Value left, Value right)
         {
             return Number.UnsafeMod(left._number, right._number);
         }
@@ -809,7 +809,7 @@ namespace Yolol.Execution
             return left.Type != Type.Number;
         }
 
-        internal static Number UnsafeExponent(Value left, Value right)
+        public static Number UnsafeExponent(Value left, Value right)
         {
             return left._number.Exponent(right._number);
         }
@@ -868,7 +868,7 @@ namespace Yolol.Execution
             return value.Type != Type.Number;
         }
 
-        internal static Number UnsafeNegate(Value value)
+        public static Number UnsafeNegate(Value value)
         {
             return -value._number;
         }
@@ -889,7 +889,7 @@ namespace Yolol.Execution
             return value.Type != Type.Number;
         }
 
-        internal static Number UnsafeAbs(Value value)
+        public static Number UnsafeAbs(Value value)
         {
             return value._number.Abs();
         }
@@ -910,7 +910,7 @@ namespace Yolol.Execution
             return value.Type != Type.Number;
         }
 
-        internal static Number UnsafeSqrt(Value value)
+        public static Number UnsafeSqrt(Value value)
         {
             return value._number.Sqrt();
         }
@@ -931,7 +931,7 @@ namespace Yolol.Execution
             return value.Type != Type.Number;
         }
 
-        internal static Number UnsafeSin(Value value)
+        public static Number UnsafeSin(Value value)
         {
             return value._number.Sin();
         }
@@ -952,7 +952,7 @@ namespace Yolol.Execution
             return value.Type != Type.Number;
         }
 
-        internal static Number UnsafeCos(Value value)
+        public static Number UnsafeCos(Value value)
         {
             return value._number.Cos();
         }
@@ -973,7 +973,7 @@ namespace Yolol.Execution
             return value.Type != Type.Number;
         }
 
-        internal static Number UnsafeTan(Value value)
+        public static Number UnsafeTan(Value value)
         {
             return value._number.Tan();
         }
@@ -993,7 +993,7 @@ namespace Yolol.Execution
             return value.Type != Type.Number;
         }
 
-        internal static Number UnsafeAtan(Value value)
+        public static Number UnsafeAtan(Value value)
         {
             return value._number.ArcTan();
         }
@@ -1014,7 +1014,7 @@ namespace Yolol.Execution
             return value.Type != Type.Number;
         }
 
-        internal static Number UnsafeArcSin(Value value)
+        public static Number UnsafeArcSin(Value value)
         {
             return value._number.ArcSin();
         }
@@ -1035,7 +1035,7 @@ namespace Yolol.Execution
             return value.Type != Type.Number;
         }
 
-        internal static Number UnsafeArcCos(Value value)
+        public static Number UnsafeArcCos(Value value)
         {
             return value._number.ArcCos();
         }
@@ -1064,7 +1064,7 @@ namespace Yolol.Execution
             return value.Type != Type.Number;
         }
 
-        internal static Number UnsafeFactorial(Value value)
+        public static Number UnsafeFactorial(Value value)
         {
             return value._number.Factorial();
         }
