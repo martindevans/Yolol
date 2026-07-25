@@ -42,7 +42,6 @@
 
   <ItemGroup>
     <None Remove="Grammar\YololParser.pegasus" />
-    <None Remove="nuget-push.ps1" />
   </ItemGroup>
 
   <ItemGroup>
