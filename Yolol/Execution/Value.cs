@@ -633,6 +633,12 @@ namespace Yolol.Execution
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static Number UnsafeDiv(Value left, Number right)
         {
+            return UnsafeDiv(in left, in right);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Number UnsafeDiv(in Value left, in Number right)
+        {
             return Number.UnsafeDivide(left._number, right);
         }
 
