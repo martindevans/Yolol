@@ -646,6 +646,7 @@ namespace Yolol.Execution
         internal static Number UnsafeDiv(Value left, bool right)
         {
             return Number.UnsafeDivide(left._number, right);
+            return Number.UnsafeDivide(left._number, right);
         }
 
         [ErrorMetadata(nameof(WillDivThrow), nameof(UnsafeDiv))]
@@ -742,7 +743,13 @@ namespace Yolol.Execution
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static Number UnsafeMod(Value left, Number right)
+        public static Number UnsafeMod(Value left, Number right)
+        {
+            return UnsafeMod(in left, in right);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Number UnsafeMod(in Value left, in Number right)
         {
             return Number.UnsafeMod(left._number, right);
         }
