@@ -530,6 +530,12 @@ namespace Yolol.Execution
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Number UnsafeMultiply(Value left, Value right)
         {
+            return UnsafeMultiply(in left, in right);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Number UnsafeMultiply(in Value left, in Value right)
+        {
             return left._number * right._number;
         }
 
@@ -614,6 +620,12 @@ namespace Yolol.Execution
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Number UnsafeDiv(Value left, Value right)
+        {
+            return UnsafeDiv(in left, in right);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Number UnsafeDiv(in Value left, in Value right)
         {
             return Number.UnsafeDivide(left._number, right._number);
         }
@@ -713,6 +725,12 @@ namespace Yolol.Execution
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Number UnsafeMod(Value left, Value right)
+        {
+            return UnsafeMod(in left, in right);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Number UnsafeMod(in Value left, in Value right)
         {
             return Number.UnsafeMod(left._number, right._number);
         }
@@ -839,6 +857,11 @@ namespace Yolol.Execution
 
         public static Number UnsafeExponent(Value left, Value right)
         {
+            return UnsafeExponent(in left, in right);
+        }
+
+        public static Number UnsafeExponent(in Value left, in Value right)
+        {
             return left._number.Exponent(right._number);
         }
 
@@ -903,6 +926,11 @@ namespace Yolol.Execution
 
         public static Number UnsafeNegate(Value value)
         {
+            return UnsafeNegate(in value);
+        }
+
+        public static Number UnsafeNegate(in Value value)
+        {
             return -value._number;
         }
 
@@ -928,6 +956,11 @@ namespace Yolol.Execution
         }
 
         public static Number UnsafeAbs(Value value)
+        {
+            return UnsafeAbs(in value);
+        }
+
+        public static Number UnsafeAbs(in Value value)
         {
             return value._number.Abs();
         }
@@ -955,6 +988,11 @@ namespace Yolol.Execution
 
         public static Number UnsafeSqrt(Value value)
         {
+            return UnsafeSqrt(in value);
+        }
+
+        public static Number UnsafeSqrt(in Value value)
+        {
             return value._number.Sqrt();
         }
 
@@ -980,6 +1018,11 @@ namespace Yolol.Execution
         }
 
         public static Number UnsafeSin(Value value)
+        {
+            return UnsafeSin(in value);
+        }
+
+        public static Number UnsafeSin(in Value value)
         {
             return value._number.Sin();
         }
@@ -1007,6 +1050,11 @@ namespace Yolol.Execution
 
         public static Number UnsafeCos(Value value)
         {
+            return UnsafeCos(in value);
+        }
+
+        public static Number UnsafeCos(in Value value)
+        {
             return value._number.Cos();
         }
 
@@ -1033,6 +1081,11 @@ namespace Yolol.Execution
 
         public static Number UnsafeTan(Value value)
         {
+            return UnsafeTan(in value);
+        }
+
+        public static Number UnsafeTan(in Value value)
+        {
             return value._number.Tan();
         }
 
@@ -1057,6 +1110,11 @@ namespace Yolol.Execution
         }
 
         public static Number UnsafeAtan(Value value)
+        {
+            return UnsafeAtan(in value);
+        }
+
+        public static Number UnsafeAtan(in Value value)
         {
             return value._number.ArcTan();
         }
@@ -1084,6 +1142,11 @@ namespace Yolol.Execution
 
         public static Number UnsafeArcSin(Value value)
         {
+            return UnsafeArcSin(in value);
+        }
+
+        public static Number UnsafeArcSin(in Value value)
+        {
             return value._number.ArcSin();
         }
 
@@ -1109,6 +1172,11 @@ namespace Yolol.Execution
         }
 
         public static Number UnsafeArcCos(Value value)
+        {
+            return UnsafeArcCos(in value);
+        }
+
+        public static Number UnsafeArcCos(in Value value)
         {
             return value._number.ArcCos();
         }
@@ -1143,6 +1211,11 @@ namespace Yolol.Execution
         }
 
         public static Number UnsafeFactorial(Value value)
+        {
+            return UnsafeFactorial(in value);
+        }
+
+        public static Number UnsafeFactorial(in Value value)
         {
             return value._number.Factorial();
         }
