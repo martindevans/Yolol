@@ -506,6 +506,12 @@ namespace Yolol.Execution
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool WillMulThrow(Value l, Value r)
         {
+            return WillMulThrow(in l, in r);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool WillMulThrow(in Value l, in Value r)
+        {
             return l._type == Type.String || r._type == Type.String;
         }
 
@@ -575,6 +581,12 @@ namespace Yolol.Execution
         #region op /
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool WillDivThrow(Value l, Value r)
+        {
+            return WillDivThrow(in l, in r);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool WillDivThrow(in Value l, in Value r)
         {
             if (l._type == Type.Number && r._type == Type.Number)
                 return Number.WillDivThrow(l._number, r._number);
@@ -668,6 +680,12 @@ namespace Yolol.Execution
         #region op %
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool WillModThrow(Value l, Value r)
+        {
+            return WillModThrow(in l, in r);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool WillModThrow(in Value l, in Value r)
         {
             if (l._type == Type.Number && r._type == Type.Number)
                 return Number.WillModThrow(l._number, r._number);
@@ -769,6 +787,11 @@ namespace Yolol.Execution
         #region op --
         public static bool WillDecThrow(Value value)
         {
+            return WillDecThrow(in value);
+        }
+
+        public static bool WillDecThrow(in Value value)
+        {
             return value._type == Type.String
                 && value._string.Length == 0;
         }
@@ -795,6 +818,11 @@ namespace Yolol.Execution
 
         #region exponent
         public static bool WillExponentThrow(Value left, Value right)
+        {
+            return WillExponentThrow(in left, in right);
+        }
+
+        public static bool WillExponentThrow(in Value left, in Value right)
         {
             return left.Type != Type.Number || right.Type != Type.Number;
         }
@@ -865,6 +893,11 @@ namespace Yolol.Execution
         #region negate
         public static bool WillNegateThrow(Value value)
         {
+            return WillNegateThrow(in value);
+        }
+
+        public static bool WillNegateThrow(in Value value)
+        {
             return value.Type != Type.Number;
         }
 
@@ -885,6 +918,11 @@ namespace Yolol.Execution
 
         #region abs
         public static bool WillAbsThrow(Value value)
+        {
+            return WillAbsThrow(in value);
+        }
+
+        public static bool WillAbsThrow(in Value value)
         {
             return value.Type != Type.Number;
         }
@@ -907,6 +945,11 @@ namespace Yolol.Execution
         #region sqrt
         public static bool WillSqrtThrow(Value value)
         {
+            return WillSqrtThrow(in value);
+        }
+
+        public static bool WillSqrtThrow(in Value value)
+        {
             return value.Type != Type.Number;
         }
 
@@ -927,6 +970,11 @@ namespace Yolol.Execution
 
         #region sin
         public static bool WillSinThrow(Value value)
+        {
+            return WillSinThrow(in value);
+        }
+
+        public static bool WillSinThrow(in Value value)
         {
             return value.Type != Type.Number;
         }
@@ -949,6 +997,11 @@ namespace Yolol.Execution
         #region cos
         public static bool WillCosThrow(Value value)
         {
+            return WillCosThrow(in value);
+        }
+
+        public static bool WillCosThrow(in Value value)
+        {
             return value.Type != Type.Number;
         }
 
@@ -970,6 +1023,11 @@ namespace Yolol.Execution
         #region tan
         public static bool WillTanThrow(Value value)
         {
+            return WillTanThrow(in value);
+        }
+
+        public static bool WillTanThrow(in Value value)
+        {
             return value.Type != Type.Number;
         }
 
@@ -989,6 +1047,11 @@ namespace Yolol.Execution
 
         #region atan
         public static bool WillAtanThrow(Value value)
+        {
+            return WillAtanThrow(in value);
+        }
+
+        public static bool WillAtanThrow(in Value value)
         {
             return value.Type != Type.Number;
         }
@@ -1011,6 +1074,11 @@ namespace Yolol.Execution
         #region asin
         public static bool WillArcSinThrow(Value value)
         {
+            return WillArcSinThrow(in value);
+        }
+
+        public static bool WillArcSinThrow(in Value value)
+        {
             return value.Type != Type.Number;
         }
 
@@ -1031,6 +1099,11 @@ namespace Yolol.Execution
 
         #region acos
         public static bool WillArcCosThrow(Value value)
+        {
+            return WillArcCosThrow(in value);
+        }
+
+        public static bool WillArcCosThrow(in Value value)
         {
             return value.Type != Type.Number;
         }
@@ -1060,6 +1133,11 @@ namespace Yolol.Execution
 
         #region factorial
         public static bool WillFactorialThrow(Value value)
+        {
+            return WillFactorialThrow(in value);
+        }
+
+        public static bool WillFactorialThrow(in Value value)
         {
             return value.Type != Type.Number;
         }
