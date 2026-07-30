@@ -88,6 +88,30 @@ namespace Yolol.Execution
             return new Value(s);
         }
 
+        public bool TryGetString(out YString ystring)
+        {
+            if (_type == Type.String)
+            {
+                ystring = _string;
+                return true;
+            }
+
+            ystring = default;
+            return false;
+        }
+
+        public bool TryGetNumber(out Number number)
+        {
+            if (_type == Type.Number)
+            {
+                number = _number;
+                return true;
+            }
+
+            number = default;
+            return false;
+        }
+
         public override string ToString()
         {
             if (_type == Type.Number)
