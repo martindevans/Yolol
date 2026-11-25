@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Pegasus.Common;
+using Pegasus.Common.Tracing;
 using Yolol.Grammar.AST;
 
 namespace Yolol.Grammar
@@ -11,8 +14,16 @@ namespace Yolol.Grammar
             try
             {
                 var parser = new YololParser();
+
+                //var ptrace = new WarningsPerformanceTracer();
+                //parser.Tracer = ptrace;
+
                 var parsed = parser.Parse(program);
                 parsed.SourceCode = program;
+
+                //var recommendations = ptrace.Recommendations;
+                //foreach (var recommendation in recommendations)
+                //    Console.WriteLine(recommendation);
 
                 return new Result<Program, ParseError>(parsed);
             }
@@ -63,6 +74,25 @@ namespace Yolol.Grammar
                 IsOk = false;
                 _ok = null;
                 _err = err;
+            }
+        }
+
+        private class CustomPerformanceTracer : PerformanceTracer
+        {
+            public IReadOnlyList<string> Recommendations { get; set; } = [];
+
+            protected override void ReportPerformance(TimeSpan averageCacheHitDuration, RulePerformanceInfo[] stats)
+            {
+                Recommendations =
+                [
+                    ..stats.Where(stat => !stat.IsCached && stat.EstimatedTotalTimeSaved > TimeSpan.Zero).Select(stat =>
+                        $"Recommendation: Add the -memoize flag to `{stat.Name}`. (Saves {stat.EstimatedTotalTimeSaved.TotalMilliseconds}ms)"
+                    ),
+
+                    ..stats.Where(stat => stat.IsCached && stat.EstimatedTotalTimeSaved < -TimeSpan.FromMilliseconds(10)).Select(stat =>
+                        $"Recommendation: Remove -memoize flag from `{stat.Name}`. (Saves {stat.EstimatedTotalTimeSaved.Negate().TotalMilliseconds}ms)"
+                    )
+                ];
             }
         }
 

@@ -139,7 +139,7 @@ value <BaseExpression> -memoize
 // ########################################
 // Others
 
-identifier <VariableName>
+identifier <VariableName> -memoize
     = s:([a-zA-Z_][a-zA-Z0-9_]<0,>) { new VariableName(s) }
     / ":" s:([a-zA-Z0-9_]<1,>) { new VariableName(":" + string.Concat(s)) }
 
@@ -147,7 +147,7 @@ newline
     = "\r\n"
     / "\n"
 
-_
+_ -memoize
     = [ \t]*
 
 EOF
